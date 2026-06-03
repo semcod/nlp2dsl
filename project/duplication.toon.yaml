@@ -1,12 +1,21 @@
-# redup/duplication | 10 groups | 48f 6480L | 2026-04-08
+# redup/duplication | 10 groups | 48f 6496L | 2026-06-03
 
 SUMMARY:
   files_scanned: 48
-  total_lines:   6480
+  total_lines:   6496
   dup_groups:    10
-  dup_fragments: 29
-  saved_lines:   143
-  scan_ms:       20703
+  dup_fragments: 28
+  saved_lines:   140
+  scan_ms:       2115
+
+HOTSPOTS[7] (files with most duplication):
+  backend/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.8%)
+  nlp-service/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.8%)
+  worker/logging_setup.py  dup=49L  groups=5  frags=5  (0.8%)
+  backend/app/routers/settings.py  dup=24L  groups=2  frags=4  (0.4%)
+  worker/worker.py  dup=22L  groups=1  frags=2  (0.3%)
+  backend/app/routers/workflow.py  dup=6L  groups=1  frags=2  (0.1%)
+  examples/01-invoice/main.py  dup=4L  groups=1  frags=1  (0.1%)
 
 DUPLICATES[10] (ranked by impact):
   [5980042b45ef9ea3] ! STRU  setup_logging  L=22 N=3 saved=44 sim=1.00
@@ -41,13 +50,12 @@ DUPLICATES[10] (ranked by impact):
       backend/app/logging_setup.py:64-66  (__init__)
       nlp-service/app/logging_setup.py:64-66  (__init__)
       worker/logging_setup.py:64-66  (__init__)
-  [8af82767bfb2b892]   STRU  run_workflow_endpoint  L=3 N=3 saved=6 sim=1.00
-      backend/app/routers/workflow.py:67-69  (run_workflow_endpoint)
-      backend/app/routers/workflow.py:73-75  (start_workflow_endpoint)
-      nlp-service/app/main.py:84-89  (parse_text)
   [2ce1096adac6d1a4]   STRU  actions_schema  L=5 N=2 saved=5 sim=1.00
       backend/app/routers/settings.py:21-25  (actions_schema)
       backend/app/routers/settings.py:39-43  (get_settings)
+  [8af82767bfb2b892]   STRU  run_workflow_endpoint  L=3 N=2 saved=3 sim=1.00
+      backend/app/routers/workflow.py:67-69  (run_workflow_endpoint)
+      backend/app/routers/workflow.py:73-75  (start_workflow_endpoint)
 
 REFACTOR[10] (ranked by priority):
   [1] ● extract_function   → utils/setup_logging.py
@@ -74,13 +82,55 @@ REFACTOR[10] (ranked by priority):
   [8] ● extract_class      → utils/__init__.py
       WHY: 3 occurrences of 3-line block across 3 files — saves 6 lines
       FILES: backend/app/logging_setup.py, nlp-service/app/logging_setup.py, worker/logging_setup.py
-  [9] ○ extract_function   → utils/run_workflow_endpoint.py
-      WHY: 3 occurrences of 3-line block across 2 files — saves 6 lines
-      FILES: backend/app/routers/workflow.py, nlp-service/app/main.py
-  [10] ○ extract_function   → backend/app/routers/utils/actions_schema.py
+  [9] ○ extract_function   → backend/app/routers/utils/actions_schema.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: backend/app/routers/settings.py
+  [10] ○ extract_function   → backend/app/routers/utils/run_workflow_endpoint.py
+      WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
+      FILES: backend/app/routers/workflow.py
+
+QUICK_WINS[3] (low risk, high savings — do first):
+  [4] extract_function   saved=16L  → examples/utils/main.py
+      FILES: main.py, main.py, main.py +2
+  [5] extract_function   saved=11L  → worker/utils/handle_notify_slack.py
+      FILES: worker.py
+  [6] extract_function   saved=7L  → backend/app/routers/utils/action_schema.py
+      FILES: settings.py
+
+DEPENDENCY_RISK[5] (duplicates spanning multiple packages):
+  setup_logging  packages=3  files=3
+      backend/app/logging_setup.py
+      nlp-service/app/logging_setup.py
+      worker/logging_setup.py
+  format  packages=3  files=3
+      backend/app/logging_setup.py
+      nlp-service/app/logging_setup.py
+      worker/logging_setup.py
+  dispatch  packages=3  files=3
+      backend/app/logging_setup.py
+      nlp-service/app/logging_setup.py
+      worker/logging_setup.py
+  __init__  packages=3  files=3
+      backend/app/logging_setup.py
+      nlp-service/app/logging_setup.py
+      worker/logging_setup.py
+  __init__  packages=3  files=3
+      backend/app/logging_setup.py
+      nlp-service/app/logging_setup.py
+      worker/logging_setup.py
+
+EFFORT_ESTIMATE (total ≈ 7.9h):
+  hard   setup_logging                       saved=44L  ~176min
+  hard   format                              saved=24L  ~96min
+  medium dispatch                            saved=18L  ~72min
+  medium main                                saved=16L  ~32min
+  easy   handle_notify_slack                 saved=11L  ~22min
+  easy   action_schema                       saved=7L  ~14min
+  easy   __init__                            saved=6L  ~24min
+  easy   __init__                            saved=6L  ~24min
+  easy   actions_schema                      saved=5L  ~10min
+  easy   run_workflow_endpoint               saved=3L  ~6min
 
 METRICS-TARGET:
   dup_groups:  10 → 0
-  saved_lines: 143 lines recoverable
+  saved_lines: 140 lines recoverable

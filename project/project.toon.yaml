@@ -1,7 +1,8 @@
-# nlp2dsl | 263 func | 33f | 10550L | python | 2026-04-08
+# nlp2dsl | 272 func | 41f | 8515L | python | 2026-06-03
+# generated in 0.00s
 
 HEALTH:
-  CC̄=3.0  critical=13 (limit:10)  dup=3  cycles=0
+  CC̄=2.9  critical=12 (limit:10)  dup=3  cycles=0
 
 ALERTS[20]:
   !!! cc_exceeded      _extract_entities = 40 (limit:15)
@@ -12,26 +13,26 @@ ALERTS[20]:
   !!  cc_exceeded      run_code_generation_demo = 20 (limit:15)
   !!  high_fan_out     _execute_workflow = 19 (limit:10)
   !!  high_fan_out     workflow_from_text = 17 (limit:10)
-  !!  high_fan_out     websocket_chat = 16 (limit:10)
   !   cc_exceeded      ConversationFlow._handle_response = 16 (limit:15)
+  !   cc_exceeded      _format_system_result = 16 (limit:15)
 
-MODULES[47] (top by size):
-  M[nlp2dsl_sdk/demos.py] 649L C:1 F:17 CC↑20 D:6 (python)
-  M[nlp2dsl_sdk/client.py] 567L C:2 F:47 CC↑16 D:0 (python)
-  M[nlp-service/app/main.py] 519L C:0 F:20 CC↑10 D:0 (python)
+MODULES[96] (top by size):
+  M[planfile.yaml] 747L C:0 F:0 CC↑0 D:0 (yaml)
+  M[nlp2dsl_sdk/demos.py] 659L C:1 F:17 CC↑20 D:6 (python)
+  M[nlp2dsl_sdk/client.py] 567L C:2 F:47 CC↑16 D:2 (python)
+  M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
   M[nlp-service/app/registry.py] 384L C:0 F:4 CC↑5 D:3 (python)
-  M[nlp-service/app/orchestrator.py] 344L C:0 F:7 CC↑21 D:1 (python)
-  M[nlp-service/app/system_executor.py] 338L C:0 F:13 CC↑12 D:1 (python)
-  M[nlp-service/app/parser_rules.py] 290L C:0 F:5 CC↑40 D:2 (python)
+  M[nlp-service/app/orchestrator.py] 344L C:0 F:7 CC↑21 D:0 (python)
+  M[nlp-service/app/system_executor.py] 342L C:0 F:13 CC↑12 D:0 (python)
+  M[nlp-service/app/parser_rules.py] 290L C:0 F:5 CC↑40 D:1 (python)
   M[nlp-service/app/code_generator.py] 279L C:1 F:8 CC↑14 D:0 (python)
-  M[backend/app/engine.py] 269L C:0 F:7 CC↑11 D:2 (python)
+  M[backend/app/engine.py] 269L C:0 F:7 CC↑11 D:1 (python)
   M[nlp-service/app/settings.py] 251L C:6 F:11 CC↑6 D:2 (python)
   M[worker/worker.py] 230L C:0 F:12 CC↑5 D:0 (python)
   M[backend/app/routers/workflow.py] 189L C:0 F:9 CC↑8 D:0 (python)
-  M[nlp-service/app/mapper.py] 189L C:0 F:6 CC↑8 D:2 (python)
-  M[nlp-service/app/parser_llm.py] 187L C:0 F:3 CC↑10 D:1 (python)
-  M[backend/app/db/postgres.py] 172L C:3 F:11 CC↑4 D:0 (python)
-  LANGS: python:42/shell:3/javascript:1/rust:1
+  M[nlp-service/app/mapper.py] 189L C:0 F:6 CC↑8 D:1 (python)
+  M[nlp-service/app/parser_llm.py] 187L C:0 F:3 CC↑10 D:0 (python)
+  LANGS: python:47/shell:12/other:8/txt:8/toml:5/yaml:4/ini:3/json:3/javascript:2/rust:2/yml:2
 
 HOTSPOTS[10]:
   ★ _extract_entities fan=30  // Extract entities from text using regex and keywords.
@@ -42,12 +43,12 @@ HOTSPOTS[10]:
 
 Body: {"text": "...
 
-REFACTOR[11]:
-  [1] H/L Split _extract_entities (CC=40 → target CC<10)
-  [2] H/H Split god module nlp2dsl_sdk/demos.py (649L, 1 classes)
+REFACTOR[12]:
+  [1] H/L Split _extract_entities (CC=40)
+  [2] H/H Split god module nlp2dsl_sdk/demos.py (659L, 1 classes)
   [3] H/H Split god module nlp2dsl_sdk/client.py (567L, 2 classes)
-  [4] H/H Split god module nlp-service/app/main.py (519L, 0 classes)
-  [5] M/L Split run_code_generation_demo (CC=20 → target CC<10)
+  [4] H/H Split god module goal.yaml (512L, 0 classes)
+  [5] H/H Split god module planfile.yaml (747L, 0 classes)
 
 EVOLUTION:
-  2026-04-08 CC̄=3.0 crit=13 10550L // Automated analysis
+  2026-06-03 CC̄=2.9 crit=12 8515L // Automated analysis

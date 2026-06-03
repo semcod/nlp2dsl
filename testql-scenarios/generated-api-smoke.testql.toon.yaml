@@ -1,0 +1,39 @@
+# SCENARIO: Auto-generated API Smoke Tests
+# TYPE: api
+# GENERATED: true
+# DETECTORS: FastAPIDetector, WebSocketDetector, ConfigEndpointDetector
+
+CONFIG[5]{key, value}:
+  base_url, http://localhost:8101
+  timeout_ms, 10000
+  retry_count, 3
+  retry_backoff_ms, 1000
+  detected_frameworks, FastAPIDetector, WebSocketDetector, ConfigEndpointDetector
+
+# Wait for service to be ready
+WAIT 1000
+
+# Health check
+API GET /api/health 200
+ASSERT_STATUS 200
+
+# REST API Endpoints (1 unique)
+API[1]{method, endpoint, expected_status}:
+  GET, /, 200
+
+# Capture useful values from responses for subsequent tests
+# CAPTURE request_id FROM 'headers.x-request-id'
+# CAPTURE session_token FROM 'body.token'
+
+ASSERT[2]{field, operator, expected}:
+  _status, <, 500
+  _status, >=, 200
+
+# Conditional flow for error handling
+FLOW[2]{condition, action}:
+  _status >= 500, LOG 'Server error detected'
+  _status == 429, WAIT 2000  # Rate limit - wait and retry
+
+
+# Summary by Framework:
+#   docker: 7 endpoints

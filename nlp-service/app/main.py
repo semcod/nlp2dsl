@@ -54,7 +54,9 @@ from app.settings import settings_manager
 from app.store.factory import get_conversation_store
 from app.system_executor import SYSTEM_EXECUTORS, execute_system_action
 
-setup_logging(service="nlp-service")
+
+if __name__ == "__main__":
+    setup_logging(service="nlp-service")
 log = logging.getLogger("nlp-service")
 
 app = FastAPI(
@@ -66,8 +68,8 @@ app = FastAPI(
     version="0.1.0",
 )
 
-app.add_middleware(RequestIDMiddleware)
-app.add_middleware(
+    app.add_middleware(RequestIDMiddleware)
+    app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],

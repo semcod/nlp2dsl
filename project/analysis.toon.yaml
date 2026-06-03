@@ -1,98 +1,250 @@
-# code2llm | 47f 6550L | python:42,shell:3,javascript:1,rust:1 | 2026-04-08
-# CC̄=3.0 | critical:5/269 | dups:0 | cycles:0
+# code2llm | 96f 8515L | python:47,shell:12,txt:8,toml:5,yaml:4,json:3,ini:3,yml:2,rust:2,javascript:2 | 2026-06-03
+# generated in 0.03s
+# CC̅=2.9 | critical:5/272 | dups:0 | cycles:0
 
 HEALTH[5]:
-  🟡 CC    run_code_generation_demo CC=20 (limit:15)
   🟡 CC    _handle_response CC=16 (limit:15)
   🟡 CC    _extract_entities CC=40 (limit:15)
   🟡 CC    _process_message CC=21 (limit:15)
   🟡 CC    _format_system_result CC=16 (limit:15)
+  🟡 CC    run_code_generation_demo CC=20 (limit:15)
 
 REFACTOR[1]:
   1. split 5 high-CC methods  (CC>15)
 
-PIPELINES[192]:
-  [1] Src [server]: server
+PIPELINES[194]:
+  [1] Src [main]: main
       PURITY: 100% pure
-  [2] Src [npmCommand]: npmCommand
+  [2] Src [main]: main
       PURITY: 100% pure
-  [3] Src [child]: child
+  [3] Src [server]: server
       PURITY: 100% pure
-  [4] Src [shuttingDown]: shuttingDown
+  [4] Src [npmCommand]: npmCommand
       PURITY: 100% pure
-  [5] Src [exitCode]: exitCode → main → shutdown
+  [5] Src [child]: child
+      PURITY: 100% pure
+  [6] Src [shuttingDown]: shuttingDown
+      PURITY: 100% pure
+  [7] Src [exitCode]: exitCode → main → shutdown
+      PURITY: 100% pure
+  [8] Src [http]: http
+      PURITY: 100% pure
+  [9] Src [fs]: fs
+      PURITY: 100% pure
+  [10] Src [path]: path
+      PURITY: 100% pure
+  [11] Src [HOST]: HOST
+      PURITY: 100% pure
+  [12] Src [PORT]: PORT
+      PURITY: 100% pure
+  [13] Src [ROOT_DIR]: ROOT_DIR
+      PURITY: 100% pure
+  [14] Src [MIME_TYPES]: MIME_TYPES
+      PURITY: 100% pure
+  [15] Src [safePath]: safePath
+      PURITY: 100% pure
+  [16] Src [candidate]: candidate
+      PURITY: 100% pure
+  [17] Src [fileContents]: fileContents → contentType
+      PURITY: 100% pure
+  [18] Src [pathname]: pathname
+      PURITY: 100% pure
+  [19] Src [targetPath]: targetPath
+      PURITY: 100% pure
+  [20] Src [startServer]: startServer → handleRequest → resolveRequestPath → isInsideRoot
+      PURITY: 100% pure
+  [21] Src [server]: server → handleRequest → resolveRequestPath → isInsideRoot
+      PURITY: 100% pure
+  [22] Src [actions_schema]: actions_schema → get_request_id
+      PURITY: 100% pure
+  [23] Src [action_schema]: action_schema → get_request_id
+      PURITY: 100% pure
+  [24] Src [get_settings]: get_settings → get_request_id
+      PURITY: 100% pure
+  [25] Src [get_settings_section]: get_settings_section → get_request_id
+      PURITY: 100% pure
+  [26] Src [update_settings_section]: update_settings_section → get_request_id
+      PURITY: 100% pure
+  [27] Src [set_setting]: set_setting → get_request_id
+      PURITY: 100% pure
+  [28] Src [reset_settings]: reset_settings → get_request_id
+      PURITY: 100% pure
+  [29] Src [main]: main → list_available_demos
+      PURITY: 100% pure
+  [30] Src [to_dict]: to_dict
+      PURITY: 100% pure
+  [31] Src [__init__]: __init__
+      PURITY: 100% pure
+  [32] Src [_ensure_engine]: _ensure_engine
+      PURITY: 100% pure
+  [33] Src [_get_session_factory]: _get_session_factory
+      PURITY: 100% pure
+  [34] Src [_ensure_tables]: _ensure_tables
+      PURITY: 100% pure
+  [35] Src [save_run]: save_run
+      PURITY: 100% pure
+  [36] Src [update_run_status]: update_run_status
+      PURITY: 100% pure
+  [37] Src [get_run]: get_run
+      PURITY: 100% pure
+  [38] Src [list_runs]: list_runs
+      PURITY: 100% pure
+  [39] Src [count_runs]: count_runs
+      PURITY: 100% pure
+  [40] Src [close]: close
+      PURITY: 100% pure
+  [41] Src [health]: health
+      PURITY: 100% pure
+  [42] Src [__init__]: __init__
+      PURITY: 100% pure
+  [43] Src [from_env]: from_env
+      PURITY: 100% pure
+  [44] Src [close]: close
+      PURITY: 100% pure
+  [45] Src [__exit__]: __exit__
+      PURITY: 100% pure
+  [46] Src [_request]: _request
+      PURITY: 100% pure
+  [47] Src [_backend]: _backend
+      PURITY: 100% pure
+  [48] Src [_nlp_service]: _nlp_service
+      PURITY: 100% pure
+  [49] Src [_worker]: _worker
+      PURITY: 100% pure
+  [50] Src [backend_health]: backend_health
       PURITY: 100% pure
 
 LAYERS:
-  nlp-service/                    CC̄=3.9    ←in:0  →out:0
-  │ !! main                       519L  0C   20m  CC=10     ←0
+  nlp-service/                    CC̄=4.1    ←in:0  →out:0
   │ registry                   384L  0C    4m  CC=5      ←3
-  │ !! orchestrator               344L  0C    7m  CC=21     ←1
-  │ system_executor            338L  0C   13m  CC=12     ←1
-  │ !! parser_rules               290L  0C    5m  CC=40     ←2
+  │ !! orchestrator               344L  0C    7m  CC=21     ←0
+  │ system_executor            342L  0C   13m  CC=12     ←0
+  │ !! parser_rules               290L  0C    5m  CC=40     ←1
   │ code_generator             279L  1C    8m  CC=14     ←0
   │ settings                   251L  6C   11m  CC=6      ←2
-  │ mapper                     189L  0C    6m  CC=8      ←2
-  │ parser_llm                 187L  0C    3m  CC=10     ←1
-  │ audio_parser               148L  1C    8m  CC=9      ←1
+  │ mapper                     189L  0C    6m  CC=8      ←1
+  │ parser_llm                 187L  0C    3m  CC=10     ←0
+  │ audio_parser               148L  1C    8m  CC=9      ←0
   │ schemas                    127L  11C    0m  CC=0.0    ←0
-  │ logging_setup              100L  2C    6m  CC=3      ←0
+  │ logging_setup              100L  2C    6m  CC=3      ←5
   │ config                      60L  1C    0m  CC=0.0    ←0
   │ redis_store                 58L  1C    7m  CC=3      ←0
-  │ factory                     46L  0C    1m  CC=4      ←1
+  │ pyproject.toml              52L  0C    0m  CC=0.0    ←0
+  │ factory                     46L  0C    1m  CC=4      ←0
   │ __init__                    30L  1C    4m  CC=1      ←0
+  │ manifest.json               30L  0C    0m  CC=0.0    ←0
   │ memory                      23L  1C    5m  CC=1      ←0
+  │ Dockerfile                  11L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             9L  0C    0m  CC=0.0    ←0
+  │ pytest.ini                   5L  0C    0m  CC=0.0    ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
-  tauri-wrapper/                  CC̄=3.5    ←in:0  →out:0
+  tauri-wrapper/                  CC̄=2.7    ←in:0  →out:0
+  │ serve-dist.js              139L  0C   21m  CC=8      ←0
   │ desktop.sh                  79L  0C    0m  CC=0.0    ←0
   │ dev.js                      56L  0C    7m  CC=11     ←0
+  │ tauri.conf.json             43L  0C    0m  CC=0.0    ←0
+  │ package.json                18L  0C    0m  CC=0.0    ←0
+  │ Cargo.toml                  17L  0C    0m  CC=0.0    ←0
   │ main.rs                      7L  0C    1m  CC=2      ←0
+  │ build.rs                     3L  0C    1m  CC=1      ←0
   │
-  nlp2dsl_sdk/                    CC̄=2.6    ←in:0  →out:0
-  │ !! demos                      649L  1C   17m  CC=20     ←6
-  │ !! client                     567L  2C   47m  CC=16     ←1
+  nlp2dsl_sdk/                    CC̄=2.6    ←in:8  →out:0
+  │ !! demos                      659L  1C   17m  CC=20     ←6
+  │ !! client                     567L  2C   47m  CC=16     ←2
   │ __main__                    41L  0C    1m  CC=5      ←0
   │ __init__                    33L  0C    0m  CC=0.0    ←0
   │
   backend/                        CC̄=2.1    ←in:0  →out:0
-  │ engine                     269L  0C    7m  CC=11     ←2
+  │ engine                     269L  0C    7m  CC=11     ←1
   │ workflow                   189L  0C    9m  CC=8      ←0
   │ postgres                   172L  3C   11m  CC=4      ←0
   │ chat                       107L  0C    4m  CC=9      ←0
-  │ logging_setup              100L  2C    6m  CC=3      ←5
+  │ logging_setup              100L  2C    6m  CC=3      ←0
   │ workflow_events             91L  2C    6m  CC=3      ←0
   │ settings                    81L  0C    7m  CC=2      ←0
   │ schemas                     64L  6C    0m  CC=0.0    ←0
+  │ pyproject.toml              52L  0C    0m  CC=0.0    ←0
   │ __init__                    49L  1C    6m  CC=2      ←0
   │ main                        48L  0C    1m  CC=1      ←0
   │ config                      42L  1C    0m  CC=0.0    ←0
   │ memory                      37L  1C    6m  CC=2      ←0
   │ system                      29L  0C    1m  CC=2      ←0
   │ workflow                    22L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  11L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             8L  0C    0m  CC=0.0    ←0
+  │ pytest.ini                   5L  0C    0m  CC=0.0    ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   worker/                         CC̄=1.7    ←in:0  →out:0
   │ worker                     230L  0C   12m  CC=5      ←0
   │ logging_setup              100L  2C    6m  CC=3      ←0
+  │ pyproject.toml              46L  0C    0m  CC=0.0    ←0
   │ config                      27L  1C    0m  CC=0.0    ←0
+  │ Dockerfile                  11L  0C    0m  CC=0.0    ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
+  │ pytest.ini                   5L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             3L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=1.2    ←in:0  →out:1
+  │ docker-compose.yml          60L  0C    0m  CC=0.0    ←0
+  │ main                        38L  0C    1m  CC=2      ←0
+  │ code_generation_examples    25L  0C    1m  CC=1      ←0
+  │ main                        23L  0C    1m  CC=1      ←0
+  │ main                        23L  0C    1m  CC=1      ←0
+  │ main                        23L  0C    1m  CC=1      ←0
+  │ main                        23L  0C    1m  CC=1      ←0
+  │ Dockerfile                  23L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  23L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  23L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  23L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  23L  0C    0m  CC=0.0    ←0
+  │ run.sh                       6L  0C    0m  CC=0.0    ←0
+  │ run.sh                       6L  0C    0m  CC=0.0    ←0
+  │ run.sh                       6L  0C    0m  CC=0.0    ←0
+  │ run.sh                       6L  0C    0m  CC=0.0    ←0
+  │ run.sh                       6L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             1L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             1L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             1L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             1L  0C    0m  CC=0.0    ←0
+  │ requirements.txt             1L  0C    0m  CC=0.0    ←0
+  │ run.sh                       0L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! planfile.yaml              747L  0C    0m  CC=0.0    ←0
+  │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml         110L  0C    0m  CC=0.0    ←0
+  │ prefact.yaml                82L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml              60L  0C    0m  CC=0.0    ←0
+  │ project.sh                  59L  0C    0m  CC=0.0    ←0
   │ metrun-profile.sh           48L  0C    0m  CC=0.0    ←0
-  │ project.sh                  35L  0C    0m  CC=0.0    ←0
+  │ run-all-tests.sh            44L  0C    1m  CC=0.0    ←0
+  │ pyqual.yaml                 41L  0C    0m  CC=0.0    ←0
+  │ .pfix-test-wrapper.sh       16L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │
   ── zero ──
      backend/app/__init__.py                   0L
      backend/app/routers/__init__.py           0L
+     examples/basic/invoice/run.sh             0L
      nlp-service/app/__init__.py               0L
 
 COUPLING:
-                       backend.app  nlp-service.app
-      backend.app               ──                2
-  nlp-service.app               ←2               ──
+                                                   backend.app                nlp-service.app                    nlp2dsl_sdk                       examples            examples.01-invoice              examples.02-email  examples.03-report-and-notify   examples.04-scheduled-report
+                    backend.app                             ──                             15                              3                                                                                                                                                             !! fan-out
+                nlp-service.app                            ←15                             ──                                                                                                                                                                                            hub
+                    nlp2dsl_sdk                             ←3                                                            ──                             ←1                             ←1                             ←1                             ←1                             ←1  hub
+                       examples                                                                                            1                             ──                                                                                                                            
+            examples.01-invoice                                                                                            1                                                            ──                                                                                             
+              examples.02-email                                                                                            1                                                                                           ──                                                              
+  examples.03-report-and-notify                                                                                            1                                                                                                                          ──                               
+   examples.04-scheduled-report                                                                                            1                                                                                                                                                         ──
   CYCLES: none
+  HUB: nlp-service.app/ (fan-in=15)
+  HUB: nlp2dsl_sdk/ (fan-in=8)
+  SMELL: backend.app/ fan-out=18 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

@@ -477,50 +477,63 @@ class ConversationFlow:
         message = data.get("message", "")
 
         if status == "in_progress":
-            print(f"🤖 System: {message}")
-
-            form = data.get("form")
-            if form:
-                print(f"\n📋 Formularz: {form.get('description', '')}")
-                for field in form.get("fields", []):
-                    required = "(wymagane)" if field.get("required") else "(opcjonalne)"
-                    print(f"   • {field.get('label', field.get('name', ''))}: {field.get('type', '')} {required}")
-                    options = field.get("options")
-                    if options:
-                        print(f"     Opcje: {', '.join(options)}")
-                print()
-
-            missing = data.get("missing")
-            if missing:
-                print(f"❗ Brakuje: {', '.join(missing)}\n")
-
+            self._handle_in_progress_response(data, message)
         elif status == "ready":
-            print(f"🤖 System: {message}")
-            dsl = data.get("dsl")
-            if dsl:
-                print(f"📝 Workflow: {dsl['name']} ({len(dsl['steps'])} kroków)")
-                for i, step in enumerate(dsl["steps"], 1):
-                    config = step.get("config", {})
-                    print(f"   Krok {i}: {step.get('action', '')}")
-                    for key, value in config.items():
-                        print(f"      {key}: {value}")
-                print()
-
+            self._handle_ready_response(data, message)
         elif status == "completed":
-            print(f"🤖 System: {message}")
-            execution = data.get("execution")
-            if execution:
-                print("✅ Wynik wykonania:")
-                for step in execution.get("steps", []):
-                    if step.get("status") == "completed":
-                        result = step.get("result", {})
-                        print(f"   • {step.get('action', '')}: {result}")
-                print()
-
+            self._handle_completed_response(data, message)
         elif status == "error":
-            print(f"❌ Błąd: {message}\n")
+            self._handle_error_response(message)
 
         self.history.append({"role": "assistant", "text": message})
+
+    def _handle_in_progress_response(self, data: dict[str, Any], message: str) -> None:
+        """Handle in_progress status response."""
+        print(f"🤖 System: {message}")
+
+        form = data.get("form")
+        if form:
+            print(f"\n📋 Formularz: {form.get('description', '')}")
+            for field in form.get("fields", []):
+                required = "(wymagane)" if field.get("required") else "(opcjonalne)"
+                print(f"   • {field.get('label', field.get('name', ''))}: {field.get('type', '')} {required}")
+                options = field.get("options")
+                if options:
+                    print(f"     Opcje: {', '.join(options)}")
+            print()
+
+        missing = data.get("missing")
+        if missing:
+            print(f"❗ Brakuje: {', '.join(missing)}\n")
+
+    def _handle_ready_response(self, data: dict[str, Any], message: str) -> None:
+        """Handle ready status response."""
+        print(f"🤖 System: {message}")
+        dsl = data.get("dsl")
+        if dsl:
+            print(f"📝 Workflow: {dsl['name']} ({len(dsl['steps'])} kroków)")
+            for i, step in enumerate(dsl["steps"], 1):
+                config = step.get("config", {})
+                print(f"   Krok {i}: {step.get('action', '')}")
+                for key, value in config.items():
+                    print(f"      {key}: {value}")
+            print()
+
+    def _handle_completed_response(self, data: dict[str, Any], message: str) -> None:
+        """Handle completed status response."""
+        print(f"🤖 System: {message}")
+        execution = data.get("execution")
+        if execution:
+            print("✅ Wynik wykonania:")
+            for step in execution.get("steps", []):
+                if step.get("status") == "completed":
+                    result = step.get("result", {})
+                    print(f"   • {step.get('action', '')}: {result}")
+            print()
+
+    def _handle_error_response(self, message: str) -> None:
+        """Handle error status response."""
+        print(f"❌ Błąd: {message}\n")
 
     def run_demo(self) -> None:
         print("=== Demonstracja Konwersacyjnego Flow ===\n")

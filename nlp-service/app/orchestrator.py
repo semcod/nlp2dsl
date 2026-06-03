@@ -152,6 +152,38 @@ def _process_message(state: ConversationState, text: str) -> ConversationRespons
     """Core orchestration: parse → merge → validate → respond."""
 
     # Early return: if workflow is ready and user says execute keyword, preserve DSL
+    execute_response = _check_execute_keyword(state, text)
+    if execute_response:
+        return execute_response
+
+    # 1. NLP extraction
+    nlp = parse_rules(text)
+    log.info("NLP: intent=%s conf=%.2f", nlp.intent.intent, nlp.intent.confidence)
+
+    # 2. Update state with new data
+    _merge_into_state(state, nlp)
+
+    # 3. Resolve actions for current intent
+    unknown_response = _handle_unknown_intent(state)
+    if unknown_response:
+        return unknown_response
+
+    # 3b. System actions — execute immediately, no DSL
+    system_response = _handle_system_action(state)
+    if system_response:
+        return system_response
+
+    # 4. Try to build DSL and check completeness
+    dsl_response = _build_and_check_dsl(state)
+    if dsl_response:
+        return dsl_response
+
+    # 5. Incomplete — generate question + form
+    return _build_incomplete_response(state)
+
+
+def _check_execute_keyword(state: ConversationState, text: str) -> ConversationResponse | None:
+    """Check if workflow is ready and user wants to execute."""
     if state.status == "ready" and state.dsl:
         text_lower = text.lower()
         execute_keywords = ["uruchom", "wykonaj", "start", "run", "ok", "tak", "go"]
@@ -163,15 +195,11 @@ def _process_message(state: ConversationState, text: str) -> ConversationRespons
                 message=f"Workflow gotowy: {state.dsl.name} ({len(state.dsl.steps)} kroków). Wyślij 'uruchom' aby wykonać.",
                 dsl=state.dsl,
             )
+    return None
 
-    # 1. NLP extraction
-    nlp = parse_rules(text)
-    log.info("NLP: intent=%s conf=%.2f", nlp.intent.intent, nlp.intent.confidence)
 
-    # 2. Update state with new data
-    _merge_into_state(state, nlp)
-
-    # 3. Resolve actions for current intent
+def _handle_unknown_intent(state: ConversationState) -> ConversationResponse | None:
+    """Handle case when intent is unknown."""
     if not state.intent or state.intent == "unknown":
         msg = (
             "Nie rozpoznałem intencji. Jaką automatyzację chcesz stworzyć?\n"
@@ -184,8 +212,11 @@ def _process_message(state: ConversationState, text: str) -> ConversationRespons
             status="in_progress",
             message=msg,
         )
+    return None
 
-    # 3b. System actions — execute immediately, no DSL
+
+def _handle_system_action(state: ConversationState) -> ConversationResponse | None:
+    """Handle system actions that execute immediately without DSL."""
     if state.intent in SYSTEM_ACTIONS:
         from app.system_executor import SYSTEM_EXECUTORS
 
@@ -211,8 +242,11 @@ def _process_message(state: ConversationState, text: str) -> ConversationRespons
             message=msg,
             dsl=None,
         )
+    return None
 
-    # 4. Try to build DSL
+
+def _build_and_check_dsl(state: ConversationState) -> ConversationResponse | None:
+    """Build DSL from state and check if complete."""
     nlp_for_mapper = NLPResult(
         intent=NLPIntent(intent=state.intent, confidence=1.0),
         entities=NLPEntities(**{k: v for k, v in state.entities.items() if k != "_trigger"}),
@@ -221,7 +255,6 @@ def _process_message(state: ConversationState, text: str) -> ConversationRespons
 
     dialog = map_to_dsl(nlp_for_mapper)
 
-    # 5. Check completeness
     if dialog.status == "complete" and dialog.workflow:
         state.dsl = dialog.workflow
         state.status = "ready"
@@ -236,8 +269,19 @@ def _process_message(state: ConversationState, text: str) -> ConversationRespons
             message=msg,
             dsl=dialog.workflow,
         )
+    return None
 
-    # 6. Incomplete — generate question + form
+
+def _build_incomplete_response(state: ConversationState) -> ConversationResponse:
+    """Build response for incomplete workflow state."""
+    nlp_for_mapper = NLPResult(
+        intent=NLPIntent(intent=state.intent, confidence=1.0),
+        entities=NLPEntities(**{k: v for k, v in state.entities.items() if k != "_trigger"}),
+        raw_text=" ".join(h["text"] for h in state.history if h["role"] == "user"),
+    )
+
+    dialog = map_to_dsl(nlp_for_mapper)
+
     state.missing = dialog.missing_fields
     question = dialog.prompt_user or "Podaj brakujące dane."
 

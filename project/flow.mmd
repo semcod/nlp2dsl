@@ -1,4 +1,5 @@
 flowchart TD
+%% generated in 0.01s
 
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
@@ -23,22 +24,22 @@ flowchart TD
     end
 
     subgraph Core
+        tauri_wrapper__src_tauri__build__main["main"]
         tauri_wrapper__src_tauri__src__main__main["main"]
-        backend__app__workflow_events__WorkflowEvent__to_dict["to_dict"]
-        backend__app__workflow_events__WorkflowEventHub__subscribe["subscribe"]
-        backend__app__workflow_events__WorkflowEventHub__unsubscribe["unsubscribe"]
-        backend__app__workflow_events__WorkflowEventHub__publish["publish"]
-        backend__app__workflow_events__WorkflowEventHub__subscriber_count["subscriber_count"]
-        backend__app__main__health["health"]
-        backend__app__db__memory__MemoryWorkflowRepo__save_run["save_run"]
-        backend__app__db__memory__MemoryWorkflowRepo__update_run_status["update_run_status"]
-        backend__app__db__memory__MemoryWorkflowRepo__get_run["get_run"]
-        backend__app__db__memory__MemoryWorkflowRepo__list_runs["list_runs"]
-        backend__app__db__memory__MemoryWorkflowRepo__count_runs["count_runs"]
-        backend__app__db__WorkflowRepo__save_run["save_run"]
-        backend__app__db__WorkflowRepo__update_run_status["update_run_status"]
-        backend__app__db__WorkflowRepo__get_run["get_run"]
-        ...["+130 more"]
+        backend__app__routers__settings__actions_schema["actions_schema"]
+        backend__app__routers__settings__action_schema["action_schema"]
+        backend__app__routers__settings__get_settings["get_settings"]
+        backend__app__routers__settings__get_settings_section["get_settings_section"]
+        backend__app__routers__settings__update_settings_section["update_settings_section"]
+        backend__app__routers__settings__set_setting["set_setting"]
+        backend__app__routers__settings__reset_settings["reset_settings"]
+        nlp2dsl_sdk____main____main["main"]
+        backend__app__db__postgres__WorkflowRunModel__to_dict["to_dict"]
+        backend__app__db__postgres__PostgresWorkflowRepo___ensure_engine["_ensure_engine"]
+        backend__app__db__postgres__PostgresWorkflowRepo___get_session_factory["_get_session_factory"]
+        backend__app__db__postgres__PostgresWorkflowRepo___ensure_tables["_ensure_tables"]
+        backend__app__db__postgres__PostgresWorkflowRepo__save_run["save_run"]
+        ...["+119 more"]
     end
 
-    class tauri_wrapper__src_tauri__src__main__main,backend__app__workflow_events__WorkflowEvent__to_dict,backend__app__workflow_events__WorkflowEventHub__subscribe,backend__app__workflow_events__WorkflowEventHub__unsubscribe,backend__app__workflow_events__WorkflowEventHub__publish,backend__app__workflow_events__WorkflowEventHub__subscriber_count,backend__app__main__health,backend__app__db__memory__MemoryWorkflowRepo__save_run,backend__app__db__memory__MemoryWorkflowRepo__update_run_status,backend__app__db__memory__MemoryWorkflowRepo__get_run entry
+    class tauri_wrapper__src_tauri__build__main,tauri_wrapper__src_tauri__src__main__main,backend__app__routers__settings__actions_schema,backend__app__routers__settings__action_schema,backend__app__routers__settings__get_settings,backend__app__routers__settings__get_settings_section,backend__app__routers__settings__update_settings_section,backend__app__routers__settings__set_setting,backend__app__routers__settings__reset_settings,nlp2dsl_sdk____main____main entry

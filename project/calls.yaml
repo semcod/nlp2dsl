@@ -1,0 +1,1441 @@
+project: /home/tom/github/wronai/nlp2dsl
+generated_from: code2llm call graph analysis
+stats:
+  total_nodes: 108
+  total_edges: 110
+  modules_count: 26
+nodes:
+  nlp-service.app.orchestrator._merge_into_state:
+    name: _merge_into_state
+    module: nlp-service.app.orchestrator
+    line: 261
+    cyclomatic_complexity: 9
+    calls_out: 4
+    calls_in: 1
+  nlp2dsl_sdk.demos._ensure_services:
+    name: _ensure_services
+    module: nlp2dsl_sdk.demos
+    line: 36
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 8
+  backend.app.routers.settings.actions_schema:
+    name: actions_schema
+    module: backend.app.routers.settings
+    line: 21
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  nlp2dsl_sdk.demos._print_json:
+    name: _print_json
+    module: nlp2dsl_sdk.demos
+    line: 45
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 4
+  nlp-service.app.mapper._build_config:
+    name: _build_config
+    module: nlp-service.app.mapper
+    line: 108
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  backend.app.workflow_events.WorkflowEventHub.publish:
+    name: publish
+    module: backend.app.workflow_events
+    line: 79
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  nlp-service.app.parser_llm.parse_llm:
+    name: parse_llm
+    module: nlp-service.app.parser_llm
+    line: 104
+    cyclomatic_complexity: 3
+    calls_out: 16
+    calls_in: 0
+  backend.app.routers.chat.chat_get_state:
+    name: chat_get_state
+    module: backend.app.routers.chat
+    line: 101
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 0
+  nlp-service.app.mapper._resolve_actions:
+    name: _resolve_actions
+    module: nlp-service.app.mapper
+    line: 84
+    cyclomatic_complexity: 7
+    calls_out: 4
+    calls_in: 1
+  backend.app.routers.chat.chat_start:
+    name: chat_start
+    module: backend.app.routers.chat
+    line: 56
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  tauri-wrapper.scripts.serve-dist.stat:
+    name: stat
+    module: tauri-wrapper.scripts.serve-dist
+    line: 48
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  backend.app.routers.workflow._workflow_snapshot:
+    name: _workflow_snapshot
+    module: backend.app.routers.workflow
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 2
+  nlp-service.app.parser_rules._detect_actions:
+    name: _detect_actions
+    module: nlp-service.app.parser_rules
+    line: 123
+    cyclomatic_complexity: 10
+    calls_out: 9
+    calls_in: 1
+  nlp2dsl_sdk.demos.run_scheduled_report_demo:
+    name: run_scheduled_report_demo
+    module: nlp2dsl_sdk.demos
+    line: 528
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 1
+  nlp-service.app.system_executor._is_read_only:
+    name: _is_read_only
+    module: nlp-service.app.system_executor
+    line: 52
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  nlp2dsl_sdk.demos.run_code_generation_demo:
+    name: run_code_generation_demo
+    module: nlp2dsl_sdk.demos
+    line: 550
+    cyclomatic_complexity: 20
+    calls_out: 51
+    calls_in: 1
+  examples.01-invoice.main.main:
+    name: main
+    module: examples.01-invoice.main
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  backend.app.routers.workflow.stream_workflow:
+    name: stream_workflow
+    module: backend.app.routers.workflow
+    line: 94
+    cyclomatic_complexity: 2
+    calls_out: 22
+    calls_in: 0
+  nlp-service.app.orchestrator.start_conversation:
+    name: start_conversation
+    module: nlp-service.app.orchestrator
+    line: 74
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  nlp-service.app.mapper._get_field_mapping:
+    name: _get_field_mapping
+    module: nlp-service.app.mapper
+    line: 142
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  nlp-service.app.system_executor._validate_file_path:
+    name: _validate_file_path
+    module: nlp-service.app.system_executor
+    line: 28
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 2
+  backend.app.routers.settings.action_schema:
+    name: action_schema
+    module: backend.app.routers.settings
+    line: 29
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  tauri-wrapper.scripts.dev.exitCode:
+    name: exitCode
+    module: tauri-wrapper.scripts.dev
+    line: 47
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  worker.worker.handle_generate_code:
+    name: handle_generate_code
+    module: worker.worker
+    line: 162
+    cyclomatic_complexity: 5
+    calls_out: 17
+    calls_in: 0
+  tauri-wrapper.scripts.serve-dist.resolveRequestPath:
+    name: resolveRequestPath
+    module: tauri-wrapper.scripts.serve-dist
+    line: 35
+    cyclomatic_complexity: 8
+    calls_out: 8
+    calls_in: 1
+  nlp2dsl_sdk.demos.run_action_catalog_demo:
+    name: run_action_catalog_demo
+    module: nlp2dsl_sdk.demos
+    line: 139
+    cyclomatic_complexity: 6
+    calls_out: 19
+    calls_in: 0
+  worker.worker._deliver_notification:
+    name: _deliver_notification
+    module: worker.worker
+    line: 49
+    cyclomatic_complexity: 5
+    calls_out: 16
+    calls_in: 3
+  nlp-service.app.registry.get_defaults:
+    name: get_defaults
+    module: nlp-service.app.registry
+    line: 381
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  nlp-service.app.orchestrator._process_message:
+    name: _process_message
+    module: nlp-service.app.orchestrator
+    line: 151
+    cyclomatic_complexity: 21
+    calls_out: 30
+    calls_in: 2
+  tauri-wrapper.scripts.serve-dist.server:
+    name: server
+    module: tauri-wrapper.scripts.serve-dist
+    line: 109
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 0
+  backend.app.routers.settings.get_settings_section:
+    name: get_settings_section
+    module: backend.app.routers.settings
+    line: 47
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  nlp2dsl_sdk.demos._print_workflow_preview:
+    name: _print_workflow_preview
+    module: nlp2dsl_sdk.demos
+    line: 49
+    cyclomatic_complexity: 4
+    calls_out: 16
+    calls_in: 3
+  examples.03-report-and-notify.main.main:
+    name: main
+    module: examples.03-report-and-notify.main
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  backend.app.routers.settings.get_settings:
+    name: get_settings
+    module: backend.app.routers.settings
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  nlp2dsl_sdk.demos._run_workflow_examples:
+    name: _run_workflow_examples
+    module: nlp2dsl_sdk.demos
+    line: 396
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  backend.app.engine.start_workflow:
+    name: start_workflow
+    module: backend.app.engine
+    line: 254
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 1
+  backend.app.routers.settings.set_setting:
+    name: set_setting
+    module: backend.app.routers.settings
+    line: 67
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  backend.app.routers.chat._proxy_chat_payload:
+    name: _proxy_chat_payload
+    module: backend.app.routers.chat
+    line: 23
+    cyclomatic_complexity: 9
+    calls_out: 16
+    calls_in: 2
+  nlp-service.app.mapper._make_name:
+    name: _make_name
+    module: nlp-service.app.mapper
+    line: 156
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  nlp2dsl_sdk.demos._print_execution_result:
+    name: _print_execution_result
+    module: nlp2dsl_sdk.demos
+    line: 69
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 7
+  nlp2dsl_sdk.demos._run_gallery_examples:
+    name: _run_gallery_examples
+    module: nlp2dsl_sdk.demos
+    line: 414
+    cyclomatic_complexity: 5
+    calls_out: 14
+    calls_in: 1
+  examples.code_generation_examples.main:
+    name: main
+    module: examples.code_generation_examples
+    line: 18
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  worker.worker.handle_send_email:
+    name: handle_send_email
+    module: worker.worker
+    line: 90
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 0
+  nlp-service.app.logging_setup.get_request_id:
+    name: get_request_id
+    module: nlp-service.app.logging_setup
+    line: 29
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 13
+  nlp2dsl_sdk.client.workflow_step:
+    name: workflow_step
+    module: nlp2dsl_sdk.client
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 11
+  worker.worker.action:
+    name: action
+    module: worker.worker
+    line: 41
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 8
+  nlp2dsl_sdk.demos.run_report_and_notify_demo:
+    name: run_report_and_notify_demo
+    module: nlp2dsl_sdk.demos
+    line: 500
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 1
+  nlp-service.app.system_executor._exec_file_write:
+    name: _exec_file_write
+    module: nlp-service.app.system_executor
+    line: 152
+    cyclomatic_complexity: 4
+    calls_out: 12
+    calls_in: 0
+  nlp2dsl_sdk.__main__.main:
+    name: main
+    module: nlp2dsl_sdk.__main__
+    line: 10
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 0
+  backend.app.engine._workflow_steps_payload:
+    name: _workflow_steps_payload
+    module: backend.app.engine
+    line: 38
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  nlp-service.app.mapper.map_to_dsl:
+    name: map_to_dsl
+    module: nlp-service.app.mapper
+    line: 28
+    cyclomatic_complexity: 8
+    calls_out: 17
+    calls_in: 1
+  nlp2dsl_sdk.demos.run_automation_gallery_demo:
+    name: run_automation_gallery_demo
+    module: nlp2dsl_sdk.demos
+    line: 174
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  worker.worker.handle_notify_telegram:
+    name: handle_notify_telegram
+    module: worker.worker
+    line: 133
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  tauri-wrapper.scripts.serve-dist.sendFile:
+    name: sendFile
+    module: tauri-wrapper.scripts.serve-dist
+    line: 61
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  nlp2dsl_sdk.demos.run_email_demo:
+    name: run_email_demo
+    module: nlp2dsl_sdk.demos
+    line: 470
+    cyclomatic_complexity: 5
+    calls_out: 14
+    calls_in: 1
+  backend.app.routers.settings.update_settings_section:
+    name: update_settings_section
+    module: backend.app.routers.settings
+    line: 57
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  nlp-service.app.orchestrator.continue_conversation:
+    name: continue_conversation
+    module: nlp-service.app.orchestrator
+    line: 84
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 0
+  worker.worker.handle_notify_teams:
+    name: handle_notify_teams
+    module: worker.worker
+    line: 147
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  nlp2dsl_sdk.demos.list_available_demos:
+    name: list_available_demos
+    module: nlp2dsl_sdk.demos
+    line: 643
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  tauri-wrapper.scripts.serve-dist.contentType:
+    name: contentType
+    module: tauri-wrapper.scripts.serve-dist
+    line: 26
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 3
+  nlp2dsl_sdk.client.NLP2DSLClient.run_workflow:
+    name: run_workflow
+    module: nlp2dsl_sdk.client
+    line: 114
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 3
+  nlp-service.app.settings.SettingsManager.set:
+    name: set
+    module: nlp-service.app.settings
+    line: 126
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 4
+  examples.04-scheduled-report.main.main:
+    name: main
+    module: examples.04-scheduled-report.main
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  nlp2dsl_sdk.demos.run_invoice_demo:
+    name: run_invoice_demo
+    module: nlp2dsl_sdk.demos
+    line: 445
+    cyclomatic_complexity: 5
+    calls_out: 14
+    calls_in: 1
+  backend.app.routers.chat.chat_message:
+    name: chat_message
+    module: backend.app.routers.chat
+    line: 69
+    cyclomatic_complexity: 7
+    calls_out: 17
+    calls_in: 0
+  nlp-service.app.parser_rules.parse_rules:
+    name: parse_rules
+    module: nlp-service.app.parser_rules
+    line: 91
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 1
+  nlp-service.app.parser_llm._parse_json_response:
+    name: _parse_json_response
+    module: nlp-service.app.parser_llm
+    line: 173
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  nlp2dsl_sdk.client.NLP2DSLClient.send_invoice_and_notify:
+    name: send_invoice_and_notify
+    module: nlp2dsl_sdk.client
+    line: 409
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  worker.worker.handle_crm_update:
+    name: handle_crm_update
+    module: worker.worker
+    line: 110
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  worker.worker.handle_generate_report:
+    name: handle_generate_report
+    module: worker.worker
+    line: 99
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
+  nlp2dsl_sdk.client.NLP2DSLClient.crm_update:
+    name: crm_update
+    module: nlp2dsl_sdk.client
+    line: 396
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  backend.app.engine.run_workflow:
+    name: run_workflow
+    module: backend.app.engine
+    line: 248
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  tauri-wrapper.scripts.serve-dist.startServer:
+    name: startServer
+    module: tauri-wrapper.scripts.serve-dist
+    line: 107
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  nlp2dsl_sdk.client.NLP2DSLClient.generate_report:
+    name: generate_report
+    module: nlp2dsl_sdk.client
+    line: 304
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  nlp2dsl_sdk.demos._preview_text_examples:
+    name: _preview_text_examples
+    module: nlp2dsl_sdk.demos
+    line: 99
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 6
+  tauri-wrapper.scripts.dev.shutdown:
+    name: shutdown
+    module: tauri-wrapper.scripts.dev
+    line: 17
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 1
+  backend.app.engine._publish_workflow_event:
+    name: _publish_workflow_event
+    module: backend.app.engine
+    line: 54
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 7
+  backend.app.routers.workflow.run_workflow_endpoint:
+    name: run_workflow_endpoint
+    module: backend.app.routers.workflow
+    line: 67
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  backend.app.routers.settings.reset_settings:
+    name: reset_settings
+    module: backend.app.routers.settings
+    line: 77
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  nlp2dsl_sdk.client.NLP2DSLClient.send_invoice:
+    name: send_invoice
+    module: nlp2dsl_sdk.client
+    line: 269
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  nlp2dsl_sdk.client.NLP2DSLClient.send_email:
+    name: send_email
+    module: nlp2dsl_sdk.client
+    line: 283
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  nlp2dsl_sdk.client.NLP2DSLClient.notify_slack:
+    name: notify_slack
+    module: nlp2dsl_sdk.client
+    line: 377
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  nlp-service.app.parser_rules._extract_entities:
+    name: _extract_entities
+    module: nlp-service.app.parser_rules
+    line: 172
+    cyclomatic_complexity: 40
+    calls_out: 36
+    calls_in: 1
+  nlp-service.app.registry.get_required_fields:
+    name: get_required_fields
+    module: nlp-service.app.registry
+    line: 375
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  backend.app.engine._execute_workflow:
+    name: _execute_workflow
+    module: backend.app.engine
+    line: 81
+    cyclomatic_complexity: 11
+    calls_out: 42
+    calls_in: 2
+  examples.02-email.main.main:
+    name: main
+    module: examples.02-email.main
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  nlp-service.app.system_executor._exec_file_read:
+    name: _exec_file_read
+    module: nlp-service.app.system_executor
+    line: 114
+    cyclomatic_complexity: 9
+    calls_out: 18
+    calls_in: 0
+  backend.app.routers.workflow._format_sse:
+    name: _format_sse
+    module: backend.app.routers.workflow
+    line: 26
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 4
+  nlp-service.app.audio_parser.stt_file:
+    name: stt_file
+    module: nlp-service.app.audio_parser
+    line: 92
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  worker.worker.handle_send_invoice:
+    name: handle_send_invoice
+    module: worker.worker
+    line: 80
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
+  backend.app.workflow_events.WorkflowEventHub.subscriber_count:
+    name: subscriber_count
+    module: backend.app.workflow_events
+    line: 86
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  tauri-wrapper.scripts.serve-dist.fileContents:
+    name: fileContents
+    module: tauri-wrapper.scripts.serve-dist
+    line: 62
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  tauri-wrapper.scripts.serve-dist.isInsideRoot:
+    name: isInsideRoot
+    module: tauri-wrapper.scripts.serve-dist
+    line: 30
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  nlp-service.app.audio_parser.stt_audio:
+    name: stt_audio
+    module: nlp-service.app.audio_parser
+    line: 35
+    cyclomatic_complexity: 9
+    calls_out: 14
+    calls_in: 2
+  nlp-service.app.parser_rules._resolve_intent:
+    name: _resolve_intent
+    module: nlp-service.app.parser_rules
+    line: 154
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  nlp-service.app.parser_llm._detect_provider:
+    name: _detect_provider
+    module: nlp-service.app.parser_llm
+    line: 150
+    cyclomatic_complexity: 10
+    calls_out: 8
+    calls_in: 1
+  backend.app.routers.workflow.start_workflow_endpoint:
+    name: start_workflow_endpoint
+    module: backend.app.routers.workflow
+    line: 73
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  nlp2dsl_sdk.demos.run_crm_update_demo:
+    name: run_crm_update_demo
+    module: nlp2dsl_sdk.demos
+    line: 120
+    cyclomatic_complexity: 3
+    calls_out: 7
+    calls_in: 0
+  backend.app.engine._persist_workflow_snapshot:
+    name: _persist_workflow_snapshot
+    module: backend.app.engine
+    line: 42
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 7
+  worker.worker.handle_notify_slack:
+    name: handle_notify_slack
+    module: worker.worker
+    line: 119
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  tauri-wrapper.scripts.dev.main:
+    name: main
+    module: tauri-wrapper.scripts.dev
+    line: 6
+    cyclomatic_complexity: 11
+    calls_out: 10
+    calls_in: 1
+  backend.app.routers.system.system_execute:
+    name: system_execute
+    module: backend.app.routers.system
+    line: 23
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  nlp2dsl_sdk.client.NLP2DSLClient.generate_report_and_notify:
+    name: generate_report_and_notify
+    module: nlp2dsl_sdk.client
+    line: 317
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  nlp-service.app.settings._coerce_type:
+    name: _coerce_type
+    module: nlp-service.app.settings
+    line: 236
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  tauri-wrapper.scripts.serve-dist.handleRequest:
+    name: handleRequest
+    module: tauri-wrapper.scripts.serve-dist
+    line: 70
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 2
+  nlp-service.app.registry.get_trigger:
+    name: get_trigger
+    module: nlp-service.app.registry
+    line: 366
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 3
+  nlp-service.app.audio_parser.StreamingSTT.send_audio:
+    name: send_audio
+    module: nlp-service.app.audio_parser
+    line: 135
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  backend.app.engine._track_background_task:
+    name: _track_background_task
+    module: backend.app.engine
+    line: 235
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+edges:
+- caller: tauri-wrapper.scripts.dev.main
+  callee: tauri-wrapper.scripts.dev.shutdown
+  call_type: resolved
+- caller: tauri-wrapper.scripts.dev.exitCode
+  callee: tauri-wrapper.scripts.dev.main
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.resolveRequestPath
+  callee: tauri-wrapper.scripts.serve-dist.isInsideRoot
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.resolveRequestPath
+  callee: tauri-wrapper.scripts.serve-dist.stat
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.sendFile
+  callee: tauri-wrapper.scripts.serve-dist.contentType
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.fileContents
+  callee: tauri-wrapper.scripts.serve-dist.contentType
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.handleRequest
+  callee: tauri-wrapper.scripts.serve-dist.resolveRequestPath
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.handleRequest
+  callee: tauri-wrapper.scripts.serve-dist.contentType
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.handleRequest
+  callee: tauri-wrapper.scripts.serve-dist.sendFile
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.startServer
+  callee: tauri-wrapper.scripts.serve-dist.handleRequest
+  call_type: resolved
+- caller: tauri-wrapper.scripts.serve-dist.server
+  callee: tauri-wrapper.scripts.serve-dist.handleRequest
+  call_type: resolved
+- caller: backend.app.routers.settings.actions_schema
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.routers.settings.action_schema
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.routers.settings.get_settings
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.routers.settings.get_settings_section
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.routers.settings.update_settings_section
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.routers.settings.set_setting
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.routers.settings.reset_settings
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: nlp2dsl_sdk.__main__.main
+  callee: nlp2dsl_sdk.demos.list_available_demos
+  call_type: resolved
+- caller: nlp2dsl_sdk.client.NLP2DSLClient.send_invoice
+  callee: nlp2dsl_sdk.client.workflow_step
+  call_type: resolved
+- caller: nlp2dsl_sdk.client.NLP2DSLClient.send_email
+  callee: nlp2dsl_sdk.client.workflow_step
+  call_type: resolved
+- caller: nlp2dsl_sdk.client.NLP2DSLClient.generate_report
+  callee: nlp2dsl_sdk.client.workflow_step
+  call_type: resolved
+- caller: nlp2dsl_sdk.client.NLP2DSLClient.generate_report_and_notify
+  callee: nlp2dsl_sdk.client.workflow_step
+  call_type: resolved
+- caller: nlp2dsl_sdk.client.NLP2DSLClient.notify_slack
+  callee: nlp2dsl_sdk.client.workflow_step
+  call_type: resolved
+- caller: nlp2dsl_sdk.client.NLP2DSLClient.crm_update
+  callee: nlp2dsl_sdk.client.workflow_step
+  call_type: resolved
+- caller: nlp2dsl_sdk.client.NLP2DSLClient.send_invoice_and_notify
+  callee: nlp2dsl_sdk.client.workflow_step
+  call_type: resolved
+- caller: backend.app.routers.system.system_execute
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.routers.workflow.run_workflow_endpoint
+  callee: nlp2dsl_sdk.client.NLP2DSLClient.run_workflow
+  call_type: resolved
+- caller: backend.app.routers.workflow.start_workflow_endpoint
+  callee: backend.app.engine.start_workflow
+  call_type: resolved
+- caller: backend.app.routers.workflow.stream_workflow
+  callee: backend.app.routers.workflow._workflow_snapshot
+  call_type: resolved
+- caller: backend.app.routers.workflow.stream_workflow
+  callee: backend.app.routers.workflow._format_sse
+  call_type: resolved
+- caller: nlp-service.app.audio_parser.stt_file
+  callee: nlp-service.app.audio_parser.stt_audio
+  call_type: resolved
+- caller: nlp-service.app.audio_parser.StreamingSTT.send_audio
+  callee: nlp-service.app.audio_parser.stt_audio
+  call_type: resolved
+- caller: examples.code_generation_examples.main
+  callee: nlp2dsl_sdk.demos.run_code_generation_demo
+  call_type: resolved
+- caller: examples.01-invoice.main.main
+  callee: nlp2dsl_sdk.demos.run_invoice_demo
+  call_type: resolved
+- caller: nlp-service.app.parser_rules.parse_rules
+  callee: nlp-service.app.parser_rules._detect_actions
+  call_type: resolved
+- caller: nlp-service.app.parser_rules.parse_rules
+  callee: nlp-service.app.parser_rules._resolve_intent
+  call_type: resolved
+- caller: nlp-service.app.parser_rules.parse_rules
+  callee: nlp-service.app.parser_rules._extract_entities
+  call_type: resolved
+- caller: nlp-service.app.parser_rules.parse_rules
+  callee: nlp-service.app.registry.get_trigger
+  call_type: resolved
+- caller: nlp-service.app.parser_rules._resolve_intent
+  callee: nlp-service.app.settings.SettingsManager.set
+  call_type: resolved
+- caller: examples.02-email.main.main
+  callee: nlp2dsl_sdk.demos.run_email_demo
+  call_type: resolved
+- caller: nlp-service.app.mapper.map_to_dsl
+  callee: nlp-service.app.mapper._resolve_actions
+  call_type: resolved
+- caller: nlp-service.app.mapper.map_to_dsl
+  callee: nlp-service.app.mapper._make_name
+  call_type: resolved
+- caller: nlp-service.app.mapper.map_to_dsl
+  callee: nlp-service.app.mapper._build_config
+  call_type: resolved
+- caller: nlp-service.app.mapper.map_to_dsl
+  callee: nlp-service.app.registry.get_trigger
+  call_type: resolved
+- caller: nlp-service.app.mapper._build_config
+  callee: nlp-service.app.registry.get_required_fields
+  call_type: resolved
+- caller: nlp-service.app.mapper._build_config
+  callee: nlp-service.app.registry.get_defaults
+  call_type: resolved
+- caller: nlp-service.app.mapper._build_config
+  callee: nlp-service.app.mapper._get_field_mapping
+  call_type: resolved
+- caller: nlp-service.app.orchestrator.start_conversation
+  callee: nlp-service.app.orchestrator._process_message
+  call_type: resolved
+- caller: nlp-service.app.orchestrator.continue_conversation
+  callee: nlp-service.app.orchestrator._process_message
+  call_type: resolved
+- caller: nlp-service.app.orchestrator._process_message
+  callee: nlp-service.app.parser_rules.parse_rules
+  call_type: resolved
+- caller: nlp-service.app.orchestrator._process_message
+  callee: nlp-service.app.orchestrator._merge_into_state
+  call_type: resolved
+- caller: nlp-service.app.orchestrator._process_message
+  callee: nlp-service.app.mapper.map_to_dsl
+  call_type: resolved
+- caller: nlp-service.app.orchestrator._merge_into_state
+  callee: nlp-service.app.registry.get_trigger
+  call_type: resolved
+- caller: examples.04-scheduled-report.main.main
+  callee: nlp2dsl_sdk.demos.run_scheduled_report_demo
+  call_type: resolved
+- caller: nlp-service.app.system_executor._exec_file_read
+  callee: nlp-service.app.system_executor._validate_file_path
+  call_type: resolved
+- caller: nlp-service.app.system_executor._exec_file_write
+  callee: nlp-service.app.system_executor._validate_file_path
+  call_type: resolved
+- caller: nlp-service.app.system_executor._exec_file_write
+  callee: nlp-service.app.system_executor._is_read_only
+  call_type: resolved
+- caller: backend.app.engine._persist_workflow_snapshot
+  callee: backend.app.engine._workflow_steps_payload
+  call_type: resolved
+- caller: backend.app.engine._execute_workflow
+  callee: backend.app.engine._publish_workflow_event
+  call_type: resolved
+- caller: backend.app.engine._execute_workflow
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: backend.app.engine._execute_workflow
+  callee: backend.app.engine._persist_workflow_snapshot
+  call_type: resolved
+- caller: backend.app.engine.run_workflow
+  callee: backend.app.engine._execute_workflow
+  call_type: resolved
+- caller: backend.app.engine.start_workflow
+  callee: backend.app.engine._track_background_task
+  call_type: resolved
+- caller: backend.app.engine.start_workflow
+  callee: backend.app.engine._persist_workflow_snapshot
+  call_type: resolved
+- caller: backend.app.engine.start_workflow
+  callee: backend.app.engine._execute_workflow
+  call_type: resolved
+- caller: backend.app.routers.chat.chat_start
+  callee: backend.app.routers.chat._proxy_chat_payload
+  call_type: resolved
+- caller: backend.app.routers.chat.chat_message
+  callee: backend.app.routers.chat._proxy_chat_payload
+  call_type: resolved
+- caller: backend.app.routers.chat.chat_get_state
+  callee: nlp-service.app.logging_setup.get_request_id
+  call_type: resolved
+- caller: worker.worker.handle_send_invoice
+  callee: worker.worker.action
+  call_type: resolved
+- caller: worker.worker.handle_send_email
+  callee: worker.worker.action
+  call_type: resolved
+- caller: worker.worker.handle_generate_report
+  callee: worker.worker.action
+  call_type: resolved
+- caller: worker.worker.handle_crm_update
+  callee: worker.worker.action
+  call_type: resolved
+- caller: worker.worker.handle_notify_slack
+  callee: worker.worker.action
+  call_type: resolved
+- caller: worker.worker.handle_notify_slack
+  callee: worker.worker._deliver_notification
+  call_type: resolved
+- caller: worker.worker.handle_notify_telegram
+  callee: worker.worker.action
+  call_type: resolved
+- caller: worker.worker.handle_notify_telegram
+  callee: worker.worker._deliver_notification
+  call_type: resolved
+- caller: worker.worker.handle_notify_teams
+  callee: worker.worker.action
+  call_type: resolved
+- caller: worker.worker.handle_notify_teams
+  callee: worker.worker._deliver_notification
+  call_type: resolved
+- caller: worker.worker.handle_generate_code
+  callee: worker.worker.action
+  call_type: resolved
+- caller: backend.app.workflow_events.WorkflowEventHub.publish
+  callee: nlp-service.app.settings.SettingsManager.set
+  call_type: resolved
+- caller: backend.app.workflow_events.WorkflowEventHub.subscriber_count
+  callee: nlp-service.app.settings.SettingsManager.set
+  call_type: resolved
+- caller: examples.03-report-and-notify.main.main
+  callee: nlp2dsl_sdk.demos.run_report_and_notify_demo
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos._print_workflow_preview
+  callee: nlp2dsl_sdk.demos._print_json
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos._print_execution_result
+  callee: nlp2dsl_sdk.demos._print_json
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos._preview_text_examples
+  callee: nlp2dsl_sdk.demos._print_workflow_preview
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_crm_update_demo
+  callee: nlp2dsl_sdk.demos._preview_text_examples
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_crm_update_demo
+  callee: nlp2dsl_sdk.demos._print_execution_result
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_crm_update_demo
+  callee: nlp2dsl_sdk.demos._ensure_services
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_action_catalog_demo
+  callee: nlp2dsl_sdk.demos._ensure_services
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_automation_gallery_demo
+  callee: nlp2dsl_sdk.demos._run_gallery_examples
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_automation_gallery_demo
+  callee: nlp2dsl_sdk.demos._ensure_services
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos._run_workflow_examples
+  callee: nlp2dsl_sdk.demos._print_execution_result
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos._run_gallery_examples
+  callee: nlp2dsl_sdk.demos._print_workflow_preview
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_invoice_demo
+  callee: nlp2dsl_sdk.demos._preview_text_examples
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_invoice_demo
+  callee: nlp2dsl_sdk.demos._print_execution_result
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_invoice_demo
+  callee: nlp2dsl_sdk.demos._ensure_services
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_email_demo
+  callee: nlp2dsl_sdk.demos._preview_text_examples
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_email_demo
+  callee: nlp2dsl_sdk.demos._print_execution_result
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_email_demo
+  callee: nlp2dsl_sdk.demos._ensure_services
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_report_and_notify_demo
+  callee: nlp2dsl_sdk.demos._preview_text_examples
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_report_and_notify_demo
+  callee: nlp2dsl_sdk.demos._print_execution_result
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_report_and_notify_demo
+  callee: nlp2dsl_sdk.demos._ensure_services
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_scheduled_report_demo
+  callee: nlp2dsl_sdk.demos._run_workflow_examples
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_scheduled_report_demo
+  callee: nlp2dsl_sdk.demos._preview_text_examples
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_scheduled_report_demo
+  callee: nlp2dsl_sdk.demos._ensure_services
+  call_type: resolved
+- caller: nlp2dsl_sdk.demos.run_code_generation_demo
+  callee: nlp2dsl_sdk.demos._preview_text_examples
+  call_type: resolved
+- caller: nlp-service.app.settings.SettingsManager.set
+  callee: nlp-service.app.settings._coerce_type
+  call_type: resolved
+- caller: nlp-service.app.parser_llm.parse_llm
+  callee: nlp-service.app.parser_llm._detect_provider
+  call_type: resolved
+- caller: nlp-service.app.parser_llm.parse_llm
+  callee: nlp-service.app.parser_llm._parse_json_response
+  call_type: resolved
+modules:
+  backend.app.engine:
+  - backend.app.engine._execute_workflow
+  - backend.app.engine._persist_workflow_snapshot
+  - backend.app.engine._publish_workflow_event
+  - backend.app.engine._track_background_task
+  - backend.app.engine._workflow_steps_payload
+  - backend.app.engine.run_workflow
+  - backend.app.engine.start_workflow
+  backend.app.routers.chat:
+  - backend.app.routers.chat._proxy_chat_payload
+  - backend.app.routers.chat.chat_get_state
+  - backend.app.routers.chat.chat_message
+  - backend.app.routers.chat.chat_start
+  backend.app.routers.settings:
+  - backend.app.routers.settings.action_schema
+  - backend.app.routers.settings.actions_schema
+  - backend.app.routers.settings.get_settings
+  - backend.app.routers.settings.get_settings_section
+  - backend.app.routers.settings.reset_settings
+  - backend.app.routers.settings.set_setting
+  - backend.app.routers.settings.update_settings_section
+  backend.app.routers.system:
+  - backend.app.routers.system.system_execute
+  backend.app.routers.workflow:
+  - backend.app.routers.workflow._format_sse
+  - backend.app.routers.workflow._workflow_snapshot
+  - backend.app.routers.workflow.run_workflow_endpoint
+  - backend.app.routers.workflow.start_workflow_endpoint
+  - backend.app.routers.workflow.stream_workflow
+  backend.app.workflow_events:
+  - backend.app.workflow_events.WorkflowEventHub.publish
+  - backend.app.workflow_events.WorkflowEventHub.subscriber_count
+  examples.01-invoice.main:
+  - examples.01-invoice.main.main
+  examples.02-email.main:
+  - examples.02-email.main.main
+  examples.03-report-and-notify.main:
+  - examples.03-report-and-notify.main.main
+  examples.04-scheduled-report.main:
+  - examples.04-scheduled-report.main.main
+  examples.code_generation_examples:
+  - examples.code_generation_examples.main
+  nlp-service.app.audio_parser:
+  - nlp-service.app.audio_parser.StreamingSTT.send_audio
+  - nlp-service.app.audio_parser.stt_audio
+  - nlp-service.app.audio_parser.stt_file
+  nlp-service.app.logging_setup:
+  - nlp-service.app.logging_setup.get_request_id
+  nlp-service.app.mapper:
+  - nlp-service.app.mapper._build_config
+  - nlp-service.app.mapper._get_field_mapping
+  - nlp-service.app.mapper._make_name
+  - nlp-service.app.mapper._resolve_actions
+  - nlp-service.app.mapper.map_to_dsl
+  nlp-service.app.orchestrator:
+  - nlp-service.app.orchestrator._merge_into_state
+  - nlp-service.app.orchestrator._process_message
+  - nlp-service.app.orchestrator.continue_conversation
+  - nlp-service.app.orchestrator.start_conversation
+  nlp-service.app.parser_llm:
+  - nlp-service.app.parser_llm._detect_provider
+  - nlp-service.app.parser_llm._parse_json_response
+  - nlp-service.app.parser_llm.parse_llm
+  nlp-service.app.parser_rules:
+  - nlp-service.app.parser_rules._detect_actions
+  - nlp-service.app.parser_rules._extract_entities
+  - nlp-service.app.parser_rules._resolve_intent
+  - nlp-service.app.parser_rules.parse_rules
+  nlp-service.app.registry:
+  - nlp-service.app.registry.get_defaults
+  - nlp-service.app.registry.get_required_fields
+  - nlp-service.app.registry.get_trigger
+  nlp-service.app.settings:
+  - nlp-service.app.settings.SettingsManager.set
+  - nlp-service.app.settings._coerce_type
+  nlp-service.app.system_executor:
+  - nlp-service.app.system_executor._exec_file_read
+  - nlp-service.app.system_executor._exec_file_write
+  - nlp-service.app.system_executor._is_read_only
+  - nlp-service.app.system_executor._validate_file_path
+  nlp2dsl_sdk.__main__:
+  - nlp2dsl_sdk.__main__.main
+  nlp2dsl_sdk.client:
+  - nlp2dsl_sdk.client.NLP2DSLClient.crm_update
+  - nlp2dsl_sdk.client.NLP2DSLClient.generate_report
+  - nlp2dsl_sdk.client.NLP2DSLClient.generate_report_and_notify
+  - nlp2dsl_sdk.client.NLP2DSLClient.notify_slack
+  - nlp2dsl_sdk.client.NLP2DSLClient.run_workflow
+  - nlp2dsl_sdk.client.NLP2DSLClient.send_email
+  - nlp2dsl_sdk.client.NLP2DSLClient.send_invoice
+  - nlp2dsl_sdk.client.NLP2DSLClient.send_invoice_and_notify
+  - nlp2dsl_sdk.client.workflow_step
+  nlp2dsl_sdk.demos:
+  - nlp2dsl_sdk.demos._ensure_services
+  - nlp2dsl_sdk.demos._preview_text_examples
+  - nlp2dsl_sdk.demos._print_execution_result
+  - nlp2dsl_sdk.demos._print_json
+  - nlp2dsl_sdk.demos._print_workflow_preview
+  - nlp2dsl_sdk.demos._run_gallery_examples
+  - nlp2dsl_sdk.demos._run_workflow_examples
+  - nlp2dsl_sdk.demos.list_available_demos
+  - nlp2dsl_sdk.demos.run_action_catalog_demo
+  - nlp2dsl_sdk.demos.run_automation_gallery_demo
+  - nlp2dsl_sdk.demos.run_code_generation_demo
+  - nlp2dsl_sdk.demos.run_crm_update_demo
+  - nlp2dsl_sdk.demos.run_email_demo
+  - nlp2dsl_sdk.demos.run_invoice_demo
+  - nlp2dsl_sdk.demos.run_report_and_notify_demo
+  - nlp2dsl_sdk.demos.run_scheduled_report_demo
+  tauri-wrapper.scripts.dev:
+  - tauri-wrapper.scripts.dev.exitCode
+  - tauri-wrapper.scripts.dev.main
+  - tauri-wrapper.scripts.dev.shutdown
+  tauri-wrapper.scripts.serve-dist:
+  - tauri-wrapper.scripts.serve-dist.contentType
+  - tauri-wrapper.scripts.serve-dist.fileContents
+  - tauri-wrapper.scripts.serve-dist.handleRequest
+  - tauri-wrapper.scripts.serve-dist.isInsideRoot
+  - tauri-wrapper.scripts.serve-dist.resolveRequestPath
+  - tauri-wrapper.scripts.serve-dist.sendFile
+  - tauri-wrapper.scripts.serve-dist.server
+  - tauri-wrapper.scripts.serve-dist.startServer
+  - tauri-wrapper.scripts.serve-dist.stat
+  worker.worker:
+  - worker.worker._deliver_notification
+  - worker.worker.action
+  - worker.worker.handle_crm_update
+  - worker.worker.handle_generate_code
+  - worker.worker.handle_generate_report
+  - worker.worker.handle_notify_slack
+  - worker.worker.handle_notify_teams
+  - worker.worker.handle_notify_telegram
+  - worker.worker.handle_send_email
+  - worker.worker.handle_send_invoice
+entry_points:
+- backend.app.db.WorkflowRepo.count_runs
+- backend.app.db.WorkflowRepo.get_run
+- backend.app.db.WorkflowRepo.list_runs
+- backend.app.db.WorkflowRepo.save_run
+- backend.app.db.WorkflowRepo.update_run_status
+- backend.app.db.create_workflow_repo
+- backend.app.db.memory.MemoryWorkflowRepo.__init__
+- backend.app.db.memory.MemoryWorkflowRepo.count_runs
+- backend.app.db.memory.MemoryWorkflowRepo.get_run
+- backend.app.db.memory.MemoryWorkflowRepo.list_runs
+- backend.app.db.memory.MemoryWorkflowRepo.save_run
+- backend.app.db.memory.MemoryWorkflowRepo.update_run_status
+- backend.app.db.postgres.PostgresWorkflowRepo.__init__
+- backend.app.db.postgres.PostgresWorkflowRepo._ensure_engine
+- backend.app.db.postgres.PostgresWorkflowRepo._ensure_tables
+- backend.app.db.postgres.PostgresWorkflowRepo._get_session_factory
+- backend.app.db.postgres.PostgresWorkflowRepo.close
+- backend.app.db.postgres.PostgresWorkflowRepo.count_runs
+- backend.app.db.postgres.PostgresWorkflowRepo.get_run
+- backend.app.db.postgres.PostgresWorkflowRepo.list_runs
+- backend.app.db.postgres.PostgresWorkflowRepo.save_run
+- backend.app.db.postgres.PostgresWorkflowRepo.update_run_status
+- backend.app.db.postgres.WorkflowRunModel.to_dict
+- backend.app.engine.run_workflow
+- backend.app.logging_setup.JSONFormatter.__init__
+- backend.app.logging_setup.JSONFormatter.format
+- backend.app.logging_setup.RequestIDMiddleware.__init__
+- backend.app.logging_setup.RequestIDMiddleware.dispatch
+- backend.app.logging_setup.get_request_id
+- backend.app.logging_setup.setup_logging
+- backend.app.main.health
+- backend.app.routers.chat.chat_get_state
+- backend.app.routers.chat.chat_message
+- backend.app.routers.chat.chat_start
+- backend.app.routers.settings.action_schema
+- backend.app.routers.settings.actions_schema
+- backend.app.routers.settings.get_settings
+- backend.app.routers.settings.get_settings_section
+- backend.app.routers.settings.reset_settings
+- backend.app.routers.settings.set_setting
+- backend.app.routers.settings.update_settings_section
+- backend.app.routers.system.system_execute
+- backend.app.routers.workflow.get_history
+- backend.app.routers.workflow.get_workflow
+- backend.app.routers.workflow.list_actions
+- backend.app.routers.workflow.run_workflow_endpoint
+- backend.app.routers.workflow.start_workflow_endpoint
+- backend.app.routers.workflow.stream_workflow
+- backend.app.routers.workflow.workflow_from_text
+- backend.app.workflow_events.WorkflowEvent.to_dict
+- backend.app.workflow_events.WorkflowEventHub.__init__
+- backend.app.workflow_events.WorkflowEventHub.publish
+- backend.app.workflow_events.WorkflowEventHub.subscribe
+- backend.app.workflow_events.WorkflowEventHub.subscriber_count
+- backend.app.workflow_events.WorkflowEventHub.unsubscribe
+- examples.01-invoice.main.main
+- examples.02-email.main.main
+- examples.03-report-and-notify.main.main
+- examples.04-scheduled-report.main.main
+- examples.05-conversation-flow.main.main
+- examples.code_generation_examples.main
+- nlp-service.app.audio_parser.StreamingSTT.__init__
+- nlp-service.app.audio_parser.StreamingSTT.get_transcript
+- nlp-service.app.audio_parser.StreamingSTT.send_audio
+- nlp-service.app.audio_parser.StreamingSTT.start
+- nlp-service.app.audio_parser.StreamingSTT.stop
+- nlp-service.app.audio_parser.is_stt_available
+- nlp-service.app.audio_parser.stt_file
+- nlp-service.app.code_generator.CodeGenerator.__init__
+- nlp-service.app.code_generator.CodeGenerator._build_prompt
+- nlp-service.app.code_generator.CodeGenerator._extract_class_name
+- nlp-service.app.code_generator.CodeGenerator._get_api_key
+- nlp-service.app.code_generator.CodeGenerator._split_code_and_tests
+- nlp-service.app.code_generator.CodeGenerator.generate_code
+- nlp-service.app.code_generator.CodeGenerator.get_language_info
+- nlp-service.app.code_generator.CodeGenerator.get_supported_languages
+- nlp-service.app.logging_setup.JSONFormatter.__init__
+- nlp-service.app.logging_setup.JSONFormatter.format
+- nlp-service.app.logging_setup.RequestIDMiddleware.__init__
+- nlp-service.app.logging_setup.RequestIDMiddleware.dispatch
+- nlp-service.app.logging_setup.setup_logging
+- nlp-service.app.orchestrator.continue_conversation
+- nlp-service.app.orchestrator.get_conversation
+- nlp-service.app.orchestrator.start_conversation
+- nlp-service.app.parser_llm.parse_llm
+- nlp-service.app.registry.get_action_by_alias
+- nlp-service.app.settings.SettingsManager.__new__
+- nlp-service.app.settings.SettingsManager._load
+- nlp-service.app.settings.SettingsManager._save
+- nlp-service.app.settings.SettingsManager.describe
+- nlp-service.app.settings.SettingsManager.get
+- nlp-service.app.settings.SettingsManager.get_all
+- nlp-service.app.settings.SettingsManager.get_section
+- nlp-service.app.settings.SettingsManager.reset
+- nlp-service.app.settings.SettingsManager.update_section
+- nlp-service.app.store.ConversationStore.count
+- nlp-service.app.store.ConversationStore.delete
+- nlp-service.app.store.ConversationStore.get
+- nlp-service.app.store.ConversationStore.save
+- nlp-service.app.store.factory.get_conversation_store
+- nlp-service.app.store.memory.MemoryConversationStore.__init__
+- nlp-service.app.store.memory.MemoryConversationStore.count
+- nlp-service.app.store.memory.MemoryConversationStore.delete
+- nlp-service.app.store.memory.MemoryConversationStore.get
+- nlp-service.app.store.memory.MemoryConversationStore.save
+- nlp-service.app.store.redis_store.RedisConversationStore.__init__
+- nlp-service.app.store.redis_store.RedisConversationStore._key
+- nlp-service.app.store.redis_store.RedisConversationStore.close
+- nlp-service.app.store.redis_store.RedisConversationStore.count
+- nlp-service.app.store.redis_store.RedisConversationStore.delete
+- nlp-service.app.store.redis_store.RedisConversationStore.get
+- nlp-service.app.store.redis_store.RedisConversationStore.save
+- nlp-service.app.system_executor._exec_file_list
+- nlp-service.app.system_executor._exec_file_read
+- nlp-service.app.system_executor._exec_file_write
+- nlp-service.app.system_executor._exec_registry_add
+- nlp-service.app.system_executor._exec_registry_edit
+- nlp-service.app.system_executor._exec_registry_list
+- nlp-service.app.system_executor._exec_settings_get
+- nlp-service.app.system_executor._exec_settings_reset
+- nlp-service.app.system_executor._exec_settings_set
+- nlp-service.app.system_executor._exec_status
+- nlp-service.app.system_executor.execute_system_action
+- nlp2dsl_sdk.__main__.main
+- nlp2dsl_sdk.client.ConversationFlow.__init__
+- nlp2dsl_sdk.client.ConversationFlow._handle_response
+- nlp2dsl_sdk.client.ConversationFlow.run_demo
+- nlp2dsl_sdk.client.ConversationFlow.run_interactive
+- nlp2dsl_sdk.client.ConversationFlow.send_message
+- nlp2dsl_sdk.client.ConversationFlow.start
+- nlp2dsl_sdk.client.NLP2DSLClient.__enter__
+- nlp2dsl_sdk.client.NLP2DSLClient.__exit__
+- nlp2dsl_sdk.client.NLP2DSLClient.__init__
+- nlp2dsl_sdk.client.NLP2DSLClient._backend
+- nlp2dsl_sdk.client.NLP2DSLClient._nlp_service
+- nlp2dsl_sdk.client.NLP2DSLClient._request
+- nlp2dsl_sdk.client.NLP2DSLClient._worker
+- nlp2dsl_sdk.client.NLP2DSLClient.backend_health
+- nlp2dsl_sdk.client.NLP2DSLClient.chat_message
+- nlp2dsl_sdk.client.NLP2DSLClient.chat_start
+- nlp2dsl_sdk.client.NLP2DSLClient.chat_state
+- nlp2dsl_sdk.client.NLP2DSLClient.close
+- nlp2dsl_sdk.client.NLP2DSLClient.create_scheduled_report
+- nlp2dsl_sdk.client.NLP2DSLClient.crm_update
+- nlp2dsl_sdk.client.NLP2DSLClient.from_env
+- nlp2dsl_sdk.client.NLP2DSLClient.generate_code
+- nlp2dsl_sdk.client.NLP2DSLClient.generate_report
+- nlp2dsl_sdk.client.NLP2DSLClient.generate_report_and_notify
+- nlp2dsl_sdk.client.NLP2DSLClient.health
+- nlp2dsl_sdk.client.NLP2DSLClient.nlp_chat_message
+- nlp2dsl_sdk.client.NLP2DSLClient.nlp_chat_start
+- nlp2dsl_sdk.client.NLP2DSLClient.nlp_chat_state
+- nlp2dsl_sdk.client.NLP2DSLClient.nlp_service_health
+- nlp2dsl_sdk.client.NLP2DSLClient.notify_slack
+- nlp2dsl_sdk.client.NLP2DSLClient.reset_settings
+- nlp2dsl_sdk.client.NLP2DSLClient.send_email
+- nlp2dsl_sdk.client.NLP2DSLClient.send_invoice
+- nlp2dsl_sdk.client.NLP2DSLClient.send_invoice_and_notify
+- nlp2dsl_sdk.client.NLP2DSLClient.set_setting
+- nlp2dsl_sdk.client.NLP2DSLClient.settings
+- nlp2dsl_sdk.client.NLP2DSLClient.settings_section
+- nlp2dsl_sdk.client.NLP2DSLClient.supported_languages
+- nlp2dsl_sdk.client.NLP2DSLClient.update_settings_section
+- nlp2dsl_sdk.client.NLP2DSLClient.worker_execute
+- nlp2dsl_sdk.client.NLP2DSLClient.worker_generate_code
+- nlp2dsl_sdk.client.NLP2DSLClient.worker_health
+- nlp2dsl_sdk.client.NLP2DSLClient.workflow_action_schema
+- nlp2dsl_sdk.client.NLP2DSLClient.workflow_actions
+- nlp2dsl_sdk.client.NLP2DSLClient.workflow_from_text
+- nlp2dsl_sdk.demos.run_action_catalog_demo
+- nlp2dsl_sdk.demos.run_automation_gallery_demo
+- nlp2dsl_sdk.demos.run_crm_update_demo
+- run-all-tests.run_tests
+- tauri-wrapper.scripts.dev.child
+- tauri-wrapper.scripts.dev.exitCode
+- tauri-wrapper.scripts.dev.npmCommand
+- tauri-wrapper.scripts.dev.server
+- tauri-wrapper.scripts.dev.shuttingDown
+- tauri-wrapper.scripts.serve-dist.HOST
+- tauri-wrapper.scripts.serve-dist.MIME_TYPES
+- tauri-wrapper.scripts.serve-dist.PORT
+- tauri-wrapper.scripts.serve-dist.ROOT_DIR
+- tauri-wrapper.scripts.serve-dist.candidate
+- tauri-wrapper.scripts.serve-dist.fileContents
+- tauri-wrapper.scripts.serve-dist.fs
+- tauri-wrapper.scripts.serve-dist.http
+- tauri-wrapper.scripts.serve-dist.path
+- tauri-wrapper.scripts.serve-dist.pathname
+- tauri-wrapper.scripts.serve-dist.relativePath
+- tauri-wrapper.scripts.serve-dist.safePath
+- tauri-wrapper.scripts.serve-dist.server
+- tauri-wrapper.scripts.serve-dist.startServer
+- tauri-wrapper.scripts.serve-dist.targetPath
+- tauri-wrapper.src-tauri.build.main
+- tauri-wrapper.src-tauri.src.main.main
+- worker.logging_setup.JSONFormatter.__init__
+- worker.logging_setup.JSONFormatter.format
+- worker.logging_setup.RequestIDMiddleware.__init__
+- worker.logging_setup.RequestIDMiddleware.dispatch
+- worker.logging_setup.get_request_id
+- worker.logging_setup.setup_logging
+- worker.worker.execute_step
+- worker.worker.handle_crm_update
+- worker.worker.handle_generate_code
+- worker.worker.handle_generate_report
+- worker.worker.handle_notify_slack
+- worker.worker.handle_notify_teams
+- worker.worker.handle_notify_telegram
+- worker.worker.handle_send_email
+- worker.worker.handle_send_invoice
+- worker.worker.health

@@ -173,7 +173,20 @@ def _extract_entities(text: str, text_lower: str) -> NLPEntities:
     """Extract entities from text using regex and keywords."""
     entities = NLPEntities()
 
-    # Amount
+    _extract_amount(entities, text)
+    _extract_email(entities, text)
+    _extract_report_type(entities, text_lower)
+    _extract_format(entities, text_lower)
+    _extract_notification_channels(entities, text)
+    _extract_param_aliases(entities, text_lower)
+    _extract_system_entities(entities, text, text_lower)
+    _extract_fallback_recipient(entities, text_lower)
+
+    return entities
+
+
+def _extract_amount(entities: NLPEntities, text: str) -> None:
+    """Extract amount and currency from text."""
     amount_match = AMOUNT_PATTERN.search(text)
     if amount_match:
         raw_amount = amount_match.group(1).replace(" ", "").replace(",", ".")
@@ -187,23 +200,32 @@ def _extract_entities(text: str, text_lower: str) -> NLPEntities:
             if entities.currency in ("ZŁ",):
                 entities.currency = "PLN"
 
-    # Email
+
+def _extract_email(entities: NLPEntities, text: str) -> None:
+    """Extract email address from text."""
     email_match = EMAIL_PATTERN.search(text)
     if email_match:
         entities.to = email_match.group(0)
 
-    # Report type
+
+def _extract_report_type(entities: NLPEntities, text_lower: str) -> None:
+    """Extract report type from keywords."""
     for keyword, rtype in REPORT_TYPE_KEYWORDS.items():
         if keyword in text_lower:
             entities.report_type = rtype
             break
 
-    # Format
+
+def _extract_format(entities: NLPEntities, text_lower: str) -> None:
+    """Extract format from keywords."""
     for keyword, fmt in FORMAT_KEYWORDS.items():
         if keyword in text_lower:
             entities.format = fmt
             break
 
+
+def _extract_notification_channels(entities: NLPEntities, text: str) -> None:
+    """Extract Slack, Telegram, and Teams channels from text."""
     # Slack channel
     channel_match = SLACK_CHANNEL_PATTERN.search(text)
     if channel_match:
@@ -219,7 +241,9 @@ def _extract_entities(text: str, text_lower: str) -> NLPEntities:
     if teams_match and not entities.channel:
         entities.channel = teams_match.group(1)
 
-    # ── param_aliases extraction (from registry) ─────────────
+
+def _extract_param_aliases(entities: NLPEntities, text_lower: str) -> None:
+    """Extract entities from registry param_aliases."""
     for action_name, meta in ACTIONS_REGISTRY.items():
         for alias_key, target in meta.get("param_aliases", {}).items():
             if alias_key in text_lower:
@@ -228,8 +252,9 @@ def _extract_entities(text: str, text_lower: str) -> NLPEntities:
                     _set_entity(entities, field, value)
                 # else: alias_key maps to a field name — value comes from text
 
-    # ── System entity extraction ──────────────────────────────
 
+def _extract_system_entities(entities: NLPEntities, text: str, text_lower: str) -> None:
+    """Extract system-related entities (file path, settings, model, mode)."""
     # File path
     file_match = FILE_PATH_PATTERN.search(text)
     if file_match and not entities.file_path:
@@ -264,7 +289,9 @@ def _extract_entities(text: str, text_lower: str) -> NLPEntities:
             if not entities.setting_path:
                 entities.setting_path = "nlp.default_mode"
 
-    # Fallback recipient heuristics
+
+def _extract_fallback_recipient(entities: NLPEntities, text_lower: str) -> None:
+    """Extract recipient using fallback heuristics."""
     if not entities.to:
         patterns = [
             r"do\s+([\w.]+@[\w.]+)",
@@ -276,8 +303,6 @@ def _extract_entities(text: str, text_lower: str) -> NLPEntities:
                 if "@" in (m.group(0) if m.lastindex is None else m.group(1)):
                     entities.to = m.group(1) if m.lastindex else m.group(0)
                 break
-
-    return entities
 
 
 def _set_entity(entities: NLPEntities, field: str, value: str) -> None:

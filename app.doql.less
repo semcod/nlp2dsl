@@ -1,0 +1,119 @@
+// LESS format — define @variables here as needed
+
+app {
+  name: nlp2dsl;
+  version: 0.0.7;
+}
+
+dependencies {
+  runtime: requests>=2.31.0;
+}
+
+entity[name="NLPIntent"] {
+  intent: string!;
+  confidence: float!;
+}
+
+entity[name="NLPEntities"] {
+  amount: float | None;
+  currency: str | None;
+  to: str | None;
+  subject: str | None;
+  message: str | None;
+  channel: str | None;
+  chat_id: str | None;
+  title: str | None;
+  report_type: str | None;
+  format: str | None;
+  entity: str | None;
+  data: dict | None;
+  setting_path: str | None;
+  setting_value: str | None;
+  section: str | None;
+  file_path: str | None;
+  content: str | None;
+  directory: str | None;
+  pattern: str | None;
+  line_start: int | None;
+  line_end: int | None;
+  mode: str | None;
+  action_name: str | None;
+  action_description: str | None;
+  required_fields: list[str] | None;
+  aliases: list[str] | None;
+  description: str | None;
+  language: str | None;
+  context: str | None;
+  include_tests: bool | None;
+}
+
+entity[name="DSLStep"] {
+  action: string!;
+  config: json!;
+}
+
+entity[name="WorkflowDSL"] {
+  name: string!;
+  trigger: str | None;
+  steps: list[DSLStep]!;
+}
+
+entity[name="ConversationState"] {
+  id: string!;
+  intent: str | None;
+  entities: json!;
+  missing: list[str]!;
+  dsl: WorkflowDSL | None;
+  status: string!;
+  history: list[dict]!;
+}
+
+entity[name="Step"] {
+  id: string!;
+  action: string!;
+  config: json!;
+}
+
+entity[name="ActionInfo"] {
+  name: string!;
+  description: string!;
+  config_schema: json!;
+}
+
+database[name="postgres"] {
+  type: postgresql;
+  url: env.DATABASE_URL;
+}
+
+database[name="redis"] {
+  type: redis;
+  url: env.REDIS_URL;
+}
+
+interface[type="api"] {
+  type: rest;
+  framework: fastapi;
+}
+
+interface[type="cli"] {
+  framework: argparse;
+}
+interface[type="cli"] page[name="nlp2dsl-demo"] {
+
+}
+
+deploy {
+  target: docker-compose;
+  compose_file: docker-compose.yml;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: .env;
+  python_version: >=3.10;
+}
+
+environment[name="backup"] {
+  runtime: docker-compose;
+  env_file: .env.backup;
+}

@@ -16,6 +16,10 @@ from pathlib import Path
 from app.registry import ACTIONS_REGISTRY, BUSINESS_ACTIONS, SYSTEM_ACTIONS
 from app.settings import settings_manager
 
+CONSTANT_5 = 5
+CONSTANT_1024 = 1024
+
+
 log = logging.getLogger("system.executor")
 
 
@@ -121,7 +125,7 @@ def _exec_file_read(config: dict) -> dict:
         return {"error": f"Ścieżka nie jest plikiem: {file_path}"}
 
     # Size check
-    size_kb = Path(resolved).stat().st_size / 1024
+    size_kb = Path(resolved).stat().st_size / CONSTANT_1024
     max_kb = settings_manager.settings.file_access.max_file_size_kb
     if size_kb > max_kb:
         return {"error": f"Plik za duży: {size_kb:.0f}KB (max {max_kb}KB)"}
@@ -170,7 +174,7 @@ def _exec_file_write(config: dict) -> dict:
     return {
         "file_path": file_path,
         "mode": mode,
-        "size_kb": round(p.stat().st_size / 1024, 1),
+        "size_kb": round(p.stat().st_size / CONSTANT_1024, 1),
         "written": True,
     }
 
@@ -200,7 +204,7 @@ def _exec_file_list(config: dict) -> dict:
             rel = str(p.relative_to(resolved))
             files.append({
                 "path": rel,
-                "size_kb": round(p.stat().st_size / 1024, 1),
+                "size_kb": round(p.stat().st_size / CONSTANT_1024, 1),
                 "ext": p.suffix,
             })
 
@@ -228,7 +232,7 @@ def _exec_registry_list(config: dict) -> dict:
             "category": action_cat,
             "required": meta.get("required", []),
             "optional": list(meta.get("optional", {}).keys()),
-            "aliases": meta.get("aliases", [])[:5],  # truncate for readability
+            "aliases": meta.get("aliases", [])[:CONSTANT_5],  # truncate for readability
         }
 
     return {"count": len(result), "actions": result}

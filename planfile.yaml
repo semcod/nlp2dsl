@@ -17,731 +17,432 @@ sprints:
   objectives:
   - Fix code quality issues
   task_patterns:
-  - id: ticket-00037da7
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in backend/app/db/postgres.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/postgres.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-db2a96fa
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in backend/app/db/postgres.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/postgres.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-ef91d6e2
-    name: Fix magic-numbers issues
-    description: Resolve 2 magic-numbers issues in backend/app/db/postgres.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/postgres.py
-    rule_id: magic-numbers
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-2130e546
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in backend/app/db/memory.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/memory.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-0a5b455d
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in backend/app/db/memory.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/memory.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-8bf58242
-    name: Fix magic-numbers issues
-    description: Resolve 2 magic-numbers issues in backend/app/db/memory.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/memory.py
-    rule_id: magic-numbers
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-fa8279de
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in backend/app/db/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - backend/app/db/__init__.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-d73648c7
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in backend/app/db/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/__init__.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-928de930
-    name: Fix magic-numbers issues
-    description: Resolve 1 magic-numbers issues in backend/app/db/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/db/__init__.py
-    rule_id: magic-numbers
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-30a16290
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in backend/app/schemas.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/schemas.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-b55e6446
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in examples/01-invoice/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/01-invoice/main.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-b68e8c7b
-    name: Fix magic-numbers issues
-    description: Resolve 1 magic-numbers issues in examples/01-invoice/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/01-invoice/main.py
-    rule_id: magic-numbers
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-a9601d56
-    name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in examples/01-invoice/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/01-invoice/main.py
-    rule_id: ai-boilerplate
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-58eb74cd
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in examples/02-email/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/02-email/main.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-b16cc838
-    name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in examples/02-email/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/02-email/main.py
-    rule_id: ai-boilerplate
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-cd979cfc
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in backend/app/workflow.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - backend/app/workflow.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-a52d42d2
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in backend/app/workflow.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - backend/app/workflow.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-58dcbaff
-    name: Fix magic-numbers issues
-    description: Resolve 29 magic-numbers issues in backend/app/workflow.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - backend/app/workflow.py
-    rule_id: magic-numbers
-    count: 29
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-e4554ce7
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in examples/03-report-and-notify/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/03-report-and-notify/main.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-078a4a88
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in examples/03-report-and-notify/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/03-report-and-notify/main.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-5728d3b6
-    name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in examples/03-report-and-notify/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/03-report-and-notify/main.py
-    rule_id: ai-boilerplate
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-401f9ca3
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in nlp-service/app/audio_parser.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/audio_parser.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-beb7718f
-    name: Fix magic-numbers issues
-    description: Resolve 3 magic-numbers issues in nlp-service/app/audio_parser.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/audio_parser.py
-    rule_id: magic-numbers
-    count: 3
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-a89dd293
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in examples/04-scheduled-report/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/04-scheduled-report/main.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-f9cbe204
-    name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in examples/04-scheduled-report/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/04-scheduled-report/main.py
-    rule_id: ai-boilerplate
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-d1b72345
-    name: Fix smart-return-type issues
-    description: Resolve 3 smart-return-type issues in examples/05-conversation-flow/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/05-conversation-flow/main.py
-    rule_id: smart-return-type
-    count: 3
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-b3a4dda6
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in examples/05-conversation-flow/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/05-conversation-flow/main.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-da12ef79
-    name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in examples/05-conversation-flow/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - examples/05-conversation-flow/main.py
-    rule_id: ai-boilerplate
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-4da7f8a6
-    name: Fix relative-imports issues
-    description: Resolve 20 relative-imports issues in nlp-service/app/main.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - nlp-service/app/main.py
-    rule_id: relative-imports
-    count: 20
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-ae593814
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in nlp-service/app/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/main.py
-    rule_id: unused-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-fde7963d
-    name: Fix magic-numbers issues
-    description: Resolve 17 magic-numbers issues in nlp-service/app/main.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - nlp-service/app/main.py
-    rule_id: magic-numbers
-    count: 17
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-b4366a3a
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in nlp-service/app/parser_llm.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/parser_llm.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-a4bf68ea
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in nlp-service/app/parser_llm.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/parser_llm.py
-    rule_id: unused-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-baf10809
-    name: Fix magic-numbers issues
-    description: Resolve 1 magic-numbers issues in nlp-service/app/parser_llm.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/parser_llm.py
-    rule_id: magic-numbers
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-1831b048
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in nlp-service/app/mapper.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/mapper.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-2588e7e9
+  - id: ticket-616e3a85
     name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in nlp-service/app/mapper.py
+    description: Resolve 1 string-concat issues in backend/app/db/memory.py
     task_type: prefactor
     priority: medium
     estimate: 1d
     files:
-    - nlp-service/app/mapper.py
+    - backend/app/db/memory.py
     rule_id: string-concat
     count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-bfe823b1
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in nlp-service/app/mapper.py
+  - id: ticket-c3e00438
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in backend/app/routers/workflow.py
     task_type: prefactor
     priority: medium
     estimate: 1d
     files:
-    - nlp-service/app/mapper.py
-    rule_id: unused-imports
-    count: 2
+    - backend/app/routers/workflow.py
+    rule_id: string-concat
+    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-2202936d
-    name: Fix relative-imports issues
-    description: Resolve 12 relative-imports issues in nlp-service/app/orchestrator.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - nlp-service/app/orchestrator.py
-    rule_id: relative-imports
-    count: 12
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-9f0f5f67
-    name: Fix unused-imports issues
-    description: Resolve 6 unused-imports issues in nlp-service/app/orchestrator.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - nlp-service/app/orchestrator.py
-    rule_id: unused-imports
-    count: 6
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-8a34632d
+  - id: ticket-0c14fdca
     name: Fix magic-numbers issues
-    description: Resolve 3 magic-numbers issues in nlp-service/app/orchestrator.py
+    description: Resolve 1 magic-numbers issues in backend/app/routers/workflow.py
     task_type: prefactor
     priority: medium
     estimate: 1d
     files:
-    - nlp-service/app/orchestrator.py
-    rule_id: magic-numbers
-    count: 3
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-837e1b2e
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in nlp-service/app/parser_rules.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/parser_rules.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-f6076433
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in nlp-service/app/parser_rules.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/parser_rules.py
-    rule_id: unused-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-6961011a
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in nlp-service/app/schemas.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/schemas.py
-    rule_id: unused-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-d0c06a0b
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in nlp-service/app/settings.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/settings.py
-    rule_id: unused-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-210a344a
-    name: Fix magic-numbers issues
-    description: Resolve 2 magic-numbers issues in nlp-service/app/settings.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/settings.py
-    rule_id: magic-numbers
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-910e7b0f
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in nlp-service/app/store/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - nlp-service/app/store/__init__.py
-    rule_id: unused-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-245a1586
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in nlp-service/app/store/memory.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/store/memory.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-240bedf5
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in nlp-service/app/store/memory.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/store/memory.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-36140de0
-    name: Fix relative-imports issues
-    description: Resolve 6 relative-imports issues in nlp-service/app/store/factory.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - nlp-service/app/store/factory.py
-    rule_id: relative-imports
-    count: 6
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-7c5b2595
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in nlp-service/app/store/factory.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/store/factory.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-4256589d
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in nlp-service/app/store/redis_store.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/store/redis_store.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-5e8e148c
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in nlp-service/app/store/redis_store.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/store/redis_store.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-000bfb9c
-    name: Fix smart-return-type issues
-    description: Resolve 2 smart-return-type issues in worker/worker.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - worker/worker.py
-    rule_id: smart-return-type
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-4068a5d1
-    name: Fix magic-numbers issues
-    description: Resolve 1 magic-numbers issues in worker/worker.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - worker/worker.py
+    - backend/app/routers/workflow.py
     rule_id: magic-numbers
     count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-7fc53ee5
+  - id: ticket-891a6624
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/code_generator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/code_generator.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-fee55e46
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in backend/app/workflow_events.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - backend/app/workflow_events.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8d40f43b
+    name: Fix wildcard-imports issues
+    description: Resolve 2 wildcard-imports issues in nlp-service/app/main.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/main.py
+    rule_id: wildcard-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-08ceb54b
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in nlp-service/app/main.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/main.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-619416fc
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/parser_rules.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/parser_rules.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e831df43
     name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in nlp-service/app/system_executor.py
+    description: Resolve 4 relative-imports issues in nlp2dsl_sdk/__init__.py
     task_type: prefactor
     priority: medium
     estimate: 2d
     files:
-    - nlp-service/app/system_executor.py
+    - nlp2dsl_sdk/__init__.py
     rule_id: relative-imports
     count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-f79f2677
-    name: Fix unused-imports issues
-    description: Resolve 6 unused-imports issues in nlp-service/app/system_executor.py
+  - id: ticket-611cce1f
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in nlp2dsl_sdk/__main__.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/__main__.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b262a15d
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp2dsl_sdk/__main__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/__main__.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1ca41d5c
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in nlp2dsl_sdk/__main__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/__main__.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-3c002d51
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/system_executor.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
     files:
     - nlp-service/app/system_executor.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a21e2790
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp2dsl_sdk/client.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/client.py
     rule_id: unused-imports
-    count: 6
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8347ee63
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in nlp2dsl_sdk/client.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/client.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c817bf01
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in nlp2dsl_sdk/demos.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/demos.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8b296193
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp2dsl_sdk/demos.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/demos.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6e5993f0
+    name: Fix magic-numbers issues
+    description: Resolve 3 magic-numbers issues in nlp2dsl_sdk/demos.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/demos.py
+    rule_id: magic-numbers
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d5835930
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in nlp2dsl_sdk/demos.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp2dsl_sdk/demos.py
+    rule_id: llm-generated-code
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-56520637
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/conftest.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/conftest.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2b6c5439
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/e2e/test_backend.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/test_backend.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1524c8eb
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in tests/e2e/test_chat_ui.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/test_chat_ui.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-75152068
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/e2e/test_chat_ui.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/test_chat_ui.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-18143572
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/parser_llm.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/parser_llm.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b115c49b
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/e2e/test_nlp_service.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/test_nlp_service.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e018aebb
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/e2e/conftest.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/conftest.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-09a381ab
+    name: Fix magic-numbers issues
+    description: Resolve 3 magic-numbers issues in tests/e2e/conftest.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/conftest.py
+    rule_id: magic-numbers
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e1c59dbb
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/e2e/test_websocket.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/e2e/test_websocket.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e274cbe7
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/test_nlp2dsl_sdk.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_nlp2dsl_sdk.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cf621da7
+    name: Fix smart-return-type issues
+    description: Resolve 2 smart-return-type issues in tests/test_placeholder.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_placeholder.py
+    rule_id: smart-return-type
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f0bb0d83
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in worker/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - worker/__init__.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1d8f8c0a
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in worker/worker.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - worker/worker.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2a0f4b01
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in worker/worker.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - worker/worker.py
+    rule_id: string-concat
+    count: 1
     model_hints:
       planning: balanced
       implementation: balanced

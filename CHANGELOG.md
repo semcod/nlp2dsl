@@ -5,7 +5,74 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.10] - 2026-06-03
+
+### Fixed
+- Fix string-concat issues (ticket-616e3a85)
+- Fix string-concat issues (ticket-c3e00438)
+- Fix magic-numbers issues (ticket-0c14fdca)
+- Fix string-concat issues (ticket-891a6624)
+- Fix unused-imports issues (ticket-fee55e46)
+- Fix wildcard-imports issues (ticket-8d40f43b)
+- Fix ai-boilerplate issues (ticket-08ceb54b)
+- Fix string-concat issues (ticket-619416fc)
+- Fix relative-imports issues (ticket-e831df43)
+- Fix relative-imports issues (ticket-611cce1f)
+- Fix unused-imports issues (ticket-b262a15d)
+- Fix ai-boilerplate issues (ticket-1ca41d5c)
+- Fix string-concat issues (ticket-3c002d51)
+- Fix unused-imports issues (ticket-a21e2790)
+- Fix magic-numbers issues (ticket-8347ee63)
+- Fix relative-imports issues (ticket-c817bf01)
+- Fix unused-imports issues (ticket-8b296193)
+- Fix magic-numbers issues (ticket-6e5993f0)
+- Fix llm-generated-code issues (ticket-d5835930)
+- Fix unused-imports issues (ticket-56520637)
+- Fix unused-imports issues (ticket-2b6c5439)
+- Fix string-concat issues (ticket-1524c8eb)
+- Fix unused-imports issues (ticket-75152068)
+- Fix string-concat issues (ticket-18143572)
+- Fix unused-imports issues (ticket-b115c49b)
+- Fix unused-imports issues (ticket-e018aebb)
+- Fix magic-numbers issues (ticket-09a381ab)
+- Fix unused-imports issues (ticket-e1c59dbb)
+- Fix unused-imports issues (ticket-e274cbe7)
+- Fix smart-return-type issues (ticket-cf621da7)
+- Fix relative-imports issues (ticket-f0bb0d83)
+- Fix relative-imports issues (ticket-1d8f8c0a)
+- Fix string-concat issues (ticket-2a0f4b01)
+
 ## [Unreleased]
+
+## [0.0.8] - 2026-06-03
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update testql-scenarios/generated-api-smoke.testql.toon.yaml
+- Update testql-scenarios/generated-cli-tests.testql.toon.yaml
+- Update testql-scenarios/generated-from-pytests.testql.toon.yaml
+- Update tests/tests/test_nlp2dsl_tests.py
+
+### Other
+- Update app.doql.less
+- Update nlp-service/app/main.py
+- Update nlp-service/app/orchestrator.py
+- Update nlp-service/app/parser_rules.py
+- Update nlp-service/app/system_executor.py
+- Update nlp2dsl_sdk/client.py
+- Update nlp2dsl_sdk/demos.py
+- Update planfile.yaml
+- Update project.sh
+- Update project/analysis.toon.yaml
+- ... and 19 more files
 
 ## [0.0.7] - 2026-04-07
 

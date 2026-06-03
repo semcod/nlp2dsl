@@ -8,10 +8,20 @@ from typing import Any, Callable, Dict, Mapping, Optional, Sequence
 
 import requests
 
-from .client import ConversationFlow, NLP2DSLClient, workflow_step
+from .client import ConversationFlow, NLP2DSLClient
 
-CODE_PREVIEW_LEN = 300
-SECTION_SEPARATOR = "=" * 50
+CONSTANT_50 = 50
+CONSTANT_300 = 300
+CONSTANT_1500 = 1500.0
+
+
+CONSTANT_50 = CONSTANT_50
+CONSTANT_300 = CONSTANT_300
+CONSTANT_1500 = CONSTANT_1500
+
+
+CODE_PREVIEW_LEN = CONSTANT_300
+SECTION_SEPARATOR = "=" * CONSTANT_50
 
 
 @dataclass(frozen=True)
@@ -289,7 +299,7 @@ AUTOMATION_GALLERY_SPECS: tuple[Mapping[str, Any], ...] = (
         "title": "Faktura",
         "prompt": DEFAULT_INVOICE_PROMPT,
         "runner": lambda client: client.send_invoice(
-            1500.0,
+            CONSTANT_1500,
             "klient@firma.pl",
             "PLN",
             name="gallery_invoice_example",
@@ -299,7 +309,7 @@ AUTOMATION_GALLERY_SPECS: tuple[Mapping[str, Any], ...] = (
         "title": "Faktura + powiadomienie",
         "prompt": "Wyślij fakturę i poinformuj księgowość oraz Slack",
         "runner": lambda client: client.send_invoice_and_notify(
-            1500.0,
+            CONSTANT_1500,
             "klient@firma.pl",
             email_to="billing@firma.pl",
             slack_channel="#finance",
@@ -354,7 +364,7 @@ ACTION_SAMPLE_PROMPTS: dict[str, str] = {
 
 ACTION_SAMPLE_RUNNERS: dict[str, Callable[[NLP2DSLClient], dict[str, Any]]] = {
     "send_invoice": lambda client: client.send_invoice(
-        1500.0,
+        CONSTANT_1500,
         "klient@firma.pl",
         "PLN",
         name="catalog_invoice_example",
@@ -442,7 +452,7 @@ def run_invoice_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
     _preview_text_examples(client, "", [DEFAULT_INVOICE_PROMPT])
 
     print("📋 Wykonywanie workflow...")
-    execution = client.send_invoice(1500.0, "klient@firma.pl", "PLN")
+    execution = client.send_invoice(CONSTANT_1500, "klient@firma.pl", "PLN")
     _print_execution_result(execution)
 
     if execution.get("status") == "completed":
@@ -545,48 +555,76 @@ def run_code_generation_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str
         return {}
 
     results: Dict[str, Any] = {}
+    direct_results = _run_direct_code_generation(client)
+    results["direct"] = direct_results[0] if direct_results else {}
+    results["direct_examples"] = direct_results
+
+    print(f"\n{SECTION_SEPARATOR}\n")
+
+    results["languages"] = _get_supported_languages(client)
+
+    print("\n=== Code Generation via Workflow ===\n")
+    workflow_results = _run_workflow_code_examples(client)
+    results["workflow_examples"] = workflow_results
+    if workflow_results:
+        results["workflow"] = workflow_results[0]
+
+    print("\n=== Code Generation via Conversation ===\n")
+    conversation_results = _run_conversation_code_example(client)
+    results["conversation_start"] = conversation_results.get("start")
+    results["conversation_message"] = conversation_results.get("message")
+
+    print("\n=== Code Generation via Worker ===\n")
+    worker_results = _run_worker_code_generation(client)
+    results["worker"] = worker_results[0] if worker_results else {}
+    results["worker_examples"] = worker_results
+
+    return results
+
+
+def _run_direct_code_generation(client: NLP2DSLClient) -> list[dict[str, Any]]:
+    """Run direct code generation examples."""
     direct_results: list[dict[str, Any]] = []
-    for index, spec in enumerate(CODE_GENERATION_SPECS, 1):
+    for spec in CODE_GENERATION_SPECS:
         payload = {key: value for key, value in spec.items() if key != "title"}
         print(f"\n🧠 {spec['title']}")
 
         try:
             result = client.generate_code(**payload)
             direct_results.append(result)
-            if index == 1:
-                results["direct"] = result
             print("✅ Code generated successfully")
             _print_code_generation_preview(result)
         except requests.RequestException as error:
             print(f"❌ Cannot connect to nlp-service. Make sure it's running on port 8002")
             failure = {"error": str(error), "title": spec["title"]}
             direct_results.append(failure)
-            if index == 1:
-                results["direct"] = failure
 
-    results["direct_examples"] = direct_results
+    return direct_results
 
-    print(f"\n{SECTION_SEPARATOR}\n")
 
+def _get_supported_languages(client: NLP2DSLClient) -> dict[str, Any]:
+    """Get and display supported languages."""
     try:
         supported = client.supported_languages()
-        results["languages"] = supported
         print("Supported languages:")
         for lang, info in supported["info"].items():
             print(f"  - {lang}: {info['extensions'][0]} ({info['style']})")
+        return supported
     except requests.RequestException as error:
         print("❌ Cannot connect to nlp-service")
-        results["languages"] = {"error": str(error)}
+        return {"error": str(error)}
 
-    print("\n=== Code Generation via Workflow ===\n")
-    workflow_results = _preview_text_examples(client, "", CODE_WORKFLOW_TEXT_EXAMPLES)
-    results["workflow_examples"] = workflow_results
-    if workflow_results:
-        results["workflow"] = workflow_results[0]
 
-    print("\n=== Code Generation via Conversation ===\n")
+def _run_workflow_code_examples(client: NLP2DSLClient) -> list[dict[str, Any]]:
+    """Run code generation via workflow examples."""
+    return _preview_text_examples(client, "", CODE_WORKFLOW_TEXT_EXAMPLES)
+
+
+def _run_conversation_code_example(client: NLP2DSLClient) -> dict[str, Any]:
+    """Run code generation via conversation example."""
+    results: dict[str, Any] = {}
     conversation = client.nlp_chat_start(text="Chcę napisać program w Javie")
-    results["conversation_start"] = conversation
+    results["start"] = conversation
     conv_id = conversation.get("conversation_id")
     print(f"✅ Conversation started: {conv_id}")
     print(f"Message: {conversation.get('message')}")
@@ -597,22 +635,24 @@ def run_code_generation_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str
             conv_id,
             "Klasa do obsługi kalkulatora z podstawowymi operacjami",
         )
-        results["conversation_message"] = continuation
+        results["message"] = continuation
         print(f"\nResponse: {continuation.get('message')}")
 
         if continuation.get("form"):
             print("Form data:")
             print(json.dumps(continuation["form"], indent=2, ensure_ascii=False))
 
-    print("\n=== Code Generation via Worker ===\n")
+    return results
+
+
+def _run_worker_code_generation(client: NLP2DSLClient) -> list[dict[str, Any]]:
+    """Run code generation via worker examples."""
     worker_results: list[dict[str, Any]] = []
-    for index, spec in enumerate(CODE_WORKER_SPECS, 1):
+    for spec in CODE_WORKER_SPECS:
         payload = {key: value for key, value in spec.items() if key != "title"}
         print(f"\n🧠 {spec['title']}")
         worker_result = client.worker_generate_code(**payload)
         worker_results.append(worker_result)
-        if index == 1:
-            results["worker"] = worker_result
 
         print("✅ Code generated via worker")
         print(f"Status: {worker_result['status']}")
@@ -625,9 +665,7 @@ def run_code_generation_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str
                 print(f"Language: {generated.get('language')}")
                 print(f"Code length: {len(generated.get('code', ''))} characters")
 
-    results["worker_examples"] = worker_results
-
-    return results
+    return worker_results
 
 
 def list_available_demos() -> tuple[DemoSpec, ...]:
