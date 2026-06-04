@@ -44,6 +44,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.12] - 2026-06-04
+
+### Docs
+- Update README.md
+- Update docs/REFACTOR-PLAN.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update .env.example
+- Update backend/app/routers/chat.py
+- Update nlp-service/Dockerfile
+- Update nlp-service/app/orchestrator.py
+- Update nlp-service/app/parser_rules.py
+- Update nlp-service/app/parsing/__init__.py
+- Update nlp-service/app/parsing/facade.py
+- Update nlp-service/app/registry.py
+- Update nlp-service/app/schemas.py
+- Update nlp-service/integrations/__init__.py
+- ... and 23 more files
+
 ## [0.0.11] - 2026-06-03
 
 ### Docs

@@ -11,6 +11,7 @@ from app.registry import (
     ACTIONS_REGISTRY,
     BUSINESS_ACTIONS,
     COMPOSITE_INTENTS,
+    MULLM_ACTIONS,
     SYSTEM_ACTIONS,
     get_action_by_alias,
     get_defaults,
@@ -132,12 +133,22 @@ class TestCategories:
         assert len(BUSINESS_ACTIONS) > 0
 
     def test_no_overlap(self) -> None:
-        """System and business sets don't overlap."""
+        """System, business and mullm sets don't overlap."""
         assert SYSTEM_ACTIONS.isdisjoint(BUSINESS_ACTIONS)
+        assert SYSTEM_ACTIONS.isdisjoint(MULLM_ACTIONS)
+        assert BUSINESS_ACTIONS.isdisjoint(MULLM_ACTIONS)
 
     def test_union_is_complete(self) -> None:
-        """System ∪ Business = all actions."""
-        assert SYSTEM_ACTIONS | BUSINESS_ACTIONS == set(ACTIONS_REGISTRY.keys())
+        """System ∪ Business ∪ Mullm = all actions."""
+        assert (
+            SYSTEM_ACTIONS | BUSINESS_ACTIONS | MULLM_ACTIONS
+            == set(ACTIONS_REGISTRY.keys())
+        )
+
+    def test_mullm_actions_loaded(self) -> None:
+        """Mullm integration registers shell/ticket actions."""
+        assert "mullm_shell_task" in MULLM_ACTIONS
+        assert "mullm_create_ticket" in ACTIONS_REGISTRY
 
 
 # ── Composite intents ────────────────────────────────────────────

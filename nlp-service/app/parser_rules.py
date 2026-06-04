@@ -147,6 +147,11 @@ def _detect_actions(text_lower: str) -> list[str]:
         # Same category system actions with overlapping aliases — pick best
         if top_cat == "system" and second_cat == "system" and top_score > second_score:
             return [sorted_actions[0]]
+        # System vs Mullm overlap (np. „pliki”) — prefer system w nlp2dsl
+        if top_cat == "system" and second_cat == "mullm":
+            return [sorted_actions[0]]
+        if top_cat == "mullm" and second_cat == "system" and top_score <= second_score:
+            return [sorted_actions[1]]
 
     return sorted_actions
 

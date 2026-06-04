@@ -15,8 +15,8 @@ import logging
 from uuid import uuid4
 
 from app.mapper import map_to_dsl
-from app.parser_rules import parse_rules
-from app.registry import ACTIONS_REGISTRY, SYSTEM_ACTIONS, get_trigger
+from app.parsing.facade import parse_text
+from app.registry import ACTIONS_REGISTRY, MULLM_ACTIONS, SYSTEM_ACTIONS, get_trigger
 from app.schemas import (
     ActionFormSchema,
     ConversationResponse,
@@ -65,6 +65,9 @@ FIELD_TYPES: dict[str, dict] = {
     "action_description": {"type": "string",  "label": "Opis akcji"},
     "required_fields":    {"type": "string",  "label": "Wymagane pola (przecinkami)"},
     "aliases":            {"type": "string",  "label": "Aliasy (przecinkami)"},
+    # ── Mullm ──
+    "shell_command": {"type": "string",  "label": "Polecenie shell"},
+    "description":   {"type": "string",  "label": "Opis zadania"},
 }
 
 
@@ -76,7 +79,7 @@ async def start_conversation(text: str) -> ConversationResponse:
     state = ConversationState(id=uuid4().hex[:_CONVERSATION_ID_LENGTH])
     state.history.append({"role": "user", "text": text})
 
-    result = _process_message(state, text)
+    result = await _process_message(state, text)
     await _store.save(state.id, state.model_dump())
     return result
 
@@ -96,7 +99,7 @@ async def continue_conversation(conversation_id: str, text: str) -> Conversation
 
     state.history.append({"role": "user", "text": text})
 
-    result = _process_message(state, text)
+    result = await _process_message(state, text)
     await _store.save(state.id, state.model_dump())
     return result
 
@@ -148,7 +151,7 @@ def get_action_form(action: str) -> ActionFormSchema | None:
 # ── Internal ──────────────────────────────────────────────────
 
 
-def _process_message(state: ConversationState, text: str) -> ConversationResponse:
+async def _process_message(state: ConversationState, text: str) -> ConversationResponse:
     """Core orchestration: parse → merge → validate → respond."""
 
     # Early return: if workflow is ready and user says execute keyword, preserve DSL
@@ -156,8 +159,8 @@ def _process_message(state: ConversationState, text: str) -> ConversationRespons
     if execute_response:
         return execute_response
 
-    # 1. NLP extraction
-    nlp = parse_rules(text)
+    # 1. NLP extraction (rules / llm / auto — NLP_CHAT_MODE)
+    nlp = await parse_text(text)
     log.info("NLP: intent=%s conf=%.2f", nlp.intent.intent, nlp.intent.confidence)
 
     # 2. Update state with new data
@@ -260,7 +263,12 @@ def _build_and_check_dsl(state: ConversationState) -> ConversationResponse | Non
         state.status = "ready"
         state.missing = []
 
-        msg = f"Workflow gotowy: {dialog.workflow.name} ({len(dialog.workflow.steps)} kroków). Wyślij 'uruchom' aby wykonać."
+        backend = "mullm" if state.intent in MULLM_ACTIONS else "worker"
+        msg = (
+            f"Workflow gotowy: {dialog.workflow.name} ({len(dialog.workflow.steps)} kroków). "
+            f"Wyślij 'uruchom' aby wykonać"
+            + (" (Mullm)." if backend == "mullm" else ".")
+        )
         state.history.append({"role": "assistant", "text": msg})
 
         return ConversationResponse(
@@ -268,6 +276,7 @@ def _build_and_check_dsl(state: ConversationState) -> ConversationResponse | Non
             status="ready",
             message=msg,
             dsl=dialog.workflow,
+            execution_backend=backend,
         )
     return None
 

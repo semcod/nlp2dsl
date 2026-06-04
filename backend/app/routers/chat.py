@@ -85,14 +85,31 @@ async def chat_message(request: Request) -> dict[str, Any]:
         dsl = result.get("dsl")
         if dsl:
             steps = dsl.get("steps", [])
-            req = RunWorkflowRequest(
-                name=dsl.get("name", "chat_generated"),
-                trigger=dsl.get("trigger", "manual"),
-                steps=[Step(action=s["action"], config=s.get("config", {})) for s in steps],
-            )
-            wf_result = await run_workflow(req)
-            result["status"] = "executed"
-            result["execution"] = wf_result.model_dump()
+            mullm_steps = [
+                s for s in steps
+                if str(s.get("action", "")).startswith("mullm_")
+            ]
+            if mullm_steps or result.get("execution_backend") == "mullm":
+                result["status"] = "ready"
+                result["execution_backend"] = "mullm"
+                result["execution"] = {
+                    "backend": "mullm",
+                    "steps": mullm_steps or steps,
+                    "hint": "Wykonaj w Mullm workspace (conductor / BFF).",
+                }
+            else:
+                req = RunWorkflowRequest(
+                    name=dsl.get("name", "chat_generated"),
+                    trigger=dsl.get("trigger", "manual"),
+                    steps=[
+                        Step(action=s["action"], config=s.get("config", {}))
+                        for s in steps
+                    ],
+                )
+                wf_result = await run_workflow(req)
+                result["status"] = "executed"
+                result["execution"] = wf_result.model_dump()
+                result["execution_backend"] = "worker"
 
     return result
 

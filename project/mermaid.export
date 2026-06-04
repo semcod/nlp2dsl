@@ -1,13 +1,38 @@
 flowchart TD
 %% generated in 0.00s
     subgraph backend__app
-        backend__app__routers__settings__actions_schema["actions_schema"]
-        backend__app__routers__settings__action_schema["action_schema"]
-        backend__app__routers__settings__get_settings["get_settings"]
-        backend__app__routers__settings__get_settings_section["get_settings_section"]
-        backend__app__routers__settings__update_settings_section["update_settings_section"]
-        backend__app__routers__settings__set_setting["set_setting"]
-        backend__app__routers__settings__reset_settings["reset_settings"]
+        backend__app__engine___workflow_steps_payload["_workflow_steps_payload"]
+        backend__app__engine___persist_workflow_snapshot["_persist_workflow_snapshot"]
+        backend__app__engine___publish_workflow_event["_publish_workflow_event"]
+        backend__app__engine___execute_workflow("_execute_workflow CC=11")
+        backend__app__engine___track_background_task["_track_background_task"]
+        backend__app__engine__run_workflow["run_workflow"]
+        backend__app__engine__start_workflow["start_workflow"]
+        backend__app__logging_setup__get_request_id["get_request_id"]
+        backend__app__logging_setup__JSONFormatter____init__["__init__"]
+        backend__app__logging_setup__JSONFormatter__format["format"]
+        backend__app__logging_setup__RequestIDMiddleware____init__["__init__"]
+        backend__app__logging_setup__RequestIDMiddleware__dispatch["dispatch"]
+        backend__app__logging_setup__setup_logging["setup_logging"]
+        backend__app__workflow_events__WorkflowEvent__to_dict["to_dict"]
+        backend__app__workflow_events__WorkflowEventHub____init__["__init__"]
+        backend__app__workflow_events__WorkflowEventHub__subscribe["subscribe"]
+        backend__app__workflow_events__WorkflowEventHub__unsubscribe["unsubscribe"]
+        backend__app__workflow_events__WorkflowEventHub__publish["publish"]
+        backend__app__workflow_events__WorkflowEventHub__subscriber_count["subscriber_count"]
+        backend__app__main__health["health"]
+        backend__app__db__memory__MemoryWorkflowRepo____init__["__init__"]
+        backend__app__db__memory__MemoryWorkflowRepo__save_run["save_run"]
+        backend__app__db__memory__MemoryWorkflowRepo__update_run_status["update_run_status"]
+        backend__app__db__memory__MemoryWorkflowRepo__get_run["get_run"]
+        backend__app__db__memory__MemoryWorkflowRepo__list_runs["list_runs"]
+        backend__app__db__memory__MemoryWorkflowRepo__count_runs["count_runs"]
+        backend__app__db__WorkflowRepo__save_run["save_run"]
+        backend__app__db__WorkflowRepo__update_run_status["update_run_status"]
+        backend__app__db__WorkflowRepo__get_run["get_run"]
+        backend__app__db__WorkflowRepo__list_runs["list_runs"]
+        backend__app__db__WorkflowRepo__count_runs["count_runs"]
+        backend__app__db__create_workflow_repo["create_workflow_repo"]
         backend__app__db__postgres__WorkflowRunModel__to_dict["to_dict"]
         backend__app__db__postgres__PostgresWorkflowRepo____init__["__init__"]
         backend__app__db__postgres__PostgresWorkflowRepo___ensure_engine["_ensure_engine"]
@@ -19,14 +44,7 @@ flowchart TD
         backend__app__db__postgres__PostgresWorkflowRepo__list_runs["list_runs"]
         backend__app__db__postgres__PostgresWorkflowRepo__count_runs["count_runs"]
         backend__app__db__postgres__PostgresWorkflowRepo__close["close"]
-        backend__app__main__health["health"]
         backend__app__routers__system__system_execute["system_execute"]
-        backend__app__db__WorkflowRepo__save_run["save_run"]
-        backend__app__db__WorkflowRepo__update_run_status["update_run_status"]
-        backend__app__db__WorkflowRepo__get_run["get_run"]
-        backend__app__db__WorkflowRepo__list_runs["list_runs"]
-        backend__app__db__WorkflowRepo__count_runs["count_runs"]
-        backend__app__db__create_workflow_repo["create_workflow_repo"]
         backend__app__routers__workflow___format_sse["_format_sse"]
         backend__app__routers__workflow___workflow_snapshot["_workflow_snapshot"]
         backend__app__routers__workflow__list_actions["list_actions"]
@@ -36,31 +54,13 @@ flowchart TD
         backend__app__routers__workflow__get_workflow["get_workflow"]
         backend__app__routers__workflow__stream_workflow["stream_workflow"]
         backend__app__routers__workflow__workflow_from_text("workflow_from_text CC=8")
-        backend__app__db__memory__MemoryWorkflowRepo____init__["__init__"]
-        backend__app__db__memory__MemoryWorkflowRepo__save_run["save_run"]
-        backend__app__db__memory__MemoryWorkflowRepo__update_run_status["update_run_status"]
-        backend__app__db__memory__MemoryWorkflowRepo__get_run["get_run"]
-        backend__app__db__memory__MemoryWorkflowRepo__list_runs["list_runs"]
-        backend__app__db__memory__MemoryWorkflowRepo__count_runs["count_runs"]
-        backend__app__engine___workflow_steps_payload["_workflow_steps_payload"]
-        backend__app__engine___persist_workflow_snapshot["_persist_workflow_snapshot"]
-        backend__app__engine___publish_workflow_event["_publish_workflow_event"]
-        backend__app__engine___execute_workflow("_execute_workflow CC=11")
-        backend__app__engine___track_background_task["_track_background_task"]
-        backend__app__engine__run_workflow["run_workflow"]
-        backend__app__engine__start_workflow["start_workflow"]
-        backend__app__routers__chat___proxy_chat_payload("_proxy_chat_payload CC=9")
-        backend__app__routers__chat__chat_start["chat_start"]
-        backend__app__routers__chat__chat_message["chat_message"]
-        backend__app__routers__chat__chat_get_state["chat_get_state"]
-        backend__app__workflow_events__WorkflowEvent__to_dict["to_dict"]
-        backend__app__workflow_events__WorkflowEventHub____init__["__init__"]
-        backend__app__workflow_events__WorkflowEventHub__subscribe["subscribe"]
-        backend__app__workflow_events__WorkflowEventHub__unsubscribe["unsubscribe"]
-        backend__app__workflow_events__WorkflowEventHub__publish["publish"]
-        backend__app__workflow_events__WorkflowEventHub__subscriber_count["subscriber_count"]
-        backend__app__logging_setup__get_request_id["get_request_id"]
-        backend__app__logging_setup__JSONFormatter____init__["__init__"]
+        backend__app__routers__settings__actions_schema["actions_schema"]
+        backend__app__routers__settings__action_schema["action_schema"]
+        backend__app__routers__settings__get_settings["get_settings"]
+        backend__app__routers__settings__get_settings_section["get_settings_section"]
+        backend__app__routers__settings__update_settings_section["update_settings_section"]
+        backend__app__routers__settings__set_setting["set_setting"]
+        backend__app__routers__settings__reset_settings["reset_settings"]
     end
     subgraph examples__01_invoice
         examples__01_invoice__main__main["main"]
@@ -89,15 +89,12 @@ flowchart TD
         nlp_service__app__audio_parser__StreamingSTT__send_audio["send_audio"]
         nlp_service__app__audio_parser__StreamingSTT__get_transcript["get_transcript"]
         nlp_service__app__audio_parser__StreamingSTT__stop["stop"]
-        nlp_service__app__registry__get_action_by_alias["get_action_by_alias"]
-        nlp_service__app__registry__get_trigger["get_trigger"]
-        nlp_service__app__registry__get_required_fields["get_required_fields"]
-        nlp_service__app__registry__get_defaults["get_defaults"]
-        nlp_service__app__parser_rules__parse_rules["parse_rules"]
-        nlp_service__app__parser_rules___detect_actions("_detect_actions CC=10")
-        nlp_service__app__parser_rules___resolve_intent["_resolve_intent"]
-        nlp_service__app__parser_rules___extract_entities{{_extract_entities CC=40}}
-        nlp_service__app__parser_rules___set_entity["_set_entity"]
+        nlp_service__app__logging_setup__get_request_id["get_request_id"]
+        nlp_service__app__logging_setup__JSONFormatter____init__["__init__"]
+        nlp_service__app__logging_setup__JSONFormatter__format["format"]
+        nlp_service__app__logging_setup__RequestIDMiddleware____init__["__init__"]
+        nlp_service__app__logging_setup__RequestIDMiddleware__dispatch["dispatch"]
+        nlp_service__app__logging_setup__setup_logging["setup_logging"]
         nlp_service__app__code_generator__CodeGenerator____init__["__init__"]
         nlp_service__app__code_generator__CodeGenerator___get_api_key["_get_api_key"]
         nlp_service__app__code_generator__CodeGenerator___build_prompt["_build_prompt"]
@@ -106,19 +103,15 @@ flowchart TD
         nlp_service__app__code_generator__CodeGenerator___split_code_and_tests["_split_code_and_tests"]
         nlp_service__app__code_generator__CodeGenerator__get_supported_languages["get_supported_languages"]
         nlp_service__app__code_generator__CodeGenerator__get_language_info["get_language_info"]
+        nlp_service__app__parser_llm__parse_llm["parse_llm"]
+        nlp_service__app__parser_llm___detect_provider("_detect_provider CC=10")
+        nlp_service__app__parser_llm___parse_json_response["_parse_json_response"]
         nlp_service__app__mapper__map_to_dsl("map_to_dsl CC=8")
         nlp_service__app__mapper___resolve_actions["_resolve_actions"]
         nlp_service__app__mapper___build_config["_build_config"]
         nlp_service__app__mapper___get_field_mapping["_get_field_mapping"]
         nlp_service__app__mapper___make_name["_make_name"]
         nlp_service__app__mapper___build_prompt["_build_prompt"]
-        nlp_service__app__orchestrator__start_conversation["start_conversation"]
-        nlp_service__app__orchestrator__continue_conversation["continue_conversation"]
-        nlp_service__app__orchestrator__get_conversation["get_conversation"]
-        nlp_service__app__orchestrator__get_action_form["get_action_form"]
-        nlp_service__app__orchestrator___process_message{{_process_message CC=21}}
-        nlp_service__app__orchestrator___merge_into_state("_merge_into_state CC=9")
-        nlp_service__app__orchestrator___format_system_result{{_format_system_result CC=16}}
         nlp_service__app__system_executor___validate_file_path["_validate_file_path"]
         nlp_service__app__system_executor___is_read_only["_is_read_only"]
         nlp_service__app__system_executor__execute_system_action["execute_system_action"]
@@ -132,15 +125,27 @@ flowchart TD
         nlp_service__app__system_executor___exec_registry_add("_exec_registry_add CC=11")
         nlp_service__app__system_executor___exec_registry_edit("_exec_registry_edit CC=12")
         nlp_service__app__system_executor___exec_status["_exec_status"]
-        nlp_service__app__store__ConversationStore__get["get"]
-        nlp_service__app__store__ConversationStore__save["save"]
-        nlp_service__app__store__ConversationStore__delete["delete"]
-        nlp_service__app__store__ConversationStore__count["count"]
+        nlp_service__app__settings__SettingsManager____new__["__new__"]
+        nlp_service__app__settings__SettingsManager__get["get"]
+        nlp_service__app__settings__SettingsManager__get_section["get_section"]
+        nlp_service__app__settings__SettingsManager__get_all["get_all"]
+        nlp_service__app__settings__SettingsManager__set["set"]
+        nlp_service__app__settings__SettingsManager__update_section["update_section"]
+        nlp_service__app__settings__SettingsManager__reset["reset"]
+        nlp_service__app__settings__SettingsManager___load["_load"]
+        nlp_service__app__settings__SettingsManager___save["_save"]
+        nlp_service__app__settings__SettingsManager__describe["describe"]
+        nlp_service__app__settings___coerce_type["_coerce_type"]
         nlp_service__app__store__memory__MemoryConversationStore____init__["__init__"]
         nlp_service__app__store__memory__MemoryConversationStore__get["get"]
         nlp_service__app__store__memory__MemoryConversationStore__save["save"]
         nlp_service__app__store__memory__MemoryConversationStore__delete["delete"]
         nlp_service__app__store__memory__MemoryConversationStore__count["count"]
+    end
+    subgraph nlp_service__integrations
+        nlp_service__integrations__loader___integration_names["_integration_names"]
+        nlp_service__integrations__loader__load_integration_registries["load_integration_registries"]
+        nlp_service__integrations__loader__apply_integrations["apply_integrations"]
     end
     subgraph nlp2dsl_sdk____main__
         nlp2dsl_sdk____main____main["main"]
@@ -190,7 +195,11 @@ flowchart TD
         nlp2dsl_sdk__client__ConversationFlow____init__["__init__"]
         nlp2dsl_sdk__client__ConversationFlow__start["start"]
         nlp2dsl_sdk__client__ConversationFlow__send_message["send_message"]
-        nlp2dsl_sdk__client__ConversationFlow___handle_response{{_handle_response CC=16}}
+        nlp2dsl_sdk__client__ConversationFlow___handle_response["_handle_response"]
+        nlp2dsl_sdk__client__ConversationFlow___handle_in_progress_response["_handle_in_progress_response"]
+        nlp2dsl_sdk__client__ConversationFlow___handle_ready_response["_handle_ready_response"]
+        nlp2dsl_sdk__client__ConversationFlow___handle_completed_response["_handle_completed_response"]
+        nlp2dsl_sdk__client__ConversationFlow___handle_error_response["_handle_error_response"]
         nlp2dsl_sdk__client__ConversationFlow__run_demo["run_demo"]
         nlp2dsl_sdk__client__ConversationFlow__run_interactive["run_interactive"]
     end
@@ -210,7 +219,12 @@ flowchart TD
         nlp2dsl_sdk__demos__run_email_demo["run_email_demo"]
         nlp2dsl_sdk__demos__run_report_and_notify_demo["run_report_and_notify_demo"]
         nlp2dsl_sdk__demos__run_scheduled_report_demo["run_scheduled_report_demo"]
-        nlp2dsl_sdk__demos__run_code_generation_demo{{run_code_generation_demo CC=20}}
+        nlp2dsl_sdk__demos__run_code_generation_demo["run_code_generation_demo"]
+        nlp2dsl_sdk__demos___run_direct_code_generation["_run_direct_code_generation"]
+        nlp2dsl_sdk__demos___get_supported_languages["_get_supported_languages"]
+        nlp2dsl_sdk__demos___run_workflow_code_examples["_run_workflow_code_examples"]
+        nlp2dsl_sdk__demos___run_conversation_code_example["_run_conversation_code_example"]
+        nlp2dsl_sdk__demos___run_worker_code_generation["_run_worker_code_generation"]
         nlp2dsl_sdk__demos__list_available_demos["list_available_demos"]
     end
     subgraph run_all_tests
@@ -283,36 +297,38 @@ flowchart TD
     tauri_wrapper__scripts__serve_dist__handleRequest --> tauri_wrapper__scripts__serve_dist__sendFile
     tauri_wrapper__scripts__serve_dist__startServer --> tauri_wrapper__scripts__serve_dist__handleRequest
     tauri_wrapper__scripts__serve_dist__server --> tauri_wrapper__scripts__serve_dist__handleRequest
-    backend__app__routers__settings__actions_schema --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__settings__action_schema --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__settings__get_settings --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__settings__get_settings_section --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__settings__update_settings_section --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__settings__set_setting --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__settings__reset_settings --> nlp_service__app__logging_setup__get_request_id
-    nlp2dsl_sdk____main____main --> nlp2dsl_sdk__demos__list_available_demos
-    nlp2dsl_sdk__client__NLP2DSLClient__send_invoice --> nlp2dsl_sdk__client__workflow_step
-    nlp2dsl_sdk__client__NLP2DSLClient__send_email --> nlp2dsl_sdk__client__workflow_step
-    nlp2dsl_sdk__client__NLP2DSLClient__generate_report --> nlp2dsl_sdk__client__workflow_step
-    nlp2dsl_sdk__client__NLP2DSLClient__generate_report_and_notify --> nlp2dsl_sdk__client__workflow_step
-    nlp2dsl_sdk__client__NLP2DSLClient__notify_slack --> nlp2dsl_sdk__client__workflow_step
-    nlp2dsl_sdk__client__NLP2DSLClient__crm_update --> nlp2dsl_sdk__client__workflow_step
-    nlp2dsl_sdk__client__NLP2DSLClient__send_invoice_and_notify --> nlp2dsl_sdk__client__workflow_step
-    backend__app__routers__system__system_execute --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__workflow__run_workflow_endpoint --> nlp2dsl_sdk__client__NLP2DSLClient__run_workflow
+    backend__app__engine___persist_workflow_snapshot --> backend__app__engine___workflow_steps_payload
+    backend__app__engine___execute_workflow --> backend__app__engine___publish_workflow_event
+    backend__app__engine___execute_workflow --> backend__app__logging_setup__get_request_id
+    backend__app__engine___execute_workflow --> backend__app__engine___persist_workflow_snapshot
+    backend__app__engine__run_workflow --> backend__app__engine___execute_workflow
+    backend__app__engine__start_workflow --> backend__app__engine___track_background_task
+    backend__app__engine__start_workflow --> backend__app__engine___persist_workflow_snapshot
+    backend__app__engine__start_workflow --> backend__app__engine___execute_workflow
+    backend__app__workflow_events__WorkflowEventHub__publish --> nlp_service__app__settings__SettingsManager__set
+    backend__app__workflow_events__WorkflowEventHub__subscriber_count --> nlp_service__app__settings__SettingsManager__set
+    backend__app__routers__system__system_execute --> backend__app__logging_setup__get_request_id
+    backend__app__routers__workflow__run_workflow_endpoint --> backend__app__engine__run_workflow
     backend__app__routers__workflow__start_workflow_endpoint --> backend__app__engine__start_workflow
     backend__app__routers__workflow__stream_workflow --> backend__app__routers__workflow___workflow_snapshot
     backend__app__routers__workflow__stream_workflow --> backend__app__routers__workflow___format_sse
+    backend__app__routers__settings__actions_schema --> backend__app__logging_setup__get_request_id
+    backend__app__routers__settings__action_schema --> backend__app__logging_setup__get_request_id
+    backend__app__routers__settings__get_settings --> backend__app__logging_setup__get_request_id
+    backend__app__routers__settings__get_settings_section --> backend__app__logging_setup__get_request_id
+    backend__app__routers__settings__update_settings_section --> backend__app__logging_setup__get_request_id
+    backend__app__routers__settings__set_setting --> backend__app__logging_setup__get_request_id
+    backend__app__routers__settings__reset_settings --> backend__app__logging_setup__get_request_id
+    nlp2dsl_sdk____main____main --> nlp2dsl_sdk__demos__list_available_demos
+    examples__code_generation_examples__main --> nlp2dsl_sdk__demos__run_code_generation_demo
+    examples__04_scheduled_report__main__main --> nlp2dsl_sdk__demos__run_scheduled_report_demo
+    examples__01_invoice__main__main --> nlp2dsl_sdk__demos__run_invoice_demo
+    examples__03_report_and_notify__main__main --> nlp2dsl_sdk__demos__run_report_and_notify_demo
+    examples__02_email__main__main --> nlp2dsl_sdk__demos__run_email_demo
     nlp_service__app__audio_parser__stt_file --> nlp_service__app__audio_parser__stt_audio
     nlp_service__app__audio_parser__StreamingSTT__send_audio --> nlp_service__app__audio_parser__stt_audio
-    examples__code_generation_examples__main --> nlp2dsl_sdk__demos__run_code_generation_demo
-    examples__01_invoice__main__main --> nlp2dsl_sdk__demos__run_invoice_demo
-    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__parser_rules___detect_actions
-    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__parser_rules___resolve_intent
-    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__parser_rules___extract_entities
-    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__registry__get_trigger
-    nlp_service__app__parser_rules___resolve_intent --> nlp_service__app__settings__SettingsManager__set
-    examples__02_email__main__main --> nlp2dsl_sdk__demos__run_email_demo
+    nlp_service__app__parser_llm__parse_llm --> nlp_service__app__parser_llm___detect_provider
+    nlp_service__app__parser_llm__parse_llm --> nlp_service__app__parser_llm___parse_json_response
     nlp_service__app__mapper__map_to_dsl --> nlp_service__app__mapper___resolve_actions
     nlp_service__app__mapper__map_to_dsl --> nlp_service__app__mapper___make_name
     nlp_service__app__mapper__map_to_dsl --> nlp_service__app__mapper___build_config
@@ -321,30 +337,10 @@ flowchart TD
     nlp_service__app__mapper___build_config --> nlp_service__app__registry__get_required_fields
     nlp_service__app__mapper___build_config --> nlp_service__app__registry__get_defaults
     nlp_service__app__mapper___build_config --> nlp_service__app__mapper___get_field_mapping
-    nlp_service__app__orchestrator__start_conversation --> nlp_service__app__orchestrator___process_message
-    nlp_service__app__orchestrator__continue_conversation --> nlp_service__app__orchestrator___process_message
-    nlp_service__app__orchestrator___process_message --> nlp_service__app__parser_rules__parse_rules
-    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___merge_into_state
-    nlp_service__app__orchestrator___process_message --> nlp_service__app__mapper__map_to_dsl
-    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___format_system_result
-    nlp_service__app__orchestrator___merge_into_state --> nlp_service__app__registry__get_trigger
-    examples__04_scheduled_report__main__main --> nlp2dsl_sdk__demos__run_scheduled_report_demo
     nlp_service__app__system_executor___exec_file_read --> nlp_service__app__system_executor___validate_file_path
     nlp_service__app__system_executor___exec_file_write --> nlp_service__app__system_executor___validate_file_path
     nlp_service__app__system_executor___exec_file_write --> nlp_service__app__system_executor___is_read_only
-    backend__app__engine___persist_workflow_snapshot --> backend__app__engine___workflow_steps_payload
-    backend__app__engine___execute_workflow --> backend__app__engine___publish_workflow_event
-    backend__app__engine___execute_workflow --> nlp_service__app__logging_setup__get_request_id
-    backend__app__engine___execute_workflow --> backend__app__engine___persist_workflow_snapshot
-    backend__app__engine__run_workflow --> backend__app__engine___execute_workflow
-    backend__app__engine__start_workflow --> backend__app__engine___track_background_task
-    backend__app__engine__start_workflow --> backend__app__engine___persist_workflow_snapshot
-    backend__app__engine__start_workflow --> backend__app__engine___execute_workflow
-    backend__app__routers__chat___proxy_chat_payload --> nlp_service__app__logging_setup__get_request_id
-    backend__app__routers__chat__chat_start --> backend__app__routers__chat___proxy_chat_payload
-    backend__app__routers__chat__chat_message --> backend__app__routers__chat___proxy_chat_payload
-    backend__app__routers__chat__chat_message --> nlp2dsl_sdk__client__NLP2DSLClient__run_workflow
-    backend__app__routers__chat__chat_get_state --> nlp_service__app__logging_setup__get_request_id
+    nlp_service__app__settings__SettingsManager__set --> nlp_service__app__settings___coerce_type
     worker__worker__handle_send_invoice --> worker__worker__action
     worker__worker__handle_send_email --> worker__worker__action
     worker__worker__handle_generate_report --> worker__worker__action
@@ -356,9 +352,11 @@ flowchart TD
     worker__worker__handle_notify_teams --> worker__worker__action
     worker__worker__handle_notify_teams --> worker__worker___deliver_notification
     worker__worker__handle_generate_code --> worker__worker__action
-    backend__app__workflow_events__WorkflowEventHub__publish --> nlp_service__app__settings__SettingsManager__set
-    backend__app__workflow_events__WorkflowEventHub__subscriber_count --> nlp_service__app__settings__SettingsManager__set
-    examples__03_report_and_notify__main__main --> nlp2dsl_sdk__demos__run_report_and_notify_demo
+    backend__app__routers__chat___proxy_chat_payload --> backend__app__logging_setup__get_request_id
+    backend__app__routers__chat__chat_start --> backend__app__routers__chat___proxy_chat_payload
+    backend__app__routers__chat__chat_message --> backend__app__routers__chat___proxy_chat_payload
+    backend__app__routers__chat__chat_message --> backend__app__engine__run_workflow
+    backend__app__routers__chat__chat_get_state --> backend__app__logging_setup__get_request_id
     nlp2dsl_sdk__demos___print_workflow_preview --> nlp2dsl_sdk__demos___print_json
     nlp2dsl_sdk__demos___print_execution_result --> nlp2dsl_sdk__demos___print_json
     nlp2dsl_sdk__demos___preview_text_examples --> nlp2dsl_sdk__demos___print_workflow_preview
@@ -384,13 +382,57 @@ flowchart TD
     nlp2dsl_sdk__demos__run_scheduled_report_demo --> nlp2dsl_sdk__demos___run_workflow_examples
     nlp2dsl_sdk__demos__run_scheduled_report_demo --> nlp2dsl_sdk__demos___preview_text_examples
     nlp2dsl_sdk__demos__run_scheduled_report_demo --> nlp2dsl_sdk__demos___ensure_services
-    nlp2dsl_sdk__demos__run_code_generation_demo --> nlp2dsl_sdk__demos___preview_text_examples
+    nlp2dsl_sdk__demos__run_code_generation_demo --> nlp2dsl_sdk__demos___run_direct_code_generation
+    nlp2dsl_sdk__demos__run_code_generation_demo --> nlp2dsl_sdk__demos___get_supported_languages
+    nlp2dsl_sdk__demos__run_code_generation_demo --> nlp2dsl_sdk__demos___run_workflow_code_examples
+    nlp2dsl_sdk__demos__run_code_generation_demo --> nlp2dsl_sdk__demos___run_conversation_code_example
+    nlp2dsl_sdk__demos__run_code_generation_demo --> nlp2dsl_sdk__demos___run_worker_code_generation
     nlp2dsl_sdk__demos__run_code_generation_demo --> nlp2dsl_sdk__demos___ensure_services
-    nlp_service__app__settings__SettingsManager__set --> nlp_service__app__settings___coerce_type
-    nlp_service__app__parser_llm__parse_llm --> nlp_service__app__parser_llm___detect_provider
-    nlp_service__app__parser_llm__parse_llm --> nlp_service__app__parser_llm___parse_json_response
+    nlp2dsl_sdk__demos___run_direct_code_generation --> nlp2dsl_sdk__demos___print_code_generation_preview
+    nlp2dsl_sdk__demos___run_workflow_code_examples --> nlp2dsl_sdk__demos___preview_text_examples
+    nlp2dsl_sdk__client__NLP2DSLClient__send_invoice --> nlp2dsl_sdk__client__workflow_step
+    nlp2dsl_sdk__client__NLP2DSLClient__send_email --> nlp2dsl_sdk__client__workflow_step
+    nlp2dsl_sdk__client__NLP2DSLClient__generate_report --> nlp2dsl_sdk__client__workflow_step
+    nlp2dsl_sdk__client__NLP2DSLClient__generate_report_and_notify --> nlp2dsl_sdk__client__workflow_step
+    nlp2dsl_sdk__client__NLP2DSLClient__notify_slack --> nlp2dsl_sdk__client__workflow_step
+    nlp2dsl_sdk__client__NLP2DSLClient__crm_update --> nlp2dsl_sdk__client__workflow_step
+    nlp2dsl_sdk__client__NLP2DSLClient__send_invoice_and_notify --> nlp2dsl_sdk__client__workflow_step
+    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__parser_rules___detect_actions
+    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__parser_rules___resolve_intent
+    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__parser_rules___extract_entities
+    nlp_service__app__parser_rules__parse_rules --> nlp_service__app__registry__get_trigger
+    nlp_service__app__parser_rules___resolve_intent --> nlp_service__app__settings__SettingsManager__set
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_amount
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_email
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_report_type
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_format
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_notification_channels
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_param_aliases
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_system_entities
+    nlp_service__app__parser_rules___extract_entities --> nlp_service__app__parser_rules___extract_fallback_recipient
+    nlp_service__app__parser_rules___extract_param_aliases --> nlp_service__app__parser_rules___set_entity
+    nlp_service__app__orchestrator__start_conversation --> nlp_service__app__orchestrator___process_message
+    nlp_service__app__orchestrator__continue_conversation --> nlp_service__app__orchestrator___process_message
+    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___check_execute_keyword
+    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___merge_into_state
+    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___handle_unknown_intent
+    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___handle_system_action
+    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___build_and_check_dsl
+    nlp_service__app__orchestrator___process_message --> nlp_service__app__orchestrator___build_incomplete_response
+    nlp_service__app__orchestrator___process_message --> nlp_service__app__parsing__facade__parse_text
+    nlp_service__app__orchestrator___handle_system_action --> nlp_service__app__orchestrator___format_system_result
+    nlp_service__app__orchestrator___build_and_check_dsl --> nlp_service__app__mapper__map_to_dsl
+    nlp_service__app__orchestrator___build_incomplete_response --> nlp_service__app__mapper__map_to_dsl
+    nlp_service__app__orchestrator___build_incomplete_response --> nlp_service__app__orchestrator__get_action_form
+    nlp_service__app__orchestrator___merge_into_state --> nlp_service__app__registry__get_trigger
+    nlp_service__app__parsing__facade__parse_text --> nlp_service__app__parser_rules__parse_rules
+    nlp_service__app__parsing__facade__parse_text --> nlp_service__app__parser_llm___detect_provider
+    nlp_service__app__parsing__facade__parse_text --> nlp_service__app__parser_llm__parse_llm
+    nlp_service__integrations__loader__load_integration_registries --> nlp_service__integrations__loader___integration_names
+    nlp_service__integrations__loader__apply_integrations --> nlp_service__app__settings__SettingsManager__set
+    nlp_service__integrations__loader__apply_integrations --> nlp_service__integrations__loader__load_integration_registries
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class nlp2dsl_sdk__client__ConversationFlow___handle_response,nlp_service__app__parser_rules___extract_entities,nlp_service__app__orchestrator___process_message,nlp_service__app__orchestrator___format_system_result,nlp2dsl_sdk__demos__run_code_generation_demo highCC
-    class tauri_wrapper__scripts__dev__main,tauri_wrapper__scripts__serve_dist__resolveRequestPath,backend__app__routers__workflow__workflow_from_text,nlp_service__app__audio_parser__stt_audio,nlp_service__app__parser_rules___detect_actions,nlp_service__app__code_generator__CodeGenerator__generate_code,nlp_service__app__mapper__map_to_dsl,nlp_service__app__orchestrator___merge_into_state,nlp_service__app__system_executor___exec_file_read,nlp_service__app__system_executor___exec_file_list,nlp_service__app__system_executor___exec_registry_add,nlp_service__app__system_executor___exec_registry_edit,backend__app__engine___execute_workflow,backend__app__routers__chat___proxy_chat_payload,nlp_service__app__parser_llm___detect_provider medCC
+    class nlp_service__app__parser_rules___detect_actions,nlp_service__app__parser_rules___extract_system_entities,nlp_service__app__orchestrator___format_system_result highCC
+    class tauri_wrapper__scripts__dev__main,tauri_wrapper__scripts__serve_dist__resolveRequestPath,backend__app__engine___execute_workflow,backend__app__routers__workflow__workflow_from_text,nlp_service__app__audio_parser__stt_audio,nlp_service__app__code_generator__CodeGenerator__generate_code,nlp_service__app__parser_llm___detect_provider,nlp_service__app__mapper__map_to_dsl,nlp_service__app__system_executor___exec_file_read,nlp_service__app__system_executor___exec_file_list,nlp_service__app__system_executor___exec_registry_add,nlp_service__app__system_executor___exec_registry_edit,backend__app__routers__chat___proxy_chat_payload,backend__app__routers__chat__chat_message,nlp_service__app__orchestrator___build_and_check_dsl,nlp_service__app__orchestrator___merge_into_state,nlp_service__app__parsing__facade__parse_text medCC

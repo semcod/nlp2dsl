@@ -49,6 +49,8 @@ class NLPEntities(BaseModel):
     language: str | None = None
     context: str | None = None
     include_tests: bool | None = None
+    # ── Mullm / delegated ──
+    shell_command: str | None = None
 
 
 class NLPResult(BaseModel):
@@ -125,3 +127,4 @@ class ConversationResponse(BaseModel):
     dsl: WorkflowDSL | None = None
     missing: list[str] = []
     form: ActionFormSchema | None = None
+    execution_backend: str | None = None  # worker | mullm | system

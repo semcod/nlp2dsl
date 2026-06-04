@@ -313,6 +313,12 @@ COMPOSITE_INTENTS: dict[str, list[str]] = {
     "full_report_flow": ["generate_report", "send_email", "notify_slack"],
 }
 
+# ── Integration plugins (Mullm, …) ────────────────────────────
+
+from integrations.loader import apply_integrations
+
+MULLM_ACTIONS: set[str] = apply_integrations(ACTIONS_REGISTRY)
+
 # ── Action categories ─────────────────────────────────────────
 
 SYSTEM_ACTIONS = {
@@ -322,7 +328,7 @@ SYSTEM_ACTIONS = {
 
 BUSINESS_ACTIONS = {
     name for name in ACTIONS_REGISTRY
-    if name not in SYSTEM_ACTIONS
+    if name not in SYSTEM_ACTIONS and name not in MULLM_ACTIONS
 }
 
 

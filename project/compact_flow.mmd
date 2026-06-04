@@ -6,15 +6,15 @@ flowchart TD
     examples__03_report_and_notify["examples.03-report-and-notify<br/>1 funcs"]
     examples__04_scheduled_report["examples.04-scheduled-report<br/>1 funcs"]
     examples__code_generation_examples["examples.code_generation_examples<br/>1 funcs"]
-    nlp_service__app["nlp-service.app<br/>88 funcs"]
+    nlp_service__app["nlp-service.app<br/>102 funcs"]
+    nlp_service__integrations["nlp-service.integrations<br/>3 funcs"]
     nlp2dsl_sdk____main__["nlp2dsl_sdk.__main__<br/>1 funcs"]
-    nlp2dsl_sdk__client["nlp2dsl_sdk.client<br/>47 funcs"]
-    nlp2dsl_sdk__demos["nlp2dsl_sdk.demos<br/>17 funcs"]
-    backend__app ==>|15| nlp_service__app
-    backend__app -->|3| nlp2dsl_sdk__client
+    nlp2dsl_sdk__demos["nlp2dsl_sdk.demos<br/>22 funcs"]
+    backend__app -->|2| nlp_service__app
     nlp2dsl_sdk____main__ -->|1| nlp2dsl_sdk__demos
     examples__code_generation_examples -->|1| nlp2dsl_sdk__demos
-    examples__01_invoice -->|1| nlp2dsl_sdk__demos
-    examples__02_email -->|1| nlp2dsl_sdk__demos
     examples__04_scheduled_report -->|1| nlp2dsl_sdk__demos
+    examples__01_invoice -->|1| nlp2dsl_sdk__demos
     examples__03_report_and_notify -->|1| nlp2dsl_sdk__demos
+    examples__02_email -->|1| nlp2dsl_sdk__demos
+    nlp_service__integrations -->|1| nlp_service__app

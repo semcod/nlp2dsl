@@ -3,13 +3,13 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.0.11-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$2.47-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-10.5h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.0.12-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$2.47-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-10.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $2.4737 (18 commits)
-- 👤 **Human dev:** ~$1046 (10.5h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $2.4745 (19 commits)
+- 👤 **Human dev:** ~$1056 (10.6h @ $100/h, 30min dedup)
 
-Generated on 2026-06-03 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+Generated on 2026-06-04 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
@@ -54,7 +54,7 @@ docker compose up --build
 | Serwis | URL | Opis |
 |--------|-----|------|
 | Backend API | http://localhost:8010/docs | Gateway + workflow engine |
-| NLP Service | http://localhost:8002/docs | NLP + conversation + schema |
+| NLP Service | http://localhost:8012/docs | NLP + conversation + schema |
 | Worker | http://localhost:8004/docs | Executory akcji |
 
 ## Conversation Loop (AI Dialog)
@@ -213,7 +213,7 @@ System zawiera gotowy interfejs webowy z obsługą głosową:
 
 ```bash
 # Otwórz w przeglądarce
-http://localhost:8002/chat
+http://localhost:8012/chat
 ```
 
 ### Funkcje:
@@ -231,11 +231,11 @@ http://localhost:8002/chat
 ### Kiosk mode (desktop/embedded):
 ```bash
 # Chrome kiosk
-chrome --kiosk --autoplay-policy=no-user-gesture-required http://localhost:8002/chat
+chrome --kiosk --autoplay-policy=no-user-gesture-required http://localhost:8012/chat
 
 # Electron app
 npm install electron
-# main.js: win.loadURL('http://localhost:8002/chat')
+# main.js: win.loadURL('http://localhost:8012/chat')
 ```
 
 ## Tauri desktop wrapper
@@ -272,7 +272,7 @@ cd tauri-wrapper
 npm run desktop
 ```
 
-Launcher sprawdza backend pod `http://127.0.0.1:8002` i dopiero potem przełącza do `http://127.0.0.1:8002/chat`.
+Launcher sprawdza backend pod `http://127.0.0.1:8012` i dopiero potem przełącza do `http://127.0.0.1:8012/chat`.
 
 ### Build
 
