@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.10] - 2026-06-04
 
 ### Fixed
+- Fix unused-imports issues (ticket-a26d26be)
+- Fix unused-imports issues (ticket-c5c0bd6b)
+
+## [0.1.10] - 2026-06-04
+
+### Fixed
 - Fix wildcard-imports issues (ticket-caf9a1b0)
 - Fix wildcard-imports issues (ticket-4e2b622d)
 - Fix wildcard-imports issues (ticket-63459fc2)
@@ -90,6 +96,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix string-concat issues (ticket-2a0f4b01)
 
 ## [Unreleased]
+
+## [0.0.15] - 2026-06-04
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update .env.example
+- Update app.doql.less
+- Update planfile.yaml
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- Update project/compact_flow.png
+- ... and 11 more files
 
 ## [0.0.14] - 2026-06-04
 

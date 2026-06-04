@@ -1,5 +1,5 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('nlp2dsl', '0.0.13', 'python').
+project_metadata('nlp2dsl', '0.0.14', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('.pfix-test-wrapper.sh', 16, 'shell').
@@ -52,11 +52,12 @@ project_file('nlp-service/app/config.py', 61, 'python').
 project_file('nlp-service/app/conversation/__init__.py', 14, 'python').
 project_file('nlp-service/app/conversation/merge.py', 26, 'python').
 project_file('nlp-service/app/conversation/orchestrator.py', 108, 'python').
-project_file('nlp-service/app/conversation/responses.py', 238, 'python').
+project_file('nlp-service/app/conversation/responses.py', 273, 'python').
 project_file('nlp-service/app/dsl/__init__.py', 5, 'python').
 project_file('nlp-service/app/dsl/forms.py', 84, 'python').
 project_file('nlp-service/app/dsl/mapper.py', 190, 'python').
-project_file('nlp-service/app/execution/__init__.py', 4, 'python').
+project_file('nlp-service/app/execution/__init__.py', 15, 'python').
+project_file('nlp-service/app/execution/delegate.py', 30, 'python').
 project_file('nlp-service/app/execution/system.py', 343, 'python').
 project_file('nlp-service/app/governance/__init__.py', 15, 'python').
 project_file('nlp-service/app/governance/bootstrap.py', 79, 'python').
@@ -64,7 +65,7 @@ project_file('nlp-service/app/governance/config.py', 166, 'python').
 project_file('nlp-service/app/governance/policy.py', 303, 'python').
 project_file('nlp-service/app/governance/uri_match.py', 43, 'python').
 project_file('nlp-service/app/logging_setup.py', 101, 'python').
-project_file('nlp-service/app/main.py', 581, 'python').
+project_file('nlp-service/app/main.py', 584, 'python').
 project_file('nlp-service/app/mapper.py', 6, 'python').
 project_file('nlp-service/app/orchestrator.py', 22, 'python').
 project_file('nlp-service/app/parser_llm.py', 6, 'python').
@@ -75,11 +76,12 @@ project_file('nlp-service/app/registry.py', 391, 'python').
 project_file('nlp-service/app/routing/__init__.py', 15, 'python').
 project_file('nlp-service/app/routing/intent.py', 54, 'python').
 project_file('nlp-service/app/routing/native.py', 144, 'python').
+project_file('nlp-service/app/routing/observability.py', 58, 'python').
 project_file('nlp-service/app/routing/parser/__init__.py', 4, 'python').
 project_file('nlp-service/app/routing/parser/facade.py', 40, 'python').
 project_file('nlp-service/app/routing/parser/llm.py', 188, 'python').
 project_file('nlp-service/app/routing/parser/rules.py', 382, 'python').
-project_file('nlp-service/app/routing/resolve.py', 144, 'python').
+project_file('nlp-service/app/routing/resolve.py', 149, 'python').
 project_file('nlp-service/app/schemas.py', 132, 'python').
 project_file('nlp-service/app/settings.py', 252, 'python').
 project_file('nlp-service/app/store/__init__.py', 31, 'python').
@@ -94,10 +96,12 @@ project_file('nlp-service/integrations/mullm/registry.py', 67, 'python').
 project_file('nlp-service/tests/__init__.py', 1, 'python').
 project_file('nlp-service/tests/conftest.py', 102, 'python').
 project_file('nlp-service/tests/test_access.py', 75, 'python').
+project_file('nlp-service/tests/test_execution_delegate.py', 25, 'python').
 project_file('nlp-service/tests/test_mapper.py', 252, 'python').
 project_file('nlp-service/tests/test_orchestrator.py', 222, 'python').
 project_file('nlp-service/tests/test_parser_rules.py', 237, 'python').
 project_file('nlp-service/tests/test_registry.py', 169, 'python').
+project_file('nlp-service/tests/test_routing_observability.py', 42, 'python').
 project_file('nlp-service/tests/test_routing_resolve.py', 66, 'python').
 project_file('nlp-service/tests/test_store.py', 193, 'python').
 project_file('nlp-service/tests/test_system_executor.py', 422, 'python').
@@ -185,8 +189,9 @@ python_function('nlp-service/app/conversation/orchestrator.py', 'get_conversatio
 python_function('nlp-service/app/conversation/orchestrator.py', '_attach_routing', 2, 1, 1).
 python_function('nlp-service/app/conversation/orchestrator.py', '_process_message', 2, 6, 12).
 python_function('nlp-service/app/conversation/responses.py', 'deny_message', 1, 3, 0).
-python_function('nlp-service/app/conversation/responses.py', 'check_execute_keyword', 2, 5, 5).
-python_function('nlp-service/app/conversation/responses.py', 'handle_unknown_intent', 1, 3, 2).
+python_function('nlp-service/app/conversation/responses.py', '_is_execute_or_continue', 1, 2, 3).
+python_function('nlp-service/app/conversation/responses.py', 'check_execute_keyword', 2, 7, 5).
+python_function('nlp-service/app/conversation/responses.py', 'handle_unknown_intent', 1, 5, 4).
 python_function('nlp-service/app/conversation/responses.py', 'handle_system_action', 1, 7, 7).
 python_function('nlp-service/app/conversation/responses.py', 'build_and_check_dsl', 1, 4, 6).
 python_function('nlp-service/app/conversation/responses.py', 'build_incomplete_response', 1, 3, 6).
@@ -350,7 +355,13 @@ python_function('nlp-service/tests/test_access.py', 'test_files_agent_can_list',
 python_function('nlp-service/tests/test_access.py', 'test_mail_agent_denied_mullm_execute', 0, 2, 1).
 python_function('nlp-service/tests/test_access.py', 'test_native_lista_plikow', 0, 3, 1).
 python_function('nlp-service/tests/test_access.py', 'test_registry_has_yaml_action', 0, 3, 2).
+python_function('nlp-service/tests/test_execution_delegate.py', 'test_mullm_shell_delegated', 0, 3, 2).
+python_function('nlp-service/tests/test_execution_delegate.py', 'test_invoice_worker_backend', 0, 2, 1).
+python_function('nlp-service/tests/test_execution_delegate.py', 'test_delegate_payload_shape', 0, 3, 1).
 python_function('nlp-service/tests/test_orchestrator.py', '_patch_store', 1, 1, 3).
+python_function('nlp-service/tests/test_routing_observability.py', '_reset_metrics', 0, 1, 2).
+python_function('nlp-service/tests/test_routing_observability.py', 'test_record_increments_rules_hit', 0, 2, 4).
+python_function('nlp-service/tests/test_routing_observability.py', 'test_resolve_intent_updates_metrics', 0, 2, 3).
 python_function('nlp-service/tests/test_system_executor.py', '_reset_settings', 1, 1, 3).
 python_function('nlp2dsl_sdk/__main__.py', 'main', 0, 5, 7).
 python_function('nlp2dsl_sdk/client.py', 'workflow_step', 1, 1, 1).

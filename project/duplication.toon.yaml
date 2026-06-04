@@ -1,12 +1,12 @@
-# redup/duplication | 12 groups | 80f 8095L | 2026-06-04
+# redup/duplication | 12 groups | 84f 8221L | 2026-06-04
 
 SUMMARY:
-  files_scanned: 80
-  total_lines:   8095
+  files_scanned: 84
+  total_lines:   8221
   dup_groups:    12
   dup_fragments: 33
   saved_lines:   153
-  scan_ms:       2394
+  scan_ms:       3668
 
 HOTSPOTS[7] (files with most duplication):
   backend/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.6%)

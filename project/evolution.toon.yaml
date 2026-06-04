@@ -1,24 +1,24 @@
-# code2llm/evolution | 363 func | 44f | 2026-06-04
-# generated in 0.00s
+# code2llm/evolution | 372 func | 48f | 2026-06-04
+# generated in 0.01s
 
 NEXT[3] (ranked by impact):
-  [1] !! SPLIT           nlp2dsl_sdk/demos.py
+  [1] !! SPLIT           nlp-service/app/main.py
+      WHY: 583L, 0 classes, max CC=10
+      EFFORT: ~4h  IMPACT: 5830
+
+  [2] !! SPLIT           nlp2dsl_sdk/demos.py
       WHY: 687L, 1 classes, max CC=6
       EFFORT: ~4h  IMPACT: 4122
 
-  [2] !! SPLIT           nlp2dsl_sdk/client.py
-      WHY: 580L, 2 classes, max CC=6
-      EFFORT: ~4h  IMPACT: 3480
-
   [3] !! SPLIT           planfile.yaml
-      WHY: 591L, 0 classes, max CC=0
+      WHY: 734L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
 
 RISKS[3]:
-  ⚠ Splitting nlp2dsl_sdk/demos.py may break 22 import paths
   ⚠ Splitting planfile.yaml may break 0 import paths
-  ⚠ Splitting nlp2dsl_sdk/client.py may break 51 import paths
+  ⚠ Splitting nlp2dsl_sdk/demos.py may break 22 import paths
+  ⚠ Splitting nlp-service/app/main.py may break 23 import paths
 
 METRICS-TARGET:
   CC̄:          2.9 → ≤2.0
@@ -52,4 +52,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.2 → now CC̄=2.9
+  prev CC̄=2.9 → now CC̄=2.9

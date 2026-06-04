@@ -732,3 +732,29 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-a26d26be
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/execution/delegate.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/execution/delegate.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c5c0bd6b
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/routing/observability.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/routing/observability.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced

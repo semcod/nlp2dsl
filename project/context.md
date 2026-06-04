@@ -1,5 +1,5 @@
 # System Architecture Analysis
-<!-- generated in 0.00s -->
+<!-- generated in 0.01s -->
 
 ## Overview
 
@@ -7,10 +7,10 @@
 - **Primary Language**: python
 - **Languages**: python: 78, yaml: 8, shell: 7, toml: 5, txt: 4
 - **Analysis Mode**: static
-- **Total Functions**: 397
+- **Total Functions**: 406
 - **Total Classes**: 51
 - **Modules**: 120
-- **Entry Points**: 245
+- **Entry Points**: 248
 
 ## Architecture by Module
 
@@ -32,31 +32,31 @@
 - **Classes**: 1
 - **File**: `demos.py`
 
-### nlp-service.app.conversation.orchestrator
-- **Functions**: 22
-- **File**: `orchestrator.py`
-
 ### tauri-wrapper.scripts.serve-dist
 - **Functions**: 21
 - **File**: `serve-dist.js`
+
+### nlp-service.app.conversation.responses
+- **Functions**: 18
+- **File**: `responses.py`
 
 ### nlp-service.app.governance.policy
 - **Functions**: 14
 - **Classes**: 2
 - **File**: `policy.py`
 
-### nlp-service.app.routing.native
+### nlp-service.app.system_executor
 - **Functions**: 13
-- **File**: `native.py`
-
-### nlp-service.app.execution.system
-- **Functions**: 13
-- **File**: `system.py`
+- **File**: `system_executor.py`
 
 ### nlp-service.app.governance.config
 - **Functions**: 13
 - **Classes**: 1
 - **File**: `config.py`
+
+### nlp-service.app.routing.native
+- **Functions**: 13
+- **File**: `native.py`
 
 ### worker.worker
 - **Functions**: 12
@@ -135,20 +135,20 @@ Body: {"conversation_id": "abc", "text": "klient@firma.pl"}
 ### nlp2dsl_sdk.demos.run_action_catalog_demo
 - **Calls**: print, client.workflow_actions, print, NLP2DSLClient.from_env, nlp2dsl_sdk.demos._ensure_services, action.get, print, client.workflow_action_schema
 
-### nlp-service.app.execution.system._exec_file_read
-- **Calls**: config.get, nlp-service.app.execution.system._validate_file_path, None.read_text, config.get, config.get, None.exists, None.is_file, content.split
+### nlp-service.app.system_executor._exec_file_read
+- **Calls**: config.get, nlp-service.app.system_executor._validate_file_path, None.read_text, config.get, config.get, None.exists, None.is_file, content.split
 
 ### nlp2dsl_sdk.client.ConversationFlow._handle_in_progress_response
 > Handle in_progress status response.
 - **Calls**: print, data.get, data.get, print, form.get, print, print, print
 
+### nlp-service.app.system_executor._exec_file_list
+- **Calls**: config.get, config.get, sorted, candidate.exists, Path, resolved.rglob, str, len
+
 ### worker.worker.handle_generate_code
 - **Calls**: worker.worker.action, config.get, config.get, config.get, config.get, ValueError, httpx.AsyncClient, response.raise_for_status
 
-### nlp-service.app.execution.system._exec_file_list
-- **Calls**: config.get, config.get, sorted, candidate.exists, Path, resolved.rglob, str, len
-
-### nlp-service.app.execution.system._exec_registry_edit
+### nlp-service.app.system_executor._exec_registry_edit
 - **Calls**: config.get, config.get, changes.append, config.get, isinstance, changes.append, config.get, isinstance
 
 ### nlp2dsl_sdk.client.ConversationFlow.run_demo
@@ -177,6 +177,12 @@ Examples:
    
 - **Calls**: app.post, Form, Form, File, log.info, text.strip, HTTPException, nlp-service.app.conversation.orchestrator.continue_conversation
 
+### nlp-service.app.system_executor._exec_file_write
+- **Calls**: config.get, config.get, config.get, nlp-service.app.system_executor._validate_file_path, nlp-service.app.system_executor._is_read_only, Path, p.parent.mkdir, p.write_text
+
+### nlp-service.app.system_executor._exec_registry_add
+- **Calls**: config.get, config.get, config.get, isinstance, config.get, isinstance, f.strip, a.strip
+
 ### nlp-service.app.main.access_config
 > Załadowany nlp2dsl.yaml — obszary, agenci, grupy etykiet.
 - **Calls**: app.get, nlp-service.app.governance.config.get_access_config, list, len, cfg.agents.keys, a.get, a.get, a.get
@@ -188,12 +194,6 @@ Obsługuje:
 - Tekst: Form field "text"
 - Audio: UploadFile (STT v
 - **Calls**: app.post, Form, File, log.info, text.strip, HTTPException, nlp-service.app.conversation.orchestrator.start_conversation, nlp-service.app.audio_parser.is_stt_available
-
-### nlp-service.app.execution.system._exec_file_write
-- **Calls**: config.get, config.get, config.get, nlp-service.app.execution.system._validate_file_path, nlp-service.app.execution.system._is_read_only, Path, p.parent.mkdir, p.write_text
-
-### nlp-service.app.execution.system._exec_registry_add
-- **Calls**: config.get, config.get, config.get, isinstance, config.get, isinstance, f.strip, a.strip
 
 ### nlp2dsl_sdk.client.NLP2DSLClient.from_env
 > Build a client from environment variables used in this repo.
@@ -236,14 +236,14 @@ Reads LOG_LEVEL from BackendSettings (default INFO). Call once at startup.
 Reads LOG_LEVEL from NLPServiceSettings (default INFO). Call once at startup.
 - **Calls**: level.upper, getattr, logging.StreamHandler, handler.setFormatter, logging.getLogger, root.handlers.clear, root.addHandler, root.setLevel
 
+### nlp-service.app.system_executor._exec_registry_list
+- **Calls**: config.get, ACTIONS_REGISTRY.items, meta.get, len, meta.get, list, None.keys, meta.get
+
 ### worker.logging_setup.setup_logging
 > Replace root logger handlers with a JSONFormatter handler.
 
 Reads LOG_LEVEL from WorkerSettings (default INFO). Call once at startup.
 - **Calls**: level.upper, getattr, logging.StreamHandler, handler.setFormatter, logging.getLogger, root.handlers.clear, root.addHandler, root.setLevel
-
-### worker.worker.handle_send_invoice
-- **Calls**: worker.worker.action, log.info, log.info, config.get, config.get, asyncio.sleep, config.get, None.strftime
 
 ## Process Flows
 
@@ -280,7 +280,7 @@ run_action_catalog_demo [nlp2dsl_sdk.demos]
 
 ### Flow 6: _exec_file_read
 ```
-_exec_file_read [nlp-service.app.execution.system]
+_exec_file_read [nlp-service.app.system_executor]
   └─> _validate_file_path
 ```
 
@@ -289,20 +289,20 @@ _exec_file_read [nlp-service.app.execution.system]
 _handle_in_progress_response [nlp2dsl_sdk.client.ConversationFlow]
 ```
 
-### Flow 8: handle_generate_code
+### Flow 8: _exec_file_list
+```
+_exec_file_list [nlp-service.app.system_executor]
+```
+
+### Flow 9: handle_generate_code
 ```
 handle_generate_code [worker.worker]
   └─> action
 ```
 
-### Flow 9: _exec_file_list
-```
-_exec_file_list [nlp-service.app.execution.system]
-```
-
 ### Flow 10: _exec_registry_edit
 ```
-_exec_registry_edit [nlp-service.app.execution.system]
+_exec_registry_edit [nlp-service.app.system_executor]
 ```
 
 ## Key Classes
@@ -402,6 +402,10 @@ Placeholder - requires WebSocket implementation.
 - **Key Methods**: nlp-service.app.logging_setup.RequestIDMiddleware.__init__, nlp-service.app.logging_setup.RequestIDMiddleware.dispatch
 - **Inherits**: BaseHTTPMiddleware
 
+### nlp-service.app.governance.config.AccessConfig
+- **Methods**: 2
+- **Key Methods**: nlp-service.app.governance.config.AccessConfig.action_to_area, nlp-service.app.governance.config.AccessConfig.area_by_id
+
 ### nlp-service.app.routing.intent.IntentDecision
 > Wynik `resolve_intent` — spójny kontrakt dla orchestratora i Mullm BFF.
 - **Methods**: 2
@@ -412,14 +416,6 @@ Placeholder - requires WebSocket implementation.
 - **Methods**: 2
 - **Key Methods**: worker.logging_setup.JSONFormatter.__init__, worker.logging_setup.JSONFormatter.format
 - **Inherits**: logging.Formatter
-
-### worker.logging_setup.RequestIDMiddleware
-> Generate or forward X-Request-ID for every HTTP request.
-
-- Reads X-Request-ID from incoming headers
-- **Methods**: 2
-- **Key Methods**: worker.logging_setup.RequestIDMiddleware.__init__, worker.logging_setup.RequestIDMiddleware.dispatch
-- **Inherits**: BaseHTTPMiddleware
 
 ## Data Transformation Functions
 
@@ -434,26 +430,22 @@ Key functions that process and transform data:
 ### nlp-service.app.logging_setup.JSONFormatter.format
 - **Output to**: json.dumps, time.strftime, _request_id.get, record.getMessage, self.formatException
 
-### nlp-service.app.main.parse_text
-> Etap 1: tekst → intent + entities.
-Nie generuje DSL — tylko rozumie język naturalny.
-- **Output to**: app.post, nlp-service.app.main._run_parser
-
-### nlp-service.app.main._run_parser
-> Execute parser according to mode.
-- **Output to**: nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.routing.parser.llm._detect_provider, nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.routing.parser.llm._detect_provider, log.info
-
-### worker.logging_setup.JSONFormatter.format
-- **Output to**: json.dumps, time.strftime, _request_id.get, record.getMessage, self.formatException
-
-### nlp-service.app.routing.resolve._parser_source
-> Etykieta źródła parsera (rules vs llm) — zgodnie z NLP_CHAT_MODE=auto.
-- **Output to**: None.strip, nlp-service.app.routing.parser.rules.parse_rules, None.lower, os.getenv
+### nlp-service.app.system_executor._validate_file_path
+> Validate and resolve file path against allowed paths.
+- **Output to**: str, any, None.suffix.lower, None.resolve, PermissionError
 
 ### nlp-service.app.routing.parser.facade.parse_text
 > mode: rules | llm | auto
 Domyślnie NLP_CHAT_MODE lub auto.
-- **Output to**: None.strip, nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.routing.parser.llm._detect_provider, None.lower
+- **Output to**: None.strip, nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.parser_llm._detect_provider, None.lower
+
+### nlp-service.app.parser_llm.parse_llm
+> Parse text using LLM via LiteLLM.
+- **Output to**: nlp-service.app.parser_llm._detect_provider, log.info, log.debug, nlp-service.app.parser_llm._parse_json_response, NLPResult
+
+### nlp-service.app.parser_llm._parse_json_response
+> Extract JSON from LLM response (handles markdown fences).
+- **Output to**: raw.strip, cleaned.startswith, cleaned.find, json.loads, cleaned.split
 
 ### nlp-service.app.routing.parser.rules.parse_rules
 > Parse text using rules — no LLM needed.
@@ -463,52 +455,54 @@ Domyślnie NLP_CHAT_MODE lub auto.
 > Extract format from keywords.
 - **Output to**: FORMAT_KEYWORDS.items
 
-### nlp-service.app.conversation.orchestrator._process_message
-> Core orchestration: resolve_intent → merge → validate → respond.
-- **Output to**: nlp-service.app.conversation.orchestrator._check_execute_keyword, log.info, nlp-service.app.conversation.orchestrator._merge_into_state, nlp-service.app.conversation.orchestrator._handle_unknown_intent, nlp-service.app.conversation.orchestrator._handle_system_action
+### worker.logging_setup.JSONFormatter.format
+- **Output to**: json.dumps, time.strftime, _request_id.get, record.getMessage, self.formatException
 
-### nlp-service.app.conversation.orchestrator._format_system_result
-> Format system action result as human-readable message.
+### nlp-service.app.main.parse_text
+> Etap 1: tekst → intent + entities.
+Nie generuje DSL — tylko rozumie język naturalny.
+- **Output to**: app.post, nlp-service.app.main._run_parser
+
+### nlp-service.app.main._run_parser
+> Execute parser according to mode.
+- **Output to**: nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.parser_llm._detect_provider, nlp-service.app.routing.parser.rules.parse_rules, nlp-service.app.parser_llm._detect_provider, log.info
+
+### nlp-service.app.conversation.responses.format_system_result
 - **Output to**: result.get, _SYSTEM_RESULT_FORMATTERS.get, json.dumps, result.get, formatter
 
-### nlp-service.app.conversation.orchestrator._format_system_status
+### nlp-service.app.conversation.responses._format_system_status
 - **Output to**: inner.get, inner.get, inner.get, inner.get, inner.get
 
-### nlp-service.app.conversation.orchestrator._format_settings_get
+### nlp-service.app.conversation.responses._format_settings_get
 - **Output to**: inner.get, json.dumps
 
-### nlp-service.app.conversation.orchestrator._format_settings_set
+### nlp-service.app.conversation.responses._format_settings_set
 - **Output to**: inner.get, inner.get, inner.get
 
-### nlp-service.app.conversation.orchestrator._format_settings_reset
+### nlp-service.app.conversation.responses._format_settings_reset
 - **Output to**: inner.get
 
-### nlp-service.app.conversation.orchestrator._format_file_read
+### nlp-service.app.conversation.responses._format_file_read
 - **Output to**: inner.get, inner.get, inner.get, inner.get, inner.get
 
-### nlp-service.app.conversation.orchestrator._format_file_write
+### nlp-service.app.conversation.responses._format_file_write
 - **Output to**: inner.get, inner.get, inner.get
 
-### nlp-service.app.conversation.orchestrator._format_file_list
+### nlp-service.app.conversation.responses._format_file_list
 - **Output to**: inner.get, None.join, lines.append, inner.get, inner.get
 
-### nlp-service.app.conversation.orchestrator._format_registry_list
+### nlp-service.app.conversation.responses._format_registry_list
 - **Output to**: inner.get, actions.items, None.join, meta.get, None.join
 
-### nlp-service.app.conversation.orchestrator._format_registry_update
+### nlp-service.app.conversation.responses._format_registry_update
 - **Output to**: json.dumps
 
-### nlp-service.app.execution.system._validate_file_path
-> Validate and resolve file path against allowed paths.
-- **Output to**: str, any, None.suffix.lower, None.resolve, PermissionError
+### nlp-service.app.conversation.orchestrator._process_message
+- **Output to**: nlp-service.app.conversation.responses.check_execute_keyword, log.info, nlp-service.app.conversation.merge.merge_into_state, nlp-service.app.conversation.responses.handle_unknown_intent, nlp-service.app.conversation.responses.handle_system_action
 
-### nlp-service.app.routing.parser.llm.parse_llm
-> Parse text using LLM via LiteLLM.
-- **Output to**: nlp-service.app.routing.parser.llm._detect_provider, log.info, log.debug, nlp-service.app.routing.parser.llm._parse_json_response, NLPResult
-
-### nlp-service.app.routing.parser.llm._parse_json_response
-> Extract JSON from LLM response (handles markdown fences).
-- **Output to**: raw.strip, cleaned.startswith, cleaned.find, json.loads, cleaned.split
+### nlp-service.app.routing.resolve._parser_source
+> Etykieta źródła parsera (rules vs llm) — zgodnie z NLP_CHAT_MODE=auto.
+- **Output to**: None.strip, nlp-service.app.routing.parser.rules.parse_rules, None.lower, os.getenv
 
 ## Behavioral Patterns
 
@@ -529,12 +523,12 @@ Functions exposed as public API (no underscore prefix):
 - `backend.app.routers.workflow.workflow_from_text` - 26 calls
 - `nlp-service.app.main.websocket_chat` - 23 calls
 - `backend.app.routers.workflow.stream_workflow` - 22 calls
+- `nlp-service.app.routing.resolve.resolve_intent` - 22 calls
 - `backend.app.routers.chat.chat_message` - 21 calls
 - `nlp2dsl_sdk.demos.run_action_catalog_demo` - 19 calls
+- `nlp-service.app.mapper.map_to_dsl` - 17 calls
 - `worker.worker.handle_generate_code` - 17 calls
-- `nlp-service.app.routing.resolve.resolve_intent` - 17 calls
-- `nlp-service.app.dsl.mapper.map_to_dsl` - 17 calls
-- `nlp-service.app.routing.parser.llm.parse_llm` - 16 calls
+- `nlp-service.app.parser_llm.parse_llm` - 16 calls
 - `nlp2dsl_sdk.demos.run_invoice_demo` - 14 calls
 - `nlp2dsl_sdk.demos.run_email_demo` - 14 calls
 - `nlp2dsl_sdk.demos.run_code_generation_demo` - 14 calls
@@ -543,20 +537,20 @@ Functions exposed as public API (no underscore prefix):
 - `backend.app.db.postgres.PostgresWorkflowRepo.save_run` - 13 calls
 - `nlp-service.app.code_generator.CodeGenerator.generate_code` - 13 calls
 - `nlp-service.app.main.chat_message` - 13 calls
+- `nlp-service.app.dsl.forms.get_action_form` - 12 calls
 - `nlp-service.app.main.access_config` - 12 calls
 - `nlp-service.app.main.chat_start` - 12 calls
-- `nlp-service.app.dsl.forms.get_action_form` - 12 calls
 - `nlp2dsl_sdk.demos.run_report_and_notify_demo` - 11 calls
 - `nlp2dsl_sdk.client.NLP2DSLClient.from_env` - 11 calls
 - `nlp-service.app.settings.SettingsManager.set` - 11 calls
-- `nlp-service.app.governance.uri_match.uri_matches` - 11 calls
+- `nlp-service.app.access.uri_match.uri_matches` - 11 calls
 - `tauri-wrapper.scripts.dev.main` - 10 calls
 - `tauri-wrapper.scripts.serve-dist.startServer` - 10 calls
 - `nlp2dsl_sdk.demos.run_scheduled_report_demo` - 10 calls
 - `nlp-service.app.settings.SettingsManager.update_section` - 10 calls
+- `nlp-service.app.routing.parser.rules.parse_rules` - 10 calls
 - `nlp-service.integrations.loader.load_integration_registries` - 10 calls
 - `worker.worker.execute_step` - 10 calls
-- `nlp-service.app.routing.parser.rules.parse_rules` - 10 calls
 - `backend.app.logging_setup.setup_logging` - 9 calls
 - `nlp2dsl_sdk.client.ConversationFlow.run_interactive` - 9 calls
 - `nlp2dsl_sdk.__main__.main` - 9 calls
@@ -565,7 +559,7 @@ Functions exposed as public API (no underscore prefix):
 - `worker.worker.handle_send_invoice` - 9 calls
 - `worker.worker.handle_generate_report` - 9 calls
 - `tauri-wrapper.scripts.serve-dist.resolveRequestPath` - 8 calls
-- `worker.worker.handle_send_email` - 8 calls
+- `nlp-service.app.governance.policy.authorize_action` - 8 calls
 
 ## System Interactions
 
@@ -600,9 +594,9 @@ graph TD
     _exec_file_read --> read_text
     _handle_in_progress_ --> print
     _handle_in_progress_ --> get
-    handle_generate_code --> action
-    handle_generate_code --> get
     _exec_file_list --> get
+    _exec_file_list --> sorted
+    _exec_file_list --> exists
 ```
 
 ## Reverse Engineering Guidelines

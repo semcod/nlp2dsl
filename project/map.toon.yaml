@@ -1,10 +1,10 @@
-# nlp2dsl | 131f 12828L | python:112,shell:13,javascript:3,rust:2,less:1 | 2026-06-04
-# stats: 339 func | 122 cls | 131 mod | CC̄=3.4 | critical:13 | cycles:0
+# nlp2dsl | 135f 13046L | python:116,shell:13,javascript:3,rust:2,less:1 | 2026-06-04
+# stats: 353 func | 122 cls | 135 mod | CC̄=3.3 | critical:13 | cycles:0
 # alerts[5]: CC test_workflow_and_conversation_endpoints=17; CC test_code_generation_methods_hit_expected_services=16; CC _actions_from_yaml_areas=14; CC test_new_workflow_helpers_are_data_driven=14; CC chat_message=12
-# hotspots[5]: _execute_workflow fan=19; websocket_chat fan=16; map_to_dsl fan=14; test_code_generation fan=14; chat_message fan=13
+# hotspots[5]: _execute_workflow fan=19; websocket_chat fan=16; map_to_dsl fan=14; resolve_intent fan=14; test_code_generation fan=14
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[131]:
+M[135]:
   .pfix-test-wrapper.sh,16
   app.doql.less,125
   backend/app/__init__.py,1
@@ -55,11 +55,12 @@ M[131]:
   nlp-service/app/conversation/__init__.py,14
   nlp-service/app/conversation/merge.py,26
   nlp-service/app/conversation/orchestrator.py,108
-  nlp-service/app/conversation/responses.py,237
+  nlp-service/app/conversation/responses.py,273
   nlp-service/app/dsl/__init__.py,5
   nlp-service/app/dsl/forms.py,84
   nlp-service/app/dsl/mapper.py,190
-  nlp-service/app/execution/__init__.py,4
+  nlp-service/app/execution/__init__.py,15
+  nlp-service/app/execution/delegate.py,30
   nlp-service/app/execution/system.py,343
   nlp-service/app/governance/__init__.py,15
   nlp-service/app/governance/bootstrap.py,79
@@ -67,7 +68,7 @@ M[131]:
   nlp-service/app/governance/policy.py,303
   nlp-service/app/governance/uri_match.py,43
   nlp-service/app/logging_setup.py,101
-  nlp-service/app/main.py,581
+  nlp-service/app/main.py,584
   nlp-service/app/mapper.py,6
   nlp-service/app/orchestrator.py,22
   nlp-service/app/parser_llm.py,6
@@ -75,14 +76,15 @@ M[131]:
   nlp-service/app/parsing/__init__.py,4
   nlp-service/app/parsing/facade.py,6
   nlp-service/app/registry.py,391
-  nlp-service/app/routing/__init__.py,8
+  nlp-service/app/routing/__init__.py,15
   nlp-service/app/routing/intent.py,54
   nlp-service/app/routing/native.py,144
+  nlp-service/app/routing/observability.py,58
   nlp-service/app/routing/parser/__init__.py,4
   nlp-service/app/routing/parser/facade.py,40
   nlp-service/app/routing/parser/llm.py,188
   nlp-service/app/routing/parser/rules.py,382
-  nlp-service/app/routing/resolve.py,143
+  nlp-service/app/routing/resolve.py,149
   nlp-service/app/schemas.py,132
   nlp-service/app/settings.py,252
   nlp-service/app/store/__init__.py,31
@@ -97,10 +99,12 @@ M[131]:
   nlp-service/tests/__init__.py,1
   nlp-service/tests/conftest.py,102
   nlp-service/tests/test_access.py,75
+  nlp-service/tests/test_execution_delegate.py,25
   nlp-service/tests/test_mapper.py,252
   nlp-service/tests/test_orchestrator.py,222
   nlp-service/tests/test_parser_rules.py,237
   nlp-service/tests/test_registry.py,169
+  nlp-service/tests/test_routing_observability.py,42
   nlp-service/tests/test_routing_resolve.py,66
   nlp-service/tests/test_store.py,193
   nlp-service/tests/test_system_executor.py,422
@@ -292,8 +296,9 @@ D:
     _attach_routing(resp;decision)
     _process_message(state;text)
   nlp-service/app/conversation/responses.py:
-    e: deny_message,check_execute_keyword,handle_unknown_intent,handle_system_action,build_and_check_dsl,build_incomplete_response,_nlp_from_state,format_system_result,_format_system_status,_format_settings_get,_format_settings_set,_format_settings_reset,_format_file_read,_format_file_write,_format_file_list,_format_registry_list,_format_registry_update
+    e: deny_message,_is_execute_or_continue,check_execute_keyword,handle_unknown_intent,handle_system_action,build_and_check_dsl,build_incomplete_response,_nlp_from_state,format_system_result,_format_system_status,_format_settings_get,_format_settings_set,_format_settings_reset,_format_file_read,_format_file_write,_format_file_list,_format_registry_list,_format_registry_update
     deny_message(decision)
+    _is_execute_or_continue(text)
     check_execute_keyword(state;text)
     handle_unknown_intent(state)
     handle_system_action(state)
@@ -323,6 +328,12 @@ D:
     _make_name(intent;actions)
     _build_prompt(missing)
   nlp-service/app/execution/__init__.py:
+  nlp-service/app/execution/delegate.py:
+    e: is_delegated_to_mullm,execution_backend_for_intent,mullm_action_names,delegate_payload
+    is_delegated_to_mullm(intent)
+    execution_backend_for_intent(intent)
+    mullm_action_names()
+    delegate_payload(action;config)
   nlp-service/app/execution/system.py:
     e: _validate_file_path,_is_read_only,execute_system_action,_exec_settings_get,_exec_settings_set,_exec_settings_reset,_exec_file_read,_exec_file_write,_exec_file_list,_exec_registry_list,_exec_registry_add,_exec_registry_edit,_exec_status
     _validate_file_path(file_path)
@@ -442,6 +453,11 @@ D:
     _resolve_action_alias(text;registry)
     _best_action_alias(text_lower;registry)
     _best_alias_for_action(text_lower;action_name;meta;current)
+  nlp-service/app/routing/observability.py:
+    e: record_intent_decision,routing_metrics_snapshot,reset_routing_metrics
+    record_intent_decision(decision)
+    routing_metrics_snapshot()
+    reset_routing_metrics()
   nlp-service/app/routing/parser/__init__.py:
   nlp-service/app/routing/parser/facade.py:
     e: parse_text
@@ -544,6 +560,11 @@ D:
     test_mail_agent_denied_mullm_execute()
     test_native_lista_plikow()
     test_registry_has_yaml_action()
+  nlp-service/tests/test_execution_delegate.py:
+    e: test_mullm_shell_delegated,test_invoice_worker_backend,test_delegate_payload_shape
+    test_mullm_shell_delegated()
+    test_invoice_worker_backend()
+    test_delegate_payload_shape()
   nlp-service/tests/test_mapper.py:
     e: TestMapCompleteDSL,TestMapIncomplete,TestMapComposite,TestMapUnknown,TestMapDefaults,TestMapTrigger,TestMapSystemAction,TestMapAllBusinessActions,TestResolveActions
     TestMapCompleteDSL: test_map_complete_invoice(0),test_map_complete_email(0)  # Cases where all required fields are present → complete DSL.
@@ -583,6 +604,11 @@ D:
     TestHelperFunctions: test_get_required_fields_invoice(0),test_get_required_fields_unknown(0),test_get_defaults_invoice(0),test_get_defaults_unknown(0)  # get_required_fields, get_defaults.
     TestCategories: test_system_actions_nonempty(0),test_business_actions_nonempty(0),test_no_overlap(0),test_union_is_complete(0),test_mullm_actions_loaded(0)  # System vs business action sets.
     TestCompositeIntents: test_composite_actions_exist(1)  # COMPOSITE_INTENTS structure validation.
+  nlp-service/tests/test_routing_observability.py:
+    e: _reset_metrics,test_record_increments_rules_hit,test_resolve_intent_updates_metrics
+    _reset_metrics()
+    test_record_increments_rules_hit()
+    test_resolve_intent_updates_metrics()
   nlp-service/tests/test_routing_resolve.py:
     e: TestParserSource,TestResolveIntent,TestOrchestratorRoutingField
     TestParserSource: test_rules_mode(1)

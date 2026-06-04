@@ -1,6 +1,6 @@
 # code2llm call graph | /home/tom/github/wronai/nlp2dsl
-# generated in 0.10s
-# nodes: 211 | edges: 226 | modules: 37
+# generated in 0.15s
+# nodes: 217 | edges: 234 | modules: 41
 # CC̄=2.9
 
 HUBS[20]:
@@ -10,38 +10,38 @@ HUBS[20]:
     CC=14  in:1  out:26  total:27
   nlp-service.app.main.websocket_chat
     CC=10  in:0  out:23  total:23
+  nlp-service.app.routing.resolve.resolve_intent
+    CC=12  in:1  out:22  total:23
   backend.app.routers.workflow.stream_workflow
     CC=2  in:0  out:22  total:22
   backend.app.routers.chat.chat_message
     CC=12  in:0  out:21  total:21
-  nlp-service.app.routing.parser.llm.parse_llm
-    CC=3  in:4  out:16  total:20
-  nlp-service.app.dsl.mapper.map_to_dsl
+  nlp-service.app.mapper.map_to_dsl
     CC=8  in:3  out:17  total:20
+  nlp-service.app.parser_llm.parse_llm
+    CC=3  in:4  out:16  total:20
+  nlp2dsl_sdk.demos._print_workflow_preview
+    CC=4  in:3  out:16  total:19
   nlp2dsl_sdk.demos.run_action_catalog_demo
     CC=6  in:0  out:19  total:19
-  nlp-service.app.audio_parser.stt_audio
-    CC=9  in:5  out:14  total:19
   nlp-service.app.governance.config._build_access_config
     CC=7  in:1  out:18  total:19
   worker.worker._deliver_notification
     CC=5  in:3  out:16  total:19
-  nlp2dsl_sdk.demos._print_workflow_preview
-    CC=4  in:3  out:16  total:19
-  nlp2dsl_sdk.demos._print_execution_result
-    CC=5  in:7  out:11  total:18
-  backend.app.routers.chat._proxy_chat_payload
-    CC=9  in:2  out:16  total:18
-  nlp-service.app.governance.config._search_paths
-    CC=6  in:1  out:17  total:18
-  nlp-service.app.routing.resolve.resolve_intent
-    CC=12  in:1  out:17  total:18
+  nlp-service.app.audio_parser.stt_audio
+    CC=9  in:5  out:14  total:19
   nlp-service.app.settings.SettingsManager.set
     CC=4  in:7  out:11  total:18
   nlp-service.app.conversation.orchestrator._process_message
     CC=6  in:2  out:16  total:18
-  nlp-service.app.execution.system._exec_file_read
+  backend.app.routers.chat._proxy_chat_payload
+    CC=9  in:2  out:16  total:18
+  nlp-service.app.governance.config._search_paths
+    CC=6  in:1  out:17  total:18
+  nlp-service.app.system_executor._exec_file_read
     CC=9  in:0  out:18  total:18
+  nlp2dsl_sdk.demos._print_execution_result
+    CC=5  in:7  out:11  total:18
   worker.worker.handle_generate_code
     CC=5  in:0  out:17  total:17
 
@@ -90,36 +90,38 @@ MODULES:
     main  CC=1  out:1
   examples.code_generation_examples  [1 funcs]
     main  CC=1  out:1
+  nlp-service.app.access.uri_match  [3 funcs]
+    normalize_uri  CC=2  out:1
+    scheme_allowed  CC=5  out:2
+    uri_matches  CC=8  out:11
   nlp-service.app.audio_parser  [4 funcs]
     send_audio  CC=2  out:2
     is_stt_available  CC=2  out:0
     stt_audio  CC=9  out:14
     stt_file  CC=2  out:4
-  nlp-service.app.conversation.orchestrator  [13 funcs]
+  nlp-service.app.conversation.merge  [1 funcs]
+    merge_into_state  CC=9  out:4
+  nlp-service.app.conversation.orchestrator  [5 funcs]
     _attach_routing  CC=1  out:1
-    _build_and_check_dsl  CC=9  out:9
-    _build_incomplete_response  CC=7  out:10
-    _check_execute_keyword  CC=5  out:5
-    _deny_message  CC=3  out:0
-    _format_system_result  CC=3  out:6
-    _handle_system_action  CC=7  out:7
-    _handle_unknown_intent  CC=3  out:2
-    _merge_into_state  CC=9  out:4
     _process_message  CC=6  out:16
+    continue_conversation  CC=2  out:8
+    get_conversation  CC=2  out:2
+    start_conversation  CC=1  out:6
+  nlp-service.app.conversation.responses  [9 funcs]
+    _is_execute_or_continue  CC=2  out:3
+    _nlp_from_state  CC=5  out:5
+    build_and_check_dsl  CC=4  out:6
+    build_incomplete_response  CC=3  out:6
+    check_execute_keyword  CC=7  out:5
+    deny_message  CC=3  out:0
+    format_system_result  CC=3  out:6
+    handle_system_action  CC=7  out:7
+    handle_unknown_intent  CC=5  out:6
   nlp-service.app.dsl.forms  [1 funcs]
     get_action_form  CC=5  out:12
-  nlp-service.app.dsl.mapper  [5 funcs]
-    _build_config  CC=6  out:10
-    _get_field_mapping  CC=1  out:1
-    _make_name  CC=3  out:2
-    _resolve_actions  CC=7  out:4
-    map_to_dsl  CC=8  out:17
-  nlp-service.app.execution.system  [5 funcs]
-    _exec_file_read  CC=9  out:18
-    _exec_file_write  CC=4  out:12
-    _is_read_only  CC=2  out:5
-    _validate_file_path  CC=5  out:9
-    execute_system_action  CC=3  out:5
+  nlp-service.app.execution.delegate  [2 funcs]
+    execution_backend_for_intent  CC=2  out:1
+    is_delegated_to_mullm  CC=2  out:1
   nlp-service.app.governance.bootstrap  [3 funcs]
     _actions_from_yaml_areas  CC=14  out:26
     apply_yaml_actions  CC=4  out:6
@@ -146,10 +148,6 @@ MODULES:
     _matched_effect  CC=3  out:4
     _scheme_decision  CC=3  out:2
     _unknown_agent_decision  CC=4  out:3
-  nlp-service.app.governance.uri_match  [3 funcs]
-    normalize_uri  CC=2  out:1
-    scheme_allowed  CC=5  out:2
-    uri_matches  CC=8  out:11
   nlp-service.app.main  [14 funcs]
     _run_parser  CC=7  out:9
     access_check  CC=3  out:6
@@ -160,7 +158,17 @@ MODULES:
     chat_message  CC=5  out:13
     chat_start  CC=5  out:12
     chat_state  CC=2  out:4
-    health  CC=3  out:7
+    health  CC=3  out:8
+  nlp-service.app.mapper  [5 funcs]
+    _build_config  CC=6  out:10
+    _get_field_mapping  CC=1  out:1
+    _make_name  CC=3  out:2
+    _resolve_actions  CC=7  out:4
+    map_to_dsl  CC=8  out:17
+  nlp-service.app.parser_llm  [3 funcs]
+    _detect_provider  CC=10  out:8
+    _parse_json_response  CC=6  out:10
+    parse_llm  CC=3  out:16
   nlp-service.app.registry  [3 funcs]
     get_defaults  CC=1  out:3
     get_required_fields  CC=1  out:2
@@ -176,12 +184,11 @@ MODULES:
     _regex_pattern_matches  CC=4  out:4
     _resolve_action_alias  CC=2  out:6
     _resolve_configured_route  CC=5  out:5
+  nlp-service.app.routing.observability  [2 funcs]
+    record_intent_decision  CC=7  out:4
+    routing_metrics_snapshot  CC=1  out:1
   nlp-service.app.routing.parser.facade  [1 funcs]
     parse_text  CC=8  out:8
-  nlp-service.app.routing.parser.llm  [3 funcs]
-    _detect_provider  CC=10  out:8
-    _parse_json_response  CC=6  out:10
-    parse_llm  CC=3  out:16
   nlp-service.app.routing.parser.rules  [25 funcs]
     _action_alias_scores  CC=4  out:3
     _action_category  CC=1  out:2
@@ -197,12 +204,18 @@ MODULES:
     _intent_from_native  CC=3  out:8
     _intent_from_nlp  CC=2  out:7
     _parser_source  CC=5  out:4
-    resolve_intent  CC=12  out:17
+    resolve_intent  CC=12  out:22
   nlp-service.app.settings  [2 funcs]
     set  CC=4  out:11
     _coerce_type  CC=5  out:6
   nlp-service.app.store.factory  [1 funcs]
     get_conversation_store  CC=4  out:7
+  nlp-service.app.system_executor  [5 funcs]
+    _exec_file_read  CC=9  out:18
+    _exec_file_write  CC=4  out:12
+    _is_read_only  CC=2  out:5
+    _validate_file_path  CC=5  out:9
+    execute_system_action  CC=3  out:5
   nlp-service.integrations.loader  [3 funcs]
     _integration_names  CC=5  out:6
     apply_integrations  CC=5  out:7
