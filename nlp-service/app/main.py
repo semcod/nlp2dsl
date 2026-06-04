@@ -187,6 +187,8 @@ async def list_actions() -> dict[str, Any]:
 
 @app.get("/health")
 async def health() -> dict[str, Any]:
+    from app.routing.observability import routing_metrics_snapshot
+
     llm_provider = _detect_provider()
     store = get_conversation_store()
     return {
@@ -198,6 +200,7 @@ async def health() -> dict[str, Any]:
         "conversation_store": type(store).__name__,
         "active_conversations": await store.count(),
         "actions": list(ACTIONS_REGISTRY.keys()),
+        "routing_metrics": routing_metrics_snapshot(),
     }
 
 

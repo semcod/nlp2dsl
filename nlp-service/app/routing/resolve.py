@@ -1,0 +1,148 @@
+"""Jedno miejsce: native → parser → authorize → IntentDecision."""
+
+from __future__ import annotations
+
+import os
+from typing import Any
+
+from app.governance.policy import AccessDecision, authorize_action, get_agent_id
+from app.routing.native import resolve_native_intent
+from app.routing.parser import parse_text
+from app.routing.parser.rules import parse_rules
+from app.registry import ACTIONS_REGISTRY, DELEGATED_ACTIONS
+from app.routing.intent import IntentDecision
+from app.routing.observability import record_intent_decision
+from app.schemas import NLPResult
+
+_FALLBACK_THRESHOLD = float(os.getenv("LLM_FALLBACK_THRESHOLD", "0.5"))
+
+
+def _parser_source(text: str) -> str:
+    """Etykieta źródła parsera (rules vs llm) — zgodnie z NLP_CHAT_MODE=auto."""
+    mode = (os.getenv("NLP_CHAT_MODE", "auto") or "auto").lower().strip()
+    if mode == "rules":
+        return "rules"
+    if mode == "llm":
+        return "llm"
+    rules_result = parse_rules(text)
+    if rules_result.intent.confidence >= _FALLBACK_THRESHOLD:
+        return "rules"
+    return "llm"
+
+
+def _intent_from_native(native: dict[str, Any]) -> IntentDecision:
+    action = str(native["action"])
+    return IntentDecision(
+        action=action,
+        intent=action,
+        confidence=0.95,
+        source=str(native.get("source") or "native_routing"),
+        reason_codes=["native_match"],
+        resource_area=native.get("resource_area"),
+        permission_action=str(native.get("permission_action") or "execute"),
+        uri=native.get("uri"),
+    )
+
+
+def _intent_from_nlp(nlp: NLPResult, source: str) -> IntentDecision:
+    action = nlp.intent.intent
+    meta = ACTIONS_REGISTRY.get(action, {})
+    return IntentDecision(
+        action=action,
+        intent=action,
+        confidence=float(nlp.intent.confidence),
+        source=source,
+        reason_codes=[f"parser_{source}"],
+        resource_area=meta.get("resource_area"),
+        permission_action=str(meta.get("permission_action") or "execute"),
+        uri=meta.get("resource_uri"),
+        candidate_actions=[
+            {
+                "action": action,
+                "confidence": nlp.intent.confidence,
+                "source": source,
+            }
+        ],
+    )
+
+
+def _apply_auth(decision: IntentDecision, auth: AccessDecision) -> IntentDecision:
+    decision.agent_id = auth.agent_id
+    decision.authorized = auth.allowed
+    decision.deny_reason = None if auth.allowed else auth.reason
+    decision.deny_effect = None if auth.allowed else auth.effect
+    if not auth.allowed:
+        decision.reason_codes.append(f"auth_{auth.effect}")
+    else:
+        decision.reason_codes.append("auth_allow")
+    return decision
+
+
+async def resolve_intent(
+    text: str,
+    *,
+    agent_id: str | None = None,
+) -> tuple[IntentDecision, NLPResult | None]:
+    """
+    Kaskada: native_routing → parse_text → authorize (native zawsze; delegate przy parserze).
+
+    Zwraca (decyzja, NLPResult) — NLPResult jest None przy odmowie ACL lub gdy brak treści.
+    """
+    text = (text or "").strip()
+    aid = get_agent_id(agent_id)
+
+    if not text:
+        empty = IntentDecision(
+            action=None,
+            intent="empty",
+            confidence=0.0,
+            source="unknown",
+            reason_codes=["empty_message"],
+            agent_id=aid,
+            authorized=False,
+            deny_reason="empty_message",
+        )
+        record_intent_decision(empty)
+        return empty, None
+
+    native = resolve_native_intent(text)
+    # Tylko trasy z nlp2dsl.yaml (native_routing) — aliasy z registry idą do parsera (entities)
+    if native and native.get("source") == "native_routing":
+        decision = _intent_from_native(native)
+        decision.agent_id = aid
+        meta = ACTIONS_REGISTRY.get(decision.action or "", {})
+        auth = authorize_action(
+            aid,
+            decision.action or "",
+            resource_area=decision.resource_area,
+            uri=decision.uri,
+            permission_action=decision.permission_action,
+            action_meta=meta,
+        )
+        decision = _apply_auth(decision, auth)
+        if decision.authorized:
+            record_intent_decision(decision)
+            return decision, decision.to_nlp_result(text)
+        record_intent_decision(decision)
+        return decision, None
+
+    nlp = await parse_text(text)
+    source = _parser_source(text)
+    decision = _intent_from_nlp(nlp, source)
+    decision.agent_id = aid
+
+    if decision.action in DELEGATED_ACTIONS:
+        meta = ACTIONS_REGISTRY.get(decision.action or "", {})
+        auth = authorize_action(
+            aid,
+            decision.action or "",
+            action_meta=meta,
+        )
+        decision = _apply_auth(decision, auth)
+        if not decision.authorized:
+            record_intent_decision(decision)
+            return decision, None
+
+    decision.reason_codes.append("auth_skipped")
+    record_intent_decision(decision)
+    return decision, nlp

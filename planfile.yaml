@@ -82,45 +82,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-8d40f43b
-    name: Fix wildcard-imports issues
-    description: Resolve 2 wildcard-imports issues in nlp-service/app/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/main.py
-    rule_id: wildcard-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-08ceb54b
-    name: Fix ai-boilerplate issues
-    description: Resolve 1 ai-boilerplate issues in nlp-service/app/main.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/main.py
-    rule_id: ai-boilerplate
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-619416fc
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in nlp-service/app/parser_rules.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/parser_rules.py
-    rule_id: string-concat
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-e831df43
     name: Fix relative-imports issues
     description: Resolve 4 relative-imports issues in nlp2dsl_sdk/__init__.py
@@ -169,19 +130,6 @@ sprints:
     files:
     - nlp2dsl_sdk/__main__.py
     rule_id: ai-boilerplate
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-3c002d51
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in nlp-service/app/system_executor.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/system_executor.py
-    rule_id: string-concat
     count: 1
     model_hints:
       planning: balanced
@@ -316,19 +264,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-18143572
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in nlp-service/app/parser_llm.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/parser_llm.py
-    rule_id: string-concat
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-b115c49b
     name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in tests/e2e/test_nlp_service.py
@@ -446,32 +381,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-be57afc5
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in nlp-service/app/orchestrator.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/orchestrator.py
-    rule_id: string-concat
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-167e0f6b
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in nlp-service/app/parsing/facade.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - nlp-service/app/parsing/facade.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-f2668f83
     name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in nlp-service/integrations/loader.py
@@ -495,6 +404,331 @@ sprints:
     - tests/test_tests.py
     rule_id: smart-return-type
     count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-570b8c9f
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/access/bootstrap.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/bootstrap.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6e22a6eb
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/access/config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/config.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9aae9951
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/access/native.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/native.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9b8ea132
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/access/policy.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/policy.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-dbf1ee9e
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/access/uri_match.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/uri_match.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4548f541
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/routing/intent.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/routing/intent.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1f25c667
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/routing/resolve.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/routing/resolve.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-caf9a1b0
+    name: Fix wildcard-imports issues
+    description: Resolve 2 wildcard-imports issues in nlp-service/app/access/bootstrap.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/bootstrap.py
+    rule_id: wildcard-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4e2b622d
+    name: Fix wildcard-imports issues
+    description: Resolve 2 wildcard-imports issues in nlp-service/app/access/config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/config.py
+    rule_id: wildcard-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-63459fc2
+    name: Fix wildcard-imports issues
+    description: Resolve 2 wildcard-imports issues in nlp-service/app/access/native.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/native.py
+    rule_id: wildcard-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c5eb32c9
+    name: Fix wildcard-imports issues
+    description: Resolve 2 wildcard-imports issues in nlp-service/app/access/policy.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/policy.py
+    rule_id: wildcard-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ac0a3b35
+    name: Fix wildcard-imports issues
+    description: Resolve 2 wildcard-imports issues in nlp-service/app/access/uri_match.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/access/uri_match.py
+    rule_id: wildcard-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b5420121
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/conversation/merge.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/conversation/merge.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-eb8d37d9
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/conversation/responses.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/conversation/responses.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4412b3a3
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/conversation/responses.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/conversation/responses.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-806ddaa3
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/execution/system.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/execution/system.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2788505d
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/governance/bootstrap.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/governance/bootstrap.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c7829562
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/governance/config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/governance/config.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b70fd2b3
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/governance/config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/governance/config.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5d778247
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/governance/policy.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/governance/policy.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5df050fb
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/governance/uri_match.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/governance/uri_match.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-23772558
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/routing/native.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/routing/native.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ed906b0a
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/routing/parser/facade.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/routing/parser/facade.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-52633c6e
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/routing/parser/rules.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/routing/parser/rules.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cdff8572
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/routing/parser/llm.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/routing/parser/llm.py
+    rule_id: string-concat
+    count: 1
     model_hints:
       planning: balanced
       implementation: balanced

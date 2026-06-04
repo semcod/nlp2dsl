@@ -143,6 +143,20 @@ class TestParseSystem:
         result = parse_rules("jakie akcje")
         assert result.intent.intent == "system_registry_list"
 
+    def test_parse_system_set_model(self) -> None:
+        """Model setting command extracts path and target value."""
+        result = parse_rules("ustaw model na gpt-4o")
+        assert result.intent.intent == "system_settings_set"
+        assert result.entities.setting_path == "llm.model"
+        assert result.entities.setting_value == "gpt-4o"
+
+    def test_parse_system_set_mode(self) -> None:
+        """Mode setting command extracts nlp.default_mode."""
+        result = parse_rules("ustaw tryb rules")
+        assert result.intent.intent == "system_settings_set"
+        assert result.entities.setting_path == "nlp.default_mode"
+        assert result.entities.setting_value == "rules"
+
 
 # ── Unknown intent ───────────────────────────────────────────────
 

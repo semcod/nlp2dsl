@@ -1,22 +1,13 @@
-# code2llm | 100f 10114L | python:58,yaml:8,shell:7,toml:5,txt:4,json:3,rust:2,javascript:2,yml:2,ini:1 | 2026-06-04
-# generated in 0.09s
-# CC̅=3.2 | critical:8/341 | dups:0 | cycles:1
+# code2llm | 120f 10824L | python:78,yaml:8,shell:7,toml:5,txt:4,json:3,yml:2,rust:2,javascript:2,ini:1 | 2026-06-04
+# generated in 0.02s
+# CC̅=2.9 | critical:0/397 | dups:0 | cycles:1
 
-HEALTH[8]:
-  🟡 CC    _detect_actions CC=15 (limit:15)
-  🟡 CC    _extract_system_entities CC=16 (limit:15)
-  🟡 CC    _format_system_result CC=16 (limit:15)
-  🟡 CC    _match_route CC=21 (limit:15)
-  🟡 CC    resolve_native_intent CC=16 (limit:15)
-  🟡 CC    load_access_config CC=22 (limit:15)
-  🟡 CC    _grant_matches CC=16 (limit:15)
-  🟡 CC    authorize_action CC=18 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[2]:
-  1. split 8 high-CC methods  (CC>15)
-  2. break 1 circular dependencies
+REFACTOR[1]:
+  1. break 1 circular dependencies
 
-PIPELINES[217]:
+PIPELINES[227]:
   [1] Src [main]: main
       PURITY: 100% pure
   [2] Src [main]: main
@@ -119,39 +110,59 @@ PIPELINES[217]:
       PURITY: 100% pure
 
 LAYERS:
-  nlp-service/                    CC̄=4.3    ←in:0  →out:0
-  │ !! main                       580L  0C   23m  CC=10     ←0
-  │ !! orchestrator               455L  0C   12m  CC=16     ←1
+  nlp-service/                    CC̄=3.5    ←in:0  →out:0
+  │ !! main                       580L  0C   23m  CC=10     ←1
+  │ orchestrator               391L  0C   22m  CC=9      ←1
   │ registry                   390L  0C    4m  CC=5      ←3
-  │ system_executor            342L  0C   13m  CC=12     ←1
-  │ !! parser_rules               320L  0C   13m  CC=16     ←2
+  │ rules                      381L  0C   25m  CC=7      ←3
+  │ system                     342L  0C   13m  CC=12     ←1
+  │ policy                     302L  2C   14m  CC=5      ←2
   │ code_generator             279L  1C    8m  CC=14     ←0
   │ settings                   251L  6C   11m  CC=6      ←5
   │ mapper                     189L  0C    6m  CC=8      ←2
-  │ parser_llm                 187L  0C    3m  CC=10     ←2
-  │ !! policy                     177L  1C    4m  CC=18     ←2
+  │ llm                        187L  0C    3m  CC=10     ←2
+  │ config                     165L  1C   13m  CC=8      ←4
   │ audio_parser               148L  1C    8m  CC=9      ←1
-  │ !! config                     143L  1C    8m  CC=22     ←4
-  │ schemas                    130L  11C    0m  CC=0.0    ←0
+  │ native                     143L  0C   13m  CC=6      ←1
+  │ resolve                    142L  0C    5m  CC=12     ←1
+  │ schemas                    131L  11C    0m  CC=0.0    ←0
   │ logging_setup              100L  2C    6m  CC=3      ←0
-  │ !! native                      82L  0C    2m  CC=21     ←1
+  │ forms                       83L  0C    1m  CC=5      ←2
   │ bootstrap                   78L  0C    3m  CC=14     ←0
   │ registry                    66L  0C    0m  CC=0.0    ←0
   │ loader                      62L  0C    3m  CC=5      ←1
   │ config                      60L  1C    0m  CC=0.0    ←0
   │ redis_store                 58L  1C    7m  CC=3      ←0
+  │ intent                      53L  1C    2m  CC=3      ←0
   │ pyproject.toml              52L  0C    0m  CC=0.0    ←0
   │ factory                     46L  0C    1m  CC=4      ←1
   │ uri_match                   42L  0C    3m  CC=8      ←1
-  │ facade                      39L  0C    1m  CC=8      ←1
+  │ facade                      39L  0C    1m  CC=8      ←0
+  │ system_executor             35L  0C    0m  CC=0.0    ←0
   │ __init__                    30L  1C    4m  CC=1      ←0
   │ manifest.json               30L  0C    0m  CC=0.0    ←0
   │ memory                      23L  1C    5m  CC=1      ←0
+  │ orchestrator                21L  0C    0m  CC=0.0    ←0
   │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ Dockerfile                  14L  0C    0m  CC=0.0    ←0
+  │ __init__                    14L  0C    0m  CC=0.0    ←0
+  │ __init__                    13L  0C    0m  CC=0.0    ←0
   │ requirements.txt            10L  0C    0m  CC=0.0    ←0
+  │ __init__                     7L  0C    0m  CC=0.0    ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
+  │ parser_llm                   5L  0C    0m  CC=0.0    ←0
+  │ facade                       5L  0C    0m  CC=0.0    ←0
+  │ parser_rules                 5L  0C    0m  CC=0.0    ←0
+  │ mapper                       5L  0C    0m  CC=0.0    ←0
+  │ __init__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ uri_match                    3L  0C    0m  CC=0.0    ←0
+  │ bootstrap                    3L  0C    0m  CC=0.0    ←0
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ native                       3L  0C    0m  CC=0.0    ←0
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ policy                       3L  0C    0m  CC=0.0    ←0
+  │ config                       3L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
   tauri-wrapper/                  CC̄=2.7    ←in:0  →out:0
@@ -217,8 +228,8 @@ LAYERS:
   │ requirements.txt             1L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! planfile.yaml              591L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
-  │ !! planfile.yaml              500L  0C    0m  CC=0.0    ←0
   │ nlp2dsl.yaml               186L  0C    0m  CC=0.0    ←0
   │ docker-compose.yml         113L  0C    0m  CC=0.0    ←0
   │ prefact.yaml                82L  0C    0m  CC=0.0    ←0

@@ -315,7 +315,7 @@ COMPOSITE_INTENTS: dict[str, list[str]] = {
 
 # ── Integracje + nlp2dsl.yaml (zasoby, agenci, ACL) ───────────
 
-from app.access.bootstrap import bootstrap_registry
+from app.governance.bootstrap import bootstrap_registry
 
 MULLM_ACTIONS, DELEGATED_ACTIONS = bootstrap_registry(ACTIONS_REGISTRY)
 

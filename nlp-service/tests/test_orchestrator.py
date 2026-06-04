@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import pytest
 from app.orchestrator import (
+    _format_system_result,
     _merge_into_state,
     continue_conversation,
     get_action_form,
@@ -28,8 +29,11 @@ from app.store.memory import MemoryConversationStore
 @pytest.fixture(autouse=True)
 def _patch_store(monkeypatch) -> None:
     """Replace orchestrator's _store with a fresh MemoryConversationStore per test."""
+    import app.conversation.orchestrator as conv_orch_mod
     import app.orchestrator as orch_mod
+
     store = MemoryConversationStore()
+    monkeypatch.setattr(conv_orch_mod, "_store", store)
     monkeypatch.setattr(orch_mod, "_store", store)
 
 
@@ -115,6 +119,32 @@ class TestSystemCommands:
         resp = await start_conversation("pokaż ustawienia")
         assert resp.status == "done"
         assert "stawieni" in resp.message.lower() or "settings" in resp.message.lower() or "{" in resp.message
+
+    def test_format_system_file_list(self) -> None:
+        """File list formatter keeps the user-facing shape stable."""
+        msg = _format_system_result(
+            "system_file_list",
+            {
+                "status": "completed",
+                "result": {
+                    "directory": ".",
+                    "count": 2,
+                    "files": [
+                        {"path": "a.py", "size_kb": 1},
+                        {"path": "b.py", "size_kb": 2},
+                    ],
+                },
+            },
+        )
+        assert msg == "Pliki w . (2):\n  a.py (1 KB)\n  b.py (2 KB)"
+
+    def test_format_system_failed_result(self) -> None:
+        """Failed system action bypasses formatter dispatch."""
+        msg = _format_system_result(
+            "system_status",
+            {"status": "failed", "error": "boom"},
+        )
+        assert msg == "Błąd: boom"
 
 
 # ── get_conversation ─────────────────────────────────────────────

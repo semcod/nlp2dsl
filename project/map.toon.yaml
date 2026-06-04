@@ -1,175 +1,329 @@
-# nlp2dsl | 100f 10114L | yaml:8,shell:7,json:3,rust:2,toml:5,javascript:2,ini:1,python:58,yml:2,txt:4 | 2026-06-04
-# generated in 0.05s
-# stats: 341 func | 0 cls | 100 mod | CC̄=3.2 | critical:8 | cycles:0
-# alerts[5]: CC load_access_config=22; CC _match_route=21; fan-out _execute_workflow=19; CC authorize_action=18; fan-out _process_message=18
-# hotspots[5]: _execute_workflow fan=19; _process_message fan=18; workflow_from_text fan=17; load_access_config fan=17; chat_message fan=16
-# evolution: CC̄ 2.9→3.2 (regressed +0.3)
+# nlp2dsl | 131f 12828L | python:112,shell:13,javascript:3,rust:2,less:1 | 2026-06-04
+# stats: 339 func | 122 cls | 131 mod | CC̄=3.4 | critical:13 | cycles:0
+# alerts[5]: CC test_workflow_and_conversation_endpoints=17; CC test_code_generation_methods_hit_expected_services=16; CC _actions_from_yaml_areas=14; CC test_new_workflow_helpers_are_data_driven=14; CC chat_message=12
+# hotspots[5]: _execute_workflow fan=19; websocket_chat fan=16; map_to_dsl fan=14; test_code_generation fan=14; chat_message fan=13
+# evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[100]:
+M[131]:
   .pfix-test-wrapper.sh,16
-  backend/Dockerfile,11
-  backend/app/__init__.py,0
-  backend/app/config.py,42
-  backend/app/db/__init__.py,49
-  backend/app/db/memory.py,37
-  backend/app/db/postgres.py,172
-  backend/app/engine.py,269
-  backend/app/logging_setup.py,100
-  backend/app/main.py,48
-  backend/app/routers/chat.py,124
-  backend/app/routers/settings.py,81
-  backend/app/routers/system.py,29
-  backend/app/routers/workflow.py,189
-  backend/app/schemas.py,64
-  backend/app/workflow.py,22
-  backend/app/workflow_events.py,91
-  backend/pyproject.toml,52
-  backend/pytest.ini,5
-  backend/requirements.txt,9
-  docker-compose.yml,113
-  examples/01-invoice/Dockerfile,23
-  examples/01-invoice/main.py,23
-  examples/02-email/Dockerfile,23
-  examples/02-email/main.py,23
-  examples/03-report-and-notify/Dockerfile,23
-  examples/03-report-and-notify/main.py,23
-  examples/04-scheduled-report/Dockerfile,23
-  examples/04-scheduled-report/main.py,23
-  examples/05-conversation-flow/Dockerfile,23
-  examples/05-conversation-flow/main.py,38
-  examples/05-conversation-flow/requirements.txt,1
-  examples/05-conversation-flow/run.sh,6
-  examples/code_generation_examples.py,25
-  examples/docker-compose.yml,60
-  goal.yaml,512
-  metrun-profile.sh,48
-  nlp-service/Dockerfile,14
-  nlp-service/app/access/__init__.py,15
-  nlp-service/app/access/bootstrap.py,78
-  nlp-service/app/access/config.py,143
-  nlp-service/app/access/native.py,82
-  nlp-service/app/access/policy.py,177
-  nlp-service/app/access/uri_match.py,42
-  nlp-service/app/audio_parser.py,148
-  nlp-service/app/code_generator.py,279
-  nlp-service/app/config.py,60
-  nlp-service/app/logging_setup.py,100
-  nlp-service/app/main.py,580
-  nlp-service/app/mapper.py,189
-  nlp-service/app/orchestrator.py,455
-  nlp-service/app/parser_llm.py,187
-  nlp-service/app/parser_rules.py,320
-  nlp-service/app/parsing/__init__.py,3
-  nlp-service/app/parsing/facade.py,39
-  nlp-service/app/registry.py,390
-  nlp-service/app/schemas.py,130
-  nlp-service/app/settings.py,251
-  nlp-service/app/store/__init__.py,30
-  nlp-service/app/store/factory.py,46
-  nlp-service/app/store/memory.py,23
-  nlp-service/app/store/redis_store.py,58
-  nlp-service/app/system_executor.py,342
-  nlp-service/integrations/__init__.py,5
-  nlp-service/integrations/loader.py,62
-  nlp-service/integrations/mullm/__init__.py,1
-  nlp-service/integrations/mullm/registry.py,66
-  nlp-service/pyproject.toml,52
-  nlp-service/requirements.txt,10
-  nlp-service/static/manifest.json,30
-  nlp2dsl.yaml,186
-  nlp2dsl_sdk/__init__.py,33
-  nlp2dsl_sdk/__main__.py,41
-  nlp2dsl_sdk/client.py,580
-  nlp2dsl_sdk/demos.py,687
-  planfile.yaml,500
-  prefact.yaml,82
+  app.doql.less,125
+  backend/app/__init__.py,1
+  backend/app/config.py,43
+  backend/app/db/__init__.py,50
+  backend/app/db/memory.py,38
+  backend/app/db/postgres.py,173
+  backend/app/engine.py,270
+  backend/app/logging_setup.py,101
+  backend/app/main.py,49
+  backend/app/routers/__init__.py,1
+  backend/app/routers/chat.py,125
+  backend/app/routers/settings.py,82
+  backend/app/routers/system.py,30
+  backend/app/routers/workflow.py,190
+  backend/app/schemas.py,65
+  backend/app/workflow.py,23
+  backend/app/workflow_events.py,92
+  backend/tests/__init__.py,1
+  backend/tests/conftest.py,32
+  backend/tests/test_config.py,83
+  backend/tests/test_logging.py,124
+  backend/tests/test_persistence.py,185
+  backend/tests/test_workflow_api.py,267
+  examples/01-invoice/main.py,24
+  examples/01-invoice/run.sh,7
+  examples/02-email/main.py,24
+  examples/02-email/run.sh,7
+  examples/03-report-and-notify/main.py,24
+  examples/03-report-and-notify/run.sh,7
+  examples/04-scheduled-report/main.py,24
+  examples/04-scheduled-report/run.sh,7
+  examples/05-conversation-flow/main.py,39
+  examples/05-conversation-flow/run.sh,7
+  examples/basic/invoice/run.sh,1
+  examples/code_generation_examples.py,26
+  metrun-profile.sh,49
+  nlp-service/app/__init__.py,1
+  nlp-service/app/access/__init__.py,16
+  nlp-service/app/access/bootstrap.py,4
+  nlp-service/app/access/config.py,4
+  nlp-service/app/access/native.py,4
+  nlp-service/app/access/policy.py,4
+  nlp-service/app/access/uri_match.py,4
+  nlp-service/app/audio_parser.py,149
+  nlp-service/app/code_generator.py,280
+  nlp-service/app/config.py,61
+  nlp-service/app/conversation/__init__.py,14
+  nlp-service/app/conversation/merge.py,26
+  nlp-service/app/conversation/orchestrator.py,108
+  nlp-service/app/conversation/responses.py,237
+  nlp-service/app/dsl/__init__.py,5
+  nlp-service/app/dsl/forms.py,84
+  nlp-service/app/dsl/mapper.py,190
+  nlp-service/app/execution/__init__.py,4
+  nlp-service/app/execution/system.py,343
+  nlp-service/app/governance/__init__.py,15
+  nlp-service/app/governance/bootstrap.py,79
+  nlp-service/app/governance/config.py,166
+  nlp-service/app/governance/policy.py,303
+  nlp-service/app/governance/uri_match.py,43
+  nlp-service/app/logging_setup.py,101
+  nlp-service/app/main.py,581
+  nlp-service/app/mapper.py,6
+  nlp-service/app/orchestrator.py,22
+  nlp-service/app/parser_llm.py,6
+  nlp-service/app/parser_rules.py,6
+  nlp-service/app/parsing/__init__.py,4
+  nlp-service/app/parsing/facade.py,6
+  nlp-service/app/registry.py,391
+  nlp-service/app/routing/__init__.py,8
+  nlp-service/app/routing/intent.py,54
+  nlp-service/app/routing/native.py,144
+  nlp-service/app/routing/parser/__init__.py,4
+  nlp-service/app/routing/parser/facade.py,40
+  nlp-service/app/routing/parser/llm.py,188
+  nlp-service/app/routing/parser/rules.py,382
+  nlp-service/app/routing/resolve.py,143
+  nlp-service/app/schemas.py,132
+  nlp-service/app/settings.py,252
+  nlp-service/app/store/__init__.py,31
+  nlp-service/app/store/factory.py,47
+  nlp-service/app/store/memory.py,24
+  nlp-service/app/store/redis_store.py,59
+  nlp-service/app/system_executor.py,36
+  nlp-service/integrations/__init__.py,6
+  nlp-service/integrations/loader.py,63
+  nlp-service/integrations/mullm/__init__.py,2
+  nlp-service/integrations/mullm/registry.py,67
+  nlp-service/tests/__init__.py,1
+  nlp-service/tests/conftest.py,102
+  nlp-service/tests/test_access.py,75
+  nlp-service/tests/test_mapper.py,252
+  nlp-service/tests/test_orchestrator.py,222
+  nlp-service/tests/test_parser_rules.py,237
+  nlp-service/tests/test_registry.py,169
+  nlp-service/tests/test_routing_resolve.py,66
+  nlp-service/tests/test_store.py,193
+  nlp-service/tests/test_system_executor.py,422
+  nlp2dsl_sdk/__init__.py,34
+  nlp2dsl_sdk/__main__.py,42
+  nlp2dsl_sdk/client.py,581
+  nlp2dsl_sdk/demos.py,688
   project.sh,59
-  pyproject.toml,61
-  pyqual.yaml,41
-  run-all-tests.sh,44
-  tauri-wrapper/desktop.sh,79
-  tauri-wrapper/package.json,18
-  tauri-wrapper/scripts/dev.js,56
-  tauri-wrapper/scripts/serve-dist.js,139
-  tauri-wrapper/src-tauri/Cargo.toml,17
-  tauri-wrapper/src-tauri/build.rs,3
-  tauri-wrapper/src-tauri/src/main.rs,7
-  tauri-wrapper/src-tauri/tauri.conf.json,43
-  testql-scenarios/generated-api-smoke.testql.toon.yaml,39
-  testql-scenarios/generated-cli-tests.testql.toon.yaml,20
-  testql-scenarios/generated-from-pytests.testql.toon.yaml,128
-  tree.sh,1
-  worker/__init__.py,5
-  worker/Dockerfile,11
-  worker/config.py,27
-  worker/logging_setup.py,100
-  worker/pyproject.toml,46
-  worker/requirements.txt,4
-  worker/worker.py,230
+  run-all-tests.sh,45
+  tauri-wrapper/desktop.sh,80
+  tauri-wrapper/scripts/dev.js,57
+  tauri-wrapper/scripts/serve-dist.js,140
+  tauri-wrapper/src-tauri/build.rs,4
+  tauri-wrapper/src-tauri/src/main.rs,8
+  tauri-wrapper/test/mvp-voice-chat-wrapper.test.js,9
+  test_code_generation.py,140
+  tests/conftest.py,11
+  tests/e2e/__init__.py,1
+  tests/e2e/conftest.py,129
+  tests/e2e/test_backend.py,152
+  tests/e2e/test_chat_ui.py,263
+  tests/e2e/test_nlp_service.py,216
+  tests/e2e/test_websocket.py,112
+  tests/run.sh,86
+  tests/test_nlp2dsl_sdk.py,259
+  tests/test_placeholder.py,12
+  tests/test_tests.py,12
+  tree.sh,2
+  worker/__init__.py,6
+  worker/config.py,28
+  worker/logging_setup.py,101
+  worker/tests/__init__.py,1
+  worker/tests/conftest.py,46
+  worker/tests/test_worker.py,173
+  worker/worker.py,231
 D:
-  nlp-service/app/access/config.py:
-    e: AccessConfig,_search_paths,_load_yaml_file,_merge_dict,load_access_config,get_access_config,reload_access_config
-    AccessConfig: action_to_area(0),area_by_id(1)
-    _search_paths()
-    _load_yaml_file(path)
-    _merge_dict(base;overlay)
-    load_access_config()
-    get_access_config()
-    reload_access_config()
-  nlp-service/app/access/native.py:
-    e: _match_route,resolve_native_intent
-    _match_route(text;route)
-    resolve_native_intent(text)
-  nlp-service/app/access/policy.py:
-    e: AccessDecision,get_agent_id,_grant_matches,authorize_action
-    AccessDecision: to_dict(0)
-    get_agent_id(header_agent)
-    _grant_matches(grant)
-    authorize_action(agent_id;action_name)
-  nlp-service/app/parser_rules.py:
-    e: parse_rules,_detect_actions,_resolve_intent,_extract_entities,_extract_amount,_extract_email,_extract_report_type,_extract_format,_extract_notification_channels,_extract_param_aliases,_extract_system_entities,_extract_fallback_recipient,_set_entity
-    parse_rules(text)
-    _detect_actions(text_lower)
-    _resolve_intent(actions)
-    _extract_entities(text;text_lower)
-    _extract_amount(entities;text)
-    _extract_email(entities;text)
-    _extract_report_type(entities;text_lower)
-    _extract_format(entities;text_lower)
-    _extract_notification_channels(entities;text)
-    _extract_param_aliases(entities;text_lower)
-    _extract_system_entities(entities;text;text_lower)
-    _extract_fallback_recipient(entities;text_lower)
-    _set_entity(entities;field;value)
-  nlp-service/app/orchestrator.py:
-    e: start_conversation,continue_conversation,get_conversation,get_action_form,_process_message,_check_execute_keyword,_handle_unknown_intent,_handle_system_action,_build_and_check_dsl,_build_incomplete_response,_merge_into_state,_format_system_result
-    start_conversation(text)
-    continue_conversation(conversation_id;text)
-    get_conversation(conversation_id)
-    get_action_form(action)
-    _process_message(state;text)
-    _check_execute_keyword(state;text)
-    _handle_unknown_intent(state)
-    _handle_system_action(state)
-    _build_and_check_dsl(state)
-    _build_incomplete_response(state)
-    _merge_into_state(state;nlp)
-    _format_system_result(intent;result)
-  nlp-service/app/code_generator.py:
-    e: CodeGenerator
-    CodeGenerator: __init__(0),_get_api_key(0),_build_prompt(3),generate_code(4),_extract_class_name(1),_split_code_and_tests(2),get_supported_languages(0),get_language_info(1)  # Generates code in multiple programming languages using LLM...
-  nlp-service/app/access/bootstrap.py:
-    e: _actions_from_yaml_areas,apply_yaml_actions,bootstrap_registry
-    _actions_from_yaml_areas()
-    apply_yaml_actions(registry)
-    bootstrap_registry(registry)
+  backend/app/__init__.py:
+  backend/app/config.py:
+    e: BackendSettings
+    BackendSettings:
+  backend/app/db/__init__.py:
+    e: create_workflow_repo,WorkflowRepo
+    WorkflowRepo: save_run(4),update_run_status(2),get_run(1),list_runs(2),count_runs(0)  # Abstrakcja persystencji workflow.
+    create_workflow_repo()
+  backend/app/db/memory.py:
+    e: MemoryWorkflowRepo
+    MemoryWorkflowRepo: __init__(1),save_run(4),update_run_status(2),get_run(1),list_runs(2),count_runs(0)
+  backend/app/db/postgres.py:
+    e: Base,WorkflowRunModel,PostgresWorkflowRepo
+    Base:
+    WorkflowRunModel: to_dict(0)
+    PostgresWorkflowRepo: __init__(1),_ensure_engine(0),_get_session_factory(0),_ensure_tables(0),save_run(4),update_run_status(2),get_run(1),list_runs(2),count_runs(0),close(0)
+  backend/app/engine.py:
+    e: _workflow_steps_payload,_persist_workflow_snapshot,_publish_workflow_event,_execute_workflow,_track_background_task,run_workflow,start_workflow
+    _workflow_steps_payload(result)
+    _persist_workflow_snapshot(req;result)
+    _publish_workflow_event(workflow_id;event_type;status;message)
+    _execute_workflow(req;workflow_id)
+    _track_background_task(task)
+    run_workflow(req)
+    start_workflow(req)
+  backend/app/logging_setup.py:
+    e: get_request_id,setup_logging,JSONFormatter,RequestIDMiddleware
+    JSONFormatter: __init__(1),format(1)  # Emit log records as single-line JSON objects.
+    RequestIDMiddleware: __init__(2),dispatch(2)  # Generate or forward X-Request-ID for every HTTP request.
+    get_request_id()
+    setup_logging(service;level)
+  backend/app/main.py:
+    e: health
+    health()
+  backend/app/routers/__init__.py:
   backend/app/routers/chat.py:
     e: _proxy_chat_payload,chat_start,chat_message,chat_get_state
     _proxy_chat_payload(request;endpoint)
     chat_start(request)
     chat_message(request)
     chat_get_state(conversation_id)
-  nlp-service/app/system_executor.py:
+  backend/app/routers/settings.py:
+    e: actions_schema,action_schema,get_settings,get_settings_section,update_settings_section,set_setting,reset_settings
+    actions_schema()
+    action_schema(action)
+    get_settings()
+    get_settings_section(section)
+    update_settings_section(section;body)
+    set_setting(body)
+    reset_settings(body)
+  backend/app/routers/system.py:
+    e: system_execute
+    system_execute(body)
+  backend/app/routers/workflow.py:
+    e: _format_sse,_workflow_snapshot,list_actions,run_workflow_endpoint,start_workflow_endpoint,get_history,get_workflow,stream_workflow,workflow_from_text
+    _format_sse(event;data)
+    _workflow_snapshot(run)
+    list_actions()
+    run_workflow_endpoint(req)
+    start_workflow_endpoint(req)
+    get_history()
+    get_workflow(workflow_id)
+    stream_workflow(workflow_id;request)
+    workflow_from_text(body)
+  backend/app/schemas.py:
+    e: StepStatus,Step,RunWorkflowRequest,StepResult,WorkflowResult,ActionInfo
+    StepStatus:
+    Step:  # Pojedynczy krok workflow — deklaratywny opis akcji.
+    RunWorkflowRequest:  # Żądanie uruchomienia workflow — DSL biznesowy.
+    StepResult:
+    WorkflowResult:
+    ActionInfo:  # Opis dostępnej akcji (do listowania w GUI / API).
+  backend/app/workflow.py:
+  backend/app/workflow_events.py:
+    e: WorkflowEvent,WorkflowEventHub
+    WorkflowEvent: is_terminal(0),to_dict(0)
+    WorkflowEventHub: __init__(0),subscribe(1),unsubscribe(2),publish(1),subscriber_count(1)  # In-memory broadcaster dla workflow lifecycle events.
+  backend/tests/__init__.py:
+  backend/tests/conftest.py:
+    e: client
+    client()
+  backend/tests/test_config.py:
+    e: TestBackendSettingsDefaults,TestBackendSettingsEnvOverride,TestBackendSettingsIntegration
+    TestBackendSettingsDefaults: test_worker_url_default(1),test_nlp_service_url_default(1),test_postgres_url_default_none(1),test_log_level_default(1)  # BackendSettings reads sane defaults when env vars are absent
+    TestBackendSettingsEnvOverride: test_worker_url_from_env(1),test_postgres_url_from_env(1),test_log_level_from_env(1),test_extra_env_vars_ignored(1)  # BackendSettings picks up values from env vars.
+    TestBackendSettingsIntegration: test_settings_singleton_importable(0),test_engine_uses_settings(0)  # BackendSettings singleton is importable and functional.
+  backend/tests/test_logging.py:
+    e: TestJSONFormatter,TestRequestIDMiddleware,TestSetupLogging
+    TestJSONFormatter: test_format_produces_json(0),test_format_includes_exception(0),test_format_service_name(0)  # JSONFormatter emits valid JSON with expected fields.
+    TestRequestIDMiddleware: test_app(0),test_response_has_request_id_header(1),test_client_request_id_is_forwarded(1),test_new_id_generated_without_header(1)  # RequestIDMiddleware adds X-Request-ID to responses.
+    TestSetupLogging: test_setup_logging_installs_json_handler(0),test_setup_logging_respects_log_level(0)  # setup_logging() installs JSONFormatter on root logger.
+  backend/tests/test_persistence.py:
+    e: TestMemoryRepoCRUD,TestMemoryRepoListOrdering,TestMemoryRepoEviction,TestSerializationRoundtrip,TestWorkflowRepoFactory
+    TestMemoryRepoCRUD: repo(0),test_save_and_get(1),test_get_nonexistent(1),test_update_status(1),test_update_nonexistent(1),test_count_empty(1),test_count_after_saves(1)  # Basic CRUD on MemoryWorkflowRepo.
+    TestMemoryRepoListOrdering: populated_repo(0),test_list_default(1),test_list_with_limit(1),test_list_with_offset(1)  # list_runs returns items in reverse insertion order (newest f
+    TestMemoryRepoEviction: test_eviction_oldest(0)  # MemoryWorkflowRepo enforces max_size.
+    TestSerializationRoundtrip: test_steps_json_roundtrip(0)  # Data saved to repo preserves all fields through roundtrip.
+    TestWorkflowRepoFactory: test_factory_returns_memory_without_postgres(1),test_factory_returns_postgres_with_url(1)  # create_workflow_repo() factory behavior.
+  backend/tests/test_workflow_api.py:
+    e: _mock_worker_response,TestHealthEndpoint,TestWorkflowActions,TestRunWorkflow,TestWorkflowHistory,TestFromText
+    TestHealthEndpoint: test_health_endpoint(1)  # Backend health check.
+    TestWorkflowActions: test_workflow_actions(1),test_workflow_actions_contains_invoice(1)  # GET /workflow/actions endpoint.
+    TestRunWorkflow: test_run_workflow(1),test_run_workflow_step_failure(1),test_start_workflow(1),test_stream_workflow(1)  # POST /workflow/run endpoint.
+    TestWorkflowHistory: test_workflow_history(1)  # GET /workflow/history endpoint.
+    TestFromText: test_from_text_complete(1),test_from_text_incomplete(1),test_from_text_empty(1)  # POST /workflow/from-text endpoint.
+    _mock_worker_response(status_code;json_data)
+  examples/01-invoice/main.py:
+    e: main
+    main()
+  examples/02-email/main.py:
+    e: main
+    main()
+  examples/03-report-and-notify/main.py:
+    e: main
+    main()
+  examples/04-scheduled-report/main.py:
+    e: main
+    main()
+  examples/05-conversation-flow/main.py:
+    e: main
+    main()
+  examples/code_generation_examples.py:
+    e: main
+    main()
+  nlp-service/app/__init__.py:
+  nlp-service/app/access/__init__.py:
+  nlp-service/app/access/bootstrap.py:
+  nlp-service/app/access/config.py:
+  nlp-service/app/access/native.py:
+  nlp-service/app/access/policy.py:
+  nlp-service/app/access/uri_match.py:
+  nlp-service/app/audio_parser.py:
+    e: stt_audio,stt_file,is_stt_available,StreamingSTT
+    StreamingSTT: __init__(1),start(0),send_audio(1),get_transcript(0),stop(0)  # Real-time streaming STT via Deepgram WebSocket.
+    stt_audio(audio_bytes;language)
+    stt_file(file_path;language)
+    is_stt_available()
+  nlp-service/app/code_generator.py:
+    e: CodeGenerator
+    CodeGenerator: __init__(0),_get_api_key(0),_build_prompt(3),generate_code(4),_extract_class_name(1),_split_code_and_tests(2),get_supported_languages(0),get_language_info(1)  # Generates code in multiple programming languages using LLM.
+  nlp-service/app/config.py:
+    e: NLPServiceSettings
+    NLPServiceSettings:
+  nlp-service/app/conversation/__init__.py:
+  nlp-service/app/conversation/merge.py:
+    e: merge_into_state
+    merge_into_state(state;nlp)
+  nlp-service/app/conversation/orchestrator.py:
+    e: start_conversation,continue_conversation,get_conversation,_attach_routing,_process_message
+    start_conversation(text)
+    continue_conversation(conversation_id;text)
+    get_conversation(conversation_id)
+    _attach_routing(resp;decision)
+    _process_message(state;text)
+  nlp-service/app/conversation/responses.py:
+    e: deny_message,check_execute_keyword,handle_unknown_intent,handle_system_action,build_and_check_dsl,build_incomplete_response,_nlp_from_state,format_system_result,_format_system_status,_format_settings_get,_format_settings_set,_format_settings_reset,_format_file_read,_format_file_write,_format_file_list,_format_registry_list,_format_registry_update
+    deny_message(decision)
+    check_execute_keyword(state;text)
+    handle_unknown_intent(state)
+    handle_system_action(state)
+    build_and_check_dsl(state)
+    build_incomplete_response(state)
+    _nlp_from_state(state)
+    format_system_result(intent;result)
+    _format_system_status(inner)
+    _format_settings_get(inner)
+    _format_settings_set(inner)
+    _format_settings_reset(inner)
+    _format_file_read(inner)
+    _format_file_write(inner)
+    _format_file_list(inner)
+    _format_registry_list(inner)
+    _format_registry_update(inner)
+  nlp-service/app/dsl/__init__.py:
+  nlp-service/app/dsl/forms.py:
+    e: get_action_form
+    get_action_form(action)
+  nlp-service/app/dsl/mapper.py:
+    e: map_to_dsl,_resolve_actions,_build_config,_get_field_mapping,_make_name,_build_prompt
+    map_to_dsl(nlp)
+    _resolve_actions(intent)
+    _build_config(action;entities)
+    _get_field_mapping(action)
+    _make_name(intent;actions)
+    _build_prompt(missing)
+  nlp-service/app/execution/__init__.py:
+  nlp-service/app/execution/system.py:
     e: _validate_file_path,_is_read_only,execute_system_action,_exec_settings_get,_exec_settings_set,_exec_settings_reset,_exec_file_read,_exec_file_write,_exec_file_list,_exec_registry_list,_exec_registry_add,_exec_registry_edit,_exec_status
     _validate_file_path(file_path)
     _is_read_only(file_path)
@@ -184,30 +338,54 @@ D:
     _exec_registry_add(config)
     _exec_registry_edit(config)
     _exec_status(config)
-  tauri-wrapper/scripts/dev.js:
-    e: main,server,npmCommand,child,shuttingDown,shutdown,exitCode,exitCode
-    main()
-    server()
-    npmCommand()
-    child()
-    shuttingDown()
-    shutdown()
-    exitCode()
-    exitCode()
-  backend/app/engine.py:
-    e: _workflow_steps_payload,_persist_workflow_snapshot,_publish_workflow_event,_execute_workflow,_track_background_task,run_workflow,start_workflow
-    _workflow_steps_payload(result)
-    _persist_workflow_snapshot(req;result)
-    _publish_workflow_event(workflow_id;event_type;status;message)
-    _execute_workflow(req;workflow_id)
-    _track_background_task(task)
-    run_workflow(req)
-    start_workflow(req)
-  nlp-service/app/parser_llm.py:
-    e: parse_llm,_detect_provider,_parse_json_response
-    parse_llm(text)
-    _detect_provider()
-    _parse_json_response(raw)
+  nlp-service/app/governance/__init__.py:
+  nlp-service/app/governance/bootstrap.py:
+    e: _actions_from_yaml_areas,apply_yaml_actions,bootstrap_registry
+    _actions_from_yaml_areas()
+    apply_yaml_actions(registry)
+    bootstrap_registry(registry)
+  nlp-service/app/governance/config.py:
+    e: _search_paths,_load_yaml_file,_merge_dict,load_access_config,_load_merged_config,_build_access_config,_enabled_integrations,_default_agent,_allowed_uri_schemes,get_access_config,reload_access_config,AccessConfig
+    AccessConfig: action_to_area(0),area_by_id(1)
+    _search_paths()
+    _load_yaml_file(path)
+    _merge_dict(base;overlay)
+    load_access_config()
+    _load_merged_config()
+    _build_access_config(merged;loaded_path)
+    _enabled_integrations(merged)
+    _default_agent(settings;access_control)
+    _allowed_uri_schemes(access_control)
+    get_access_config()
+    reload_access_config()
+  nlp-service/app/governance/policy.py:
+    e: get_agent_id,_grant_matches,_grant_action_matches,_grant_target_matches,_area_selector_match,_uri_selector_match,authorize_action,_action_context,_scheme_decision,_effect_decision,_unknown_agent_decision,_matched_effect,_decision,AccessDecision,_ActionContext
+    AccessDecision: to_dict(0)
+    _ActionContext:
+    get_agent_id(header_agent)
+    _grant_matches(grant)
+    _grant_action_matches(grant;permission_action)
+    _grant_target_matches(grant)
+    _area_selector_match(area_key;resource_area)
+    _uri_selector_match(uri_pattern;uri)
+    authorize_action(agent_id;action_name)
+    _action_context(meta)
+    _scheme_decision(context)
+    _effect_decision(matched_effect;agent_id;action_name;context)
+    _unknown_agent_decision(agent_id;action_name)
+    _matched_effect(grants)
+    _decision(allowed;effect;reason;agent_id;action_name;resource_area;uri)
+  nlp-service/app/governance/uri_match.py:
+    e: normalize_uri,uri_matches,scheme_allowed
+    normalize_uri(uri)
+    uri_matches(pattern;uri)
+    scheme_allowed(uri;allowed_schemes)
+  nlp-service/app/logging_setup.py:
+    e: get_request_id,setup_logging,JSONFormatter,RequestIDMiddleware
+    JSONFormatter: __init__(1),format(1)  # Emit log records as single-line JSON objects.
+    RequestIDMiddleware: __init__(2),dispatch(2)  # Generate or forward X-Request-ID for every HTTP request.
+    get_request_id()
+    setup_logging(service;level)
   nlp-service/app/main.py:
     e: parse_text,text_to_dsl,access_config,access_check,access_reload,list_actions,health,chat_start,chat_message,chat_state,actions_schema,action_schema,get_settings,get_settings_section,update_settings_section,set_setting,reset_settings,system_execute,generate_code,get_supported_languages,_run_parser,websocket_chat,chat_ui
     parse_text(req)
@@ -233,66 +411,217 @@ D:
     _run_parser(req)
     websocket_chat(websocket;conversation_id)
     chat_ui()
-  nlp-service/app/audio_parser.py:
-    e: StreamingSTT,stt_audio,stt_file,is_stt_available
-    StreamingSTT: __init__(1),start(0),send_audio(1),get_transcript(0),stop(0)  # Real-time streaming STT via Deepgram WebSocket.
-Placeholder ...
-    stt_audio(audio_bytes;language)
-    stt_file(file_path;language)
-    is_stt_available()
-  tauri-wrapper/scripts/serve-dist.js:
-    e: http,fs,path,HOST,PORT,ROOT_DIR,MIME_TYPES,contentType,isInsideRoot,relativePath,resolveRequestPath,safePath,candidate,stat,sendFile,fileContents,handleRequest,pathname,targetPath,startServer,server
-    http()
-    fs()
-    path()
-    HOST()
-    PORT()
-    ROOT_DIR()
-    MIME_TYPES()
-    contentType()
-    isInsideRoot()
-    relativePath()
-    resolveRequestPath()
-    safePath()
-    candidate()
-    stat()
-    sendFile()
-    fileContents()
-    handleRequest()
-    pathname()
-    targetPath()
-    startServer()
-    server()
-  backend/app/routers/workflow.py:
-    e: _format_sse,_workflow_snapshot,list_actions,run_workflow_endpoint,start_workflow_endpoint,get_history,get_workflow,stream_workflow,workflow_from_text
-    _format_sse(event;data)
-    _workflow_snapshot(run)
-    list_actions()
-    run_workflow_endpoint(req)
-    start_workflow_endpoint(req)
-    get_history()
-    get_workflow(workflow_id)
-    stream_workflow(workflow_id;request)
-    workflow_from_text(body)
   nlp-service/app/mapper.py:
-    e: map_to_dsl,_resolve_actions,_build_config,_get_field_mapping,_make_name,_build_prompt
-    map_to_dsl(nlp)
-    _resolve_actions(intent)
-    _build_config(action;entities)
-    _get_field_mapping(action)
-    _make_name(intent;actions)
-    _build_prompt(missing)
+  nlp-service/app/orchestrator.py:
+  nlp-service/app/parser_llm.py:
+  nlp-service/app/parser_rules.py:
+  nlp-service/app/parsing/__init__.py:
   nlp-service/app/parsing/facade.py:
+  nlp-service/app/registry.py:
+    e: get_action_by_alias,get_trigger,get_required_fields,get_defaults
+    get_action_by_alias(text)
+    get_trigger(text)
+    get_required_fields(action)
+    get_defaults(action)
+  nlp-service/app/routing/__init__.py:
+  nlp-service/app/routing/intent.py:
+    e: IntentDecision
+    IntentDecision: to_dict(0),to_nlp_result(1)  # Wynik `resolve_intent` — spójny kontrakt dla orchestratora i
+  nlp-service/app/routing/native.py:
+    e: _match_route,_patterns_match,_pattern_matches,_regex_pattern_matches,_keywords_pattern_matches,_substring_pattern_matches,_aliases_match,resolve_native_intent,_resolve_configured_route,_route_decision,_resolve_action_alias,_best_action_alias,_best_alias_for_action
+    _match_route(text;route)
+    _patterns_match(text_lower;patterns)
+    _pattern_matches(text_lower;pattern)
+    _regex_pattern_matches(text_lower;pattern)
+    _keywords_pattern_matches(text_lower;pattern)
+    _substring_pattern_matches(text_lower;pattern)
+    _aliases_match(text_lower;aliases)
+    resolve_native_intent(text)
+    _resolve_configured_route(text;routes;action_areas)
+    _route_decision(action;route;action_areas)
+    _resolve_action_alias(text;registry)
+    _best_action_alias(text_lower;registry)
+    _best_alias_for_action(text_lower;action_name;meta;current)
+  nlp-service/app/routing/parser/__init__.py:
+  nlp-service/app/routing/parser/facade.py:
     e: parse_text
     parse_text(text;mode)
-  nlp-service/app/access/uri_match.py:
-    e: normalize_uri,uri_matches,scheme_allowed
-    normalize_uri(uri)
-    uri_matches(pattern;uri)
-    scheme_allowed(uri;allowed_schemes)
+  nlp-service/app/routing/parser/llm.py:
+    e: parse_llm,_detect_provider,_parse_json_response
+    parse_llm(text)
+    _detect_provider()
+    _parse_json_response(raw)
+  nlp-service/app/routing/parser/rules.py:
+    e: parse_rules,_detect_actions,_action_alias_scores,_longest_alias_match,_actions_by_score,_dominant_overlap_action,_action_category,_top_system_action_wins,_second_system_action_wins,_resolve_intent,_extract_entities,_extract_amount,_extract_email,_extract_report_type,_extract_format,_extract_notification_channels,_extract_param_aliases,_extract_system_entities,_extract_file_path_entity,_extract_setting_path_entity,_extract_model_setting_entity,_extract_numeric_setting_value,_extract_mode_setting_entity,_extract_fallback_recipient,_set_entity
+    parse_rules(text)
+    _detect_actions(text_lower)
+    _action_alias_scores(text_lower)
+    _longest_alias_match(text_lower;aliases)
+    _actions_by_score(scores)
+    _dominant_overlap_action(sorted_actions;scores)
+    _action_category(action_name)
+    _top_system_action_wins(top_category;second_category;top_score;second_score)
+    _second_system_action_wins(top_category;second_category;top_score;second_score)
+    _resolve_intent(actions)
+    _extract_entities(text;text_lower)
+    _extract_amount(entities;text)
+    _extract_email(entities;text)
+    _extract_report_type(entities;text_lower)
+    _extract_format(entities;text_lower)
+    _extract_notification_channels(entities;text)
+    _extract_param_aliases(entities;text_lower)
+    _extract_system_entities(entities;text;text_lower)
+    _extract_file_path_entity(entities;text)
+    _extract_setting_path_entity(entities;text)
+    _extract_model_setting_entity(entities;text_lower)
+    _extract_numeric_setting_value(entities;text_lower)
+    _extract_mode_setting_entity(entities;text_lower)
+    _extract_fallback_recipient(entities;text_lower)
+    _set_entity(entities;field;value)
+  nlp-service/app/routing/resolve.py:
+    e: _parser_source,_intent_from_native,_intent_from_nlp,_apply_auth,resolve_intent
+    _parser_source(text)
+    _intent_from_native(native)
+    _intent_from_nlp(nlp;source)
+    _apply_auth(decision;auth)
+    resolve_intent(text)
+  nlp-service/app/schemas.py:
+    e: NLPIntent,NLPEntities,NLPResult,DSLStep,WorkflowDSL,DialogResponse,NLPRequest,ConversationState,FieldSchema,ActionFormSchema,ConversationResponse
+    NLPIntent:
+    NLPEntities:
+    NLPResult:
+    DSLStep:
+    WorkflowDSL:
+    DialogResponse:
+    NLPRequest:
+    ConversationState:  # Stan rozmowy — akumuluje dane między turami dialogu.
+    FieldSchema:
+    ActionFormSchema:
+    ConversationResponse:
+  nlp-service/app/settings.py:
+    e: _coerce_type,LLMSettings,NLPSettings,WorkerSettings,FileAccessSettings,SystemSettings,SettingsManager
+    LLMSettings:
+    NLPSettings:
+    WorkerSettings:
+    FileAccessSettings:
+    SystemSettings:  # Pełny model ustawień systemu.
+    SettingsManager: __new__(1),settings(0),get(1),get_section(1),get_all(0),set(2),update_section(2),reset(1),_load(0),_save(0),describe(0)  # Runtime settings z persystencją do JSON.
+    _coerce_type(value;target_type)
+  nlp-service/app/store/__init__.py:
+    e: ConversationStore
+    ConversationStore: get(1),save(2),delete(1),count(0)  # Abstrakcja persystencji stanu konwersacji.
+  nlp-service/app/store/factory.py:
+    e: get_conversation_store
+    get_conversation_store()
+  nlp-service/app/store/memory.py:
+    e: MemoryConversationStore
+    MemoryConversationStore: __init__(0),get(1),save(2),delete(1),count(0)
+  nlp-service/app/store/redis_store.py:
+    e: RedisConversationStore
+    RedisConversationStore: __init__(2),_key(1),get(1),save(2),delete(1),count(0),close(0)
+  nlp-service/app/system_executor.py:
+  nlp-service/integrations/__init__.py:
+  nlp-service/integrations/loader.py:
+    e: _integration_names,load_integration_registries,apply_integrations
+    _integration_names()
+    load_integration_registries()
+    apply_integrations(registry)
+  nlp-service/integrations/mullm/__init__.py:
+  nlp-service/integrations/mullm/registry.py:
+  nlp-service/tests/__init__.py:
+  nlp-service/tests/conftest.py:
+    e: sample_texts,expected_intents,sample_entities,mock_conversation_store
+    sample_texts()
+    expected_intents()
+    sample_entities()
+    mock_conversation_store()
+  nlp-service/tests/test_access.py:
+    e: _point_config,test_config_loads_areas,test_uri_match_mullm,test_files_agent_can_list,test_mail_agent_denied_mullm_execute,test_native_lista_plikow,test_registry_has_yaml_action
+    _point_config(monkeypatch)
+    test_config_loads_areas()
+    test_uri_match_mullm()
+    test_files_agent_can_list()
+    test_mail_agent_denied_mullm_execute()
+    test_native_lista_plikow()
+    test_registry_has_yaml_action()
+  nlp-service/tests/test_mapper.py:
+    e: TestMapCompleteDSL,TestMapIncomplete,TestMapComposite,TestMapUnknown,TestMapDefaults,TestMapTrigger,TestMapSystemAction,TestMapAllBusinessActions,TestResolveActions
+    TestMapCompleteDSL: test_map_complete_invoice(0),test_map_complete_email(0)  # Cases where all required fields are present → complete DSL.
+    TestMapIncomplete: test_map_incomplete_invoice(0)  # Cases where required fields are missing → DialogResponse wit
+    TestMapComposite: test_map_composite_report_email(0)  # Composite intent mapping (multi-step workflows).
+    TestMapUnknown: test_map_unknown_intent(0),test_map_nonexistent_intent(0)  # Unknown intent → error response.
+    TestMapDefaults: test_map_with_defaults(0)  # Optional fields receive default values from registry.
+    TestMapTrigger: test_map_trigger_propagation(0)  # Trigger extracted from raw_text propagates to DSL.
+    TestMapSystemAction: test_map_system_action_settings(0)  # System intents should not map to DSL (no steps for system ac
+    TestMapAllBusinessActions: test_map_all_business_actions(1)  # Ensure mapper handles all registered business actions.
+    TestResolveActions: test_resolve_direct_action(0),test_resolve_composite_intent(0),test_resolve_dynamic_composite(0),test_resolve_unknown(0)  # _resolve_actions helper tests.
+  nlp-service/tests/test_orchestrator.py:
+    e: _patch_store,TestStartConversation,TestContinueConversation,TestSystemCommands,TestGetConversation,TestGetActionForm,TestMergeIntoState
+    TestStartConversation: test_start_conversation_complete(0),test_start_conversation_incomplete(0),test_start_conversation_unknown(0)  # Starting a new conversation from initial user text.
+    TestContinueConversation: test_continue_conversation(0),test_continue_conversation_lazy_create(0)  # Multi-turn dialog: providing missing data in follow-up messa
+    TestSystemCommands: test_system_command_status(0),test_system_command_settings(0),test_format_system_file_list(0),test_format_system_failed_result(0)  # System actions executed directly (no DSL generation).
+    TestGetConversation: test_get_conversation_exists(0),test_get_conversation_not_found(0)  # Retrieving stored conversation state.
+    TestGetActionForm: test_action_form_send_invoice(0),test_action_form_nonexistent(0)  # Schema-driven UI form generation.
+    TestMergeIntoState: test_merge_updates_intent(0),test_merge_preserves_existing(0)  # Internal entity merging logic.
+    _patch_store(monkeypatch)
+  nlp-service/tests/test_parser_rules.py:
+    e: TestParseInvoice,TestParseEmail,TestParseReport,TestParseComposite,TestParseSystem,TestParseUnknown,TestAmountExtraction,TestTriggerDetection,TestResultStructure
+    TestParseInvoice: test_parse_invoice_simple(0),test_parse_invoice_missing_data(0),test_parse_invoice_eur(0),test_parse_invoice_usd(0)  # Invoice intent detection and entity extraction.
+    TestParseEmail: test_parse_email(0),test_parse_email_english(0)  # Email intent detection.
+    TestParseReport: test_parse_report_weekly(0),test_parse_report_finance_csv(0)  # Report intent and entity extraction.
+    TestParseComposite: test_parse_composite_invoice_notify(0),test_parse_composite_full_flow(0)  # Multi-action (composite) intent detection.
+    TestParseSystem: test_parse_system_settings(0),test_parse_system_file_list(0),test_parse_system_status(0),test_parse_system_help(0),test_parse_system_set_model(0),test_parse_system_set_mode(0)  # System intent detection (settings, files, status).
+    TestParseUnknown: test_parse_unknown(0)  # Unknown input handling.
+    TestAmountExtraction: test_parse_amount_extraction(3)  # Currency and amount parsing across formats.
+    TestTriggerDetection: test_parse_trigger_detection(2)  # Schedule trigger extraction from text.
+    TestResultStructure: test_result_is_nlp_result(0),test_raw_text_preserved(0)  # NLPResult output structure validation.
+  nlp-service/tests/test_registry.py:
+    e: TestRegistryStructure,TestAliasResolution,TestTriggerDetection,TestHelperFunctions,TestCategories,TestCompositeIntents
+    TestRegistryStructure: test_registry_entry_has_required_keys(1)  # Validate registry entries have required keys.
+    TestAliasResolution: test_alias_invoice_pl(0),test_alias_email_en(0),test_alias_report(0),test_alias_slack(0),test_alias_unknown(0),test_alias_best_match(0)  # get_action_by_alias finds best match.
+    TestTriggerDetection: test_trigger_daily(0),test_trigger_weekly(0),test_trigger_monthly(0),test_trigger_manual_default(0)  # get_trigger extracts schedule from text.
+    TestHelperFunctions: test_get_required_fields_invoice(0),test_get_required_fields_unknown(0),test_get_defaults_invoice(0),test_get_defaults_unknown(0)  # get_required_fields, get_defaults.
+    TestCategories: test_system_actions_nonempty(0),test_business_actions_nonempty(0),test_no_overlap(0),test_union_is_complete(0),test_mullm_actions_loaded(0)  # System vs business action sets.
+    TestCompositeIntents: test_composite_actions_exist(1)  # COMPOSITE_INTENTS structure validation.
+  nlp-service/tests/test_routing_resolve.py:
+    e: TestParserSource,TestResolveIntent,TestOrchestratorRoutingField
+    TestParserSource: test_rules_mode(1)
+    TestResolveIntent: test_invoice_rules_path(0),test_unknown_intent(0),test_native_file_list_route(0),test_decision_serializable(0)
+    TestOrchestratorRoutingField: test_start_conversation_includes_routing(1)
+  nlp-service/tests/test_store.py:
+    e: TestMemoryStoreCRUD,TestSerializationRoundtrip,TestStoreFactory,TestStoreIsolation
+    TestMemoryStoreCRUD: store(0),test_save_and_get(1),test_get_nonexistent(1),test_save_overwrites(1),test_delete(1),test_delete_nonexistent(1),test_count_empty(1),test_count_after_saves(1),test_count_after_delete(1)  # Basic CRUD operations on MemoryConversationStore.
+    TestSerializationRoundtrip: store(0),test_conversation_state_roundtrip(1),test_complex_entities_roundtrip(1)  # Store must preserve data through save→get cycle.
+    TestStoreFactory: test_factory_returns_memory_without_redis(1),test_factory_singleton(1),test_factory_falls_back_on_bad_redis(1)  # get_conversation_store() factory behavior.
+    TestStoreIsolation: test_separate_instances_isolated(0)  # Multiple store instances are isolated.
+  nlp-service/tests/test_system_executor.py:
+    e: _reset_settings,TestSettingsGet,TestSettingsSet,TestSettingsReset,TestFileList,TestRegistryList,TestRegistryAdd,TestStatus,TestRegistryEdit,TestFileRead,TestFileWrite,TestExecuteSystemAction,TestFilePathValidation,TestExecutorMapping
+    TestSettingsGet: test_settings_get_all(0),test_settings_get_section(0),test_settings_get_default_is_all(0)  # _exec_settings_get handler.
+    TestSettingsSet: test_settings_set_and_verify(0),test_settings_set_missing_path(0),test_settings_set_missing_value(0)  # _exec_settings_set handler.
+    TestSettingsReset: test_settings_reset(0),test_settings_reset_section(0)  # _exec_settings_reset handler.
+    TestFileList: test_file_list(2),test_file_list_nonexistent(0)  # _exec_file_list handler.
+    TestRegistryList: test_registry_list(0),test_registry_list_business(0),test_registry_list_system(0)  # _exec_registry_list handler.
+    TestRegistryAdd: test_registry_add(0),test_registry_add_missing_name(0),test_registry_add_duplicate(0)  # _exec_registry_add handler.
+    TestStatus: test_status(0)  # _exec_status handler.
+    TestRegistryEdit: test_registry_edit_description(0),test_registry_edit_nonexistent(0)  # _exec_registry_edit handler.
+    TestFileRead: test_file_read_existing(2),test_file_read_nonexistent(2),test_file_read_no_path(0)  # _exec_file_read handler.
+    TestFileWrite: test_file_write_new(2),test_file_write_append(2)  # _exec_file_write handler.
+    TestExecuteSystemAction: test_execute_known_action(0),test_execute_unknown_action(0)  # Async dispatch function.
+    TestFilePathValidation: test_validate_allowed_path(2),test_validate_disallowed_path(0),test_is_read_only(2)  # _validate_file_path and _is_read_only.
+    TestExecutorMapping: test_all_system_actions_have_executor(0),test_executors_count(0)  # SYSTEM_EXECUTORS dict is complete.
+    _reset_settings(monkeypatch)
+  nlp2dsl_sdk/__init__.py:
+  nlp2dsl_sdk/__main__.py:
+    e: main
+    main()
+  nlp2dsl_sdk/client.py:
+    e: workflow_step,NLP2DSLClient,ConversationFlow
+    NLP2DSLClient: __init__(5),from_env(2),close(0),__enter__(0),__exit__(3),_request(3),_backend(2),_nlp_service(2),_worker(2),backend_health(0),nlp_service_health(0),worker_health(0),health(0),workflow_from_text(3),run_workflow(4),workflow_actions(0),workflow_action_schema(1),settings(0),settings_section(1),update_settings_section(2),set_setting(2),reset_settings(1),chat_start(2),chat_message(3),chat_state(1),nlp_chat_start(2),nlp_chat_message(3),nlp_chat_state(1),generate_code(4),supported_languages(0),worker_execute(3),worker_generate_code(5),send_invoice(5),send_email(5),generate_report(4),generate_report_and_notify(7),create_scheduled_report(7),notify_slack(4),crm_update(4),send_invoice_and_notify(7)  # Small reusable SDK for the NLP2DSL services.
+    ConversationFlow: __init__(1),start(2),send_message(2),_handle_response(1),_handle_in_progress_response(2),_handle_ready_response(2),_handle_completed_response(2),_handle_error_response(1),run_demo(0),run_interactive(0)  # Convenience helper for the conversational workflow example.
+    workflow_step(action)
   nlp2dsl_sdk/demos.py:
-    e: DemoSpec,_ensure_services,_print_json,_print_workflow_preview,_print_execution_result,_print_code_generation_preview,_preview_text_examples,run_crm_update_demo,run_action_catalog_demo,run_automation_gallery_demo,_run_workflow_examples,_run_gallery_examples,run_invoice_demo,run_email_demo,run_report_and_notify_demo,run_scheduled_report_demo,run_code_generation_demo,_run_direct_code_generation,_get_supported_languages,_run_workflow_code_examples,_run_conversation_code_example,_run_worker_code_generation,list_available_demos
-    DemoSpec:  # Metadata for a runnable demo exposed by the package CLI...
+    e: _ensure_services,_print_json,_print_workflow_preview,_print_execution_result,_print_code_generation_preview,_preview_text_examples,run_crm_update_demo,run_action_catalog_demo,run_automation_gallery_demo,_run_workflow_examples,_run_gallery_examples,run_invoice_demo,run_email_demo,run_report_and_notify_demo,run_scheduled_report_demo,run_code_generation_demo,_run_direct_code_generation,_get_supported_languages,_run_workflow_code_examples,_run_conversation_code_example,_run_worker_code_generation,list_available_demos,DemoSpec
+    DemoSpec:  # Metadata for a runnable demo exposed by the package CLI.
     _ensure_services(client)
     _print_json(payload)
     _print_workflow_preview(result)
@@ -315,28 +644,137 @@ Placeholder ...
     _run_conversation_code_example(client)
     _run_worker_code_generation(client)
     list_available_demos()
-  nlp2dsl_sdk/client.py:
-    e: NLP2DSLClient,ConversationFlow,workflow_step
-    NLP2DSLClient: __init__(5),from_env(1),close(0),__enter__(0),__exit__(3),_request(3),_backend(2),_nlp_service(2),_worker(2),backend_health(0),nlp_service_health(0),worker_health(0),health(0),workflow_from_text(3),run_workflow(4),workflow_actions(0),workflow_action_schema(1),settings(0),settings_section(1),update_settings_section(2),set_setting(2),reset_settings(1),chat_start(2),chat_message(3),chat_state(1),nlp_chat_start(2),nlp_chat_message(3),nlp_chat_state(1),generate_code(4),supported_languages(0),worker_execute(3),worker_generate_code(5),send_invoice(5),send_email(5),generate_report(4),generate_report_and_notify(7),create_scheduled_report(7),notify_slack(4),crm_update(4),send_invoice_and_notify(7)  # Small reusable SDK for the NLP2DSL services...
-    ConversationFlow: __init__(1),start(2),send_message(2),_handle_response(1),_handle_in_progress_response(2),_handle_ready_response(2),_handle_completed_response(2),_handle_error_response(1),run_demo(0),run_interactive(0)  # Convenience helper for the conversational workflow example...
-    workflow_step(action)
-  nlp-service/app/settings.py:
-    e: LLMSettings,NLPSettings,WorkerSettings,FileAccessSettings,SystemSettings,SettingsManager,_coerce_type
-    LLMSettings(BaseModel):
-    NLPSettings(BaseModel):
-    WorkerSettings(BaseModel):
-    FileAccessSettings(BaseModel):
-    SystemSettings(BaseModel):  # Pełny model ustawień systemu...
-    SettingsManager: __new__(0),get(1),get_section(1),get_all(0),set(2),update_section(2),reset(1),_load(0),_save(0),describe(-1)  # Runtime settings z persystencją do JSON...
-    _coerce_type(value;target_type)
-  nlp2dsl_sdk/__main__.py:
-    e: main
-    main()
-  nlp-service/integrations/loader.py:
-    e: _integration_names,load_integration_registries,apply_integrations
-    _integration_names()
-    load_integration_registries()
-    apply_integrations(registry)
+  test_code_generation.py:
+    e: test_code_generation
+    test_code_generation()
+  tests/conftest.py:
+  tests/e2e/__init__.py:
+  tests/e2e/conftest.py:
+    e: _resolve_browser_executable,nlp_client,backend_client,browser_instance,browser_context,page,chat_page
+    _resolve_browser_executable()
+    nlp_client()
+    backend_client()
+    browser_instance()
+    browser_context(browser_instance)
+    page(browser_context)
+    chat_page(page)
+  tests/e2e/test_backend.py:
+    e: test_health,test_workflow_actions_list,test_workflow_actions_contains_send_invoice,test_from_text_dsl_only_no_execute,test_from_text_empty_returns_400,test_from_text_unknown_intent_propagates_error,test_workflow_history_returns_list,test_workflow_history_unknown_id_returns_404,test_chat_start_proxied_to_nlp,test_chat_start_empty_returns_error,test_chat_message_proxied_to_nlp,test_workflow_actions_schema,test_workflow_settings_proxied
+    test_health(backend_client)
+    test_workflow_actions_list(backend_client)
+    test_workflow_actions_contains_send_invoice(backend_client)
+    test_from_text_dsl_only_no_execute(backend_client)
+    test_from_text_empty_returns_400(backend_client)
+    test_from_text_unknown_intent_propagates_error(backend_client)
+    test_workflow_history_returns_list(backend_client)
+    test_workflow_history_unknown_id_returns_404(backend_client)
+    test_chat_start_proxied_to_nlp(backend_client)
+    test_chat_start_empty_returns_error(backend_client)
+    test_chat_message_proxied_to_nlp(backend_client)
+    test_workflow_actions_schema(backend_client)
+    test_workflow_settings_proxied(backend_client)
+  tests/e2e/test_chat_ui.py:
+    e: test_page_title,test_page_has_no_js_errors,test_web_app_manifest,test_tts_button_present,test_tts_button_default_state_active,test_tts_toggle_disables,test_tts_toggle_re_enables,test_speak_function_defined,test_speech_synthesis_available,test_speak_calls_speech_synthesis,test_speak_respects_tts_disabled,test_microphone_get_user_media,test_media_recorder_supported,test_voice_button_present,test_voice_button_initial_text,wait_for_voice_recording,test_voice_transcription_autostarts_on_load,test_voice_button_click_stops_recording,test_text_input_present,test_send_button_present,test_text_message_renders_user_bubble,test_text_message_gets_assistant_response,test_speak_called_on_assistant_response,test_text_input_cleared_after_send,test_status_element_present,test_websocket_connects_on_load
+    test_page_title(chat_page)
+    test_page_has_no_js_errors(page)
+    test_web_app_manifest(chat_page)
+    test_tts_button_present(chat_page)
+    test_tts_button_default_state_active(chat_page)
+    test_tts_toggle_disables(chat_page)
+    test_tts_toggle_re_enables(chat_page)
+    test_speak_function_defined(chat_page)
+    test_speech_synthesis_available(chat_page)
+    test_speak_calls_speech_synthesis(chat_page)
+    test_speak_respects_tts_disabled(chat_page)
+    test_microphone_get_user_media(chat_page)
+    test_media_recorder_supported(chat_page)
+    test_voice_button_present(chat_page)
+    test_voice_button_initial_text(chat_page)
+    wait_for_voice_recording(chat_page;timeout_s)
+    test_voice_transcription_autostarts_on_load(chat_page)
+    test_voice_button_click_stops_recording(chat_page)
+    test_text_input_present(chat_page)
+    test_send_button_present(chat_page)
+    test_text_message_renders_user_bubble(chat_page)
+    test_text_message_gets_assistant_response(chat_page)
+    test_speak_called_on_assistant_response(chat_page)
+    test_text_input_cleared_after_send(chat_page)
+    test_status_element_present(chat_page)
+    test_websocket_connects_on_load(chat_page)
+  tests/e2e/test_nlp_service.py:
+    e: test_health,test_nlp_actions_registry,test_parse_known_intent_rules,test_parse_unknown_intent_rules,test_parse_send_email_intent,test_to_dsl_complete_invoice,test_to_dsl_unknown_returns_422,test_chat_start_text,test_chat_start_empty_text_returns_400,test_chat_message_continue_conversation,test_chat_state_get,test_chat_state_not_found,test_actions_schema_all,test_action_schema_by_name,test_action_schema_unknown_returns_404,test_settings_get_all,test_settings_get_llm_section,test_settings_unknown_section_returns_404,test_chat_ui_serves_html
+    test_health(nlp_client)
+    test_nlp_actions_registry(nlp_client)
+    test_parse_known_intent_rules(nlp_client)
+    test_parse_unknown_intent_rules(nlp_client)
+    test_parse_send_email_intent(nlp_client)
+    test_to_dsl_complete_invoice(nlp_client)
+    test_to_dsl_unknown_returns_422(nlp_client)
+    test_chat_start_text(nlp_client)
+    test_chat_start_empty_text_returns_400(nlp_client)
+    test_chat_message_continue_conversation(nlp_client)
+    test_chat_state_get(nlp_client)
+    test_chat_state_not_found(nlp_client)
+    test_actions_schema_all(nlp_client)
+    test_action_schema_by_name(nlp_client)
+    test_action_schema_unknown_returns_404(nlp_client)
+    test_settings_get_all(nlp_client)
+    test_settings_get_llm_section(nlp_client)
+    test_settings_unknown_section_returns_404(nlp_client)
+    test_chat_ui_serves_html(nlp_client)
+  tests/e2e/test_websocket.py:
+    e: _uri,_is_open,_is_closed,test_websocket_connects_and_accepts,test_websocket_unique_conversation_id,test_websocket_accepts_binary_audio,test_websocket_accepts_multiple_chunks,test_websocket_clean_disconnect,test_websocket_server_survives_abrupt_close,test_websocket_concurrent_connections
+    _uri(conv_id)
+    _is_open(ws)
+    _is_closed(ws)
+    test_websocket_connects_and_accepts()
+    test_websocket_unique_conversation_id()
+    test_websocket_accepts_binary_audio()
+    test_websocket_accepts_multiple_chunks()
+    test_websocket_clean_disconnect()
+    test_websocket_server_survives_abrupt_close()
+    test_websocket_concurrent_connections()
+  tests/test_nlp2dsl_sdk.py:
+    e: client_factory,test_from_env_prefers_repo_env_names,test_workflow_and_conversation_endpoints,test_report_helpers_use_report_type_and_schedule,test_new_workflow_helpers_are_data_driven,test_code_generation_methods_hit_expected_services,test_health_queries_all_services,DummyResponse,DummySession
+    DummyResponse: __init__(2),raise_for_status(0),json(0)
+    DummySession: __init__(1),request(2),close(0)
+    client_factory()
+    test_from_env_prefers_repo_env_names(monkeypatch)
+    test_workflow_and_conversation_endpoints(client_factory)
+    test_report_helpers_use_report_type_and_schedule(client_factory)
+    test_new_workflow_helpers_are_data_driven(client_factory)
+    test_code_generation_methods_hit_expected_services(client_factory)
+    test_health_queries_all_services(client_factory)
+  tests/test_placeholder.py:
+    e: test_placeholder,test_import
+    test_placeholder()
+    test_import()
+  tests/test_tests.py:
+    e: test_placeholder,test_import
+    test_placeholder()
+    test_import()
+  worker/__init__.py:
+  worker/config.py:
+    e: WorkerSettings
+    WorkerSettings:
+  worker/logging_setup.py:
+    e: get_request_id,setup_logging,JSONFormatter,RequestIDMiddleware
+    JSONFormatter: __init__(1),format(1)  # Emit log records as single-line JSON objects.
+    RequestIDMiddleware: __init__(2),dispatch(2)  # Generate or forward X-Request-ID for every HTTP request.
+    get_request_id()
+    setup_logging(service;level)
+  worker/tests/__init__.py:
+  worker/tests/conftest.py:
+    e: _noop_sleep,mock_asyncio_sleep,client
+    _noop_sleep()
+    mock_asyncio_sleep()
+    client()
+  worker/tests/test_worker.py:
+    e: client,TestWorkerHealth,TestExecuteActions,TestActionRegistry
+    TestWorkerHealth: test_health(1)  # Worker health endpoint.
+    TestExecuteActions: test_execute_send_invoice(1),test_execute_send_email(1),test_execute_generate_report(1),test_execute_notify_slack(1),test_execute_notify_telegram(1),test_execute_notify_teams(1),test_execute_unknown_action(1)  # POST /execute — action execution.
+    TestActionRegistry: test_handlers_registered(0),test_all_handlers_callable(0)  # ACTION_HANDLERS dict validation.
+    client()
   worker/worker.py:
     e: action,_deliver_notification,handle_send_invoice,handle_send_email,handle_generate_report,handle_crm_update,handle_notify_slack,handle_notify_telegram,handle_notify_teams,handle_generate_code,execute_step,health
     action(name)
@@ -351,179 +789,3 @@ Placeholder ...
     handle_generate_code(config)
     execute_step(step)
     health()
-  nlp-service/app/registry.py:
-    e: get_action_by_alias,get_trigger,get_required_fields,get_defaults
-    get_action_by_alias(text)
-    get_trigger(text)
-    get_required_fields(action)
-    get_defaults(action)
-  backend/app/db/postgres.py:
-    e: Base,WorkflowRunModel,PostgresWorkflowRepo
-    Base(DeclarativeBase):
-    WorkflowRunModel(Base): to_dict(0)
-    PostgresWorkflowRepo(WorkflowRepo): __init__(1),_ensure_engine(0),_get_session_factory(0),_ensure_tables(0),save_run(4),update_run_status(2),get_run(1),list_runs(2),count_runs(0),close(0)
-  nlp-service/app/store/factory.py:
-    e: get_conversation_store
-    get_conversation_store()
-  backend/app/logging_setup.py:
-    e: JSONFormatter,RequestIDMiddleware,get_request_id,setup_logging
-    JSONFormatter(logging.Formatter): __init__(1),format(1)  # Emit log records as single-line JSON objects...
-    RequestIDMiddleware(BaseHTTPMiddleware): __init__(2),dispatch(2)  # Generate or forward X-Request-ID for every HTTP request.
-
-- ...
-    get_request_id()
-    setup_logging(service;level)
-  backend/app/workflow_events.py:
-    e: WorkflowEvent,WorkflowEventHub
-    WorkflowEvent: to_dict(0)
-    WorkflowEventHub: __init__(0),subscribe(1),unsubscribe(2),publish(1),subscriber_count(1)  # In-memory broadcaster dla workflow lifecycle events...
-  nlp-service/app/logging_setup.py:
-    e: JSONFormatter,RequestIDMiddleware,get_request_id,setup_logging
-    JSONFormatter(logging.Formatter): __init__(1),format(1)  # Emit log records as single-line JSON objects...
-    RequestIDMiddleware(BaseHTTPMiddleware): __init__(2),dispatch(2)  # Generate or forward X-Request-ID for every HTTP request.
-
-- ...
-    get_request_id()
-    setup_logging(service;level)
-  nlp-service/app/store/redis_store.py:
-    e: RedisConversationStore
-    RedisConversationStore(ConversationStore): __init__(2),_key(1),get(1),save(2),delete(1),count(0),close(0)
-  worker/logging_setup.py:
-    e: JSONFormatter,RequestIDMiddleware,get_request_id,setup_logging
-    JSONFormatter(logging.Formatter): __init__(1),format(1)  # Emit log records as single-line JSON objects...
-    RequestIDMiddleware(BaseHTTPMiddleware): __init__(2),dispatch(2)  # Generate or forward X-Request-ID for every HTTP request.
-
-- ...
-    get_request_id()
-    setup_logging(service;level)
-  tauri-wrapper/src-tauri/src/main.rs:
-    e: main
-    main()
-  backend/app/db/memory.py:
-    e: MemoryWorkflowRepo
-    MemoryWorkflowRepo(WorkflowRepo): __init__(1),save_run(4),update_run_status(2),get_run(1),list_runs(2),count_runs(0)
-  backend/app/db/__init__.py:
-    e: WorkflowRepo,create_workflow_repo
-    WorkflowRepo(ABC): save_run(4),update_run_status(2),get_run(1),list_runs(2),count_runs(0)  # Abstrakcja persystencji workflow...
-    create_workflow_repo()
-  backend/app/routers/system.py:
-    e: system_execute
-    system_execute(body)
-  backend/app/routers/settings.py:
-    e: actions_schema,action_schema,get_settings,get_settings_section,update_settings_section,set_setting,reset_settings
-    actions_schema()
-    action_schema(action)
-    get_settings()
-    get_settings_section(section)
-    update_settings_section(section;body)
-    set_setting(body)
-    reset_settings(body)
-  examples/05-conversation-flow/main.py:
-    e: main
-    main()
-  tauri-wrapper/src-tauri/build.rs:
-    e: main
-    main()
-  backend/app/main.py:
-    e: health
-    health()
-  examples/code_generation_examples.py:
-    e: main
-    main()
-  examples/04-scheduled-report/main.py:
-    e: main
-    main()
-  examples/01-invoice/main.py:
-    e: main
-    main()
-  examples/03-report-and-notify/main.py:
-    e: main
-    main()
-  examples/02-email/main.py:
-    e: main
-    main()
-  nlp-service/app/store/memory.py:
-    e: MemoryConversationStore
-    MemoryConversationStore(ConversationStore): __init__(0),get(1),save(2),delete(1),count(0)
-  nlp-service/app/store/__init__.py:
-    e: ConversationStore
-    ConversationStore(ABC): get(1),save(2),delete(1),count(0)  # Abstrakcja persystencji stanu konwersacji...
-  goal.yaml:
-  .pfix-test-wrapper.sh:
-  metrun-profile.sh:
-  pyqual.yaml:
-  run-all-tests.sh:
-    e: run_tests
-    run_tests()
-  tree.sh:
-  prefact.yaml:
-  project.sh:
-  tauri-wrapper/desktop.sh:
-  tauri-wrapper/package.json:
-  tauri-wrapper/src-tauri/Cargo.toml:
-  tauri-wrapper/src-tauri/tauri.conf.json:
-  backend/pyproject.toml:
-  backend/pytest.ini:
-  backend/Dockerfile:
-  backend/app/config.py:
-    e: BackendSettings
-    BackendSettings(BaseSettings):
-  backend/app/schemas.py:
-    e: StepStatus,Step,RunWorkflowRequest,StepResult,WorkflowResult,ActionInfo
-    StepStatus(str,Enum):
-    Step(BaseModel):  # Pojedynczy krok workflow — deklaratywny opis akcji...
-    RunWorkflowRequest(BaseModel):  # Żądanie uruchomienia workflow — DSL biznesowy...
-    StepResult(BaseModel):
-    WorkflowResult(BaseModel):
-    ActionInfo(BaseModel):  # Opis dostępnej akcji (do listowania w GUI / API)...
-  backend/app/__init__.py:
-  backend/app/workflow.py:
-  nlp2dsl_sdk/__init__.py:
-  examples/docker-compose.yml:
-  examples/05-conversation-flow/run.sh:
-  examples/05-conversation-flow/requirements.txt:
-  examples/05-conversation-flow/Dockerfile:
-  examples/04-scheduled-report/Dockerfile:
-  examples/01-invoice/Dockerfile:
-  examples/03-report-and-notify/Dockerfile:
-  examples/02-email/Dockerfile:
-  nlp-service/pyproject.toml:
-  nlp-service/Dockerfile:
-  nlp-service/app/config.py:
-    e: NLPServiceSettings
-    NLPServiceSettings(BaseSettings):
-  nlp-service/app/schemas.py:
-    e: NLPIntent,NLPEntities,NLPResult,DSLStep,WorkflowDSL,DialogResponse,NLPRequest,ConversationState,FieldSchema,ActionFormSchema,ConversationResponse
-    NLPIntent(BaseModel):
-    NLPEntities(BaseModel):
-    NLPResult(BaseModel):
-    DSLStep(BaseModel):
-    WorkflowDSL(BaseModel):
-    DialogResponse(BaseModel):
-    NLPRequest(BaseModel):
-    ConversationState(BaseModel):  # Stan rozmowy — akumuluje dane między turami dialogu...
-    FieldSchema(BaseModel):
-    ActionFormSchema(BaseModel):
-    ConversationResponse(BaseModel):
-  nlp-service/app/parsing/__init__.py:
-  nlp-service/static/manifest.json:
-  nlp-service/integrations/__init__.py:
-  nlp-service/integrations/mullm/registry.py:
-  nlp-service/integrations/mullm/__init__.py:
-  worker/config.py:
-    e: WorkerSettings
-    WorkerSettings(BaseSettings):
-  worker/__init__.py:
-  worker/pyproject.toml:
-  testql-scenarios/generated-from-pytests.testql.toon.yaml:
-  testql-scenarios/generated-cli-tests.testql.toon.yaml:
-  testql-scenarios/generated-api-smoke.testql.toon.yaml:
-  planfile.yaml:
-  nlp2dsl.yaml:
-  docker-compose.yml:
-  pyproject.toml:
-  backend/requirements.txt:
-  nlp-service/requirements.txt:
-  nlp-service/app/access/__init__.py:
-  worker/requirements.txt:
-  worker/Dockerfile:

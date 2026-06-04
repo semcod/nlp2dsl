@@ -128,3 +128,4 @@ class ConversationResponse(BaseModel):
     missing: list[str] = []
     form: ActionFormSchema | None = None
     execution_backend: str | None = None  # worker | mullm | system
+    routing: dict | None = None  # IntentDecision — debug / Mullm ingress trace

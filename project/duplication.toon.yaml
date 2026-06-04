@@ -1,23 +1,23 @@
-# redup/duplication | 11 groups | 60f 7476L | 2026-06-04
+# redup/duplication | 12 groups | 80f 8095L | 2026-06-04
 
 SUMMARY:
-  files_scanned: 60
-  total_lines:   7476
-  dup_groups:    11
-  dup_fragments: 31
-  saved_lines:   149
-  scan_ms:       5142
+  files_scanned: 80
+  total_lines:   8095
+  dup_groups:    12
+  dup_fragments: 33
+  saved_lines:   153
+  scan_ms:       2394
 
 HOTSPOTS[7] (files with most duplication):
-  backend/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.7%)
-  nlp-service/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.7%)
-  worker/logging_setup.py  dup=49L  groups=5  frags=5  (0.7%)
+  backend/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.6%)
+  nlp-service/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.6%)
+  worker/logging_setup.py  dup=49L  groups=5  frags=5  (0.6%)
   backend/app/routers/settings.py  dup=24L  groups=2  frags=4  (0.3%)
   worker/worker.py  dup=22L  groups=1  frags=2  (0.3%)
-  nlp-service/app/parser_rules.py  dup=12L  groups=1  frags=2  (0.2%)
+  nlp-service/app/routing/parser/rules.py  dup=20L  groups=2  frags=4  (0.2%)
   backend/app/routers/workflow.py  dup=6L  groups=1  frags=2  (0.1%)
 
-DUPLICATES[11] (ranked by impact):
+DUPLICATES[12] (ranked by impact):
   [5980042b45ef9ea3] ! STRU  setup_logging  L=22 N=3 saved=44 sim=1.00
       backend/app/logging_setup.py:79-100  (setup_logging)
       nlp-service/app/logging_setup.py:79-100  (setup_logging)
@@ -55,13 +55,16 @@ DUPLICATES[11] (ranked by impact):
       backend/app/routers/workflow.py:73-75  (start_workflow_endpoint)
       nlp-service/app/main.py:85-90  (parse_text)
   [d8abcb97f9e3aea3]   STRU  _extract_report_type  L=6 N=2 saved=6 sim=1.00
-      nlp-service/app/parser_rules.py:216-221  (_extract_report_type)
-      nlp-service/app/parser_rules.py:224-229  (_extract_format)
+      nlp-service/app/routing/parser/rules.py:265-270  (_extract_report_type)
+      nlp-service/app/routing/parser/rules.py:273-278  (_extract_format)
   [2ce1096adac6d1a4]   STRU  actions_schema  L=5 N=2 saved=5 sim=1.00
       backend/app/routers/settings.py:21-25  (actions_schema)
       backend/app/routers/settings.py:39-43  (get_settings)
+  [88c3564ed3834adc]   STRU  _extract_file_path_entity  L=4 N=2 saved=4 sim=1.00
+      nlp-service/app/routing/parser/rules.py:319-322  (_extract_file_path_entity)
+      nlp-service/app/routing/parser/rules.py:325-328  (_extract_setting_path_entity)
 
-REFACTOR[11] (ranked by priority):
+REFACTOR[12] (ranked by priority):
   [1] ● extract_function   → utils/setup_logging.py
       WHY: 3 occurrences of 22-line block across 3 files — saves 44 lines
       FILES: backend/app/logging_setup.py, nlp-service/app/logging_setup.py, worker/logging_setup.py
@@ -89,12 +92,15 @@ REFACTOR[11] (ranked by priority):
   [9] ○ extract_function   → utils/run_workflow_endpoint.py
       WHY: 3 occurrences of 3-line block across 2 files — saves 6 lines
       FILES: backend/app/routers/workflow.py, nlp-service/app/main.py
-  [10] ○ extract_function   → nlp-service/app/utils/_extract_report_type.py
+  [10] ○ extract_function   → nlp-service/app/routing/parser/utils/_extract_report_type.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
-      FILES: nlp-service/app/parser_rules.py
+      FILES: nlp-service/app/routing/parser/rules.py
   [11] ○ extract_function   → backend/app/routers/utils/actions_schema.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: backend/app/routers/settings.py
+  [12] ○ extract_function   → nlp-service/app/routing/parser/utils/_extract_file_path_entity.py
+      WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
+      FILES: nlp-service/app/routing/parser/rules.py
 
 QUICK_WINS[5] (low risk, high savings — do first):
   [4] extract_function   saved=16L  → examples/utils/main.py
@@ -105,8 +111,8 @@ QUICK_WINS[5] (low risk, high savings — do first):
       FILES: settings.py
   [9] extract_function   saved=6L  → utils/run_workflow_endpoint.py
       FILES: workflow.py, main.py
-  [10] extract_function   saved=6L  → nlp-service/app/utils/_extract_report_type.py
-      FILES: parser_rules.py
+  [10] extract_function   saved=6L  → nlp-service/app/routing/parser/utils/_extract_report_type.py
+      FILES: rules.py
 
 DEPENDENCY_RISK[6] (duplicates spanning multiple packages):
   setup_logging  packages=3  files=3
@@ -133,7 +139,7 @@ DEPENDENCY_RISK[6] (duplicates spanning multiple packages):
       backend/app/routers/workflow.py
       nlp-service/app/main.py
 
-EFFORT_ESTIMATE (total ≈ 8.4h):
+EFFORT_ESTIMATE (total ≈ 8.6h):
   hard   setup_logging                       saved=44L  ~176min
   hard   format                              saved=24L  ~96min
   medium dispatch                            saved=18L  ~72min
@@ -144,8 +150,8 @@ EFFORT_ESTIMATE (total ≈ 8.4h):
   easy   __init__                            saved=6L  ~24min
   easy   run_workflow_endpoint               saved=6L  ~24min
   easy   _extract_report_type                saved=6L  ~12min
-  ... +1 more (~10min)
+  ... +2 more (~18min)
 
 METRICS-TARGET:
-  dup_groups:  11 → 0
-  saved_lines: 149 lines recoverable
+  dup_groups:  12 → 0
+  saved_lines: 153 lines recoverable
