@@ -35,26 +35,61 @@ def deny_message(decision: IntentDecision) -> str:
     return "Żądanie odrzucone."
 
 
+_EXECUTE_KEYWORDS = (
+    "uruchom",
+    "wykonaj",
+    "start",
+    "run",
+    "ok",
+    "tak",
+    "go",
+    "kontynuuj",
+    "continue",
+    "dalej",
+    "resume",
+)
+
+
+def _is_execute_or_continue(text: str) -> bool:
+    text_lower = text.lower().strip()
+    return any(kw in text_lower for kw in _EXECUTE_KEYWORDS)
+
+
 def check_execute_keyword(state: ConversationState, text: str) -> ConversationResponse | None:
+    if not _is_execute_or_continue(text):
+        return None
     if state.status == "ready" and state.dsl:
-        text_lower = text.lower()
-        execute_keywords = ["uruchom", "wykonaj", "start", "run", "ok", "tak", "go"]
-        if any(kw in text_lower for kw in execute_keywords):
-            log.info("Workflow already ready, preserving DSL for execution")
-            return ConversationResponse(
-                conversation_id=state.id,
-                status="ready",
-                message=(
-                    f"Workflow gotowy: {state.dsl.name} ({len(state.dsl.steps)} kroków). "
-                    "Wyślij 'uruchom' aby wykonać."
-                ),
-                dsl=state.dsl,
-            )
+        log.info("Workflow already ready, preserving DSL for execution")
+        return ConversationResponse(
+            conversation_id=state.id,
+            status="ready",
+            message=(
+                f"Workflow gotowy: {state.dsl.name} ({len(state.dsl.steps)} kroków). "
+                "Wyślij 'uruchom' aby wykonać."
+            ),
+            dsl=state.dsl,
+        )
+    if state.intent and state.intent != "unknown" and state.status == "in_progress":
+        return build_incomplete_response(state)
     return None
 
 
 def handle_unknown_intent(state: ConversationState) -> ConversationResponse | None:
     if not state.intent or state.intent == "unknown":
+        if state.history and _is_execute_or_continue(
+            state.history[-1].get("text", "")
+        ):
+            msg = (
+                "Nie mam jeszcze rozpoczętego workflow w tej rozmowie. "
+                "Podaj intencję (np. faktura, email) lub użyj komendy z Mullm "
+                "(lista plikow usera, run ls -la)."
+            )
+            state.history.append({"role": "assistant", "text": msg})
+            return ConversationResponse(
+                conversation_id=state.id,
+                status="in_progress",
+                message=msg,
+            )
         msg = (
             "Nie rozpoznałem intencji. Jaką automatyzację chcesz stworzyć?\n"
             "Np. faktura, raport, email, powiadomienie Slack.\n"
