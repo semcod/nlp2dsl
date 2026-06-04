@@ -1,0 +1,186 @@
+# nlp2dsl — zasoby, agenci, uprawnienia (URI + obszary)
+# Kopia lokalna: nlp2dsl.local.yaml (gitignore) nadpisuje wartości.
+# Ścieżka: NLP2DSL_CONFIG=/ścieżka/do/nlp2dsl.yaml
+
+version: 1
+
+settings:
+  default_agent: user
+
+integrations:
+  enabled:
+    - mullm
+
+access_control:
+  deny_by_default: false
+  allowed_uri_schemes:
+    - mullm
+    - file
+    - http
+    - https
+    - docker
+    - mailto
+
+# Obszary = logiczne strefy dostępu (URI patterns + akcje DSL)
+resource_areas:
+  - id: mullm:rag
+    title: Mullm — pliki, RAG, tickety
+    connector: mullm
+    uri_patterns:
+      - "mullm://**"
+    labels: [mullm, local, readonly]
+    risk: low
+    actions:
+      mullm_list_files:
+        description: Lista plików i zasobów Mullm
+        category: mullm
+        execution: delegate
+        permission_action: list
+        required: []
+        aliases:
+          - lista plików
+          - lista plikow
+          - lista plikow usera
+          - lista plików użytkownika
+          - lista user files
+          - list user files
+          - user files
+          - pokaż pliki
+          - pokaż plikow
+          - jakie pliki
+          - list files
+          - pliki mullm
+        native_route: true
+
+      mullm_shell_task:
+        description: Utwórz i uruchom zadanie shell w Mullm
+        category: mullm
+        execution: delegate
+        permission_action: execute
+        required: [shell_command]
+        optional:
+          title: Zadanie
+        aliases:
+          - uruchom zadanie
+          - wykonaj polecenie
+          - utwórz i uruchom
+          - run 
+          - exec 
+        param_aliases:
+          polecenie: shell_command
+          komenda: shell_command
+
+      mullm_create_ticket:
+        description: Ticket w kolejce Mullm
+        category: mullm
+        execution: delegate
+        permission_action: write
+        required: [title]
+        optional:
+          description: ""
+        aliases:
+          - utwórz ticket
+          - dodaj ticket
+          - nowe zadanie
+
+  - id: filesystem:user
+    title: Pliki użytkownika
+    connector: localfs
+    uri_patterns:
+      - "file:///home/**"
+      - "file://~/"
+    labels: [filesystem, user-owned]
+    risk: medium
+
+  - id: email:inbox
+    title: Skrzynka e-mail
+    connector: email
+    uri_patterns:
+      - "mailto:**"
+      - "https://mail.*/**"
+    labels: [email, communication]
+    risk: high
+
+  - id: docker:local
+    title: Docker lokalny
+    connector: docker
+    uri_patterns:
+      - "docker://**"
+    labels: [docker, ops]
+    risk: high
+
+# Grupy etykiet — polityki na wiele zasobów naraz
+label_groups:
+  - id: mullm-local
+    labels: [mullm, local]
+    area_ids: [mullm:rag]
+  - id: user-data
+    labels: [filesystem, user-owned]
+    area_ids: [filesystem:user]
+
+# Agenci + grants (resource_area lub uri_pattern)
+agents:
+  user:
+    description: Domyślny użytkownik (chat)
+    grants:
+      - resource_area: mullm:rag
+        actions: [list, read, execute, write]
+        effect: allow
+
+  files_agent:
+    description: Agent listujący pliki
+    grants:
+      - resource_area: mullm:rag
+        actions: [list, read]
+        effect: allow
+      - uri_pattern: "mullm://localfs/**"
+        actions: [read]
+        effect: allow
+
+  shell_agent:
+    description: Agent wykonujący shell w Mullm
+    grants:
+      - resource_area: mullm:rag
+        actions: [execute, write]
+        effect: allow
+      - uri_pattern: "mullm://ticket/**"
+        actions: [read, write]
+        effect: allow
+
+  mail_agent:
+    description: Agent poczty (przyszły connector)
+    grants:
+      - resource_area: email:inbox
+        actions: [read, search]
+        effect: allow
+      - uri_pattern: "https://mail.*/**"
+        actions: [send]
+        effect: approval
+
+  ops_agent:
+    description: Operacje docker/system
+    grants:
+      - resource_area: docker:local
+        actions: [read, execute]
+        effect: approval
+
+# Routing natywny — przed parserem rules/LLM (jak Mullm conductor)
+native_routing:
+  - action: mullm_list_files
+    resource_area: mullm:rag
+    permission_action: list
+    aliases:
+      - lista plików
+      - lista plikow
+      - lista plikow usera
+      - lista plików użytkownika
+      - lista user files
+      - list user files
+      - user files
+      - pokaż pliki
+      - jakie pliki
+    patterns:
+      - type: regex
+        value: "(lista\\s+plik|jakie\\s+pliki|poka[zż]\\s+plik|list\\s+files)"
+      - type: keywords
+        keywords: [lista, plik]

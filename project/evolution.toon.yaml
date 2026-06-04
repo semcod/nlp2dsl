@@ -1,42 +1,58 @@
-# code2llm/evolution | 264 func | 35f | 2026-06-04
+# code2llm/evolution | 307 func | 41f | 2026-06-04
 # generated in 0.00s
 
-NEXT[6] (ranked by impact):
-  [1] !! SPLIT           nlp2dsl_sdk/demos.py
+NEXT[10] (ranked by impact):
+  [1] !! SPLIT           nlp-service/app/main.py
+      WHY: 580L, 0 classes, max CC=10
+      EFFORT: ~4h  IMPACT: 5800
+
+  [2] !! SPLIT           nlp2dsl_sdk/demos.py
       WHY: 687L, 1 classes, max CC=6
       EFFORT: ~4h  IMPACT: 4122
 
-  [2] !! SPLIT           nlp2dsl_sdk/client.py
+  [3] !! SPLIT           nlp2dsl_sdk/client.py
       WHY: 580L, 2 classes, max CC=6
       EFFORT: ~4h  IMPACT: 3480
 
-  [3] !  SPLIT-FUNC      _extract_system_entities  CC=16  fan=8
+  [4] !  SPLIT-FUNC      load_access_config  CC=22  fan=17
+      WHY: CC=22 exceeds 15
+      EFFORT: ~1h  IMPACT: 374
+
+  [5] !  SPLIT-FUNC      _match_route  CC=21  fan=11
+      WHY: CC=21 exceeds 15
+      EFFORT: ~1h  IMPACT: 231
+
+  [6] !  SPLIT-FUNC      resolve_native_intent  CC=16  fan=13
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 208
+
+  [7] !  SPLIT-FUNC      authorize_action  CC=18  fan=10
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 180
+
+  [8] !  SPLIT-FUNC      _extract_system_entities  CC=16  fan=8
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 128
 
-  [4] !  SPLIT-FUNC      _format_system_result  CC=16  fan=7
+  [9] !  SPLIT-FUNC      _format_system_result  CC=16  fan=7
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 112
 
-  [5] !  SPLIT-FUNC      _detect_actions  CC=15  fan=6
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 90
-
-  [6] !! SPLIT           goal.yaml
-      WHY: 512L, 0 classes, max CC=0
-      EFFORT: ~4h  IMPACT: 0
+  [10] !  SPLIT-FUNC      _grant_matches  CC=16  fan=6
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 96
 
 
 RISKS[3]:
   ⚠ Splitting nlp2dsl_sdk/demos.py may break 22 import paths
   ⚠ Splitting nlp2dsl_sdk/client.py may break 51 import paths
-  ⚠ Splitting goal.yaml may break 0 import paths
+  ⚠ Splitting nlp-service/app/main.py may break 23 import paths
 
 METRICS-TARGET:
-  CC̄:          2.9 → ≤2.0
-  max-CC:      16 → ≤8
-  god-modules: 3 → 0
-  high-CC(≥15): 3 → ≤1
+  CC̄:          3.2 → ≤2.2
+  max-CC:      22 → ≤11
+  god-modules: 5 → 0
+  high-CC(≥15): 8 → ≤4
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -64,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=2.9 → now CC̄=2.9
+  prev CC̄=2.9 → now CC̄=3.2

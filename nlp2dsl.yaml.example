@@ -1,0 +1,38 @@
+# Przykład — skopiuj: cp nlp2dsl.yaml.example nlp2dsl.yaml
+
+version: 1
+
+settings:
+  default_agent: user
+
+integrations:
+  enabled: [mullm]
+
+access_control:
+  deny_by_default: false
+  allowed_uri_schemes: [mullm, file, http, https, docker, mailto]
+
+resource_areas:
+  - id: mullm:rag
+    title: Mullm
+    uri_patterns: ["mullm://**"]
+    labels: [mullm]
+    actions:
+      mullm_list_files:
+        category: mullm
+        execution: delegate
+        permission_action: list
+        aliases: [lista plików, lista plikow]
+
+agents:
+  files_agent:
+    grants:
+      - resource_area: mullm:rag
+        actions: [list]
+        effect: allow
+
+native_routing:
+  - action: mullm_list_files
+    resource_area: mullm:rag
+    permission_action: list
+    aliases: [lista plikow]

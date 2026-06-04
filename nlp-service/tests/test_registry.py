@@ -11,6 +11,7 @@ from app.registry import (
     ACTIONS_REGISTRY,
     BUSINESS_ACTIONS,
     COMPOSITE_INTENTS,
+    DELEGATED_ACTIONS,
     MULLM_ACTIONS,
     SYSTEM_ACTIONS,
     get_action_by_alias,
@@ -137,11 +138,12 @@ class TestCategories:
         assert SYSTEM_ACTIONS.isdisjoint(BUSINESS_ACTIONS)
         assert SYSTEM_ACTIONS.isdisjoint(MULLM_ACTIONS)
         assert BUSINESS_ACTIONS.isdisjoint(MULLM_ACTIONS)
+        assert BUSINESS_ACTIONS.isdisjoint(DELEGATED_ACTIONS)
 
     def test_union_is_complete(self) -> None:
-        """System ∪ Business ∪ Mullm = all actions."""
+        """System ∪ Business ∪ Delegated = all actions."""
         assert (
-            SYSTEM_ACTIONS | BUSINESS_ACTIONS | MULLM_ACTIONS
+            SYSTEM_ACTIONS | BUSINESS_ACTIONS | DELEGATED_ACTIONS
             == set(ACTIONS_REGISTRY.keys())
         )
 

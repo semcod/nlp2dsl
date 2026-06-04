@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.10] - 2026-06-04
+
+### Fixed
+- Fix string-concat issues (ticket-be57afc5)
+- Fix unused-imports issues (ticket-167e0f6b)
+- Fix unused-imports issues (ticket-f2668f83)
+- Fix smart-return-type issues (ticket-70ded9e5)
+
 ## [0.1.10] - 2026-06-03
 
 ### Fixed
@@ -43,6 +51,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix string-concat issues (ticket-2a0f4b01)
 
 ## [Unreleased]
+
+## [0.0.13] - 2026-06-04
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/REFACTOR-PLAN.md
+- Update docs/access-control.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update .env.example
+- Update app.doql.less
+- Update backend/requirements.txt
+- Update nlp-service/app/access/__init__.py
+- Update nlp-service/app/access/bootstrap.py
+- Update nlp-service/app/access/config.py
+- Update nlp-service/app/access/native.py
+- Update nlp-service/app/access/policy.py
+- Update nlp-service/app/access/uri_match.py
+- Update nlp-service/app/main.py
+- ... and 28 more files
 
 ## [0.0.12] - 2026-06-04
 

@@ -55,8 +55,7 @@ from app.store.factory import get_conversation_store
 from app.system_executor import SYSTEM_EXECUTORS, execute_system_action
 
 
-if __name__ == "__main__":
-    setup_logging(service="nlp-service")
+setup_logging(service="nlp-service")
 log = logging.getLogger("nlp-service")
 
 app = FastAPI(
@@ -68,8 +67,8 @@ app = FastAPI(
     version="0.1.0",
 )
 
-    app.add_middleware(RequestIDMiddleware)
-    app.add_middleware(
+app.add_middleware(RequestIDMiddleware)
+app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
@@ -110,6 +109,66 @@ async def text_to_dsl(req: NLPRequest) -> DialogResponse:
         )
 
     return map_to_dsl(nlp_result)
+
+
+@app.get("/nlp/access/config")
+async def access_config() -> dict[str, Any]:
+    """Załadowany nlp2dsl.yaml — obszary, agenci, grupy etykiet."""
+    from app.access.config import get_access_config
+
+    cfg = get_access_config()
+    return {
+        "path": cfg.path,
+        "version": cfg.version,
+        "default_agent": cfg.default_agent,
+        "integrations": cfg.enabled_integrations,
+        "resource_areas": [
+            {
+                "id": a.get("id"),
+                "title": a.get("title"),
+                "uri_patterns": a.get("uri_patterns"),
+                "labels": a.get("labels"),
+                "actions": list((a.get("actions") or {}).keys()),
+            }
+            for a in cfg.resource_areas
+        ],
+        "agents": list(cfg.agents.keys()),
+        "label_groups": cfg.label_groups,
+        "native_routes": len(cfg.native_routes),
+    }
+
+
+@app.get("/nlp/access/check")
+async def access_check(
+    agent_id: str,
+    action: str,
+    resource_area: str | None = None,
+    uri: str | None = None,
+    permission_action: str = "execute",
+) -> dict[str, Any]:
+    """Sprawdź uprawnienie agenta (debug / integracja Mullm)."""
+    from app.access.policy import authorize_action
+    from app.registry import ACTIONS_REGISTRY
+
+    meta = ACTIONS_REGISTRY.get(action, {})
+    decision = authorize_action(
+        agent_id,
+        action,
+        resource_area=resource_area or meta.get("resource_area"),
+        uri=uri,
+        permission_action=permission_action or meta.get("permission_action"),
+        action_meta=meta,
+    )
+    return decision.to_dict()
+
+
+@app.post("/nlp/access/reload")
+async def access_reload() -> dict[str, str]:
+    """Przeładuj nlp2dsl.yaml bez restartu."""
+    from app.access.config import reload_access_config
+
+    cfg = reload_access_config()
+    return {"status": "ok", "path": cfg.path or ""}
 
 
 @app.get("/nlp/actions")

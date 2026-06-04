@@ -1,11 +1,11 @@
-# nlp2dsl | 92f 8693L | yaml:7,shell:7,json:3,rust:2,toml:5,javascript:2,txt:4,ini:1,python:51,yml:2 | 2026-06-04
-# generated in 0.01s
-# stats: 298 func | 0 cls | 92 mod | CC̄=2.8 | critical:3 | cycles:0
-# alerts[5]: fan-out _execute_workflow=19; fan-out workflow_from_text=17; CC _extract_system_entities=16; CC _format_system_result=16; fan-out chat_message=16
-# hotspots[5]: _execute_workflow fan=19; workflow_from_text fan=17; chat_message fan=16; stream_workflow fan=14; map_to_dsl fan=14
-# evolution: CC̄ 2.9→2.8 (improved -0.1)
+# nlp2dsl | 100f 10114L | yaml:8,shell:7,json:3,rust:2,toml:5,javascript:2,ini:1,python:58,yml:2,txt:4 | 2026-06-04
+# generated in 0.05s
+# stats: 341 func | 0 cls | 100 mod | CC̄=3.2 | critical:8 | cycles:0
+# alerts[5]: CC load_access_config=22; CC _match_route=21; fan-out _execute_workflow=19; CC authorize_action=18; fan-out _process_message=18
+# hotspots[5]: _execute_workflow fan=19; _process_message fan=18; workflow_from_text fan=17; load_access_config fan=17; chat_message fan=16
+# evolution: CC̄ 2.9→3.2 (regressed +0.3)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[92]:
+M[100]:
   .pfix-test-wrapper.sh,16
   backend/Dockerfile,11
   backend/app/__init__.py,0
@@ -25,8 +25,8 @@ M[92]:
   backend/app/workflow_events.py,91
   backend/pyproject.toml,52
   backend/pytest.ini,5
-  backend/requirements.txt,8
-  docker-compose.yml,108
+  backend/requirements.txt,9
+  docker-compose.yml,113
   examples/01-invoice/Dockerfile,23
   examples/01-invoice/main.py,23
   examples/02-email/Dockerfile,23
@@ -44,12 +44,19 @@ M[92]:
   goal.yaml,512
   metrun-profile.sh,48
   nlp-service/Dockerfile,14
+  nlp-service/app/access/__init__.py,15
+  nlp-service/app/access/bootstrap.py,78
+  nlp-service/app/access/config.py,143
+  nlp-service/app/access/native.py,82
+  nlp-service/app/access/policy.py,177
+  nlp-service/app/access/uri_match.py,42
   nlp-service/app/audio_parser.py,148
   nlp-service/app/code_generator.py,279
   nlp-service/app/config.py,60
   nlp-service/app/logging_setup.py,100
+  nlp-service/app/main.py,580
   nlp-service/app/mapper.py,189
-  nlp-service/app/orchestrator.py,397
+  nlp-service/app/orchestrator.py,455
   nlp-service/app/parser_llm.py,187
   nlp-service/app/parser_rules.py,320
   nlp-service/app/parsing/__init__.py,3
@@ -67,13 +74,14 @@ M[92]:
   nlp-service/integrations/mullm/__init__.py,1
   nlp-service/integrations/mullm/registry.py,66
   nlp-service/pyproject.toml,52
-  nlp-service/requirements.txt,9
+  nlp-service/requirements.txt,10
   nlp-service/static/manifest.json,30
+  nlp2dsl.yaml,186
   nlp2dsl_sdk/__init__.py,33
   nlp2dsl_sdk/__main__.py,41
   nlp2dsl_sdk/client.py,580
   nlp2dsl_sdk/demos.py,687
-  planfile.yaml,448
+  planfile.yaml,500
   prefact.yaml,82
   project.sh,59
   pyproject.toml,61
@@ -96,9 +104,28 @@ M[92]:
   worker/config.py,27
   worker/logging_setup.py,100
   worker/pyproject.toml,46
-  worker/requirements.txt,3
+  worker/requirements.txt,4
   worker/worker.py,230
 D:
+  nlp-service/app/access/config.py:
+    e: AccessConfig,_search_paths,_load_yaml_file,_merge_dict,load_access_config,get_access_config,reload_access_config
+    AccessConfig: action_to_area(0),area_by_id(1)
+    _search_paths()
+    _load_yaml_file(path)
+    _merge_dict(base;overlay)
+    load_access_config()
+    get_access_config()
+    reload_access_config()
+  nlp-service/app/access/native.py:
+    e: _match_route,resolve_native_intent
+    _match_route(text;route)
+    resolve_native_intent(text)
+  nlp-service/app/access/policy.py:
+    e: AccessDecision,get_agent_id,_grant_matches,authorize_action
+    AccessDecision: to_dict(0)
+    get_agent_id(header_agent)
+    _grant_matches(grant)
+    authorize_action(agent_id;action_name)
   nlp-service/app/parser_rules.py:
     e: parse_rules,_detect_actions,_resolve_intent,_extract_entities,_extract_amount,_extract_email,_extract_report_type,_extract_format,_extract_notification_channels,_extract_param_aliases,_extract_system_entities,_extract_fallback_recipient,_set_entity
     parse_rules(text)
@@ -131,6 +158,17 @@ D:
   nlp-service/app/code_generator.py:
     e: CodeGenerator
     CodeGenerator: __init__(0),_get_api_key(0),_build_prompt(3),generate_code(4),_extract_class_name(1),_split_code_and_tests(2),get_supported_languages(0),get_language_info(1)  # Generates code in multiple programming languages using LLM...
+  nlp-service/app/access/bootstrap.py:
+    e: _actions_from_yaml_areas,apply_yaml_actions,bootstrap_registry
+    _actions_from_yaml_areas()
+    apply_yaml_actions(registry)
+    bootstrap_registry(registry)
+  backend/app/routers/chat.py:
+    e: _proxy_chat_payload,chat_start,chat_message,chat_get_state
+    _proxy_chat_payload(request;endpoint)
+    chat_start(request)
+    chat_message(request)
+    chat_get_state(conversation_id)
   nlp-service/app/system_executor.py:
     e: _validate_file_path,_is_read_only,execute_system_action,_exec_settings_get,_exec_settings_set,_exec_settings_reset,_exec_file_read,_exec_file_write,_exec_file_list,_exec_registry_list,_exec_registry_add,_exec_registry_edit,_exec_status
     _validate_file_path(file_path)
@@ -146,12 +184,6 @@ D:
     _exec_registry_add(config)
     _exec_registry_edit(config)
     _exec_status(config)
-  backend/app/routers/chat.py:
-    e: _proxy_chat_payload,chat_start,chat_message,chat_get_state
-    _proxy_chat_payload(request;endpoint)
-    chat_start(request)
-    chat_message(request)
-    chat_get_state(conversation_id)
   tauri-wrapper/scripts/dev.js:
     e: main,server,npmCommand,child,shuttingDown,shutdown,exitCode,exitCode
     main()
@@ -176,6 +208,31 @@ D:
     parse_llm(text)
     _detect_provider()
     _parse_json_response(raw)
+  nlp-service/app/main.py:
+    e: parse_text,text_to_dsl,access_config,access_check,access_reload,list_actions,health,chat_start,chat_message,chat_state,actions_schema,action_schema,get_settings,get_settings_section,update_settings_section,set_setting,reset_settings,system_execute,generate_code,get_supported_languages,_run_parser,websocket_chat,chat_ui
+    parse_text(req)
+    text_to_dsl(req)
+    access_config()
+    access_check(agent_id;action;resource_area;uri;permission_action)
+    access_reload()
+    list_actions()
+    health()
+    chat_start(text;audio)
+    chat_message(conversation_id;text;audio)
+    chat_state(conversation_id)
+    actions_schema()
+    action_schema(action)
+    get_settings()
+    get_settings_section(section)
+    update_settings_section(section;body)
+    set_setting(body)
+    reset_settings(body)
+    system_execute(body)
+    generate_code(body)
+    get_supported_languages()
+    _run_parser(req)
+    websocket_chat(websocket;conversation_id)
+    chat_ui()
   nlp-service/app/audio_parser.py:
     e: StreamingSTT,stt_audio,stt_file,is_stt_available
     StreamingSTT: __init__(1),start(0),send_audio(1),get_transcript(0),stop(0)  # Real-time streaming STT via Deepgram WebSocket.
@@ -228,15 +285,11 @@ Placeholder ...
   nlp-service/app/parsing/facade.py:
     e: parse_text
     parse_text(text;mode)
-  nlp-service/app/settings.py:
-    e: LLMSettings,NLPSettings,WorkerSettings,FileAccessSettings,SystemSettings,SettingsManager,_coerce_type
-    LLMSettings(BaseModel):
-    NLPSettings(BaseModel):
-    WorkerSettings(BaseModel):
-    FileAccessSettings(BaseModel):
-    SystemSettings(BaseModel):  # Pełny model ustawień systemu...
-    SettingsManager: __new__(0),get(1),get_section(1),get_all(0),set(2),update_section(2),reset(1),_load(0),_save(0),describe(-1)  # Runtime settings z persystencją do JSON...
-    _coerce_type(value;target_type)
+  nlp-service/app/access/uri_match.py:
+    e: normalize_uri,uri_matches,scheme_allowed
+    normalize_uri(uri)
+    uri_matches(pattern;uri)
+    scheme_allowed(uri;allowed_schemes)
   nlp2dsl_sdk/demos.py:
     e: DemoSpec,_ensure_services,_print_json,_print_workflow_preview,_print_execution_result,_print_code_generation_preview,_preview_text_examples,run_crm_update_demo,run_action_catalog_demo,run_automation_gallery_demo,_run_workflow_examples,_run_gallery_examples,run_invoice_demo,run_email_demo,run_report_and_notify_demo,run_scheduled_report_demo,run_code_generation_demo,_run_direct_code_generation,_get_supported_languages,_run_workflow_code_examples,_run_conversation_code_example,_run_worker_code_generation,list_available_demos
     DemoSpec:  # Metadata for a runnable demo exposed by the package CLI...
@@ -267,9 +320,23 @@ Placeholder ...
     NLP2DSLClient: __init__(5),from_env(1),close(0),__enter__(0),__exit__(3),_request(3),_backend(2),_nlp_service(2),_worker(2),backend_health(0),nlp_service_health(0),worker_health(0),health(0),workflow_from_text(3),run_workflow(4),workflow_actions(0),workflow_action_schema(1),settings(0),settings_section(1),update_settings_section(2),set_setting(2),reset_settings(1),chat_start(2),chat_message(3),chat_state(1),nlp_chat_start(2),nlp_chat_message(3),nlp_chat_state(1),generate_code(4),supported_languages(0),worker_execute(3),worker_generate_code(5),send_invoice(5),send_email(5),generate_report(4),generate_report_and_notify(7),create_scheduled_report(7),notify_slack(4),crm_update(4),send_invoice_and_notify(7)  # Small reusable SDK for the NLP2DSL services...
     ConversationFlow: __init__(1),start(2),send_message(2),_handle_response(1),_handle_in_progress_response(2),_handle_ready_response(2),_handle_completed_response(2),_handle_error_response(1),run_demo(0),run_interactive(0)  # Convenience helper for the conversational workflow example...
     workflow_step(action)
+  nlp-service/app/settings.py:
+    e: LLMSettings,NLPSettings,WorkerSettings,FileAccessSettings,SystemSettings,SettingsManager,_coerce_type
+    LLMSettings(BaseModel):
+    NLPSettings(BaseModel):
+    WorkerSettings(BaseModel):
+    FileAccessSettings(BaseModel):
+    SystemSettings(BaseModel):  # Pełny model ustawień systemu...
+    SettingsManager: __new__(0),get(1),get_section(1),get_all(0),set(2),update_section(2),reset(1),_load(0),_save(0),describe(-1)  # Runtime settings z persystencją do JSON...
+    _coerce_type(value;target_type)
   nlp2dsl_sdk/__main__.py:
     e: main
     main()
+  nlp-service/integrations/loader.py:
+    e: _integration_names,load_integration_registries,apply_integrations
+    _integration_names()
+    load_integration_registries()
+    apply_integrations(registry)
   worker/worker.py:
     e: action,_deliver_notification,handle_send_invoice,handle_send_email,handle_generate_report,handle_crm_update,handle_notify_slack,handle_notify_telegram,handle_notify_teams,handle_generate_code,execute_step,health
     action(name)
@@ -290,11 +357,6 @@ Placeholder ...
     get_trigger(text)
     get_required_fields(action)
     get_defaults(action)
-  nlp-service/integrations/loader.py:
-    e: _integration_names,load_integration_registries,apply_integrations
-    _integration_names()
-    load_integration_registries()
-    apply_integrations(registry)
   backend/app/db/postgres.py:
     e: Base,WorkflowRunModel,PostgresWorkflowRepo
     Base(DeclarativeBase):
@@ -400,7 +462,6 @@ Placeholder ...
   tauri-wrapper/package.json:
   tauri-wrapper/src-tauri/Cargo.toml:
   tauri-wrapper/src-tauri/tauri.conf.json:
-  backend/requirements.txt:
   backend/pyproject.toml:
   backend/pytest.ini:
   backend/Dockerfile:
@@ -426,23 +487,11 @@ Placeholder ...
   examples/01-invoice/Dockerfile:
   examples/03-report-and-notify/Dockerfile:
   examples/02-email/Dockerfile:
-  nlp-service/requirements.txt:
   nlp-service/pyproject.toml:
+  nlp-service/Dockerfile:
   nlp-service/app/config.py:
     e: NLPServiceSettings
     NLPServiceSettings(BaseSettings):
-  nlp-service/static/manifest.json:
-  worker/config.py:
-    e: WorkerSettings
-    WorkerSettings(BaseSettings):
-  worker/__init__.py:
-  worker/requirements.txt:
-  worker/pyproject.toml:
-  worker/Dockerfile:
-  planfile.yaml:
-  docker-compose.yml:
-  pyproject.toml:
-  nlp-service/Dockerfile:
   nlp-service/app/schemas.py:
     e: NLPIntent,NLPEntities,NLPResult,DSLStep,WorkflowDSL,DialogResponse,NLPRequest,ConversationState,FieldSchema,ActionFormSchema,ConversationResponse
     NLPIntent(BaseModel):
@@ -457,9 +506,24 @@ Placeholder ...
     ActionFormSchema(BaseModel):
     ConversationResponse(BaseModel):
   nlp-service/app/parsing/__init__.py:
+  nlp-service/static/manifest.json:
   nlp-service/integrations/__init__.py:
   nlp-service/integrations/mullm/registry.py:
   nlp-service/integrations/mullm/__init__.py:
+  worker/config.py:
+    e: WorkerSettings
+    WorkerSettings(BaseSettings):
+  worker/__init__.py:
+  worker/pyproject.toml:
   testql-scenarios/generated-from-pytests.testql.toon.yaml:
   testql-scenarios/generated-cli-tests.testql.toon.yaml:
   testql-scenarios/generated-api-smoke.testql.toon.yaml:
+  planfile.yaml:
+  nlp2dsl.yaml:
+  docker-compose.yml:
+  pyproject.toml:
+  backend/requirements.txt:
+  nlp-service/requirements.txt:
+  nlp-service/app/access/__init__.py:
+  worker/requirements.txt:
+  worker/Dockerfile:

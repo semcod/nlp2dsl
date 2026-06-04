@@ -1,9 +1,9 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('nlp2dsl', '0.0.7', 'python').
+project_metadata('nlp2dsl', '0.0.12', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('.pfix-test-wrapper.sh', 16, 'shell').
-project_file('app.doql.less', 120, 'less').
+project_file('app.doql.less', 125, 'less').
 project_file('backend/app/__init__.py', 1, 'python').
 project_file('backend/app/config.py', 43, 'python').
 project_file('backend/app/db/__init__.py', 50, 'python').
@@ -13,7 +13,7 @@ project_file('backend/app/engine.py', 270, 'python').
 project_file('backend/app/logging_setup.py', 101, 'python').
 project_file('backend/app/main.py', 49, 'python').
 project_file('backend/app/routers/__init__.py', 1, 'python').
-project_file('backend/app/routers/chat.py', 108, 'python').
+project_file('backend/app/routers/chat.py', 125, 'python').
 project_file('backend/app/routers/settings.py', 82, 'python').
 project_file('backend/app/routers/system.py', 30, 'python').
 project_file('backend/app/routers/workflow.py', 190, 'python').
@@ -46,23 +46,29 @@ project_file('nlp-service/app/config.py', 61, 'python').
 project_file('nlp-service/app/logging_setup.py', 101, 'python').
 project_file('nlp-service/app/main.py', 522, 'python').
 project_file('nlp-service/app/mapper.py', 190, 'python').
-project_file('nlp-service/app/orchestrator.py', 389, 'python').
+project_file('nlp-service/app/orchestrator.py', 398, 'python').
 project_file('nlp-service/app/parser_llm.py', 188, 'python').
-project_file('nlp-service/app/parser_rules.py', 316, 'python').
-project_file('nlp-service/app/registry.py', 385, 'python').
-project_file('nlp-service/app/schemas.py', 128, 'python').
+project_file('nlp-service/app/parser_rules.py', 321, 'python').
+project_file('nlp-service/app/parsing/__init__.py', 4, 'python').
+project_file('nlp-service/app/parsing/facade.py', 40, 'python').
+project_file('nlp-service/app/registry.py', 391, 'python').
+project_file('nlp-service/app/schemas.py', 131, 'python').
 project_file('nlp-service/app/settings.py', 252, 'python').
 project_file('nlp-service/app/store/__init__.py', 31, 'python').
 project_file('nlp-service/app/store/factory.py', 47, 'python').
 project_file('nlp-service/app/store/memory.py', 24, 'python').
 project_file('nlp-service/app/store/redis_store.py', 59, 'python').
 project_file('nlp-service/app/system_executor.py', 343, 'python').
+project_file('nlp-service/integrations/__init__.py', 6, 'python').
+project_file('nlp-service/integrations/loader.py', 63, 'python').
+project_file('nlp-service/integrations/mullm/__init__.py', 2, 'python').
+project_file('nlp-service/integrations/mullm/registry.py', 67, 'python').
 project_file('nlp-service/tests/__init__.py', 1, 'python').
 project_file('nlp-service/tests/conftest.py', 102, 'python').
 project_file('nlp-service/tests/test_mapper.py', 252, 'python').
 project_file('nlp-service/tests/test_orchestrator.py', 192, 'python').
 project_file('nlp-service/tests/test_parser_rules.py', 223, 'python').
-project_file('nlp-service/tests/test_registry.py', 156, 'python').
+project_file('nlp-service/tests/test_registry.py', 167, 'python').
 project_file('nlp-service/tests/test_store.py', 193, 'python').
 project_file('nlp-service/tests/test_system_executor.py', 422, 'python').
 project_file('nlp2dsl_sdk/__init__.py', 34, 'python').
@@ -88,7 +94,7 @@ project_file('tests/e2e/test_websocket.py', 112, 'python').
 project_file('tests/run.sh', 86, 'shell').
 project_file('tests/test_nlp2dsl_sdk.py', 259, 'python').
 project_file('tests/test_placeholder.py', 12, 'python').
-project_file('tests/tests/test_nlp2dsl_tests.py', 12, 'python').
+project_file('tests/test_tests.py', 12, 'python').
 project_file('tree.sh', 2, 'shell').
 project_file('worker/__init__.py', 6, 'python').
 project_file('worker/config.py', 28, 'python').
@@ -112,7 +118,7 @@ python_function('backend/app/logging_setup.py', 'setup_logging', 2, 3, 9).
 python_function('backend/app/main.py', 'health', 0, 1, 1).
 python_function('backend/app/routers/chat.py', '_proxy_chat_payload', 2, 9, 12).
 python_function('backend/app/routers/chat.py', 'chat_start', 1, 2, 4).
-python_function('backend/app/routers/chat.py', 'chat_message', 1, 7, 11).
+python_function('backend/app/routers/chat.py', 'chat_message', 1, 12, 13).
 python_function('backend/app/routers/chat.py', 'chat_get_state', 1, 2, 6).
 python_function('backend/app/routers/settings.py', 'actions_schema', 0, 1, 4).
 python_function('backend/app/routers/settings.py', 'action_schema', 1, 2, 5).
@@ -158,7 +164,7 @@ python_function('nlp-service/app/orchestrator.py', '_process_message', 2, 5, 8).
 python_function('nlp-service/app/orchestrator.py', '_check_execute_keyword', 2, 5, 5).
 python_function('nlp-service/app/orchestrator.py', '_handle_unknown_intent', 1, 3, 2).
 python_function('nlp-service/app/orchestrator.py', '_handle_system_action', 1, 7, 7).
-python_function('nlp-service/app/orchestrator.py', '_build_and_check_dsl', 1, 7, 9).
+python_function('nlp-service/app/orchestrator.py', '_build_and_check_dsl', 1, 9, 9).
 python_function('nlp-service/app/orchestrator.py', '_build_incomplete_response', 1, 7, 10).
 python_function('nlp-service/app/orchestrator.py', '_merge_into_state', 2, 9, 4).
 python_function('nlp-service/app/orchestrator.py', '_format_system_result', 2, 16, 5).
@@ -166,7 +172,7 @@ python_function('nlp-service/app/parser_llm.py', 'parse_llm', 1, 3, 11).
 python_function('nlp-service/app/parser_llm.py', '_detect_provider', 0, 10, 1).
 python_function('nlp-service/app/parser_llm.py', '_parse_json_response', 1, 6, 7).
 python_function('nlp-service/app/parser_rules.py', 'parse_rules', 1, 5, 10).
-python_function('nlp-service/app/parser_rules.py', '_detect_actions', 1, 10, 5).
+python_function('nlp-service/app/parser_rules.py', '_detect_actions', 1, 15, 5).
 python_function('nlp-service/app/parser_rules.py', '_resolve_intent', 1, 5, 5).
 python_function('nlp-service/app/parser_rules.py', '_extract_entities', 2, 1, 9).
 python_function('nlp-service/app/parser_rules.py', '_extract_amount', 2, 5, 5).
@@ -178,6 +184,7 @@ python_function('nlp-service/app/parser_rules.py', '_extract_param_aliases', 2, 
 python_function('nlp-service/app/parser_rules.py', '_extract_system_entities', 3, 16, 3).
 python_function('nlp-service/app/parser_rules.py', '_extract_fallback_recipient', 2, 7, 2).
 python_function('nlp-service/app/parser_rules.py', '_set_entity', 3, 3, 2).
+python_function('nlp-service/app/parsing/facade.py', 'parse_text', 2, 8, 6).
 python_function('nlp-service/app/registry.py', 'get_action_by_alias', 1, 5, 3).
 python_function('nlp-service/app/registry.py', 'get_trigger', 1, 3, 2).
 python_function('nlp-service/app/registry.py', 'get_required_fields', 1, 1, 1).
@@ -197,6 +204,9 @@ python_function('nlp-service/app/system_executor.py', '_exec_registry_list', 1, 
 python_function('nlp-service/app/system_executor.py', '_exec_registry_add', 1, 11, 4).
 python_function('nlp-service/app/system_executor.py', '_exec_registry_edit', 1, 12, 5).
 python_function('nlp-service/app/system_executor.py', '_exec_status', 1, 3, 2).
+python_function('nlp-service/integrations/loader.py', '_integration_names', 0, 5, 4).
+python_function('nlp-service/integrations/loader.py', 'load_integration_registries', 0, 5, 8).
+python_function('nlp-service/integrations/loader.py', 'apply_integrations', 1, 5, 6).
 python_function('nlp-service/tests/conftest.py', 'sample_texts', 0, 1, 0).
 python_function('nlp-service/tests/conftest.py', 'expected_intents', 0, 1, 0).
 python_function('nlp-service/tests/conftest.py', 'sample_entities', 0, 1, 0).
@@ -312,8 +322,8 @@ python_function('tests/test_nlp2dsl_sdk.py', 'test_code_generation_methods_hit_e
 python_function('tests/test_nlp2dsl_sdk.py', 'test_health_queries_all_services', 1, 7, 3).
 python_function('tests/test_placeholder.py', 'test_placeholder', 0, 2, 0).
 python_function('tests/test_placeholder.py', 'test_import', 0, 1, 0).
-python_function('tests/tests/test_nlp2dsl_tests.py', 'test_placeholder', 0, 2, 0).
-python_function('tests/tests/test_nlp2dsl_tests.py', 'test_import', 0, 1, 0).
+python_function('tests/test_tests.py', 'test_placeholder', 0, 2, 0).
+python_function('tests/test_tests.py', 'test_import', 0, 1, 0).
 python_function('worker/logging_setup.py', 'get_request_id', 0, 1, 1).
 python_function('worker/logging_setup.py', 'setup_logging', 2, 3, 9).
 python_function('worker/tests/conftest.py', '_noop_sleep', 0, 1, 0).
@@ -605,8 +615,9 @@ python_method('TestHelperFunctions', 'test_get_defaults_unknown', 0, 2, 1).
 python_class('nlp-service/tests/test_registry.py', 'TestCategories').
 python_method('TestCategories', 'test_system_actions_nonempty', 0, 2, 1).
 python_method('TestCategories', 'test_business_actions_nonempty', 0, 2, 1).
-python_method('TestCategories', 'test_no_overlap', 0, 2, 1).
+python_method('TestCategories', 'test_no_overlap', 0, 4, 1).
 python_method('TestCategories', 'test_union_is_complete', 0, 2, 2).
+python_method('TestCategories', 'test_mullm_actions_loaded', 0, 3, 0).
 python_class('nlp-service/tests/test_registry.py', 'TestCompositeIntents').
 python_method('TestCompositeIntents', 'test_composite_actions_exist', 1, 3, 2).
 python_class('nlp-service/tests/test_store.py', 'TestMemoryStoreCRUD').
@@ -767,6 +778,9 @@ env_variable('LLM_MODEL', 'openrouter/openai/gpt-5-mini', '').
 env_variable('LLM_TEMPERATURE', '0', '── LLM Settings ─────────────────────────────────────────────').
 env_variable('LLM_MAX_TOKENS', '1024', '').
 env_variable('LLM_FALLBACK_THRESHOLD', '0.5', '').
+env_variable('NLP2DSL_BACKEND_HOST_PORT', '8010', '8002 jest zajęty przez Mullm Projector, gdy oba stacki działają równolegle.').
+env_variable('NLP2DSL_NLP_HOST_PORT', '8012', '').
+env_variable('NLP2DSL_WORKER_HOST_PORT', '8004', '').
 env_variable('DEEPGRAM_API_KEY', '*(not set)*', 'Zdobądź klucz: https://console.deepgram.com/').
 
 % ── TestQL Scenarios ─────────────────────────────────────

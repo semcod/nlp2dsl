@@ -313,11 +313,11 @@ COMPOSITE_INTENTS: dict[str, list[str]] = {
     "full_report_flow": ["generate_report", "send_email", "notify_slack"],
 }
 
-# ── Integration plugins (Mullm, …) ────────────────────────────
+# ── Integracje + nlp2dsl.yaml (zasoby, agenci, ACL) ───────────
 
-from integrations.loader import apply_integrations
+from app.access.bootstrap import bootstrap_registry
 
-MULLM_ACTIONS: set[str] = apply_integrations(ACTIONS_REGISTRY)
+MULLM_ACTIONS, DELEGATED_ACTIONS = bootstrap_registry(ACTIONS_REGISTRY)
 
 # ── Action categories ─────────────────────────────────────────
 
@@ -328,7 +328,7 @@ SYSTEM_ACTIONS = {
 
 BUSINESS_ACTIONS = {
     name for name in ACTIONS_REGISTRY
-    if name not in SYSTEM_ACTIONS and name not in MULLM_ACTIONS
+    if name not in SYSTEM_ACTIONS and name not in DELEGATED_ACTIONS
 }
 
 

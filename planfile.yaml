@@ -446,3 +446,55 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-be57afc5
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in nlp-service/app/orchestrator.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/orchestrator.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-167e0f6b
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/app/parsing/facade.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/app/parsing/facade.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f2668f83
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in nlp-service/integrations/loader.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - nlp-service/integrations/loader.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-70ded9e5
+    name: Fix smart-return-type issues
+    description: Resolve 2 smart-return-type issues in tests/test_tests.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_tests.py
+    rule_id: smart-return-type
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced

@@ -29,7 +29,13 @@ Zasada z README zostaje: **LLM rozumie → registry waliduje → mapper buduje �
 
 ## Fazy
 
-### Faza 1 — Fundament (zrobione w tym PR)
+### Faza 1 — Fundament
+
+- [x] `nlp2dsl.yaml` — resource_areas, agents, grants, native_routing (`app/access/`)
+- [x] API `/nlp/access/config`, `/nlp/access/check`
+- [x] Orchestrator: native route + ACL przed rules/LLM
+
+### Faza 1b — wcześniejsze (integracje)
 
 - [x] `nlp-service/integrations/loader.py` — pluginy z `INTEGRATIONS=mullm`
 - [x] `nlp-service/integrations/mullm/registry.py` — akcje Mullm

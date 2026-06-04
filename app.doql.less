@@ -2,7 +2,7 @@
 
 app {
   name: nlp2dsl;
-  version: 0.0.7;
+  version: 0.0.12;
 }
 
 dependencies {
@@ -45,6 +45,7 @@ entity[name="NLPEntities"] {
   language: str | None;
   context: str | None;
   include_tests: bool | None;
+  shell_command: str | None;
 }
 
 entity[name="DSLStep"] {
@@ -100,6 +101,10 @@ interface[type="cli"] {
 }
 interface[type="cli"] page[name="nlp2dsl-demo"] {
 
+}
+
+integration[name="nlp"] {
+  type: api;
 }
 
 deploy {

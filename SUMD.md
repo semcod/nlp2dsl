@@ -21,8 +21,9 @@ Reusable Python SDK for the NLP2DSL platform
 ## Metadata
 
 - **name**: `nlp2dsl`
-- **version**: `0.0.7`
+- **version**: `0.0.12`
 - **python_requires**: `>=3.10`
+- **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
 - **generated_from**: pyproject.toml, testql(3), app.doql.less, pyqual.yaml, goal.yaml, .env.example, docker-compose.yml, project/(3 analysis files)
@@ -40,7 +41,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: nlp2dsl;
-  version: 0.0.7;
+  version: 0.0.12;
 }
 
 dependencies {
@@ -83,6 +84,7 @@ entity[name="NLPEntities"] {
   language: str | None;
   context: str | None;
   include_tests: bool | None;
+  shell_command: str | None;
 }
 
 entity[name="DSLStep"] {
@@ -138,6 +140,10 @@ interface[type="cli"] {
 }
 interface[type="cli"] page[name="nlp2dsl-demo"] {
 
+}
+
+integration[name="nlp"] {
+  type: api;
 }
 
 deploy {
@@ -418,7 +424,7 @@ pipeline:
 ```yaml
 project:
   name: nlp2dsl
-  version: 0.0.7
+  version: 0.0.12
   env: local
 ```
 
@@ -441,9 +447,9 @@ pip install -e .[dev]
 
 ### Docker Compose (`docker-compose.yml`)
 
-- **backend** image=`./backend` ports: `8010:8000`
-- **nlp-service** image=`./nlp-service` ports: `8002:8002`
-- **worker** image=`./worker` ports: `8004:8000`
+- **backend** image=`./backend` ports: `${NLP2DSL_BACKEND_HOST_PORT:-8010}:8000`
+- **nlp-service** image=`./nlp-service` ports: `${NLP2DSL_NLP_HOST_PORT:-8012}:8002`
+- **worker** image=`./worker` ports: `${NLP2DSL_WORKER_HOST_PORT:-8004}:8000`
 - **postgres** image=`postgres:16-alpine`
 - **redis** image=`redis:7-alpine`
 
@@ -456,6 +462,9 @@ pip install -e .[dev]
 | `LLM_TEMPERATURE` | `0` | ── LLM Settings ───────────────────────────────────────────── |
 | `LLM_MAX_TOKENS` | `1024` |  |
 | `LLM_FALLBACK_THRESHOLD` | `0.5` |  |
+| `NLP2DSL_BACKEND_HOST_PORT` | `8010` | 8002 jest zajęty przez Mullm Projector, gdy oba stacki działają równolegle. |
+| `NLP2DSL_NLP_HOST_PORT` | `8012` |  |
+| `NLP2DSL_WORKER_HOST_PORT` | `8004` |  |
 | `DEEPGRAM_API_KEY` | `*(not set)*` | Zdobądź klucz: https://console.deepgram.com/ |
 
 ## Release Management (`goal.yaml`)
@@ -471,15 +480,15 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# nlp2dsl | 95f 11125L | python:76,shell:13,javascript:3,rust:2,less:1 | 2026-06-03
-# stats: 233 func | 115 cls | 95 mod | CC̄=3.5 | critical:12 | cycles:0
-# alerts[5]: CC test_workflow_and_conversation_endpoints=17; CC _format_system_result=16; CC _extract_system_entities=16; CC test_code_generation_methods_hit_expected_services=16; CC test_new_workflow_helpers_are_data_driven=14
-# hotspots[5]: _execute_workflow fan=19; map_to_dsl fan=14; test_code_generation fan=14; _exec_file_read fan=13; _proxy_chat_payload fan=12
+# nlp2dsl | 101f 11363L | python:82,shell:13,javascript:3,rust:2,less:1 | 2026-06-04
+# stats: 237 func | 115 cls | 101 mod | CC̄=3.6 | critical:13 | cycles:0
+# alerts[5]: CC test_workflow_and_conversation_endpoints=17; CC _format_system_result=16; CC _extract_system_entities=16; CC test_code_generation_methods_hit_expected_services=16; CC _detect_actions=15
+# hotspots[5]: _execute_workflow fan=19; map_to_dsl fan=14; test_code_generation fan=14; chat_message fan=13; _exec_file_read fan=13
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[95]:
+M[101]:
   .pfix-test-wrapper.sh,16
-  app.doql.less,120
+  app.doql.less,125
   backend/app/__init__.py,1
   backend/app/config.py,43
   backend/app/db/__init__.py,50
@@ -489,7 +498,7 @@ M[95]:
   backend/app/logging_setup.py,101
   backend/app/main.py,49
   backend/app/routers/__init__.py,1
-  backend/app/routers/chat.py,108
+  backend/app/routers/chat.py,125
   backend/app/routers/settings.py,82
   backend/app/routers/system.py,30
   backend/app/routers/workflow.py,190
@@ -522,23 +531,29 @@ M[95]:
   nlp-service/app/logging_setup.py,101
   nlp-service/app/main.py,522
   nlp-service/app/mapper.py,190
-  nlp-service/app/orchestrator.py,389
+  nlp-service/app/orchestrator.py,398
   nlp-service/app/parser_llm.py,188
-  nlp-service/app/parser_rules.py,316
-  nlp-service/app/registry.py,385
-  nlp-service/app/schemas.py,128
+  nlp-service/app/parser_rules.py,321
+  nlp-service/app/parsing/__init__.py,4
+  nlp-service/app/parsing/facade.py,40
+  nlp-service/app/registry.py,391
+  nlp-service/app/schemas.py,131
   nlp-service/app/settings.py,252
   nlp-service/app/store/__init__.py,31
   nlp-service/app/store/factory.py,47
   nlp-service/app/store/memory.py,24
   nlp-service/app/store/redis_store.py,59
   nlp-service/app/system_executor.py,343
+  nlp-service/integrations/__init__.py,6
+  nlp-service/integrations/loader.py,63
+  nlp-service/integrations/mullm/__init__.py,2
+  nlp-service/integrations/mullm/registry.py,67
   nlp-service/tests/__init__.py,1
   nlp-service/tests/conftest.py,102
   nlp-service/tests/test_mapper.py,252
   nlp-service/tests/test_orchestrator.py,192
   nlp-service/tests/test_parser_rules.py,223
-  nlp-service/tests/test_registry.py,156
+  nlp-service/tests/test_registry.py,167
   nlp-service/tests/test_store.py,193
   nlp-service/tests/test_system_executor.py,422
   nlp2dsl_sdk/__init__.py,34
@@ -564,7 +579,7 @@ M[95]:
   tests/run.sh,86
   tests/test_nlp2dsl_sdk.py,259
   tests/test_placeholder.py,12
-  tests/tests/test_nlp2dsl_tests.py,12
+  tests/test_tests.py,12
   tree.sh,2
   worker/__init__.py,6
   worker/config.py,28
@@ -760,6 +775,10 @@ D:
     _extract_system_entities(entities;text;text_lower)
     _extract_fallback_recipient(entities;text_lower)
     _set_entity(entities;field;value)
+  nlp-service/app/parsing/__init__.py:
+  nlp-service/app/parsing/facade.py:
+    e: parse_text
+    parse_text(text;mode)
   nlp-service/app/registry.py:
     e: get_action_by_alias,get_trigger,get_required_fields,get_defaults
     get_action_by_alias(text)
@@ -815,6 +834,14 @@ D:
     _exec_registry_add(config)
     _exec_registry_edit(config)
     _exec_status(config)
+  nlp-service/integrations/__init__.py:
+  nlp-service/integrations/loader.py:
+    e: _integration_names,load_integration_registries,apply_integrations
+    _integration_names()
+    load_integration_registries()
+    apply_integrations(registry)
+  nlp-service/integrations/mullm/__init__.py:
+  nlp-service/integrations/mullm/registry.py:
   nlp-service/tests/__init__.py:
   nlp-service/tests/conftest.py:
     e: sample_texts,expected_intents,sample_entities,mock_conversation_store
@@ -859,7 +886,7 @@ D:
     TestAliasResolution: test_alias_invoice_pl(0),test_alias_email_en(0),test_alias_report(0),test_alias_slack(0),test_alias_unknown(0),test_alias_best_match(0)  # get_action_by_alias finds best match.
     TestTriggerDetection: test_trigger_daily(0),test_trigger_weekly(0),test_trigger_monthly(0),test_trigger_manual_default(0)  # get_trigger extracts schedule from text.
     TestHelperFunctions: test_get_required_fields_invoice(0),test_get_required_fields_unknown(0),test_get_defaults_invoice(0),test_get_defaults_unknown(0)  # get_required_fields, get_defaults.
-    TestCategories: test_system_actions_nonempty(0),test_business_actions_nonempty(0),test_no_overlap(0),test_union_is_complete(0)  # System vs business action sets.
+    TestCategories: test_system_actions_nonempty(0),test_business_actions_nonempty(0),test_no_overlap(0),test_union_is_complete(0),test_mullm_actions_loaded(0)  # System vs business action sets.
     TestCompositeIntents: test_composite_actions_exist(1)  # COMPOSITE_INTENTS structure validation.
   nlp-service/tests/test_store.py:
     e: TestMemoryStoreCRUD,TestSerializationRoundtrip,TestStoreFactory,TestStoreIsolation
@@ -1022,7 +1049,7 @@ D:
     e: test_placeholder,test_import
     test_placeholder()
     test_import()
-  tests/tests/test_nlp2dsl_tests.py:
+  tests/test_tests.py:
     e: test_placeholder,test_import
     test_placeholder()
     test_import()
@@ -1068,11 +1095,11 @@ D:
 
 ```prolog markpact:analysis path=project/logic.pl
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('nlp2dsl', '0.0.7', 'python').
+project_metadata('nlp2dsl', '0.0.12', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('.pfix-test-wrapper.sh', 16, 'shell').
-project_file('app.doql.less', 120, 'less').
+project_file('app.doql.less', 125, 'less').
 project_file('backend/app/__init__.py', 1, 'python').
 project_file('backend/app/config.py', 43, 'python').
 project_file('backend/app/db/__init__.py', 50, 'python').
@@ -1082,7 +1109,7 @@ project_file('backend/app/engine.py', 270, 'python').
 project_file('backend/app/logging_setup.py', 101, 'python').
 project_file('backend/app/main.py', 49, 'python').
 project_file('backend/app/routers/__init__.py', 1, 'python').
-project_file('backend/app/routers/chat.py', 108, 'python').
+project_file('backend/app/routers/chat.py', 125, 'python').
 project_file('backend/app/routers/settings.py', 82, 'python').
 project_file('backend/app/routers/system.py', 30, 'python').
 project_file('backend/app/routers/workflow.py', 190, 'python').
@@ -1115,23 +1142,29 @@ project_file('nlp-service/app/config.py', 61, 'python').
 project_file('nlp-service/app/logging_setup.py', 101, 'python').
 project_file('nlp-service/app/main.py', 522, 'python').
 project_file('nlp-service/app/mapper.py', 190, 'python').
-project_file('nlp-service/app/orchestrator.py', 389, 'python').
+project_file('nlp-service/app/orchestrator.py', 398, 'python').
 project_file('nlp-service/app/parser_llm.py', 188, 'python').
-project_file('nlp-service/app/parser_rules.py', 316, 'python').
-project_file('nlp-service/app/registry.py', 385, 'python').
-project_file('nlp-service/app/schemas.py', 128, 'python').
+project_file('nlp-service/app/parser_rules.py', 321, 'python').
+project_file('nlp-service/app/parsing/__init__.py', 4, 'python').
+project_file('nlp-service/app/parsing/facade.py', 40, 'python').
+project_file('nlp-service/app/registry.py', 391, 'python').
+project_file('nlp-service/app/schemas.py', 131, 'python').
 project_file('nlp-service/app/settings.py', 252, 'python').
 project_file('nlp-service/app/store/__init__.py', 31, 'python').
 project_file('nlp-service/app/store/factory.py', 47, 'python').
 project_file('nlp-service/app/store/memory.py', 24, 'python').
 project_file('nlp-service/app/store/redis_store.py', 59, 'python').
 project_file('nlp-service/app/system_executor.py', 343, 'python').
+project_file('nlp-service/integrations/__init__.py', 6, 'python').
+project_file('nlp-service/integrations/loader.py', 63, 'python').
+project_file('nlp-service/integrations/mullm/__init__.py', 2, 'python').
+project_file('nlp-service/integrations/mullm/registry.py', 67, 'python').
 project_file('nlp-service/tests/__init__.py', 1, 'python').
 project_file('nlp-service/tests/conftest.py', 102, 'python').
 project_file('nlp-service/tests/test_mapper.py', 252, 'python').
 project_file('nlp-service/tests/test_orchestrator.py', 192, 'python').
 project_file('nlp-service/tests/test_parser_rules.py', 223, 'python').
-project_file('nlp-service/tests/test_registry.py', 156, 'python').
+project_file('nlp-service/tests/test_registry.py', 167, 'python').
 project_file('nlp-service/tests/test_store.py', 193, 'python').
 project_file('nlp-service/tests/test_system_executor.py', 422, 'python').
 project_file('nlp2dsl_sdk/__init__.py', 34, 'python').
@@ -1157,7 +1190,7 @@ project_file('tests/e2e/test_websocket.py', 112, 'python').
 project_file('tests/run.sh', 86, 'shell').
 project_file('tests/test_nlp2dsl_sdk.py', 259, 'python').
 project_file('tests/test_placeholder.py', 12, 'python').
-project_file('tests/tests/test_nlp2dsl_tests.py', 12, 'python').
+project_file('tests/test_tests.py', 12, 'python').
 project_file('tree.sh', 2, 'shell').
 project_file('worker/__init__.py', 6, 'python').
 project_file('worker/config.py', 28, 'python').
@@ -1181,7 +1214,7 @@ python_function('backend/app/logging_setup.py', 'setup_logging', 2, 3, 9).
 python_function('backend/app/main.py', 'health', 0, 1, 1).
 python_function('backend/app/routers/chat.py', '_proxy_chat_payload', 2, 9, 12).
 python_function('backend/app/routers/chat.py', 'chat_start', 1, 2, 4).
-python_function('backend/app/routers/chat.py', 'chat_message', 1, 7, 11).
+python_function('backend/app/routers/chat.py', 'chat_message', 1, 12, 13).
 python_function('backend/app/routers/chat.py', 'chat_get_state', 1, 2, 6).
 python_function('backend/app/routers/settings.py', 'actions_schema', 0, 1, 4).
 python_function('backend/app/routers/settings.py', 'action_schema', 1, 2, 5).
@@ -1227,7 +1260,7 @@ python_function('nlp-service/app/orchestrator.py', '_process_message', 2, 5, 8).
 python_function('nlp-service/app/orchestrator.py', '_check_execute_keyword', 2, 5, 5).
 python_function('nlp-service/app/orchestrator.py', '_handle_unknown_intent', 1, 3, 2).
 python_function('nlp-service/app/orchestrator.py', '_handle_system_action', 1, 7, 7).
-python_function('nlp-service/app/orchestrator.py', '_build_and_check_dsl', 1, 7, 9).
+python_function('nlp-service/app/orchestrator.py', '_build_and_check_dsl', 1, 9, 9).
 python_function('nlp-service/app/orchestrator.py', '_build_incomplete_response', 1, 7, 10).
 python_function('nlp-service/app/orchestrator.py', '_merge_into_state', 2, 9, 4).
 python_function('nlp-service/app/orchestrator.py', '_format_system_result', 2, 16, 5).
@@ -1235,7 +1268,7 @@ python_function('nlp-service/app/parser_llm.py', 'parse_llm', 1, 3, 11).
 python_function('nlp-service/app/parser_llm.py', '_detect_provider', 0, 10, 1).
 python_function('nlp-service/app/parser_llm.py', '_parse_json_response', 1, 6, 7).
 python_function('nlp-service/app/parser_rules.py', 'parse_rules', 1, 5, 10).
-python_function('nlp-service/app/parser_rules.py', '_detect_actions', 1, 10, 5).
+python_function('nlp-service/app/parser_rules.py', '_detect_actions', 1, 15, 5).
 python_function('nlp-service/app/parser_rules.py', '_resolve_intent', 1, 5, 5).
 python_function('nlp-service/app/parser_rules.py', '_extract_entities', 2, 1, 9).
 python_function('nlp-service/app/parser_rules.py', '_extract_amount', 2, 5, 5).
@@ -1247,6 +1280,7 @@ python_function('nlp-service/app/parser_rules.py', '_extract_param_aliases', 2, 
 python_function('nlp-service/app/parser_rules.py', '_extract_system_entities', 3, 16, 3).
 python_function('nlp-service/app/parser_rules.py', '_extract_fallback_recipient', 2, 7, 2).
 python_function('nlp-service/app/parser_rules.py', '_set_entity', 3, 3, 2).
+python_function('nlp-service/app/parsing/facade.py', 'parse_text', 2, 8, 6).
 python_function('nlp-service/app/registry.py', 'get_action_by_alias', 1, 5, 3).
 python_function('nlp-service/app/registry.py', 'get_trigger', 1, 3, 2).
 python_function('nlp-service/app/registry.py', 'get_required_fields', 1, 1, 1).
@@ -1266,6 +1300,9 @@ python_function('nlp-service/app/system_executor.py', '_exec_registry_list', 1, 
 python_function('nlp-service/app/system_executor.py', '_exec_registry_add', 1, 11, 4).
 python_function('nlp-service/app/system_executor.py', '_exec_registry_edit', 1, 12, 5).
 python_function('nlp-service/app/system_executor.py', '_exec_status', 1, 3, 2).
+python_function('nlp-service/integrations/loader.py', '_integration_names', 0, 5, 4).
+python_function('nlp-service/integrations/loader.py', 'load_integration_registries', 0, 5, 8).
+python_function('nlp-service/integrations/loader.py', 'apply_integrations', 1, 5, 6).
 python_function('nlp-service/tests/conftest.py', 'sample_texts', 0, 1, 0).
 python_function('nlp-service/tests/conftest.py', 'expected_intents', 0, 1, 0).
 python_function('nlp-service/tests/conftest.py', 'sample_entities', 0, 1, 0).
@@ -1381,8 +1418,8 @@ python_function('tests/test_nlp2dsl_sdk.py', 'test_code_generation_methods_hit_e
 python_function('tests/test_nlp2dsl_sdk.py', 'test_health_queries_all_services', 1, 7, 3).
 python_function('tests/test_placeholder.py', 'test_placeholder', 0, 2, 0).
 python_function('tests/test_placeholder.py', 'test_import', 0, 1, 0).
-python_function('tests/tests/test_nlp2dsl_tests.py', 'test_placeholder', 0, 2, 0).
-python_function('tests/tests/test_nlp2dsl_tests.py', 'test_import', 0, 1, 0).
+python_function('tests/test_tests.py', 'test_placeholder', 0, 2, 0).
+python_function('tests/test_tests.py', 'test_import', 0, 1, 0).
 python_function('worker/logging_setup.py', 'get_request_id', 0, 1, 1).
 python_function('worker/logging_setup.py', 'setup_logging', 2, 3, 9).
 python_function('worker/tests/conftest.py', '_noop_sleep', 0, 1, 0).
@@ -1674,8 +1711,9 @@ python_method('TestHelperFunctions', 'test_get_defaults_unknown', 0, 2, 1).
 python_class('nlp-service/tests/test_registry.py', 'TestCategories').
 python_method('TestCategories', 'test_system_actions_nonempty', 0, 2, 1).
 python_method('TestCategories', 'test_business_actions_nonempty', 0, 2, 1).
-python_method('TestCategories', 'test_no_overlap', 0, 2, 1).
+python_method('TestCategories', 'test_no_overlap', 0, 4, 1).
 python_method('TestCategories', 'test_union_is_complete', 0, 2, 2).
+python_method('TestCategories', 'test_mullm_actions_loaded', 0, 3, 0).
 python_class('nlp-service/tests/test_registry.py', 'TestCompositeIntents').
 python_method('TestCompositeIntents', 'test_composite_actions_exist', 1, 3, 2).
 python_class('nlp-service/tests/test_store.py', 'TestMemoryStoreCRUD').
@@ -1836,6 +1874,9 @@ env_variable('LLM_MODEL', 'openrouter/openai/gpt-5-mini', '').
 env_variable('LLM_TEMPERATURE', '0', '── LLM Settings ─────────────────────────────────────────────').
 env_variable('LLM_MAX_TOKENS', '1024', '').
 env_variable('LLM_FALLBACK_THRESHOLD', '0.5', '').
+env_variable('NLP2DSL_BACKEND_HOST_PORT', '8010', '8002 jest zajęty przez Mullm Projector, gdy oba stacki działają równolegle.').
+env_variable('NLP2DSL_NLP_HOST_PORT', '8012', '').
+env_variable('NLP2DSL_WORKER_HOST_PORT', '8004', '').
 env_variable('DEEPGRAM_API_KEY', '*(not set)*', 'Zdobądź klucz: https://console.deepgram.com/').
 
 % ── TestQL Scenarios ─────────────────────────────────────
@@ -1844,72 +1885,85 @@ testql_scenario('generated-cli-tests.testql.toon.yaml', 'cli').
 testql_scenario('generated-from-pytests.testql.toon.yaml', 'integration').
 
 % ── Semantic Facts from SUMD.md ──────────────────────────
+sumd_declared_file('app.doql.less', 'doql').
+sumd_declared_file('testql-scenarios/generated-api-smoke.testql.toon.yaml', 'testql').
+sumd_declared_file('testql-scenarios/generated-cli-tests.testql.toon.yaml', 'testql').
+sumd_declared_file('testql-scenarios/generated-from-pytests.testql.toon.yaml', 'testql').
+sumd_declared_file('pyqual.yaml', 'pyqual').
+sumd_declared_file('project/map.toon.yaml', 'analysis').
+sumd_declared_file('project/logic.pl', 'analysis').
+sumd_declared_file('project/calls.toon.yaml', 'analysis').
+sumd_interface('api', '').
+sumd_interface('cli', 'argparse').
+sumd_interface('cli', '').
+sumd_deploy_target('docker_compose').
+sumd_deploy_compose_file('docker-compose.yml').
 ```
 
 ## Call Graph
 
-*108 nodes · 110 edges · 26 modules · CC̄=2.9*
+*132 nodes · 138 edges · 28 modules · CC̄=2.8*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `run_code_generation_demo` *(in nlp2dsl_sdk.demos)* | 20 ⚠ | 1 | 51 | **52** |
 | `_execute_workflow` *(in backend.app.engine)* | 11 ⚠ | 2 | 42 | **44** |
-| `_extract_entities` *(in nlp-service.app.parser_rules)* | 40 ⚠ | 1 | 36 | **37** |
-| `_process_message` *(in nlp-service.app.orchestrator)* | 21 ⚠ | 2 | 30 | **32** |
+| `_format_system_result` *(in nlp-service.app.orchestrator)* | 16 ⚠ | 1 | 38 | **39** |
 | `stream_workflow` *(in backend.app.routers.workflow)* | 2 | 0 | 22 | **22** |
-| `run_action_catalog_demo` *(in nlp2dsl_sdk.demos)* | 6 | 0 | 19 | **19** |
+| `chat_message` *(in backend.app.routers.chat)* | 12 ⚠ | 0 | 21 | **21** |
+| `map_to_dsl` *(in nlp-service.app.mapper)* | 8 | 2 | 17 | **19** |
 | `_deliver_notification` *(in worker.worker)* | 5 | 3 | 16 | **19** |
 | `_print_workflow_preview` *(in nlp2dsl_sdk.demos)* | 4 | 3 | 16 | **19** |
+| `run_action_catalog_demo` *(in nlp2dsl_sdk.demos)* | 6 | 0 | 19 | **19** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/wronai/nlp2dsl
-# generated in 0.07s
-# nodes: 108 | edges: 110 | modules: 26
-# CC̄=2.9
+# generated in 0.06s
+# nodes: 132 | edges: 138 | modules: 28
+# CC̄=2.8
 
 HUBS[20]:
-  nlp2dsl_sdk.demos.run_code_generation_demo
-    CC=20  in:1  out:51  total:52
   backend.app.engine._execute_workflow
     CC=11  in:2  out:42  total:44
-  nlp-service.app.parser_rules._extract_entities
-    CC=40  in:1  out:36  total:37
-  nlp-service.app.orchestrator._process_message
-    CC=21  in:2  out:30  total:32
+  nlp-service.app.orchestrator._format_system_result
+    CC=16  in:1  out:38  total:39
   backend.app.routers.workflow.stream_workflow
     CC=2  in:0  out:22  total:22
-  nlp2dsl_sdk.demos.run_action_catalog_demo
-    CC=6  in:0  out:19  total:19
+  backend.app.routers.chat.chat_message
+    CC=12  in:0  out:21  total:21
+  nlp-service.app.mapper.map_to_dsl
+    CC=8  in:2  out:17  total:19
   worker.worker._deliver_notification
     CC=5  in:3  out:16  total:19
   nlp2dsl_sdk.demos._print_workflow_preview
     CC=4  in:3  out:16  total:19
+  nlp2dsl_sdk.demos.run_action_catalog_demo
+    CC=6  in:0  out:19  total:19
+  nlp-service.app.system_executor._exec_file_read
+    CC=9  in:0  out:18  total:18
   backend.app.routers.chat._proxy_chat_payload
     CC=9  in:2  out:16  total:18
   nlp2dsl_sdk.demos._print_execution_result
     CC=5  in:7  out:11  total:18
-  nlp-service.app.mapper.map_to_dsl
-    CC=8  in:1  out:17  total:18
-  nlp-service.app.system_executor._exec_file_read
-    CC=9  in:0  out:18  total:18
+  nlp-service.app.parser_llm.parse_llm
+    CC=3  in:2  out:16  total:18
   worker.worker.handle_generate_code
     CC=5  in:0  out:17  total:17
-  backend.app.routers.chat.chat_message
-    CC=7  in:0  out:17  total:17
-  nlp-service.app.parser_llm.parse_llm
-    CC=3  in:0  out:16  total:16
+  nlp-service.app.settings.SettingsManager.set
+    CC=4  in:5  out:11  total:16
   nlp-service.app.audio_parser.stt_audio
     CC=9  in:2  out:14  total:16
-  nlp2dsl_sdk.demos._run_gallery_examples
-    CC=5  in:1  out:14  total:15
-  nlp2dsl_sdk.demos.run_email_demo
-    CC=5  in:1  out:14  total:15
-  nlp-service.app.settings.SettingsManager.set
-    CC=4  in:4  out:11  total:15
   nlp2dsl_sdk.demos.run_invoice_demo
     CC=5  in:1  out:14  total:15
+  nlp2dsl_sdk.demos.run_code_generation_demo
+    CC=6  in:1  out:14  total:15
+  nlp2dsl_sdk.demos.run_email_demo
+    CC=5  in:1  out:14  total:15
+  nlp2dsl_sdk.demos._run_gallery_examples
+    CC=5  in:1  out:14  total:15
+  nlp2dsl_sdk.demos._run_conversation_code_example
+    CC=3  in:1  out:14  total:15
 
 MODULES:
   backend.app.engine  [7 funcs]
@@ -1920,10 +1974,12 @@ MODULES:
     _workflow_steps_payload  CC=2  out:1
     run_workflow  CC=1  out:2
     start_workflow  CC=1  out:7
+  backend.app.logging_setup  [1 funcs]
+    get_request_id  CC=1  out:1
   backend.app.routers.chat  [4 funcs]
     _proxy_chat_payload  CC=9  out:16
     chat_get_state  CC=2  out:7
-    chat_message  CC=7  out:17
+    chat_message  CC=12  out:21
     chat_start  CC=2  out:4
   backend.app.routers.settings  [7 funcs]
     action_schema  CC=2  out:6
@@ -1958,28 +2014,40 @@ MODULES:
     send_audio  CC=2  out:2
     stt_audio  CC=9  out:14
     stt_file  CC=2  out:4
-  nlp-service.app.logging_setup  [1 funcs]
-    get_request_id  CC=1  out:1
   nlp-service.app.mapper  [5 funcs]
     _build_config  CC=6  out:10
     _get_field_mapping  CC=1  out:1
     _make_name  CC=3  out:2
     _resolve_actions  CC=7  out:4
     map_to_dsl  CC=8  out:17
-  nlp-service.app.orchestrator  [4 funcs]
+  nlp-service.app.orchestrator  [11 funcs]
+    _build_and_check_dsl  CC=9  out:9
+    _build_incomplete_response  CC=7  out:10
+    _check_execute_keyword  CC=5  out:5
+    _format_system_result  CC=16  out:38
+    _handle_system_action  CC=7  out:7
+    _handle_unknown_intent  CC=3  out:2
     _merge_into_state  CC=9  out:4
-    _process_message  CC=21  out:30
+    _process_message  CC=5  out:8
     continue_conversation  CC=2  out:8
-    start_conversation  CC=1  out:6
+    get_action_form  CC=5  out:12
   nlp-service.app.parser_llm  [3 funcs]
     _detect_provider  CC=10  out:8
     _parse_json_response  CC=6  out:10
     parse_llm  CC=3  out:16
-  nlp-service.app.parser_rules  [4 funcs]
-    _detect_actions  CC=10  out:9
-    _extract_entities  CC=40  out:36
-    _resolve_intent  CC=5  out:6
-    parse_rules  CC=5  out:10
+  nlp-service.app.parser_rules  [13 funcs]
+    _detect_actions  CC=15  out:9
+    _extract_amount  CC=5  out:7
+    _extract_email  CC=2  out:2
+    _extract_entities  CC=1  out:9
+    _extract_fallback_recipient  CC=7  out:5
+    _extract_format  CC=3  out:1
+    _extract_notification_channels  CC=6  out:6
+    _extract_param_aliases  CC=5  out:5
+    _extract_report_type  CC=3  out:1
+    _extract_system_entities  CC=16  out:8
+  nlp-service.app.parsing.facade  [1 funcs]
+    parse_text  CC=8  out:8
   nlp-service.app.registry  [3 funcs]
     get_defaults  CC=1  out:3
     get_required_fields  CC=1  out:2
@@ -1992,29 +2060,32 @@ MODULES:
     _exec_file_write  CC=4  out:12
     _is_read_only  CC=2  out:5
     _validate_file_path  CC=5  out:9
+  nlp-service.integrations.loader  [3 funcs]
+    _integration_names  CC=5  out:6
+    apply_integrations  CC=5  out:7
+    load_integration_registries  CC=5  out:10
   nlp2dsl_sdk.__main__  [1 funcs]
     main  CC=5  out:9
-  nlp2dsl_sdk.client  [9 funcs]
+  nlp2dsl_sdk.client  [8 funcs]
     crm_update  CC=2  out:3
     generate_report  CC=1  out:2
     generate_report_and_notify  CC=4  out:6
     notify_slack  CC=2  out:2
-    run_workflow  CC=3  out:3
     send_email  CC=3  out:2
     send_invoice  CC=1  out:2
     send_invoice_and_notify  CC=4  out:6
     workflow_step  CC=1  out:1
-  nlp2dsl_sdk.demos  [16 funcs]
+  nlp2dsl_sdk.demos  [21 funcs]
     _ensure_services  CC=2  out:2
+    _get_supported_languages  CC=3  out:6
     _preview_text_examples  CC=3  out:6
+    _print_code_generation_preview  CC=3  out:11
     _print_execution_result  CC=5  out:11
     _print_json  CC=1  out:2
     _print_workflow_preview  CC=4  out:16
+    _run_conversation_code_example  CC=3  out:14
+    _run_direct_code_generation  CC=5  out:9
     _run_gallery_examples  CC=5  out:14
-    _run_workflow_examples  CC=3  out:4
-    list_available_demos  CC=1  out:0
-    run_action_catalog_demo  CC=6  out:19
-    run_automation_gallery_demo  CC=3  out:4
   tauri-wrapper.scripts.dev  [3 funcs]
     exitCode  CC=2  out:1
     main  CC=11  out:10
@@ -2053,36 +2124,38 @@ EDGES:
   tauri-wrapper.scripts.serve-dist.handleRequest → tauri-wrapper.scripts.serve-dist.sendFile
   tauri-wrapper.scripts.serve-dist.startServer → tauri-wrapper.scripts.serve-dist.handleRequest
   tauri-wrapper.scripts.serve-dist.server → tauri-wrapper.scripts.serve-dist.handleRequest
-  backend.app.routers.settings.actions_schema → nlp-service.app.logging_setup.get_request_id
-  backend.app.routers.settings.action_schema → nlp-service.app.logging_setup.get_request_id
-  backend.app.routers.settings.get_settings → nlp-service.app.logging_setup.get_request_id
-  backend.app.routers.settings.get_settings_section → nlp-service.app.logging_setup.get_request_id
-  backend.app.routers.settings.update_settings_section → nlp-service.app.logging_setup.get_request_id
-  backend.app.routers.settings.set_setting → nlp-service.app.logging_setup.get_request_id
-  backend.app.routers.settings.reset_settings → nlp-service.app.logging_setup.get_request_id
-  nlp2dsl_sdk.__main__.main → nlp2dsl_sdk.demos.list_available_demos
-  nlp2dsl_sdk.client.NLP2DSLClient.send_invoice → nlp2dsl_sdk.client.workflow_step
-  nlp2dsl_sdk.client.NLP2DSLClient.send_email → nlp2dsl_sdk.client.workflow_step
-  nlp2dsl_sdk.client.NLP2DSLClient.generate_report → nlp2dsl_sdk.client.workflow_step
-  nlp2dsl_sdk.client.NLP2DSLClient.generate_report_and_notify → nlp2dsl_sdk.client.workflow_step
-  nlp2dsl_sdk.client.NLP2DSLClient.notify_slack → nlp2dsl_sdk.client.workflow_step
-  nlp2dsl_sdk.client.NLP2DSLClient.crm_update → nlp2dsl_sdk.client.workflow_step
-  nlp2dsl_sdk.client.NLP2DSLClient.send_invoice_and_notify → nlp2dsl_sdk.client.workflow_step
-  backend.app.routers.system.system_execute → nlp-service.app.logging_setup.get_request_id
-  backend.app.routers.workflow.run_workflow_endpoint → nlp2dsl_sdk.client.NLP2DSLClient.run_workflow
+  backend.app.engine._persist_workflow_snapshot → backend.app.engine._workflow_steps_payload
+  backend.app.engine._execute_workflow → backend.app.engine._publish_workflow_event
+  backend.app.engine._execute_workflow → backend.app.logging_setup.get_request_id
+  backend.app.engine._execute_workflow → backend.app.engine._persist_workflow_snapshot
+  backend.app.engine.run_workflow → backend.app.engine._execute_workflow
+  backend.app.engine.start_workflow → backend.app.engine._track_background_task
+  backend.app.engine.start_workflow → backend.app.engine._persist_workflow_snapshot
+  backend.app.engine.start_workflow → backend.app.engine._execute_workflow
+  backend.app.workflow_events.WorkflowEventHub.publish → nlp-service.app.settings.SettingsManager.set
+  backend.app.workflow_events.WorkflowEventHub.subscriber_count → nlp-service.app.settings.SettingsManager.set
+  backend.app.routers.system.system_execute → backend.app.logging_setup.get_request_id
+  backend.app.routers.workflow.run_workflow_endpoint → backend.app.engine.run_workflow
   backend.app.routers.workflow.start_workflow_endpoint → backend.app.engine.start_workflow
   backend.app.routers.workflow.stream_workflow → backend.app.routers.workflow._workflow_snapshot
   backend.app.routers.workflow.stream_workflow → backend.app.routers.workflow._format_sse
+  backend.app.routers.settings.actions_schema → backend.app.logging_setup.get_request_id
+  backend.app.routers.settings.action_schema → backend.app.logging_setup.get_request_id
+  backend.app.routers.settings.get_settings → backend.app.logging_setup.get_request_id
+  backend.app.routers.settings.get_settings_section → backend.app.logging_setup.get_request_id
+  backend.app.routers.settings.update_settings_section → backend.app.logging_setup.get_request_id
+  backend.app.routers.settings.set_setting → backend.app.logging_setup.get_request_id
+  backend.app.routers.settings.reset_settings → backend.app.logging_setup.get_request_id
+  nlp2dsl_sdk.__main__.main → nlp2dsl_sdk.demos.list_available_demos
+  examples.code_generation_examples.main → nlp2dsl_sdk.demos.run_code_generation_demo
+  examples.04-scheduled-report.main.main → nlp2dsl_sdk.demos.run_scheduled_report_demo
+  examples.01-invoice.main.main → nlp2dsl_sdk.demos.run_invoice_demo
+  examples.03-report-and-notify.main.main → nlp2dsl_sdk.demos.run_report_and_notify_demo
+  examples.02-email.main.main → nlp2dsl_sdk.demos.run_email_demo
   nlp-service.app.audio_parser.stt_file → nlp-service.app.audio_parser.stt_audio
   nlp-service.app.audio_parser.StreamingSTT.send_audio → nlp-service.app.audio_parser.stt_audio
-  examples.code_generation_examples.main → nlp2dsl_sdk.demos.run_code_generation_demo
-  examples.01-invoice.main.main → nlp2dsl_sdk.demos.run_invoice_demo
-  nlp-service.app.parser_rules.parse_rules → nlp-service.app.parser_rules._detect_actions
-  nlp-service.app.parser_rules.parse_rules → nlp-service.app.parser_rules._resolve_intent
-  nlp-service.app.parser_rules.parse_rules → nlp-service.app.parser_rules._extract_entities
-  nlp-service.app.parser_rules.parse_rules → nlp-service.app.registry.get_trigger
-  nlp-service.app.parser_rules._resolve_intent → nlp-service.app.settings.SettingsManager.set
-  examples.02-email.main.main → nlp2dsl_sdk.demos.run_email_demo
+  nlp-service.app.parser_llm.parse_llm → nlp-service.app.parser_llm._detect_provider
+  nlp-service.app.parser_llm.parse_llm → nlp-service.app.parser_llm._parse_json_response
   nlp-service.app.mapper.map_to_dsl → nlp-service.app.mapper._resolve_actions
   nlp-service.app.mapper.map_to_dsl → nlp-service.app.mapper._make_name
   nlp-service.app.mapper.map_to_dsl → nlp-service.app.mapper._build_config
@@ -2090,8 +2163,6 @@ EDGES:
   nlp-service.app.mapper._build_config → nlp-service.app.registry.get_required_fields
   nlp-service.app.mapper._build_config → nlp-service.app.registry.get_defaults
   nlp-service.app.mapper._build_config → nlp-service.app.mapper._get_field_mapping
-  nlp-service.app.orchestrator.start_conversation → nlp-service.app.orchestrator._process_message
-  nlp-service.app.orchestrator.continue_conversation → nlp-service.app.orchestrator._process_message
 ```
 
 ## Test Contracts

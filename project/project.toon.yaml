@@ -1,57 +1,56 @@
-# nlp2dsl | 298 func | 43f | 8693L | python | 2026-06-04
-# generated in 0.00s
+# nlp2dsl | 341 func | 49f | 10114L | python | 2026-06-04
+# generated in 0.01s
 
 HEALTH:
-  CC̄=2.8  critical=10 (limit:10)  dup=3  cycles=0
+  CC̄=3.2  critical=17 (limit:10)  dup=3  cycles=1
 
 ALERTS[20]:
+  !!  cc_exceeded      load_access_config = 22 (limit:15)
+  !!  cc_exceeded      _match_route = 21 (limit:15)
   !!  high_fan_out     _execute_workflow = 19 (limit:10)
+  !!  high_fan_out     _process_message = 18 (limit:10)
   !!  high_fan_out     workflow_from_text = 17 (limit:10)
+  !!  high_fan_out     load_access_config = 17 (limit:10)
   !!  high_fan_out     chat_message = 16 (limit:10)
+  !!  high_fan_out     websocket_chat = 16 (limit:10)
+  !   cc_exceeded      authorize_action = 18 (limit:15)
   !   cc_exceeded      _extract_system_entities = 16 (limit:15)
-  !   cc_exceeded      _format_system_result = 16 (limit:15)
-  !   cc_exceeded      _detect_actions = 15 (limit:15)
-  !   high_fan_out     stream_workflow = 14 (limit:10)
-  !   high_fan_out     map_to_dsl = 14 (limit:10)
-  !   high_fan_out     _exec_file_read = 13 (limit:10)
-  !   high_fan_out     _exec_file_list = 13 (limit:10)
 
-MODULES[92] (top by size):
+MODULES[100] (top by size):
   M[nlp2dsl_sdk/demos.py] 687L C:1 F:22 CC↑6 D:6 (python)
+  M[nlp-service/app/main.py] 580L C:0 F:23 CC↑10 D:0 (python)
   M[nlp2dsl_sdk/client.py] 580L C:2 F:51 CC↑6 D:0 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
-  M[planfile.yaml] 448L C:0 F:0 CC↑0 D:0 (yaml)
-  M[nlp-service/app/orchestrator.py] 397L C:0 F:12 CC↑16 D:0 (python)
+  M[planfile.yaml] 500L C:0 F:0 CC↑0 D:0 (yaml)
+  M[nlp-service/app/orchestrator.py] 455L C:0 F:12 CC↑16 D:1 (python)
   M[nlp-service/app/registry.py] 390L C:0 F:4 CC↑5 D:3 (python)
-  M[nlp-service/app/system_executor.py] 342L C:0 F:13 CC↑12 D:0 (python)
-  M[nlp-service/app/parser_rules.py] 320L C:0 F:13 CC↑16 D:1 (python)
+  M[nlp-service/app/system_executor.py] 342L C:0 F:13 CC↑12 D:1 (python)
+  M[nlp-service/app/parser_rules.py] 320L C:0 F:13 CC↑16 D:2 (python)
   M[nlp-service/app/code_generator.py] 279L C:1 F:8 CC↑14 D:0 (python)
   M[backend/app/engine.py] 269L C:0 F:7 CC↑11 D:2 (python)
-  M[nlp-service/app/settings.py] 251L C:6 F:11 CC↑6 D:3 (python)
+  M[nlp-service/app/settings.py] 251L C:6 F:11 CC↑6 D:5 (python)
   M[worker/worker.py] 230L C:0 F:12 CC↑5 D:0 (python)
   M[backend/app/routers/workflow.py] 189L C:0 F:9 CC↑8 D:0 (python)
-  M[nlp-service/app/mapper.py] 189L C:0 F:6 CC↑8 D:1 (python)
-  M[nlp-service/app/parser_llm.py] 187L C:0 F:3 CC↑10 D:1 (python)
-  LANGS: python:51/other:8/shell:7/yaml:7/toml:5/txt:4/json:3/javascript:2/rust:2/yml:2/ini:1
+  M[nlp-service/app/mapper.py] 189L C:0 F:6 CC↑8 D:2 (python)
+  LANGS: python:58/other:8/yaml:8/shell:7/toml:5/txt:4/json:3/javascript:2/rust:2/yml:2/ini:1
 
 HOTSPOTS[10]:
   ★ _execute_workflow fan=19  // Orchestrates 19 calls
+  ★ _process_message fan=18  // Analysis pipeline, 18 stages
   ★ workflow_from_text fan=17  // Pełny pipeline: tekst → NLP → DSL → (opcjonalne) wykonanie.
 
 Body: {"text": "...
+  ★ load_access_config fan=17  // Orchestrates 17 calls
   ★ chat_message fan=16  // Kontynuuj konwersację — uzupełnij brakujące dane.
 
 Body: {"conversation_id": "ab
-  ★ stream_workflow fan=14  // SSE stream with live workflow lifecycle events.
-  ★ map_to_dsl fan=14  // Konwertuje NLPResult → WorkflowDSL.
-Jeśli brakuje wymaganych pól — zwraca Dialog
 
-REFACTOR[9]:
-  [1] H/H Split god module nlp2dsl_sdk/client.py (580L, 2 classes)
-  [2] H/H Split god module nlp2dsl_sdk/demos.py (687L, 1 classes)
-  [3] H/H Split god module goal.yaml (512L, 0 classes)
-  [4] M/L Split _detect_actions (CC=15)
-  [5] M/L Split _extract_system_entities (CC=16)
+REFACTOR[15]:
+  [1] H/H Split god module nlp-service/app/main.py (580L, 0 classes)
+  [2] H/H Split god module nlp2dsl_sdk/client.py (580L, 2 classes)
+  [3] H/H Split god module nlp2dsl_sdk/demos.py (687L, 1 classes)
+  [4] H/H Split god module goal.yaml (512L, 0 classes)
+  [5] H/H Split god module planfile.yaml (500L, 0 classes)
 
 EVOLUTION:
-  2026-06-04 CC̄=2.8 crit=10 8693L // Automated analysis
+  2026-06-04 CC̄=3.2 crit=17 10114L // Automated analysis

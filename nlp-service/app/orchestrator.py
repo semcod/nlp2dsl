@@ -12,11 +12,14 @@ Conversation flow:
 """
 
 import logging
+import os
 from uuid import uuid4
 
+from app.access.native import resolve_native_intent
+from app.access.policy import authorize_action, get_agent_id
 from app.mapper import map_to_dsl
 from app.parsing.facade import parse_text
-from app.registry import ACTIONS_REGISTRY, MULLM_ACTIONS, SYSTEM_ACTIONS, get_trigger
+from app.registry import ACTIONS_REGISTRY, DELEGATED_ACTIONS, MULLM_ACTIONS, SYSTEM_ACTIONS, get_trigger
 from app.schemas import (
     ActionFormSchema,
     ConversationResponse,
@@ -159,9 +162,64 @@ async def _process_message(state: ConversationState, text: str) -> ConversationR
     if execute_response:
         return execute_response
 
-    # 1. NLP extraction (rules / llm / auto — NLP_CHAT_MODE)
-    nlp = await parse_text(text)
-    log.info("NLP: intent=%s conf=%.2f", nlp.intent.intent, nlp.intent.confidence)
+    agent_id = get_agent_id()
+
+    # 1a. Natywne trasy z nlp2dsl.yaml (np. lista plików → mullm_list_files)
+    native = resolve_native_intent(text)
+    if native:
+        action = native["action"]
+        meta = ACTIONS_REGISTRY.get(action, {})
+        auth = authorize_action(
+            agent_id,
+            action,
+            resource_area=native.get("resource_area"),
+            uri=native.get("uri"),
+            permission_action=native.get("permission_action"),
+            action_meta=meta,
+        )
+        if not auth.allowed:
+            msg = (
+                f"Brak uprawnień agenta `{agent_id}` do `{action}` "
+                f"({auth.effect}: {auth.reason})."
+            )
+            state.history.append({"role": "assistant", "text": msg})
+            return ConversationResponse(
+                conversation_id=state.id,
+                status="in_progress",
+                message=msg,
+            )
+        nlp = NLPResult(
+            intent=NLPIntent(intent=action, confidence=0.95),
+            entities=NLPEntities(),
+            raw_text=text,
+        )
+        log.info(
+            "Native route: action=%s agent=%s source=%s",
+            action,
+            agent_id,
+            native.get("source"),
+        )
+    else:
+        # 1b. NLP extraction (rules / llm / auto — NLP_CHAT_MODE)
+        nlp = await parse_text(text)
+        log.info("NLP: intent=%s conf=%.2f", nlp.intent.intent, nlp.intent.confidence)
+        if nlp.intent.intent in DELEGATED_ACTIONS:
+            auth = authorize_action(
+                agent_id,
+                nlp.intent.intent,
+                action_meta=ACTIONS_REGISTRY.get(nlp.intent.intent, {}),
+            )
+            if not auth.allowed:
+                msg = (
+                    f"Brak uprawnień agenta `{agent_id}` do `{nlp.intent.intent}` "
+                    f"({auth.effect}: {auth.reason})."
+                )
+                state.history.append({"role": "assistant", "text": msg})
+                return ConversationResponse(
+                    conversation_id=state.id,
+                    status="in_progress",
+                    message=msg,
+                )
 
     # 2. Update state with new data
     _merge_into_state(state, nlp)
@@ -263,7 +321,7 @@ def _build_and_check_dsl(state: ConversationState) -> ConversationResponse | Non
         state.status = "ready"
         state.missing = []
 
-        backend = "mullm" if state.intent in MULLM_ACTIONS else "worker"
+        backend = "mullm" if state.intent in DELEGATED_ACTIONS else "worker"
         msg = (
             f"Workflow gotowy: {dialog.workflow.name} ({len(dialog.workflow.steps)} kroków). "
             f"Wyślij 'uruchom' aby wykonać"

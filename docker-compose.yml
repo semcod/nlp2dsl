@@ -61,10 +61,15 @@ services:
       # ── Persistence (Redis) ──────────────────────────────────
       - REDIS_URL=redis://redis:6379/0
       - CONVERSATION_TTL=3600
+
+      # ── Zasoby i ACL (nlp2dsl.yaml) ───────────────────────────
+      - NLP2DSL_CONFIG=/app/nlp2dsl.yaml
+      - NLP2DSL_AGENT_ID=${NLP2DSL_AGENT_ID:-user}
     depends_on:
       - redis
     volumes:
       - ./nlp-service/static:/app/static:ro
+      - ./nlp2dsl.yaml:/app/nlp2dsl.yaml:ro
     restart: unless-stopped
 
   # ── Imperative Worker ────────────────────────────────────────
