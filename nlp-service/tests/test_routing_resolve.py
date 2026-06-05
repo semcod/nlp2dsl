@@ -25,7 +25,9 @@ class TestResolveIntent:
         assert decision.to_dict()["intent"] == "send_invoice"
 
     @pytest.mark.asyncio
-    async def test_unknown_intent(self) -> None:
+    async def test_unknown_intent(self, monkeypatch) -> None:
+        # Rules-only: auto mode would call live LLM and may classify gibberish as generate_code.
+        monkeypatch.setenv("NLP_CHAT_MODE", "rules")
         decision, nlp = await resolve_intent("zrób coś zupełnie losowego xyz123")
         assert nlp is not None
         assert decision.intent == "unknown"
