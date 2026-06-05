@@ -2,65 +2,22 @@
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional
+from typing import Any, Optional
 
 from nlp2dsl_sdk.client import NLP2DSLClient
 from nlp2dsl_sdk.preview import (
     ensure_services,
+    execute_from_text,
     preview_text_examples,
-    print_execution_result,
+    print_workflow_preview,
 )
 
-SCHEDULED_REPORT_SPECS: tuple[Mapping[str, Any], ...] = (
-    {
-        "title": "daily_sales_report",
-        "runner": lambda c: c.create_scheduled_report(
-            name="daily_sales_report",
-            report_type="sales",
-            trigger="daily",
-            schedule="09:00",
-            email_to="team@firma.pl",
-        ),
-    },
-    {
-        "title": "weekly_hr_report",
-        "runner": lambda c: c.create_scheduled_report(
-            name="weekly_hr_report",
-            report_type="hr",
-            trigger="weekly",
-            schedule="monday 08:00",
-            email_to="hr@firma.pl",
-            format_type="xlsx",
-        ),
-    },
-    {
-        "title": "monthly_finance_report",
-        "runner": lambda c: c.create_scheduled_report(
-            name="monthly_finance_report",
-            report_type="finance",
-            trigger="monthly",
-            schedule="1st 07:00",
-            email_to="cfo@firma.pl",
-        ),
-    },
-    {
-        "title": "business_hours_report",
-        "runner": lambda c: c.create_scheduled_report(
-            name="business_hours_report",
-            report_type="sales",
-            trigger="daily",
-            schedule="09:00",
-            email_to="manager@firma.pl",
-            format_type="csv",
-        ),
-    },
-)
-
-SCHEDULED_REPORT_TEXT_EXAMPLES: tuple[str, ...] = (
-    "Codziennie o 9:00 generuj raport sprzedaży",
-    "Co poniedziałek raport HR do hr@firma.pl",
-    "Pierwszego każdego miesiąca raport finansów",
-    "Każdego dnia o 18:00 przygotuj raport sprzedaży dla zespołu",
+# Wyłącznie zdania NL — parser ustala trigger, typ raportu, format, odbiorcę
+SCHEDULED_REPORT_QUERIES: tuple[str, ...] = (
+    "Codziennie o 9:00 generuj raport sprzedaży PDF i wyślij email do team@firma.pl",
+    "Co poniedziałek raport HR w xlsx i wyślij do hr@firma.pl",
+    "Pierwszego każdego miesiąca raport finansów PDF do cfo@firma.pl",
+    "Codziennie o 9:00 raport sprzedaży CSV i wyślij do manager@firma.pl",
 )
 
 
@@ -71,19 +28,33 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
     if not ensure_services(client):
         return {}
 
-    print("📋 Tworzenie raportów z różnymi harmonogramami...\n")
+    print("📋 Analiza zapytań (NLP → DSL, bez wykonania):\n")
+    preview_text_examples(client, "", SCHEDULED_REPORT_QUERIES, finalize_artifacts=False)
+
+    print("\n📋 Wykonywanie z rozpoznanego DSL (execute=true):\n")
     results: list[dict[str, Any]] = []
-    for spec in SCHEDULED_REPORT_SPECS:
-        print(f"\n📦 {spec['title']}")
-        result = spec["runner"](client)
+    for query in SCHEDULED_REPORT_QUERIES:
+        result = execute_from_text(client, query, label="Harmonogram + raport")
         results.append(result)
-        print_execution_result(result)
 
-    print("\n📝 Przykłady generowania z tekstu:")
-    preview_text_examples(client, "", SCHEDULED_REPORT_TEXT_EXAMPLES)
+    ok = sum(1 for r in results if r.get("status") == "executed")
+    print(f"\n📊 Wykonano: {ok}/{len(SCHEDULED_REPORT_QUERIES)}")
 
-    print("\n🎉 Wszystkie zaplanowane raporty zostały utworzone!")
-    print("\n💡 Wskazówka: W systemie produkcyjnym te workflow byłyby uruchamiane")
-    print("   automatycznie według zdefiniowanych harmonogramów.")
+    if ok == len(SCHEDULED_REPORT_QUERIES):
+        print("\n🎉 Wszystkie zaplanowane raporty zostały utworzone!")
+    else:
+        print("\n⚠️  Część zapytań incomplete — sprawdź .nlp2dsl/pipeline/*.yaml")
+        for r in results:
+            if r.get("status") != "executed":
+                print_workflow_preview(r)
+
+    print("\n💡 W systemie produkcyjnym te workflow byłyby uruchamiane")
+    print("   automatycznie według triggerów rozpoznanych z tekstu.")
+
+    from nlp2dsl_sdk.artifacts import get_example_writer
+
+    writer = get_example_writer()
+    if writer:
+        writer.finalize(client)
 
     return results[-1] if results else {}

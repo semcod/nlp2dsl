@@ -131,6 +131,34 @@ def preview_text_examples(
     return results
 
 
+def execute_from_text(
+    client: NLP2DSLClient,
+    text: str,
+    *,
+    mode: str = "auto",
+    label: str = "Wykonywanie workflow",
+) -> dict[str, Any]:
+    """NLP query → DSL → execution (no hardcoded run_workflow helpers)."""
+    print(f"\n📋 {label}...")
+    print(f"🧠 Zapytanie: '{text}'")
+    try:
+        result = client.workflow_from_text(text, execute=True, mode=mode)
+    except requests.HTTPError as exc:
+        result = workflow_http_error_result(exc)
+        print_workflow_preview(result)
+        return result
+
+    print_workflow_preview(result)
+    if result.get("status") == "executed" and result.get("result"):
+        steps = result["result"].get("steps", [])
+        if steps:
+            print(f"   Liczba kroków: {len(steps)}")
+            for index, step in enumerate(steps, 1):
+                icon = "✅" if step.get("status") == "completed" else "❌"
+                print(f"   Krok {index} ({step.get('action')}): {icon}")
+    return result
+
+
 def finalize_example_artifacts(client: NLP2DSLClient | None = None) -> None:
     """Flush .nlp2dsl/ when scenario recorded queries with finalize_artifacts=False."""
     writer = get_example_writer()

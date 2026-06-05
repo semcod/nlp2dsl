@@ -14,12 +14,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `examples/bootstrap.py`, `scripts/aggregate-example-testql.py`, [`docs/artifacts.md`](docs/artifacts.md)
 
 ### Changed
+- Przykłady 01–04: wykonanie przez `workflow_from_text(execute=True)` zamiast hardkodu `send_email` / `create_scheduled_report`
+- `examples/*/main.py`: ładowanie `scenario.py` przez `importlib` (naprawa kolizji `import scenario`)
+- `execute_from_text()` w `nlp2dsl_sdk/preview.py`
 - `configure_utf8` podnosi locale ASCII (`C`, `POSIX`) do `C.UTF-8`; rekonfiguruje też `stdin`
 - Przykłady `examples/*/scenario.py` — usunięte ręczne wywołania `configure_utf8(force=True)`
 - `nlp2dsl-show` deleguje encoding do SDK gdy dostępny
 
 ### Fixed
 - `nlp2cmd-intent`: normalizer zwracający `str` zamiast obiektu z `.text` w `KeywordIntentDetector`
+
+## [0.0.18] - 2026-06-05
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update examples/README.md
+
+### Test
+- Update testql-scenarios/generated-examples.testql.toon.yaml
+
+### Other
+- Update examples/01-invoice/main.py
+- Update examples/01-invoice/scenario.py
+- Update examples/02-email/main.py
+- Update examples/02-email/scenario.py
+- Update examples/03-report-and-notify/main.py
+- Update examples/03-report-and-notify/scenario.py
+- Update examples/04-scheduled-report/main.py
+- Update examples/04-scheduled-report/scenario.py
+- Update examples/05-conversation-flow/main.py
+- Update examples/06-interactive-chat/main.py
+- ... and 8 more files
 
 ## [0.1.10] - 2026-06-05
 

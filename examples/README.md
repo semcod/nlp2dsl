@@ -291,6 +291,18 @@ nlp2dsl-demo interactive-chat
 
 Te komendy ładują ten sam `scenario.py` co `examples/*/main.py`.
 
+### Wykonanie wyłącznie z NLP (bez hardkodu SDK)
+
+Przykłady **01–04** i **09** używają `workflow_from_text(query, execute=True)` — nie `client.send_email()` / `create_scheduled_report()`.  
+Jedynym wejściem jest **zdanie użytkownika**; DSL i kroki wynikają z parsera.
+
+```python
+from nlp2dsl_sdk.preview import execute_from_text
+result = execute_from_text(client, "Wyślij email do a@b.pl: treść wiadomości")
+```
+
+Helpery `send_invoice`, `send_email` w SDK pozostają do testów integracyjnych, nie do demo NLP.
+
 ---
 
 ## Konfiguracja
