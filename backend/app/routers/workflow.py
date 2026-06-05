@@ -57,6 +57,16 @@ ACTIONS_REGISTRY: list[ActionInfo] = [
 ]
 
 
+@router.post("/nlp/orient")
+async def orient_nlp(body: dict[str, Any]) -> dict[str, Any]:
+    """Proxy orientacji zapytania do nlp-service (Mullm ingress)."""
+    async with AsyncClient(timeout=_PROXY_TIMEOUT_SECONDS) as client:
+        resp = await client.post(f"{NLP_SERVICE_URL}/nlp/orient", json=body)
+        if resp.status_code != 200:
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
+        return resp.json()
+
+
 @router.get("/actions", response_model=list[ActionInfo])
 async def list_actions() -> list[ActionInfo]:
     """Zwraca listę dostępnych akcji (DSL vocabulary)."""

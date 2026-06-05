@@ -8,6 +8,10 @@ from .demos import list_available_demos
 
 
 def main() -> None:
+    from nlp2dsl_sdk.encoding import configure_utf8
+
+    configure_utf8()
+
     parser = argparse.ArgumentParser(description="Run an NLP2DSL SDK demo")
     parser.add_argument(
         "demo",

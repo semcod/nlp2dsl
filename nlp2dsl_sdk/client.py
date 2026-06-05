@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import time
 from pathlib import Path
 from typing import Any, Mapping, Optional, Sequence
 
@@ -12,6 +13,8 @@ DEFAULT_BACKEND_URL = "http://localhost:8010"
 DEFAULT_NLP_SERVICE_URL = "http://localhost:8002"
 DEFAULT_WORKER_URL = "http://localhost:8004"
 DEFAULT_TIMEOUT_SECONDS = 30.0
+_RETRYABLE_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+_DEFAULT_HTTP_RETRIES = 3
 
 
 def workflow_step(action: str, **config: Any) -> dict[str, Any]:
@@ -77,8 +80,25 @@ class NLP2DSLClient:
         self.close()
 
     def _request(self, base_url: str, method: str, path: str, **kwargs: Any) -> requests.Response:
+        headers = dict(kwargs.pop("headers", {}) or {})
+        headers.setdefault("Accept", "application/json; charset=utf-8")
+        headers.setdefault("Accept-Charset", "utf-8")
+        kwargs["headers"] = headers
         kwargs.setdefault("timeout", self.timeout)
-        response = self.session.request(method.upper(), f"{base_url}{path}", **kwargs)
+
+        max_retries = int(os.getenv("NLP2DSL_HTTP_RETRIES", str(_DEFAULT_HTTP_RETRIES)))
+        url = f"{base_url}{path}"
+        response: requests.Response | None = None
+
+        for attempt in range(max_retries):
+            response = self.session.request(method.upper(), url, **kwargs)
+            if response.status_code not in _RETRYABLE_STATUS_CODES or attempt == max_retries - 1:
+                break
+            time.sleep(0.5 * (attempt + 1))
+
+        assert response is not None
+        if not response.encoding or response.encoding.lower() in {"ascii", "iso-8859-1"}:
+            response.encoding = response.apparent_encoding or "utf-8"
         response.raise_for_status()
         return response
 

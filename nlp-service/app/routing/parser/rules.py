@@ -35,6 +35,25 @@ EMAIL_PATTERN = re.compile(
     r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
 )
 
+REMINDER_SUBJECT_PATTERN = re.compile(
+    r"przypomnij\s+\S+@\S+\s+o\s+(.+)$",
+    re.IGNORECASE,
+)
+
+EMAIL_SUBJECT_PATTERN = re.compile(
+    r"z\s+tematem\s+(.+?)(?:\s+i\s+|\s*$)",
+    re.IGNORECASE,
+)
+
+EMAIL_COLON_BODY_PATTERN = re.compile(
+    r"@[\w.-]+\s*:\s*(.+)$",
+)
+
+EMAIL_OFFER_PATTERN = re.compile(
+    r"z\s+now[aą]\s+ofert[aą]",
+    re.IGNORECASE,
+)
+
 REPORT_TYPE_KEYWORDS = {
     "sprzedaż": "sales",
     "sprzedazy": "sales",
@@ -55,7 +74,21 @@ REPORT_TYPE_KEYWORDS = {
 FORMAT_KEYWORDS = {"pdf": "pdf", "csv": "csv", "excel": "xlsx", "xlsx": "xlsx"}
 
 SLACK_CHANNEL_PATTERN = re.compile(r"#[\w-]+")
-TELEGRAM_CHAT_PATTERN = re.compile(r"(?:telegram(?:ie)?|na telegram|do telegramu|chat(?:em)?|do)\s+([@][\w_]+|\d+)", re.IGNORECASE)
+NOTIFY_COLON_MESSAGE_PATTERN = re.compile(
+    r"(?:#\S+|general|chat\s+-?\d+|-?\d{6,})\s*:\s*(.+)$",
+    re.IGNORECASE,
+)
+NOTIFY_ABOUT_PATTERN = re.compile(
+    r"(?:powiadom|notify|wyślij|wyslij)(?:\s+\S+)*\s+(?:#\S+|general)\s+o\s+(.+)$",
+    re.IGNORECASE,
+)
+TELEGRAM_CHAT_PATTERN = re.compile(
+    r"(?:telegram(?:ie)?|na telegram|notify telegram|do telegramu)"
+    r"|chat\s+(-?\d+)"
+    r"|(?:^|\s)([@][\w_]+|-?\d{5,})\s*:",
+    re.IGNORECASE,
+)
+TELEGRAM_CHAT_ID_PATTERN = re.compile(r"(-?\d{6,})")
 TEAMS_CHANNEL_PATTERN = re.compile(r"(?:teams|microsoft teams|na teams|do teamsu)\s+([#\w-]+)", re.IGNORECASE)
 
 # ── System patterns ───────────────────────────────────────────
@@ -112,6 +145,18 @@ def parse_rules(text: str) -> NLPResult:
     # Handle description for generate_code (rules mode)
     if intent_name == "generate_code" and not entities.description:
         entities.description = text
+    if intent_name == "generate_code" and not entities.language:
+        if "python" in text_lower:
+            entities.language = "python"
+        elif "javascript" in text_lower or "js" in text_lower:
+            entities.language = "javascript"
+        elif "java" in text_lower:
+            entities.language = "java"
+    if intent_name == "crm_update" and not entities.entity:
+        for kw, ent in (("lead", "lead"), ("kontakt", "contact"), ("contact", "contact"), ("klient", "client"), ("deal", "deal")):
+            if kw in text_lower:
+                entities.entity = ent
+                break
 
     return NLPResult(
         intent=NLPIntent(intent=intent_name, confidence=confidence),
@@ -126,11 +171,55 @@ def _detect_actions(text_lower: str) -> list[str]:
     if not scores:
         return []
 
+    scores = _apply_context_filters(text_lower, scores)
     sorted_actions = _actions_by_score(scores)
+
+    business = [a for a in sorted_actions if _action_category(a) == "business"]
+    if len(business) >= _MIN_ACTIONS_FOR_DOMINANCE:
+        return business
+
     dominant_action = _dominant_overlap_action(sorted_actions, scores)
     if dominant_action:
         return [dominant_action]
     return sorted_actions
+
+
+def _apply_context_filters(text_lower: str, scores: dict[str, int]) -> dict[str, int]:
+    """Suppress false positives and add implicit actions from context."""
+    filtered = dict(scores)
+
+    if any(k in text_lower for k in ("crm", "lead", "kontakt", "contact", "deal")):
+        filtered.pop("system_status", None)
+        filtered.pop("system_file_list", None)
+        if not any(
+            k in text_lower
+            for k in ("wyślij email", "wyslij email", "napisz do", "send email", "maila do", "wiadomość do")
+        ):
+            filtered.pop("send_email", None)
+
+    if "telegram" in text_lower:
+        filtered.pop("notify_slack", None)
+        if "notify_telegram" not in filtered:
+            filtered["notify_telegram"] = 8
+
+    if SLACK_CHANNEL_PATTERN.search(text_lower) and "notify_slack" not in filtered:
+        if any(k in text_lower for k in ("powiadom", "wyślij", "wyslij", "slack", "#")):
+            filtered["notify_slack"] = max(filtered.get("notify_slack", 0), 6)
+
+    if "python" in text_lower or "javascript" in text_lower or "funkcj" in text_lower:
+        if "generate_code" not in filtered and any(
+            k in text_lower for k in ("napisz", "stwórz", "generuj kod", "program", "kod")
+        ):
+            filtered["generate_code"] = max(filtered.get("generate_code", 0), 10)
+
+    for business in ("generate_report", "send_invoice", "send_email", "crm_update"):
+        biz_score = filtered.get(business, 0)
+        if biz_score >= 6:
+            for sys_action in ("system_file_list", "system_status", "system_registry_list"):
+                if filtered.get(sys_action, 0) < biz_score:
+                    filtered.pop(sys_action, None)
+
+    return filtered
 
 
 def _action_alias_scores(text_lower: str) -> dict[str, int]:
@@ -143,11 +232,20 @@ def _action_alias_scores(text_lower: str) -> dict[str, int]:
     return scores
 
 
+def _alias_in_text(text_lower: str, alias_text: str) -> bool:
+    """Match alias; short tokens use word boundaries to avoid 'ls' in 'formacie'."""
+    if " " in alias_text:
+        return alias_text in text_lower
+    if len(alias_text) <= 4:
+        return bool(re.search(rf"(?<!\w){re.escape(alias_text)}(?!\w)", text_lower))
+    return alias_text in text_lower
+
+
 def _longest_alias_match(text_lower: str, aliases: list[str]) -> int:
     best_score = 0
     for alias in aliases:
         alias_text = str(alias).lower()
-        if alias_text in text_lower and len(alias_text) > best_score:
+        if _alias_in_text(text_lower, alias_text) and len(alias_text) > best_score:
             best_score = len(alias_text)
     return best_score
 
@@ -229,9 +327,12 @@ def _extract_entities(text: str, text_lower: str) -> NLPEntities:
 
     _extract_amount(entities, text)
     _extract_email(entities, text)
+    _extract_email_subject_and_body(entities, text)
+    _extract_reminder_subject(entities, text)
     _extract_report_type(entities, text_lower)
     _extract_format(entities, text_lower)
     _extract_notification_channels(entities, text)
+    _extract_notification_message(entities, text)
     _extract_param_aliases(entities, text_lower)
     _extract_system_entities(entities, text, text_lower)
     _extract_fallback_recipient(entities, text_lower)
@@ -256,10 +357,51 @@ def _extract_amount(entities: NLPEntities, text: str) -> None:
 
 
 def _extract_email(entities: NLPEntities, text: str) -> None:
-    """Extract email address from text."""
-    email_match = EMAIL_PATTERN.search(text)
-    if email_match:
-        entities.to = email_match.group(0)
+    """Extract email address(es) from text."""
+    emails = EMAIL_PATTERN.findall(text)
+    if not emails:
+        return
+    entities.to = emails[0]
+    if len(emails) >= 2:
+        entities.email_to = emails[1]
+
+
+def _extract_email_subject_and_body(entities: NLPEntities, text: str) -> None:
+    """Extract subject/body from common Polish email phrasing."""
+    colon_match = EMAIL_COLON_BODY_PATTERN.search(text.strip())
+    if colon_match:
+        body = colon_match.group(1).strip()
+        if body:
+            entities.message = body
+        return
+
+    subject_match = EMAIL_SUBJECT_PATTERN.search(text)
+    if subject_match:
+        subject = subject_match.group(1).strip()
+        if subject:
+            entities.subject = subject
+
+    if EMAIL_OFFER_PATTERN.search(text):
+        if not entities.subject:
+            entities.subject = "Nowa oferta"
+        if not entities.message:
+            entities.message = (
+                "Dzień dobry,\n\nW załączeniu przesyłamy nową ofertę. "
+                "Prosimy o kontakt w razie pytań.\n\nPozdrawiamy"
+            )
+
+
+def _extract_reminder_subject(entities: NLPEntities, text: str) -> None:
+    """Extract email subject/body from 'Przypomnij X o Y' phrasing."""
+    match = REMINDER_SUBJECT_PATTERN.search(text.strip())
+    if not match:
+        return
+    subject = match.group(1).strip()
+    if not subject:
+        return
+    entities.subject = subject[:1].upper() + subject[1:]
+    if not entities.message:
+        entities.message = f"Przypominamy: {entities.subject}."
 
 
 def _extract_report_type(entities: NLPEntities, text_lower: str) -> None:
@@ -286,14 +428,38 @@ def _extract_notification_channels(entities: NLPEntities, text: str) -> None:
         entities.channel = channel_match.group(0)
 
     # Telegram chat_id
-    telegram_match = TELEGRAM_CHAT_PATTERN.search(text)
-    if telegram_match and not entities.chat_id:
-        entities.chat_id = telegram_match.group(1)
+    if re.search(r"telegram", text, re.IGNORECASE):
+        id_match = TELEGRAM_CHAT_ID_PATTERN.search(text)
+        if id_match and not entities.chat_id:
+            entities.chat_id = id_match.group(1)
+        elif not entities.chat_id:
+            telegram_match = TELEGRAM_CHAT_PATTERN.search(text)
+            if telegram_match and telegram_match.lastindex:
+                entities.chat_id = telegram_match.group(telegram_match.lastindex)
 
     # Teams channel (fallback when user explicitly names Teams)
     teams_match = TEAMS_CHANNEL_PATTERN.search(text)
     if teams_match and not entities.channel:
         entities.channel = teams_match.group(1)
+
+
+def _extract_notification_message(entities: NLPEntities, text: str) -> None:
+    """Extract Slack/Telegram/Teams message body from common phrasing."""
+    if entities.message:
+        return
+
+    colon_match = NOTIFY_COLON_MESSAGE_PATTERN.search(text.strip())
+    if colon_match:
+        msg = colon_match.group(1).strip()
+        if msg:
+            entities.message = msg
+            return
+
+    about_match = NOTIFY_ABOUT_PATTERN.search(text.strip())
+    if about_match:
+        msg = about_match.group(1).strip()
+        if msg:
+            entities.message = msg
 
 
 def _extract_param_aliases(entities: NLPEntities, text_lower: str) -> None:

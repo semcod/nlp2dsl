@@ -14,6 +14,7 @@ from app.registry import (
     ACTIONS_REGISTRY,
     COMPOSITE_INTENTS,
     get_defaults,
+    get_quality_required_fields,
     get_required_fields,
     get_trigger,
 )
@@ -133,10 +134,49 @@ def _build_config(action: str, entities: NLPEntities) -> tuple[dict, list[str]]:
 
     # Add optional fields with defaults
     for field, default in defaults.items():
+        mapped_field = field_mapping.get(field, field)
         value = entities_dict.get(field)
+        if value is None:
+            value = entities_dict.get(mapped_field)
         config[field] = value if value is not None else default
 
+    if action == "send_email":
+        if entities_dict.get("email_to"):
+            config["to"] = entities_dict["email_to"]
+        if not str(config.get("body", "")).strip():
+            report_type = entities_dict.get("report_type")
+            if report_type:
+                config["body"] = f"W załączeniu przesyłamy raport {report_type}."
+            elif entities_dict.get("amount"):
+                config["body"] = (
+                    f"Faktura na kwotę {entities_dict['amount']} "
+                    f"{entities_dict.get('currency', 'PLN')} została wystawiona."
+                )
+
+    if action.startswith("notify_") and not str(config.get("message", "")).strip():
+        auto_msg = _auto_notify_message(config, entities_dict)
+        if auto_msg:
+            config["message"] = auto_msg
+
+    for field in get_quality_required_fields(action):
+        value = config.get(field)
+        if value is None or (isinstance(value, str) and not value.strip()):
+            missing.append(field)
+
     return config, missing
+
+
+def _auto_notify_message(config: dict, entities_dict: dict) -> str | None:
+    """Heuristic notify body when channel present but user gave no explicit text."""
+    report_type = entities_dict.get("report_type")
+    channel = config.get("channel") or entities_dict.get("channel")
+    if report_type and channel:
+        return f"📊 Raport {report_type} jest dostępny."
+    amount = entities_dict.get("amount")
+    if amount and channel:
+        currency = entities_dict.get("currency", "PLN")
+        return f"📄 Faktura {amount} {currency} — powiadomienie automatyczne."
+    return None
 
 
 def _get_field_mapping(action: str) -> dict[str, str]:
@@ -149,6 +189,12 @@ def _get_field_mapping(action: str) -> dict[str, str]:
         "notify_slack": {"channel": "channel", "message": "message"},
         "notify_telegram": {"chat_id": "chat_id", "message": "message"},
         "notify_teams": {"channel": "channel", "message": "message"},
+        "generate_code": {
+            "description": "description",
+            "language": "language",
+            "context": "context",
+            "include_tests": "include_tests",
+        },
     }
     return mappings.get(action, {})
 
@@ -169,6 +215,7 @@ def _build_prompt(missing: list[str]) -> str:
         "to": "adres e-mail odbiorcy",
         "currency": "walutę",
         "subject": "temat wiadomości",
+        "body": "treść wiadomości (body)",
         "report_type": "typ raportu (np. sales, hr, finance)",
         "format": "format (pdf, csv)",
         "channel": "kanał Slack (np. #general)",

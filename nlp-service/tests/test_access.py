@@ -58,10 +58,10 @@ def test_mail_agent_denied_mullm_execute():
     assert not d.allowed
 
 
-def test_native_lista_plikow():
-    from app.access.native import resolve_native_intent
+def test_native_lista_plikow_registry():
+    from app.routing.native import resolve_native_intent
 
-    hit = resolve_native_intent("lista plikow")
+    hit = resolve_native_intent("lista plikow usera z rejestru")
     assert hit is not None
     assert hit["action"] == "mullm_list_files"
 

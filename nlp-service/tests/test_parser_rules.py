@@ -67,6 +67,61 @@ class TestParseEmail:
         assert result.intent.intent == "send_email"
         assert result.entities.to == "admin@corp.com"
 
+    def test_parse_email_reminder(self) -> None:
+        """Reminder phrasing maps to send_email with subject."""
+        result = parse_rules("Przypomnij billing@firma.pl o nieopłaconej fakturze")
+        assert result.intent.intent == "send_email"
+        assert result.entities.to == "billing@firma.pl"
+        assert result.entities.subject == "Nieopłaconej fakturze"
+        assert "Przypominamy" in (result.entities.message or "")
+
+    def test_parse_email_with_subject(self) -> None:
+        """'z tematem' extracts subject from email request."""
+        result = parse_rules("Wyślij email do team@firma.pl z tematem Status projektu")
+        assert "send_email" in result.intent.intent
+        assert result.entities.to == "team@firma.pl"
+        assert result.entities.subject == "Status projektu"
+
+    def test_parse_email_colon_body(self) -> None:
+        """'Napisz do X: treść' extracts message body."""
+        result = parse_rules("Napisz do manager@firma.pl: Projekt zakończony sukcesem")
+        assert result.intent.intent == "send_email"
+        assert result.entities.to == "manager@firma.pl"
+        assert result.entities.message == "Projekt zakończony sukcesem"
+
+    def test_parse_email_offer(self) -> None:
+        """Offer phrasing fills subject and default body."""
+        result = parse_rules("Maila do klient@firma.pl z nową ofertą")
+        assert result.intent.intent == "send_email"
+        assert result.entities.to == "klient@firma.pl"
+        assert result.entities.subject == "Nowa oferta"
+        assert result.entities.message
+
+
+    def test_parse_slack_with_message(self) -> None:
+        """Slack notification extracts message after colon."""
+        result = parse_rules("Wyślij powiadomienie na Slack #devops: deploy zakończony")
+        assert result.intent.intent == "notify_slack"
+        assert result.entities.channel == "#devops"
+        assert result.entities.message == "deploy zakończony"
+
+    def test_parse_slack_about_message(self) -> None:
+        """'Powiadom #sales o X' extracts message."""
+        result = parse_rules("Powiadom kanał #sales o podpisaniu umowy z Beta Corp")
+        assert result.intent.intent == "notify_slack"
+        assert result.entities.message == "podpisaniu umowy z Beta Corp"
+
+
+class TestParseNotifyQuality:
+    def test_notify_channel_only_maps_incomplete_without_message(self) -> None:
+        from app.mapper import map_to_dsl
+
+        result = parse_rules("Powiadom #oncall")
+        dialog = map_to_dsl(result)
+        assert result.intent.intent == "notify_slack"
+        assert dialog.status == "incomplete"
+        assert any("message" in f for f in dialog.missing_fields)
+
 
 # ── Report parsing ───────────────────────────────────────────────
 
@@ -80,6 +135,13 @@ class TestParseReport:
         assert result.intent.intent == "generate_report"
         assert result.entities.report_type == "sales"
         assert result.entities.format == "pdf"
+
+    def test_parse_report_hr_xlsx_no_false_system(self) -> None:
+        """'w formacie xlsx' must not trigger system_file_list via 'ls' substring."""
+        result = parse_rules("Co tydzień raport HR w formacie xlsx")
+        assert result.intent.intent == "generate_report"
+        assert "system_file_list" not in result.intent.intent
+        assert result.entities.format == "xlsx"
 
     def test_parse_report_finance_csv(self) -> None:
         """Finance report in CSV format."""

@@ -8,7 +8,17 @@ from typing import Any, Callable, Dict, Mapping, Optional, Sequence
 
 import requests
 
-from .client import ConversationFlow, NLP2DSLClient
+from .client import NLP2DSLClient
+from .encoding import configure_utf8
+from .example_loader import load_example_runner
+from .preview import (
+    ensure_services,
+    preview_text_examples,
+    print_execution_result,
+    print_json,
+    print_workflow_preview,
+    workflow_http_error_result,
+)
 
 CONSTANT_50 = 50
 CONSTANT_300 = 300
@@ -33,51 +43,8 @@ class DemoSpec:
     runner: Callable[[Optional[NLP2DSLClient]], Any]
 
 
-def _ensure_services(client: NLP2DSLClient) -> bool:
-    try:
-        client.health()
-        return True
-    except requests.RequestException:
-        print("❌ Nie można połączyć się z API. Uruchom: docker compose up -d")
-        return False
-
-
-def _print_json(payload: Any) -> None:
-    print(json.dumps(payload, indent=2, ensure_ascii=False))
-
-
-def _print_workflow_preview(result: Mapping[str, Any]) -> None:
-    status = result.get("status")
-
-    if status == "complete":
-        print("✅ Wygenerowany DSL:")
-        _print_json(result["dsl"])
-        steps = result["dsl"].get("steps", [])
-        print(f"   Liczba kroków: {len(steps)}")
-    elif status == "executed":
-        print("✅ Wygenerowany DSL:")
-        _print_json(result["dsl"])
-        steps = result["dsl"].get("steps", [])
-        print(f"   Liczba kroków: {len(steps)}")
-        if result.get("result") is not None:
-            print("✅ Wynik wykonania:")
-            _print_json(result["result"])
-    else:
-        print(f"❌ Workflow nie powiódł się: {result.get('error', 'nieznany błąd')}")
-
-
-def _print_execution_result(result: Mapping[str, Any]) -> None:
-    print("✅ Wynik wykonania:")
-    _print_json(result)
-
-    steps = result.get("steps", [])
-    if steps:
-        print(f"   Liczba kroków: {len(steps)}")
-        for index, step in enumerate(steps, 1):
-            status = "✅" if step.get("status") == "completed" else "❌"
-            print(f"   Krok {index} ({step.get('action')}): {status}")
-            if step.get("error"):
-                print(f"      Błąd: {step['error']}")
+def _begin_demo() -> None:
+    configure_utf8(force=True)
 
 
 def _print_code_generation_preview(result: Mapping[str, Any]) -> None:
@@ -96,35 +63,15 @@ def _print_code_generation_preview(result: Mapping[str, Any]) -> None:
     print(f"{preview}..." if len(code) > CODE_PREVIEW_LEN else preview)
 
 
-def _preview_text_examples(
-    client: NLP2DSLClient,
-    title: str,
-    examples: Sequence[str],
-    *,
-    execute: bool = False,
-) -> list[dict[str, Any]]:
-    if title:
-        print(title)
-
-    results: list[dict[str, Any]] = []
-    for text in examples:
-        print(f"\n📝 Przykład: {text}")
-        print(f"🧠 Analiza tekstu: '{text}'")
-        result = client.workflow_from_text(text, execute=execute)
-        results.append(result)
-        _print_workflow_preview(result)
-
-    return results
-
-
 def run_crm_update_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
+    _begin_demo()
     client = client or NLP2DSLClient.from_env()
     print("=== Przykład: Aktualizacja CRM ===\n")
 
-    if not _ensure_services(client):
+    if not ensure_services(client):
         return {}
 
-    _preview_text_examples(client, "", CRM_TEXT_EXAMPLES)
+    preview_text_examples(client, "", CRM_TEXT_EXAMPLES)
 
     print("\n📋 Wykonywanie workflow...")
     execution = client.crm_update(
@@ -132,15 +79,16 @@ def run_crm_update_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any
         data={"company": "ACME", "status": "qualified", "owner": "sales"},
         name="crm_update_demo",
     )
-    _print_execution_result(execution)
+    print_execution_result(execution)
     return execution
 
 
 def run_action_catalog_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
+    _begin_demo()
     client = client or NLP2DSLClient.from_env()
     print("=== Przykład: Katalog Akcji ===\n")
 
-    if not _ensure_services(client):
+    if not ensure_services(client):
         return {}
 
     actions = client.workflow_actions()
@@ -159,88 +107,30 @@ def run_action_catalog_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str,
             print(f"  🧠 Analiza tekstu: '{prompt}'")
             preview = client.workflow_from_text(prompt)
             results["samples"][name] = preview
-            _print_workflow_preview(preview)
+            print_workflow_preview(preview)
 
         runner = ACTION_SAMPLE_RUNNERS.get(name)
         if runner:
             print("  📋 Przykładowe wykonanie:")
             sample = runner(client)
             results["samples"][f"{name}_execution"] = sample
-            _print_execution_result(sample)
+            print_execution_result(sample)
 
     return results
 
 
 def run_automation_gallery_demo(client: Optional[NLP2DSLClient] = None) -> list[dict[str, Any]]:
+    _begin_demo()
     client = client or NLP2DSLClient.from_env()
     print("=== Przykład: Galeria automatyzacji bez boilerplate ===\n")
 
-    if not _ensure_services(client):
+    if not ensure_services(client):
         return []
 
     return _run_gallery_examples(client, "", AUTOMATION_GALLERY_SPECS)
 
 
 DEFAULT_INVOICE_PROMPT = "Wyślij fakturę na 1500 PLN do klient@firma.pl"
-
-EMAIL_TEXT_EXAMPLES: tuple[str, ...] = (
-    "Wyślij email do team@firma.pl z tematem Status projektu",
-    "Napisz do manager@firma.pl: Projekt zakończony sukcesem",
-    "Maila do klient@firma.pl z nową ofertą",
-    "Przypomnij billing@firma.pl o nieopłaconej fakturze",
-)
-
-REPORT_TEXT_EXAMPLES: tuple[str, ...] = (
-    "Co tydzień generuj raport sprzedaży w PDF i wyślij email do manager@firma.pl",
-    "Generuj raport HR i powiadom na #hr",
-    "Miesięczny raport finansów do CFO i teamu",
-    "Raport kwartalny sprzedaży w CSV i wyślij go do #sales",
-)
-
-SCHEDULED_REPORT_SPECS: tuple[Mapping[str, Any], ...] = (
-    {
-        "title": "daily_sales_report",
-        "runner": lambda client: client.create_scheduled_report(
-            name="daily_sales_report",
-            report_type="sales",
-            trigger="daily",
-            schedule="09:00",
-            email_to="team@firma.pl",
-        ),
-    },
-    {
-        "title": "weekly_hr_report",
-        "runner": lambda client: client.create_scheduled_report(
-            name="weekly_hr_report",
-            report_type="hr",
-            trigger="weekly",
-            schedule="monday 08:00",
-            email_to="hr@firma.pl",
-            format_type="xlsx",
-        ),
-    },
-    {
-        "title": "monthly_finance_report",
-        "runner": lambda client: client.create_scheduled_report(
-            name="monthly_finance_report",
-            report_type="finance",
-            trigger="monthly",
-            schedule="1st 07:00",
-            email_to="cfo@firma.pl",
-        ),
-    },
-    {
-        "title": "business_hours_report",
-        "runner": lambda client: client.create_scheduled_report(
-            name="business_hours_report",
-            report_type="sales",
-            trigger="daily",
-            schedule="09:00",
-            email_to="manager@firma.pl",
-            format_type="csv",
-        ),
-    },
-)
 
 CODE_GENERATION_SPECS: tuple[Mapping[str, Any], ...] = (
     {
@@ -285,13 +175,6 @@ CODE_WORKER_SPECS: tuple[Mapping[str, Any], ...] = (
         "language": "python",
         "include_tests": True,
     },
-)
-
-SCHEDULED_REPORT_TEXT_EXAMPLES: tuple[str, ...] = (
-    "Codziennie o 9:00 generuj raport sprzedaży",
-    "Co poniedziałek raport HR do hr@firma.pl",
-    "Pierwszego każdego miesiąca raport finansów",
-    "Każdego dnia o 18:00 przygotuj raport sprzedaży dla zespołu",
 )
 
 AUTOMATION_GALLERY_SPECS: tuple[Mapping[str, Any], ...] = (
@@ -406,7 +289,7 @@ def _run_workflow_examples(
         print(f"\n📦 {example['title']}")
         result = example["runner"](client)
         results.append(result)
-        _print_execution_result(result)
+        print_execution_result(result)
 
     return results
 
@@ -426,7 +309,7 @@ def _run_gallery_examples(
         if prompt:
             print(f"🧠 Analiza tekstu: '{prompt}'")
             preview = client.workflow_from_text(prompt, execute=bool(example.get("execute_preview", False)))
-            _print_workflow_preview(preview)
+            print_workflow_preview(preview)
         else:
             preview = {}
 
@@ -435,123 +318,34 @@ def _run_gallery_examples(
         if callable(runner):
             print("\n📋 Wykonywanie workflow...")
             execution = runner(client)
-            _print_execution_result(execution)
+            print_execution_result(execution)
 
         results.append({"title": example["title"], "preview": preview, "execution": execution})
 
     return results
 
 
-def run_invoice_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
-    client = client or NLP2DSLClient.from_env()
-    print("=== Przykład: Wysyłanie Faktury ===\n")
-
-    if not _ensure_services(client):
-        return {}
-
-    _preview_text_examples(client, "", [DEFAULT_INVOICE_PROMPT])
-
-    print("📋 Wykonywanie workflow...")
-    execution = client.send_invoice(CONSTANT_1500, "klient@firma.pl", "PLN")
-    _print_execution_result(execution)
-
-    if execution.get("status") == "completed":
-        step = execution["steps"][0]
-        if step.get("status") == "completed":
-            print(f"\n🎉 Faktura wysłana! ID: {step['result']['invoice_id']}")
-        else:
-            print(f"\n❌ Błąd: {step.get('error')}")
-    else:
-        print(f"\n❌ Workflow nie powiódł się: {execution.get('error')}")
-
-    return execution
-
-
-def run_email_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
-    client = client or NLP2DSLClient.from_env()
-    print("=== Przykład: Wysyłanie E-maila ===\n")
-
-    if not _ensure_services(client):
-        return {}
-
-    _preview_text_examples(client, "", EMAIL_TEXT_EXAMPLES)
-
-    print("\n📋 Wykonywanie workflow...")
-    execution = client.send_email(
-        to="team@firma.pl",
-        subject="Status dzienny projektów",
-        body="Wszystkie projekty przebiegają zgodnie z harmonogramem.",
-    )
-
-    _print_execution_result(execution)
-
-    if execution.get("status") == "completed":
-        step = execution["steps"][0]
-        if step.get("status") == "completed":
-            print("\n🎉 E-mail wysłany pomyślnie!")
-        else:
-            print(f"\n❌ Błąd: {step.get('error')}")
-    else:
-        print(f"\n❌ Workflow nie powiódł się: {execution.get('error')}")
-
-    return execution
-
-
-def run_report_and_notify_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
-    client = client or NLP2DSLClient.from_env()
-    print("=== Przykład: Raport i Powiadomienia ===\n")
-
-    if not _ensure_services(client):
-        return {}
-
-    _preview_text_examples(client, "", REPORT_TEXT_EXAMPLES)
-
-    print("\n📋 Wykonywanie workflow z wieloma krokami...")
-    execution = client.generate_report_and_notify(
-        report_type="sales",
-        format_type="pdf",
-        email_to="manager@firma.pl",
-        slack_channel="#sales",
-        trigger="weekly",
-    )
-
-    _print_execution_result(execution)
-
-    if execution.get("status") == "completed":
-        print("\n🎉 Workflow wykonany pomyślnie!")
-    else:
-        print(f"\n❌ Workflow nie powiódł się: {execution.get('error')}")
-
-    return execution
-
-
-def run_scheduled_report_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
-    client = client or NLP2DSLClient.from_env()
-    print("=== Przykład: Zaplanowane Raporty ===\n")
-
-    if not _ensure_services(client):
-        return {}
-
-    print("📋 Tworzenie raportów z różnymi harmonogramami...\n")
-    scheduled_results = _run_workflow_examples(client, "", SCHEDULED_REPORT_SPECS)
-
-    print("\n📝 Przykłady generowania z tekstu:")
-    _preview_text_examples(client, "", SCHEDULED_REPORT_TEXT_EXAMPLES)
-
-    last_result = scheduled_results[-1] if scheduled_results else {}
-
-    print("\n🎉 Wszystkie zaplanowane raporty zostały utworzone!")
-    print("\n💡 Wskazówka: W systemie produkcyjnym te workflow byłyby uruchamiane")
-    print("   automatycznie według zdefiniowanych harmonogramów.")
-
-    return last_result
+# Przykłady 01–07: logika w examples/<dir>/scenario.py (demos.py tylko re-eksportuje)
+run_invoice_demo = load_example_runner("01-invoice")
+run_email_demo = load_example_runner("02-email")
+run_report_and_notify_demo = load_example_runner("03-report-and-notify")
+run_scheduled_report_demo = load_example_runner("04-scheduled-report")
+run_conversation_flow_demo = load_example_runner("05-conversation-flow")
+run_interactive_chat_demo = load_example_runner("06-interactive-chat")
+run_email_conversation_demo = load_example_runner("07-email-conversation")
+run_multi_object_benchmark = load_example_runner("08-multi-object-benchmark")
+run_execution_smoke = load_example_runner("09-execution-smoke")
+run_llm_benchmark = load_example_runner("10-llm-benchmark")
+run_notify_quality_demo = load_example_runner("11-notify-quality")
+run_ir_show_demo = load_example_runner("12-ir-show")
 
 
 def run_code_generation_demo(client: Optional[NLP2DSLClient] = None) -> Dict[str, Any]:
+    _begin_demo()
     client = client or NLP2DSLClient.from_env()
     print("=== Direct Code Generation API ===\n")
 
-    if not _ensure_services(client):
+    if not ensure_services(client):
         return {}
 
     results: Dict[str, Any] = {}
@@ -617,7 +411,7 @@ def _get_supported_languages(client: NLP2DSLClient) -> dict[str, Any]:
 
 def _run_workflow_code_examples(client: NLP2DSLClient) -> list[dict[str, Any]]:
     """Run code generation via workflow examples."""
-    return _preview_text_examples(client, "", CODE_WORKFLOW_TEXT_EXAMPLES)
+    return preview_text_examples(client, "", CODE_WORKFLOW_TEXT_EXAMPLES)
 
 
 def _run_conversation_code_example(client: NLP2DSLClient) -> dict[str, Any]:
@@ -677,7 +471,14 @@ DEMO_SPECS: tuple[DemoSpec, ...] = (
     DemoSpec("email", "Wysyłanie e-maila", run_email_demo),
     DemoSpec("report", "Raport i powiadomienia", run_report_and_notify_demo),
     DemoSpec("scheduled-report", "Zaplanowane raporty", run_scheduled_report_demo),
-    DemoSpec("conversation", "Konwersacyjny flow", lambda client=None: ConversationFlow(client).run_demo()),
+    DemoSpec("conversation", "Konwersacyjny flow", run_conversation_flow_demo),
+    DemoSpec("interactive-chat", "Interaktywny chat", run_interactive_chat_demo),
+    DemoSpec("email-conversation", "E-mail z dialogiem", run_email_conversation_demo),
+    DemoSpec("multi-object-benchmark", "Benchmark 20 obiektów", run_multi_object_benchmark),
+    DemoSpec("execution-smoke", "Smoke wykonania E2E", run_execution_smoke),
+    DemoSpec("llm-benchmark", "Benchmark LLM-only (20 zapytań)", run_llm_benchmark),
+    DemoSpec("notify-quality", "Powiadomienia quality+enrich", run_notify_quality_demo),
+    DemoSpec("ir-show", "MVP vs IntentIR (nlp2dsl show)", run_ir_show_demo),
     DemoSpec("code-generation", "Generowanie kodu", run_code_generation_demo),
     DemoSpec("crm", "Aktualizacja CRM", run_crm_update_demo),
     DemoSpec("actions", "Dynamiczny katalog akcji", run_action_catalog_demo),

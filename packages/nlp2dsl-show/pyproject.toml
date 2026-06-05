@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nlp2dsl-show"
+version = "0.1.0"
+description = "Show NL query structure as IntentIR / ExecutionPlanIR (no execution)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+    "pact-ir>=0.1.0",
+    "nlp2cmd-intent>=0.1.1",
+    "nlp2cmd-planner>=0.1.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+nlp2dsl-show = "nlp2dsl_show.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nlp2dsl_show"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

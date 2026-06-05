@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 from app.mapper import _resolve_actions, map_to_dsl
-from app.registry import ACTIONS_REGISTRY, BUSINESS_ACTIONS
+from app.registry import ACTIONS_REGISTRY, BUSINESS_ACTIONS, get_quality_required_fields
 from app.schemas import (
     NLPEntities,
     NLPIntent,
@@ -38,16 +38,33 @@ class TestMapCompleteDSL:
         assert step.config["to"] == "klient@firma.pl"
 
     def test_map_complete_email(self) -> None:
-        """Email with recipient → complete DSL."""
+        """Email with recipient and body → complete DSL."""
         nlp = NLPResult(
             intent=NLPIntent(intent="send_email", confidence=0.8),
-            entities=NLPEntities(to="jan@example.com"),
-            raw_text="Wyślij email do jan@example.com",
+            entities=NLPEntities(
+                to="jan@example.com",
+                subject="Status",
+                message="Projekt zakończony.",
+            ),
+            raw_text="Napisz do jan@example.com: Projekt zakończony.",
         )
         dialog = map_to_dsl(nlp)
         assert dialog.status == "complete"
         assert dialog.workflow.steps[0].action == "send_email"
         assert dialog.workflow.steps[0].config["to"] == "jan@example.com"
+        assert dialog.workflow.steps[0].config["body"] == "Projekt zakończony."
+
+    def test_map_incomplete_email_missing_body(self) -> None:
+        """Email without body → incomplete (quality_required)."""
+        nlp = NLPResult(
+            intent=NLPIntent(intent="send_email", confidence=0.8),
+            entities=NLPEntities(to="jan@example.com", subject="Status"),
+            raw_text="Wyślij email do jan@example.com z tematem Status",
+        )
+        dialog = map_to_dsl(nlp)
+        assert dialog.status == "incomplete"
+        assert any("body" in field for field in dialog.missing_fields)
+        assert "treść" in (dialog.prompt_user or "").lower()
 
 
 # ── Incomplete mapping ───────────────────────────────────────────
@@ -69,6 +86,27 @@ class TestMapIncomplete:
         assert any("amount" in f for f in dialog.missing_fields)
         assert any("to" in f for f in dialog.missing_fields)
         assert dialog.prompt_user is not None
+
+
+    def test_map_composite_invoice_email_separate_recipients(self) -> None:
+        """Second email (email_to) used for send_email step in composite flow."""
+        nlp = NLPResult(
+            intent=NLPIntent(intent="full_invoice_flow", confidence=0.9),
+            entities=NLPEntities(
+                amount=12000.0,
+                currency="PLN",
+                to="enterprise@corp.com",
+                email_to="ksiegowosc@firma.pl",
+                channel="#finance",
+                message="Faktura wystawiona i wysłana do księgowości.",
+            ),
+            raw_text="Pełny flow faktura",
+        )
+        dialog = map_to_dsl(nlp)
+        assert dialog.status == "complete"
+        email_step = next(s for s in dialog.workflow.steps if s.action == "send_email")
+        assert email_step.config["to"] == "ksiegowosc@firma.pl"
+        assert email_step.config["body"]
 
 
 # ── Composite mapping ────────────────────────────────────────────
@@ -192,8 +230,9 @@ class TestMapAllBusinessActions:
         # Build entities with dummy values for required fields
         entity_kwargs = {}
         has_unmapped_fields = False
-        for field in meta["required"]:
-            if field not in self._ENTITY_FIELDS:
+        fields_to_fill = list(meta["required"]) + get_quality_required_fields(action_name)
+        for field in fields_to_fill:
+            if field not in self._ENTITY_FIELDS and field != "body":
                 has_unmapped_fields = True
                 continue
             if field == "amount":
@@ -206,6 +245,10 @@ class TestMapAllBusinessActions:
                 entity_kwargs["channel"] = "#test"
             elif field == "entity":
                 entity_kwargs["entity"] = "contact"
+            elif field == "body":
+                entity_kwargs["message"] = "test body"
+            elif field == "message":
+                entity_kwargs["message"] = "test notification"
             else:
                 entity_kwargs[field] = "test_value"
 

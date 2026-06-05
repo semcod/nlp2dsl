@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.10] - 2026-06-05
+
+### Fixed
+- Fix unused-imports issues (ticket-4db4052e)
+- Fix string-concat issues (ticket-58f905e2)
+
 ## [0.1.10] - 2026-06-04
 
 ### Fixed
@@ -96,6 +102,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix string-concat issues (ticket-2a0f4b01)
 
 ## [Unreleased]
+
+## [0.0.16] - 2026-06-05
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/intract-integration.md
+- Update examples/README.md
+- Update packages/README.md
+- Update packages/nlp2cmd-intent/README.md
+- Update packages/nlp2cmd-planner/README.md
+- ... and 5 more files
+
+### Test
+- Update tests/test_encoding.py
+- Update tests/test_nlp2dsl_sdk.py
+
+### Other
+- Update .env.example
+- Update Makefile
+- Update app.doql.less
+- Update backend/app/db/postgres.py
+- Update backend/app/routers/workflow.py
+- Update examples/01-invoice/main.py
+- Update examples/01-invoice/scenario.py
+- Update examples/02-email/main.py
+- Update examples/02-email/scenario.py
+- Update examples/03-report-and-notify/main.py
+- ... and 133 more files
 
 ## [0.0.15] - 2026-06-04
 

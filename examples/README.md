@@ -1,239 +1,316 @@
 # Przykłady użycia NLP2DSL
 
-Zbiór praktycznych przykładów pokazujących, jak używać platformy NLP2DSL do automatyzacji procesów biznesowych. Od tej wersji logika HTTP i wspólne flow są wyciągnięte do pakietu `nlp2dsl_sdk`, a skrypty w `examples/` są cienkimi wrapperami nad helperami SDK. Dodatkowo pakiet udostępnia katalog demo i CLI (`nlp2dsl-demo`) do uruchamiania gotowych scenariuszy bez tworzenia boilerplate'u. Jeśli chcesz używać tej samej warstwy w projekcie produkcyjnym, zainstaluj pakiet z repozytorium przez `pip install -e .`.
+Praktyczne scenariusze automatyzacji (faktury, e-mail, raporty, dialog). **Logika każdego przykładu jest w `examples/<nr>/scenario.py`** — `main.py` to cienki punkt wejścia. Wspólne helpery HTTP/print są w `nlp2dsl_sdk/preview.py`.
 
 ## Struktura
 
 ```
 examples/
-├── 01-invoice/                # Wysyłanie faktury
-├── 02-email/                  # Wysyłanie e-maila
-├── 03-report-and-notify/      # Raport + powiadomienia
-├── 04-scheduled-report/       # Zaplanowane raporty
-├── 05-conversation-flow/      # Konwersacyjny flow
-└── README.md                  # Ta dokumentacja
+├── 01-invoice/              # Faktura one-shot
+├── 02-email/                # E-mail — parser + quality gate body
+├── 03-report-and-notify/    # Raport + email + Slack
+├── 04-scheduled-report/     # Harmonogramy (daily/weekly/monthly)
+├── 05-conversation-flow/    # Dialog: faktura → uzupełnienie → uruchom
+├── 06-interactive-chat/     # Tryb interaktywny w terminalu (-i)
+├── 07-email-conversation/   # E-mail z brakującym body — uzupełnienie w dialogu
+├── 08-multi-object-benchmark/  # 20 zapytań — invoice/slack/crm/code/…
+├── 09-execution-smoke/      # Wykonanie E2E (execute=true) dla 5 typów
+├── 10-llm-benchmark/        # 20 zapytań tylko mode=llm (OpenRouter)
+├── 11-notify-quality/       # Powiadomienia: quality_required + enrich
+├── 12-ir-show/              # MVP workflow vs nlp2dsl show (IntentIR)
+└── README.md
 ```
+
+### Dlaczego wcześniej wszystko było w `demos.py`?
+
+Historycznie `nlp2dsl_sdk/demos.py` był **jednym katalogiem dla CLI `nlp2dsl-demo`** — żeby nie duplikować HTTP, printów i listy demo. To wygodne dla `nlp2dsl-demo gallery`, ale **słabe do nauki**, bo `examples/*/main.py` były tylko wrapperami.
+
+Obecny podział:
+
+| Plik | Rola |
+|------|------|
+| `examples/02-email/scenario.py` | **Twoja logika** — prompty, kroki, asercje wizualne |
+| `examples/02-email/main.py` | `python3 main.py` — uruchomienie |
+| `nlp2dsl_sdk/preview.py` | Wspólne `print_workflow_preview`, `preview_text_examples` |
+| `nlp2dsl_sdk/demos.py` | Re-eksport do `nlp2dsl-demo` (`load_example_runner`) |
+
+---
+
+## Intract, walidacja i logi
+
+### Czy przykłady `examples/*` używają Intract?
+
+**Nie.** Ścieżka `examples/` → `NLP2DSLClient` → backend `:8010` → nlp-service → worker **nie przechodzi przez Intract**.
+
+| Ścieżka | Walidacja | Intract |
+|---------|-----------|---------|
+| `examples/*/main.py` (MVP Docker) | Pydantic w nlp-service (`NLPResult`, `WorkflowDSL`), `quality_required` (np. `body` e-maila), status `incomplete` / `complete` | **nie** |
+| `nlp2dsl show "…"` | `IntentIR` / `ExecutionPlanIR` (Pydantic) | opcjonalnie `NLP2CMD_INTRACT_GATE=1` w **nlp2cmd** |
+| `nlp2cmd plan "…"` | `needs_clarification`, plan gate | opcjonalnie Intract w **nlp2cmd** |
+
+Szczegóły: [`docs/intract-integration.md`](../docs/intract-integration.md).
+
+### Co jest walidowane w przykładach MVP?
+
+1. **Parser** — intent + entities (`/nlp/parse`, tryb `rules` / `llm` / `auto`)
+2. **Mapper** — wymagane pola z `ACTIONS_REGISTRY`; `quality_required: [body]` dla e-maila
+3. **Odpowiedź API** — `status: complete | incomplete | executed`; SDK sprawdza `execution.steps[].status`
+4. **Wykonanie** — worker symuluje akcje; w logach widać `completed` / `failed` per krok
+
+Przykłady **nie robią twardej asercji pytest** na każdy krok — pokazują wynik na stdout (`✅` / `❌`). Testy integracyjne są w `tests/e2e/`.
+
+### Jak są generowane logi?
+
+Serwisy używają **JSON logów** z `X-Request-ID` (śledzenie między backend ↔ nlp-service):
+
+```bash
+# Wszystkie serwisy
+docker compose logs -f
+
+# Tylko pipeline NLP
+docker compose logs -f nlp-service
+
+# Filtrowanie po request_id (z nagłówka odpowiedzi HTTP)
+docker compose logs nlp-service 2>&1 | grep '"request_id":"abc123"'
+```
+
+Pola w logu: `ts`, `level`, `service`, `request_id`, `logger`, `msg`.  
+Kluczowe loggery: `nlp.mapper`, `nlp.enrich`, `nlp.llm`, `orchestrator`.
+
+Poziom: `LOG_LEVEL=DEBUG` w env nlp-service (domyślnie `INFO`).
+
+---
 
 ## Szybki start
 
-### Lokalne uruchomienie
-1. Upewnij się, że platforma działa:
-   ```bash
-   docker compose up -d
-   ```
-
-2. Wybierz przykład i uruchom:
-   ```bash
-   cd examples/01-invoice
-   ./run.sh
-   # lub
-   python3 main.py
-   ```
-
-3. Albo uruchom gotowy demo katalog z pakietu:
-   ```bash
-   nlp2dsl-demo --list
-   nlp2dsl-demo gallery
-   nlp2dsl-demo actions
-   ```
-
-### Uruchomienie w Dockerze
-Każdy przykład zawiera Dockerfile i może być uruchomiony kontenerowo:
 ```bash
-# z katalogu głównego repo
-docker build -f examples/01-invoice/Dockerfile -t nlp2dsl-invoice-example .
-docker run --rm --network host nlp2dsl-invoice-example
+cd /path/to/nlp2dsl
+docker compose up -d
+pip install -e .
+./examples/run-all.sh
 ```
 
-## Przykłady
+Pojedynczy przykład:
 
-### 1. Wysyłanie Faktury
-- **Lokalizacja**: `examples/01-invoice/`
-- **Opis**: Prosty przykład wysyłania faktury z kwotą i odbiorcą
-- **Koncepcje**: `run_invoice_demo()`, `workflow_from_text()`, `send_invoice()`
-
-### 2. Wysyłanie E-maila
-- **Lokalizacja**: `examples/02-email/`
-- **Opis**: Różne sposoby wysyłania e-maili
-- **Koncepcje**: `run_email_demo()`, `workflow_from_text()`, `send_email()`
-
-### 3. Raport i Powiadomienia
-- **Lokalizacja**: `examples/03-report-and-notify/`
-- **Opis**: Generowanie raportu i wysyłanie do wielu kanałów
-- **Koncepcje**: `run_report_and_notify_demo()`, wielokrokowe workflow, powiadomienia
-
-### 4. Zaplanowane Raporty
-- **Lokalizacja**: `examples/04-scheduled-report/`
-- **Opis**: Automatyczne raporty według harmonogramu
-- **Koncepcje**: `run_scheduled_report_demo()`, triggery, schedule
-
-### 5. Konwersacyjny Flow
-- **Lokalizacja**: `examples/05-conversation-flow/`
-- **Opis**: Pełny cykl konwersacji od startu do wykonania
-- **Koncepcje**: `ConversationFlow`, `run_demo()`, `run_interactive()`, dynamic forms
-
-## Konfiguracja środowiska
-
-### Pliki .env.example
-Każdy przykład zawiera plik `.env.example` z opcjonalną konfiguracją:
 ```bash
-cp .env.example .env
-# Edytuj .env z swoimi danymi
+cd examples/02-email
+python3 main.py
 ```
 
-### Opcjonalne serwisy
-Niektóre przykłady mogą korzystać z dodatkowych serwisów:
+---
+
+## Tryb interaktywny — rozmowa z nlp2dsl
+
+Użyj gdy dane są **niekompletne** (faktura bez kwoty, e-mail bez body). System dopytuje i buduje DSL dopiero gdy `status=ready`.
+
+### 1. Python SDK (`ConversationFlow`)
+
 ```bash
-# SMTP mock (dla emaili i faktur)
-docker compose -f examples/docker-compose.yml --profile email up -d smtp-mock
-# UI: http://localhost:8025
-
-# Redis (cache i kolejki)
-docker compose -f examples/docker-compose.yml --profile cache up -d redis
-
-# PostgreSQL (historia konwersacji)
-docker compose -f examples/docker-compose.yml --profile history up -d postgres
-
-# MinIO (storage dla raportów)
-docker compose -f examples/docker-compose.yml --profile storage up -d minio
-# Console: http://localhost:9001
+cd examples/06-interactive-chat
+python3 main.py --interactive
 ```
 
-### Prawdziwe integracje
-Aby użyć prawdziwych serwisów zamiast mock responses:
+Przepływ w terminalu:
 
-1. **Email/SMTP**: Skonfiguruj zmienne w `.env`:
-   ```env
-   SMTP_HOST=smtp.gmail.com
-   SMTP_USER=twoj@gmail.com
-   SMTP_PASSWORD=twoj_haslo_aplikacji
-   ```
+```
+👤 Ty: Chcę wysłać fakturę
+🤖 System: Podaj: kwotę, adres e-mail odbiorcy
+👤 Ty: 1500 PLN na klient@firma.pl
+🤖 System: Workflow gotowy: auto_send_invoice (1 kroków). Wyślij 'uruchom' aby wykonać.
+👤 Ty: uruchom
+```
 
-2. **Slack**: Skonfiguruj webhook URL:
-   ```env
-   SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
-   ```
+Słowa kluczowe wykonania: `uruchom`, `wykonaj`, `run`, `tak`, `ok`, `kontynuuj`.
 
-3. **Storage raportów**: Użyj MinIO lub AWS S3:
-   ```env
-   STORAGE_TYPE=s3
-   S3_ENDPOINT=http://localhost:9000
-   S3_ACCESS_KEY=minioadmin
-   ```
+### 2. HTTP API (backend :8010)
 
-## Korzystanie z SDK
+```bash
+# Start
+curl -s -X POST http://localhost:8010/workflow/chat/start \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Chcę wysłać fakturę"}' | jq .
 
-### 1. One-shot API
-Najszybszy sposób na wykonanie pojedynczej akcji:
+# Uzupełnienie (conversation_id z poprzedniej odpowiedzi)
+curl -s -X POST http://localhost:8010/workflow/chat/message \
+  -H "Content-Type: application/json" \
+  -d '{"conversation_id": "ID", "text": "1500 PLN na klient@firma.pl"}' | jq .
+
+# Wykonanie
+curl -s -X POST http://localhost:8010/workflow/chat/message \
+  -H "Content-Type: application/json" \
+  -d '{"conversation_id": "ID", "text": "uruchom"}' | jq .
+```
+
+### 3. E-mail z brakującym body (przykład 07)
+
+```bash
+cd examples/07-email-conversation
+python3 main.py
+```
+
+Pokazuje różnicę: one-shot `incomplete` vs dialog z uzupełnieniem treści.
+
+### 4. LLM uzupełnia body (bez dialogu)
+
+Gdy `NLP_ENRICH_MISSING=1` i jest `OPENROUTER_API_KEY`, nlp-service sam generuje `body` z kontekstu (Faza B). Dialog nadal działa gdy enrich wyłączony lub LLM niedostępny.
+
+---
+
+## Katalog przykładów
+
+### 01 — Faktura
+```bash
+python3 examples/01-invoice/main.py
+```
+One-shot: tekst → DSL → `send_invoice`.
+
+### 02 — E-mail
+```bash
+python3 examples/02-email/main.py
+```
+Cztery warianty fraz + wykonanie. Pierwsza fraza (tylko temat) → `incomplete` bez enrich.
+
+### 03 — Raport + powiadomienia
+Wielokrokowy workflow: `generate_report` → `send_email` → `notify_slack`.
+
+### 04 — Zaplanowane raporty
+Triggery: `daily`, `weekly`, `monthly` + generowanie z tekstu.
+
+### 05 — Konwersacja (faktura)
+Skryptowany 3-krokowy dialog. Interaktywnie: `python3 main.py -i`.
+
+### 06 — Interaktywny chat
+`python3 main.py -i` — dowolna intencja w pętli. Bez `-i`: krótkie demo (dla `run-all.sh`).
+
+### 07 — E-mail + dialog
+One-shot vs conversation dla tego samego promptu z brakującym `body`.
+
+### 08 — Benchmark 20 obiektów
+```bash
+python3 examples/08-multi-object-benchmark/main.py
+python3 examples/08-multi-object-benchmark/main.py --modes rules,auto,llm
+```
+Mierzy skuteczność NLP→DSL dla: invoice, slack, telegram, teams, crm, report, code, system, composite. Wyniki JSON w `results/`.
+
+### 09 — Smoke wykonania
+```bash
+python3 examples/09-execution-smoke/main.py
+```
+5 scenariuszy z `execute=true` — weryfikuje worker end-to-end.
+
+### 10 — Benchmark LLM-only
+```bash
+python3 examples/10-llm-benchmark/main.py
+```
+20 zapytań z `mode=llm`. Przy `unknown` z LLM — automatyczny fallback na rules (`resolve_mode.py`).
+
+### 11 — Powiadomienia quality + enrich
+```bash
+python3 examples/11-notify-quality/main.py
+NLP_ENRICH_MISSING=1 python3 examples/11-notify-quality/main.py
+```
+`Powiadom #oncall` bez treści → `incomplete`; z dwukropkiem lub `o …` → `complete`; enrich uzupełnia gdy włączony.
+
+### 12 — MVP vs IntentIR
+```bash
+pip install -e . && ./scripts/setup-dev.sh
+python3 examples/12-ir-show/main.py
+NLP2CMD_INTRACT_GATE=1 nlp2dsl show "znajdź pliki *.py" --plan
+```
+
+---
+
+## Wyniki benchmarku (ostatni run)
+
+| Tryb | Pass rate | Uwagi |
+|------|-----------|-------|
+| `rules` | **20/20 (100%)** | ~0.3s, bez API |
+| `auto` | **20/20 (100%)** | rules first, LLM gdy confidence < 0.5 |
+| `llm` | **~16–20/20** | zależny od modelu; fallback rules przy unknown |
+
+---
+
+## Schema dynamiczne a LLM
+
+| Warstwa | Źródło | LLM? |
+|---------|--------|------|
+| Formularze UI (`/actions/schema`) | `ACTIONS_REGISTRY` + `FIELD_TYPES` | nie — deterministyczne |
+| Prompt LLM (`parse_llm`) | `prompt_catalog.py` buduje katalog z rejestru | tak — **dynamiczny katalog intencji** |
+| DSL (`map_to_dsl`) | mapper deterministyczny | nigdy |
+
+OpenRouter **nie generuje JSON Schema od zera** — rozszerza rozpoznanie intencji i entities wg katalogu z rejestru. Nowa akcja wymaga wpisu w `ACTIONS_REGISTRY` (lub `system_registry_add`).
+
+Opcjonalne uzupełnianie pól: `NLP_ENRICH_MISSING=1` (body e-maila).
+
+---
+
+## Przykłady kodu (skrót)
+
+### One-shot
 ```python
 from nlp2dsl_sdk import NLP2DSLClient
 
 with NLP2DSLClient.from_env() as client:
-    client.workflow_from_text("Wyślij fakturę na 1500 PLN do klient@firma.pl")
+    result = client.workflow_from_text(
+        "Wyślij fakturę na 1500 PLN do klient@firma.pl",
+        execute=True,
+    )
+    print(result["status"], result.get("dsl"))
 ```
 
-### 2. Konwersacyjny flow
-Gdy potrzebujesz dopytać o brakujące dane:
+### Dialog
 ```python
 from nlp2dsl_sdk import ConversationFlow
 
 flow = ConversationFlow()
-flow.run_demo()
-# albo:
-# flow.run_interactive()
+flow.start("Wyślij email do jan@example.com z tematem Status")
+flow.send_message("Treść: Wszystko zgodnie z planem.")
+flow.send_message("uruchom")
 ```
 
-### 3. Bezpośrednie DSL
-Gdy znasz dokładną konfigurację:
+### Bezpośrednie DSL
 ```python
 from nlp2dsl_sdk import NLP2DSLClient, workflow_step
 
 with NLP2DSLClient.from_env() as client:
     client.run_workflow(
-        name="my_workflow",
-        steps=[
-            workflow_step("send_invoice", amount=1500, to="klient@firma.pl", currency="PLN"),
-            workflow_step("send_email", to="billing@firma.pl", subject="Faktura wysłana"),
-        ],
+        name="my_flow",
+        steps=[workflow_step("send_email", to="a@b.pl", subject="Hi", body="…")],
     )
 ```
 
-### 4. Boilerplate-free demo catalog
-Gdy chcesz szybko dodać nowy scenariusz demo bez kopiowania HTTP i printów:
-```python
-from nlp2dsl_sdk import DEMO_REGISTRY, list_available_demos
+---
 
-for spec in list_available_demos():
-    print(spec.name, spec.description)
-
-DEMO_REGISTRY["gallery"]()
-```
-
-## Dostępne akcje
-
-| Akcja | Parametry | Przykładowe komendy |
-|-------|-----------|-------------------|
-| `send_invoice` | `amount`, `to`, `currency` | "Wyślij fakturę", "Wystaw rachunek" |
-| `send_email` | `to`, `subject`, `body` | "Wyślij email", "Napisz maila" |
-| `generate_report` | `report_type`, `format` | "Generuj raport", "Zestawienie" |
-| `crm_update` | `entity`, `data` | "Aktualizuj CRM", "Zmień dane" |
-| `notify_slack` | `channel`, `message` | "Powiadom Slack", "Napisz na #" |
-
-## Composite Intents
-
-System automatycznie rozpoznaje złożone intencje:
-- `invoice_and_notify` - Faktura + powiadomienie
-- `invoice_and_email` - Faktura + email
-- `report_and_notify` - Raport + powiadomienia
-- `report_and_email` - Raport + email
-- `full_invoice_flow` - Pełny proces faktury
-- `full_report_flow` - Pełny proces raportu
-
-## Tryby LLM
-
-Domyślnie system używa parsera regułowego (działa bez kluczy API). Można włączyć LLM:
+## CLI demo (bez katalogu examples)
 
 ```bash
-# Odkomentuj w docker-compose.yml:
-# - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
-# - LLM_MODEL=openrouter/openai/gpt-5-mini
+nlp2dsl-demo --list
+nlp2dsl-demo email
+nlp2dsl-demo interactive-chat
 ```
 
-## Testowanie
+Te komendy ładują ten sam `scenario.py` co `examples/*/main.py`.
 
-Każdy przykład zawiera skrypt testowy:
+---
+
+## Konfiguracja
+
 ```bash
-# Uruchom wszystkie przykłady
-for dir in examples/*/; do
-    echo "Testing $dir"
-    cd "$dir"
-    python3 main.py
-    cd - > /dev/null
-done
+cp .env.example .env
+# OPENROUTER_API_KEY=...     # opcjonalnie LLM
+# NLP_ENRICH_MISSING=1       # auto-body e-maila
 ```
 
-## Wskazówki
+| Zmienna | Domyślnie | Opis |
+|---------|-----------|------|
+| `NLP2DSL_BACKEND_URL` | `http://localhost:8010` | Gateway |
+| `NLP2DSL_NLP_SERVICE_URL` | `http://localhost:8012` | NLP bezpośrednio |
+| `NLP_ENRICH_MISSING` | `0` | LLM uzupełnia brakujące body |
 
-1. **Zacznij od prostych przykładów** - `01-invoice` lub `02-email`
-2. **Użyj konwersacyjnego flow** gdy dane są niekompletne
-3. **Sprawdź schema** aby zobaczyć dostępne pola:
-   ```bash
-   curl http://localhost:8010/workflow/actions/schema
-   ```
-4. **Logi** pomagają zrozumieć działanie:
-   ```bash
-   docker compose logs -f nlp-service
-   ```
-
-## Dodawanie własnych przykładów
-
-1. Najpierw sprawdź, czy istniejący katalog demo w `nlp2dsl_sdk` nie pokrywa Twojego przypadku
-2. Jeśli potrzebujesz nowego scenariusza, dopisz go jako nową definicję do katalogu demo albo użyj `workflow_step()` do złożenia workflow
-3. Dodawaj tylko cienkie wrappery w `examples/`, jeśli naprawdę potrzebujesz osobnego punktu wejścia
-4. Przetestuj przed dodaniem
+---
 
 ## Wsparcie
 
-- Dokumentacja API: http://localhost:8010/docs
+- API: http://localhost:8010/docs
 - Schema akcji: http://localhost:8010/workflow/actions/schema
-- Logi: `docker compose logs -f`
+- Logi: `docker compose logs -f nlp-service backend worker`

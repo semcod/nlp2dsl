@@ -17,6 +17,7 @@ class DummyResponse:
         self.status_code = status_code
         self.text = json.dumps(payload, ensure_ascii=False)
         self.headers = {"content-type": "application/json"}
+        self.encoding = "utf-8"
 
     def raise_for_status(self) -> None:
         if self.status_code >= 400:
@@ -110,6 +111,23 @@ def test_workflow_and_conversation_endpoints(client_factory: Any) -> None:
     assert session.calls[3][2]["json"] == {"conversation_id": "conv-1", "text": "1500 PLN"}
 
     assert session.calls[4][1] == "http://backend.test/workflow/actions/schema/send_invoice"
+
+
+def test_request_retries_transient_server_errors(client_factory: Any, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("NLP2DSL_HTTP_RETRIES", "3")
+    monkeypatch.setattr("nlp2dsl_sdk.client.time.sleep", lambda _seconds: None)
+
+    client, session = client_factory(
+        DummyResponse({"error": "busy"}, status_code=500),
+        DummyResponse({"error": "busy"}, status_code=503),
+        DummyResponse({"status": "complete", "dsl": {"name": "demo"}}),
+    )
+
+    result = client.workflow_from_text("Wyślij email", execute=False)
+
+    assert result["status"] == "complete"
+    assert len(session.calls) == 3
+    assert all(call[1] == "http://backend.test/workflow/from-text" for call in session.calls)
 
 
 def test_report_helpers_use_report_type_and_schedule(client_factory: Any) -> None:

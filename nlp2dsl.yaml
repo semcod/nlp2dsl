@@ -166,21 +166,21 @@ agents:
 
 # Routing natywny — przed parserem rules/LLM (jak Mullm conductor)
 native_routing:
+  # Jawny rejestr Mullm — bez tego orient_query → host (ls ~) dla „lista plikow usera”
   - action: mullm_list_files
     resource_area: mullm:rag
     permission_action: list
     aliases:
-      - lista plików
-      - lista plikow
-      - lista plikow usera
-      - lista plików użytkownika
-      - lista user files
-      - list user files
-      - user files
-      - pokaż pliki
-      - jakie pliki
+      - lista plikow usera z rejestru
+      - lista plików użytkownika wgrane
+      - lista plików mullm
+      - lista plikow mullm
+      - pliki mullm
+      - zasoby mullm
+      - user files w workspace
+      - user files localfs
     patterns:
-      - type: regex
-        value: "(lista\\s+plik|jakie\\s+pliki|poka[zż]\\s+plik|list\\s+files)"
       - type: keywords
-        keywords: [lista, plik]
+        keywords: [rejestr, plik]
+      - type: keywords
+        keywords: [access, fabric]

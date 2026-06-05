@@ -1,17 +1,19 @@
 # code2llm call graph | /home/tom/github/wronai/nlp2dsl
-# generated in 0.15s
-# nodes: 217 | edges: 234 | modules: 41
+# generated in 0.18s
+# nodes: 220 | edges: 237 | modules: 42
 # CC̄=2.9
 
 HUBS[20]:
   backend.app.engine._execute_workflow
     CC=11  in:2  out:42  total:44
+  nlp-service.app.routing.resolve.resolve_intent
+    CC=18  in:1  out:31  total:32
   nlp-service.app.governance.bootstrap._actions_from_yaml_areas
     CC=14  in:1  out:26  total:27
+  nlp-service.app.routing.orientation.orient_query
+    CC=13  in:2  out:21  total:23
   nlp-service.app.main.websocket_chat
     CC=10  in:0  out:23  total:23
-  nlp-service.app.routing.resolve.resolve_intent
-    CC=12  in:1  out:22  total:23
   backend.app.routers.workflow.stream_workflow
     CC=2  in:0  out:22  total:22
   backend.app.routers.chat.chat_message
@@ -20,30 +22,28 @@ HUBS[20]:
     CC=8  in:3  out:17  total:20
   nlp-service.app.parser_llm.parse_llm
     CC=3  in:4  out:16  total:20
-  nlp2dsl_sdk.demos._print_workflow_preview
-    CC=4  in:3  out:16  total:19
-  nlp2dsl_sdk.demos.run_action_catalog_demo
-    CC=6  in:0  out:19  total:19
   nlp-service.app.governance.config._build_access_config
     CC=7  in:1  out:18  total:19
-  worker.worker._deliver_notification
-    CC=5  in:3  out:16  total:19
+  nlp2dsl_sdk.demos.run_action_catalog_demo
+    CC=6  in:0  out:19  total:19
   nlp-service.app.audio_parser.stt_audio
     CC=9  in:5  out:14  total:19
-  nlp-service.app.settings.SettingsManager.set
-    CC=4  in:7  out:11  total:18
-  nlp-service.app.conversation.orchestrator._process_message
-    CC=6  in:2  out:16  total:18
+  worker.worker._deliver_notification
+    CC=5  in:3  out:16  total:19
+  nlp2dsl_sdk.demos._print_workflow_preview
+    CC=4  in:3  out:16  total:19
   backend.app.routers.chat._proxy_chat_payload
     CC=9  in:2  out:16  total:18
+  nlp2dsl_sdk.demos._print_execution_result
+    CC=5  in:7  out:11  total:18
+  nlp-service.app.settings.SettingsManager.set
+    CC=4  in:7  out:11  total:18
   nlp-service.app.governance.config._search_paths
     CC=6  in:1  out:17  total:18
   nlp-service.app.system_executor._exec_file_read
     CC=9  in:0  out:18  total:18
-  nlp2dsl_sdk.demos._print_execution_result
-    CC=5  in:7  out:11  total:18
-  worker.worker.handle_generate_code
-    CC=5  in:0  out:17  total:17
+  nlp-service.app.conversation.orchestrator._process_message
+    CC=6  in:2  out:16  total:18
 
 MODULES:
   backend.app.engine  [7 funcs]
@@ -148,7 +148,7 @@ MODULES:
     _matched_effect  CC=3  out:4
     _scheme_decision  CC=3  out:2
     _unknown_agent_decision  CC=4  out:3
-  nlp-service.app.main  [14 funcs]
+  nlp-service.app.main  [15 funcs]
     _run_parser  CC=7  out:9
     access_check  CC=3  out:6
     access_config  CC=3  out:12
@@ -187,6 +187,9 @@ MODULES:
   nlp-service.app.routing.observability  [2 funcs]
     record_intent_decision  CC=7  out:4
     routing_metrics_snapshot  CC=1  out:1
+  nlp-service.app.routing.orientation  [2 funcs]
+    _is_file_list_query  CC=5  out:8
+    orient_query  CC=13  out:21
   nlp-service.app.routing.parser.facade  [1 funcs]
     parse_text  CC=8  out:8
   nlp-service.app.routing.parser.rules  [25 funcs]
@@ -201,10 +204,10 @@ MODULES:
     _extract_fallback_recipient  CC=7  out:5
     _extract_file_path_entity  CC=3  out:2
   nlp-service.app.routing.resolve  [4 funcs]
-    _intent_from_native  CC=3  out:8
     _intent_from_nlp  CC=2  out:7
+    _intent_from_orientation  CC=4  out:9
     _parser_source  CC=5  out:4
-    resolve_intent  CC=12  out:22
+    resolve_intent  CC=18  out:31
   nlp-service.app.settings  [2 funcs]
     set  CC=4  out:11
     _coerce_type  CC=5  out:6

@@ -1,12 +1,12 @@
-# redup/duplication | 12 groups | 84f 8221L | 2026-06-04
+# redup/duplication | 12 groups | 85f 8502L | 2026-06-05
 
 SUMMARY:
-  files_scanned: 84
-  total_lines:   8221
+  files_scanned: 85
+  total_lines:   8502
   dup_groups:    12
   dup_fragments: 33
   saved_lines:   153
-  scan_ms:       3668
+  scan_ms:       2427
 
 HOTSPOTS[7] (files with most duplication):
   backend/app/logging_setup.py  dup=49L  groups=5  frags=5  (0.6%)
@@ -51,9 +51,9 @@ DUPLICATES[12] (ranked by impact):
       nlp-service/app/logging_setup.py:64-66  (__init__)
       worker/logging_setup.py:64-66  (__init__)
   [8af82767bfb2b892]   STRU  run_workflow_endpoint  L=3 N=3 saved=6 sim=1.00
-      backend/app/routers/workflow.py:67-69  (run_workflow_endpoint)
-      backend/app/routers/workflow.py:73-75  (start_workflow_endpoint)
-      nlp-service/app/main.py:85-90  (parse_text)
+      backend/app/routers/workflow.py:77-79  (run_workflow_endpoint)
+      backend/app/routers/workflow.py:83-85  (start_workflow_endpoint)
+      nlp-service/app/main.py:94-99  (parse_text)
   [d8abcb97f9e3aea3]   STRU  _extract_report_type  L=6 N=2 saved=6 sim=1.00
       nlp-service/app/routing/parser/rules.py:265-270  (_extract_report_type)
       nlp-service/app/routing/parser/rules.py:273-278  (_extract_format)

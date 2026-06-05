@@ -54,6 +54,7 @@ services:
       - LLM_TEMPERATURE=0
       - LLM_MAX_TOKENS=1024
       - LLM_FALLBACK_THRESHOLD=0.5
+      - NLP_ENRICH_MISSING=${NLP_ENRICH_MISSING:-0}
 
       # ── Speech-to-Text (Deepgram) ─────────────────────────────
       - DEEPGRAM_API_KEY=${DEEPGRAM_API_KEY}

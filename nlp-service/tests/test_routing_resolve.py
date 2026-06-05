@@ -33,14 +33,10 @@ class TestResolveIntent:
 
     @pytest.mark.asyncio
     async def test_native_file_list_route(self) -> None:
-        decision, nlp = await resolve_intent("lista plikow usera")
+        decision, nlp = await resolve_intent("lista plikow usera", connector="mullm")
         assert nlp is not None
-        assert decision.source in ("native_routing", "action_aliases")
-        assert decision.action in (
-            "mullm_list_files",
-            "system_file_list",
-            None,
-        ) or "list" in (decision.action or "").lower()
+        assert decision.source == "orientation"
+        assert decision.action == "mullm_shell_task"
 
     @pytest.mark.asyncio
     async def test_decision_serializable(self) -> None:

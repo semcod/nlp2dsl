@@ -41,6 +41,14 @@ FIELD_TYPES: dict[str, dict] = {
     "aliases": {"type": "string", "label": "Aliasy (przecinkami)"},
     "shell_command": {"type": "string", "label": "Polecenie shell"},
     "description": {"type": "string", "label": "Opis zadania"},
+    "language": {
+        "type": "select",
+        "label": "Język programowania",
+        "options": ["python", "javascript", "java", "go", "rust", "cpp", "php", "ruby"],
+    },
+    "context": {"type": "string", "label": "Kontekst / wymagania dodatkowe"},
+    "include_tests": {"type": "select", "label": "Dołącz testy", "options": ["true", "false"]},
+    "chat_id": {"type": "string", "label": "Identyfikator czatu Telegram"},
 }
 
 

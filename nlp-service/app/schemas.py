@@ -20,6 +20,7 @@ class NLPEntities(BaseModel):
     amount: float | None = None
     currency: str | None = None
     to: str | None = None
+    email_to: str | None = None  # drugi odbiorca (composite: faktura + email)
     subject: str | None = None
     message: str | None = None
     channel: str | None = None
@@ -88,6 +89,11 @@ class NLPRequest(BaseModel):
     text: str
     context: dict = {}
     mode: str = "auto"  # "auto" | "llm" | "rules"
+
+
+class OrientRequest(BaseModel):
+    text: str
+    connector: str = "mullm"  # mullm | local
 
 
 # ── Conversation State ───────────────────────────────────────

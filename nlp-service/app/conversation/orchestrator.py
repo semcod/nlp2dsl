@@ -65,7 +65,7 @@ def _attach_routing(
 
 
 async def _process_message(state: ConversationState, text: str) -> ConversationResponse:
-    execute_response = check_execute_keyword(state, text)
+    execute_response = await check_execute_keyword(state, text)
     if execute_response:
         return execute_response
 
@@ -100,8 +100,8 @@ async def _process_message(state: ConversationState, text: str) -> ConversationR
     if system_response:
         return _attach_routing(system_response, decision)
 
-    dsl_response = build_and_check_dsl(state)
+    dsl_response = await build_and_check_dsl(state)
     if dsl_response:
         return _attach_routing(dsl_response, decision)
 
-    return _attach_routing(build_incomplete_response(state), decision)
+    return _attach_routing(await build_incomplete_response(state), decision)

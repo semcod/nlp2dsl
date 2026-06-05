@@ -25,6 +25,7 @@ class IntentDecision:
     deny_effect: str | None = None
     agent_id: str = ""
     candidate_actions: list[dict[str, Any]] = field(default_factory=list)
+    orientation: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -32,6 +33,7 @@ class IntentDecision:
             "intent": self.intent,
             "confidence": self.confidence,
             "source": self.source,
+            "orientation": self.orientation,
             "reason_codes": self.reason_codes,
             "resource_area": self.resource_area,
             "permission_action": self.permission_action,

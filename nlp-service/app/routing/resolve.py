@@ -7,6 +7,7 @@ from typing import Any
 
 from app.governance.policy import AccessDecision, authorize_action, get_agent_id
 from app.routing.native import resolve_native_intent
+from app.routing.orientation import OrientationResult, orient_query
 from app.routing.parser import parse_text
 from app.routing.parser.rules import parse_rules
 from app.registry import ACTIONS_REGISTRY, DELEGATED_ACTIONS
@@ -78,18 +79,47 @@ def _apply_auth(decision: IntentDecision, auth: AccessDecision) -> IntentDecisio
     return decision
 
 
+def _intent_from_orientation(
+    text: str,
+    orientation: OrientationResult,
+    *,
+    agent_id: str,
+) -> IntentDecision | None:
+    """Krótka ścieżka gdy orientacja ma wysoką pewność i znaną akcję."""
+    if orientation.confidence < 0.8 or not orientation.suggested_action:
+        return None
+    action = orientation.suggested_action
+    codes = list(orientation.reason_codes) + ["orientation_short_circuit"]
+    decision = IntentDecision(
+        action=action,
+        intent=action,
+        confidence=float(orientation.confidence),
+        source="orientation",
+        reason_codes=codes,
+        agent_id=agent_id,
+        orientation=orientation.to_dict(),
+    )
+    meta = ACTIONS_REGISTRY.get(action, {})
+    decision.resource_area = meta.get("resource_area")
+    decision.permission_action = str(meta.get("permission_action") or "execute")
+    decision.uri = meta.get("resource_uri")
+    return decision
+
+
 async def resolve_intent(
     text: str,
     *,
     agent_id: str | None = None,
+    connector: str = "mullm",
 ) -> tuple[IntentDecision, NLPResult | None]:
     """
-    Kaskada: native_routing → parse_text → authorize (native zawsze; delegate przy parserze).
+    Kaskada: orientacja → native_routing → parse_text → authorize.
 
     Zwraca (decyzja, NLPResult) — NLPResult jest None przy odmowie ACL lub gdy brak treści.
     """
     text = (text or "").strip()
     aid = get_agent_id(agent_id)
+    orientation = orient_query(text, connector=connector)
 
     if not text:
         empty = IntentDecision(
@@ -104,6 +134,22 @@ async def resolve_intent(
         )
         record_intent_decision(empty)
         return empty, None
+
+    oriented = _intent_from_orientation(text, orientation, agent_id=aid)
+    if oriented and oriented.action in DELEGATED_ACTIONS:
+        meta = ACTIONS_REGISTRY.get(oriented.action or "", {})
+        auth = authorize_action(aid, oriented.action or "", action_meta=meta)
+        oriented = _apply_auth(oriented, auth)
+        if oriented.authorized:
+            record_intent_decision(oriented)
+            nlp = oriented.to_nlp_result(text)
+            if orientation.shell_command:
+                nlp.entities = nlp.entities.model_copy(
+                    update={"shell_command": orientation.shell_command}
+                )
+            return oriented, nlp
+        record_intent_decision(oriented)
+        return oriented, None
 
     native = resolve_native_intent(text)
     # Tylko trasy z nlp2dsl.yaml (native_routing) — aliasy z registry idą do parsera (entities)

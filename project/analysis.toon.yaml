@@ -1,13 +1,15 @@
-# code2llm | 120f 10333L | python:78,yaml:8,shell:7,toml:5,txt:4,json:3,yml:2,rust:2,javascript:2,ini:1 | 2026-06-04
-# generated in 0.07s
-# CC̅=2.9 | critical:0/406 | dups:0 | cycles:1
+# code2llm | 121f 10666L | python:79,yaml:8,shell:7,toml:5,txt:4,json:3,yml:2,rust:2,javascript:2,ini:1 | 2026-06-05
+# generated in 0.02s
+# CC̅=2.9 | critical:1/415 | dups:0 | cycles:1
 
-HEALTH[0]: ok
+HEALTH[1]:
+  🟡 CC    resolve_intent CC=18 (limit:15)
 
-REFACTOR[1]:
-  1. break 1 circular dependencies
+REFACTOR[2]:
+  1. split 1 high-CC methods  (CC>15)
+  2. break 1 circular dependencies
 
-PIPELINES[229]:
+PIPELINES[231]:
   [1] Src [main]: main
       PURITY: 100% pure
   [2] Src [main]: main
@@ -110,19 +112,20 @@ PIPELINES[229]:
       PURITY: 100% pure
 
 LAYERS:
-  nlp-service/                    CC̄=3.4    ←in:0  →out:0
-  │ !! main                       583L  0C   23m  CC=10     ←0
+  nlp-service/                    CC̄=3.5    ←in:0  →out:0
+  │ !! main                       592L  0C   24m  CC=10     ←1
   │ registry                   390L  0C    4m  CC=5      ←3
   │ rules                      381L  0C   25m  CC=7      ←3
   │ policy                     302L  2C   14m  CC=5      ←2
   │ code_generator             279L  1C    8m  CC=14     ←0
   │ responses                  272L  0C   18m  CC=7      ←1
   │ settings                   251L  6C   11m  CC=6      ←5
+  │ orientation                206L  1C    6m  CC=13     ←2
+  │ !! resolve                    194L  0C    6m  CC=18     ←1
   │ config                     165L  1C   13m  CC=8      ←4
   │ audio_parser               148L  1C    8m  CC=9      ←1
-  │ resolve                    148L  0C    5m  CC=12     ←1
   │ native                     143L  0C   13m  CC=6      ←1
-  │ schemas                    131L  11C    0m  CC=0.0    ←0
+  │ schemas                    136L  12C    0m  CC=0.0    ←0
   │ orchestrator               107L  0C    5m  CC=6      ←1
   │ logging_setup              100L  2C    6m  CC=3      ←0
   │ forms                       83L  0C    1m  CC=5      ←2
@@ -132,10 +135,10 @@ LAYERS:
   │ config                      60L  1C    0m  CC=0.0    ←0
   │ redis_store                 58L  1C    7m  CC=3      ←0
   │ observability               57L  0C    3m  CC=7      ←2
-  │ intent                      53L  1C    2m  CC=3      ←0
+  │ intent                      55L  1C    2m  CC=3      ←0
   │ pyproject.toml              52L  0C    0m  CC=0.0    ←0
   │ factory                     46L  0C    1m  CC=4      ←1
-  │ facade                      39L  0C    1m  CC=8      ←1
+  │ facade                      39L  0C    1m  CC=8      ←0
   │ system_executor             35L  0C   13m  CC=12     ←1
   │ __init__                    30L  1C    4m  CC=1      ←0
   │ manifest.json               30L  0C    0m  CC=0.0    ←0
@@ -143,9 +146,9 @@ LAYERS:
   │ merge                       25L  0C    1m  CC=9      ←1
   │ memory                      23L  1C    5m  CC=1      ←0
   │ orchestrator                21L  0C    0m  CC=0.0    ←0
+  │ __init__                    17L  0C    0m  CC=0.0    ←0
   │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ Dockerfile                  14L  0C    0m  CC=0.0    ←0
-  │ __init__                    14L  0C    0m  CC=0.0    ←0
   │ __init__                    14L  0C    0m  CC=0.0    ←0
   │ __init__                    14L  0C    0m  CC=0.0    ←0
   │ __init__                    13L  0C    0m  CC=0.0    ←0
@@ -183,7 +186,7 @@ LAYERS:
   │
   backend/                        CC̄=2.2    ←in:0  →out:0
   │ engine                     269L  0C    7m  CC=11     ←2
-  │ workflow                   189L  0C    9m  CC=8      ←0
+  │ workflow                   199L  0C   10m  CC=8      ←0
   │ postgres                   172L  3C   11m  CC=4      ←0
   │ chat                       124L  0C    4m  CC=12     ←0
   │ logging_setup              100L  2C    6m  CC=3      ←5
@@ -228,7 +231,7 @@ LAYERS:
   │ requirements.txt             1L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! planfile.yaml              734L  0C    0m  CC=0.0    ←0
+  │ !! planfile.yaml              786L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
   │ nlp2dsl.yaml               186L  0C    0m  CC=0.0    ←0
   │ docker-compose.yml         113L  0C    0m  CC=0.0    ←0

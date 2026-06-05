@@ -28,6 +28,7 @@ import os
 import litellm
 from litellm import acompletion
 
+from app.routing.parser.prompt_catalog import build_llm_system_prompt
 from app.schemas import NLPEntities, NLPIntent, NLPResult
 
 log = logging.getLogger("nlp.llm")
@@ -47,50 +48,7 @@ LLM_API_BASE = os.getenv("LLM_API_BASE", None)
 
 # ── Prompts ───────────────────────────────────────────────────
 
-SYSTEM_PROMPT = """Jesteś silnikiem NLP do automatyzacji procesów biznesowych.
-
-Twoim JEDYNYM zadaniem jest:
-1. Rozpoznać INTENT (co użytkownik chce zrobić)
-2. Wyodrębnić ENTITIES (parametry)
-3. Wskazać MISSING (brakujące wymagane pola)
-
-Zwracaj TYLKO poprawny JSON — bez markdown, bez komentarzy.
-
-Dostępne intenty (akcje):
-- send_invoice: faktura (required: amount, to)
-- send_email: email (required: to)
-- generate_report: raport (required: report_type)
-- crm_update: aktualizacja CRM (required: entity)
-- notify_slack: powiadomienie Slack (required: channel)
-- notify_telegram: powiadomienie Telegram (required: chat_id)
-- notify_teams: powiadomienie Microsoft Teams (required: channel)
-- invoice_and_notify: faktura + Slack
-- invoice_and_email: faktura + email
-- report_and_email: raport + email
-- full_invoice_flow: faktura + email + Slack
-- full_report_flow: raport + email + Slack
-
-Schemat entities:
-{
-  "amount": number | null,
-  "currency": string | null,
-  "to": string | null,
-  "subject": string | null,
-  "message": string | null,
-  "channel": string | null,
-  "chat_id": string | null,
-  "title": string | null,
-  "report_type": string | null,
-  "format": string | null,
-  "entity": string | null
-}
-
-Schemat odpowiedzi:
-{
-  "intent": {"intent": "...", "confidence": 0.0-1.0},
-  "entities": {...},
-  "missing": ["field1", "field2"]
-}"""
+SYSTEM_PROMPT = build_llm_system_prompt()
 
 USER_PROMPT_TEMPLATE = """Przeanalizuj tekst i zwróć JSON:
 

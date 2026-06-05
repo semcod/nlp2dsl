@@ -1,0 +1,126 @@
+"""Shared print/preview helpers for examples and nlp2dsl-demo CLI."""
+
+from __future__ import annotations
+
+import json
+from typing import Any, Mapping, Sequence
+
+import requests
+
+from .client import NLP2DSLClient
+
+
+def print_json(payload: Any) -> None:
+    print(json.dumps(payload, indent=2, ensure_ascii=False))
+
+
+def print_workflow_preview(result: Mapping[str, Any]) -> None:
+    status = result.get("status")
+
+    if status == "complete":
+        print("✅ Wygenerowany DSL:")
+        print_json(result["dsl"])
+        steps = result["dsl"].get("steps", [])
+        print(f"   Liczba kroków: {len(steps)}")
+    elif status == "executed":
+        print("✅ Wygenerowany DSL:")
+        print_json(result["dsl"])
+        steps = result["dsl"].get("steps", [])
+        print(f"   Liczba kroków: {len(steps)}")
+        if result.get("result") is not None:
+            print("✅ Wynik wykonania:")
+            print_json(result["result"])
+    elif status == "incomplete":
+        partial = result.get("partial_workflow") or result.get("dsl")
+        if partial:
+            print("⚠️  Częściowy DSL (brakuje pól):")
+            print_json(partial)
+        missing = result.get("missing_fields") or []
+        if missing:
+            print(f"   Brakuje: {', '.join(missing)}")
+        prompt = result.get("prompt_user")
+        if prompt:
+            print(f"   💬 {prompt}")
+    elif status == "error":
+        print(f"❌ Workflow nie powiódł się: {result.get('error', 'nieznany błąd')}")
+    else:
+        print(f"❌ Workflow nie powiódł się: {result.get('error', 'nieznany błąd')}")
+
+
+def print_execution_result(result: Mapping[str, Any]) -> None:
+    print("✅ Wynik wykonania:")
+    print_json(result)
+
+    steps = result.get("steps", [])
+    if steps:
+        print(f"   Liczba kroków: {len(steps)}")
+        for index, step in enumerate(steps, 1):
+            status = "✅" if step.get("status") == "completed" else "❌"
+            print(f"   Krok {index} ({step.get('action')}): {status}")
+            if step.get("error"):
+                print(f"      Błąd: {step['error']}")
+
+
+def workflow_http_error_result(exc: requests.HTTPError) -> dict[str, Any]:
+    response = exc.response
+    status = response.status_code if response is not None else None
+    detail: Any = None
+    if response is not None:
+        try:
+            detail = response.json()
+        except ValueError:
+            detail = response.text
+
+    if status == 422:
+        message = "Nie rozpoznano intencji"
+        if isinstance(detail, dict):
+            inner = detail.get("detail", detail)
+            if isinstance(inner, dict):
+                message = str(inner.get("error") or inner.get("hint") or message)
+            else:
+                message = str(inner)
+        return {"status": "error", "error": message, "http_status": status, "detail": detail}
+
+    message = str(exc)
+    if isinstance(detail, dict):
+        message = str(detail.get("detail", detail))
+    elif detail:
+        message = str(detail)
+    return {"status": "error", "error": message, "http_status": status, "detail": detail}
+
+
+def preview_text_examples(
+    client: NLP2DSLClient,
+    title: str,
+    examples: Sequence[str],
+    *,
+    execute: bool = False,
+    mode: str = "auto",
+) -> list[dict[str, Any]]:
+    if title:
+        print(title)
+
+    results: list[dict[str, Any]] = []
+    for text in examples:
+        print(f"\n📝 Przykład: {text}")
+        print(f"🧠 Analiza tekstu: '{text}'")
+        try:
+            result = client.workflow_from_text(text, execute=execute, mode=mode)
+        except requests.HTTPError as exc:
+            result = workflow_http_error_result(exc)
+            results.append(result)
+            print_workflow_preview(result)
+            continue
+        results.append(result)
+        print_workflow_preview(result)
+
+    return results
+
+
+def ensure_services(client: NLP2DSLClient) -> bool:
+    try:
+        client.health()
+        return True
+    except requests.RequestException:
+        print("❌ Nie można połączyć się z API. Uruchom: docker compose up -d")
+        return False

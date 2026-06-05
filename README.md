@@ -3,13 +3,13 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.0.15-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$3.66-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-12.3h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.0.16-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$3.95-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-12.4h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $3.6569 (23 commits)
-- 👤 **Human dev:** ~$1228 (12.3h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $3.9517 (24 commits)
+- 👤 **Human dev:** ~$1238 (12.4h @ $100/h, 30min dedup)
 
-Generated on 2026-06-04 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+Generated on 2026-06-05 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
@@ -42,6 +42,83 @@ Użytkownik (tekst / głos / GUI)
 
 **Zasada:** LLM rozumie → Pydantic waliduje → Mapper buduje → Docker wykonuje
 
+## Integracja z nlp2cmd
+
+Repozytorium zawiera dwa poziomy:
+
+| Warstwa | Lokalizacja | Rola |
+|---------|-------------|------|
+| **Platforma MVP** | `backend/`, `nlp-service/`, `worker/` | Workflow DSL (faktury, e-mail, raporty) w Docker |
+| **Pakiety IR** | `packages/` | IntentIR / ExecutionPlanIR — wspólny język z nlp2cmd i Propact |
+
+### Podział odpowiedzialności
+
+| Narzędzie | Zadanie |
+|-----------|---------|
+| **`nlp2dsl show "query"`** | Struktura zapytania (IntentIR) — **bez wykonania** |
+| **`nlp2cmd plan "query"`** | Plan → Propact markdown; `--execute` → hybrid executor (Propact + nlp2cmd) |
+| **`nlp2cmd -q "query" -r`** | Legacy runtime nlp2cmd (shell / browser / canvas) |
+| **`examples/*/scenario.py`** | Demo platformy MVP (wymaga `docker compose up`; `main.py` = punkt wejścia) |
+
+### Instalacja pakietów (dev)
+
+```bash
+./scripts/setup-dev.sh          # pakiety IR + SDK + nlp2cmd[integration]
+# lub tylko pakiety:
+./packages/install-dev.sh
+
+export NLP2CMD_INTEGRATION=1
+export LANG=C.UTF-8
+```
+
+```bash
+nlp2dsl show "znajdz pliki *.py w src"               # IntentIR JSON
+nlp2cmd plan "znajdz pliki *.py w src"               # Propact markdown
+nlp2cmd plan "znajdz pliki *.py w src" --explain     # + execution_route
+nlp2cmd plan "znajdz pliki *.py w src" --execute     # hybrid executor
+NLP2CMD_SHOW_STRUCTURE=1 nlp2cmd -q "query"          # analiza na wejściu nlp2cmd
+```
+
+Szczegóły: [`packages/README.md`](packages/README.md) · walidacja kontraktów: [`docs/intract-integration.md`](docs/intract-integration.md)
+
+### Architektura pakietów IR
+
+```mermaid
+flowchart LR
+    Q[NL query] --> SHOW[nlp2dsl show]
+    Q --> PLAN[nlp2cmd plan]
+
+    subgraph pkgs [packages/]
+        IR[IntentIR]
+        EPIR[ExecutionPlanIR]
+    end
+
+    SHOW --> IR
+    SHOW --> EPIR
+    PLAN --> IR --> EPIR --> MD[Propact markdown]
+
+    EPIR -.->|NLP2CMD_INTRACT_GATE| GATE[PlanStepGate w nlp2cmd]
+```
+
+| Narzędzie | Walidacja struktury | Kontrakty Intract |
+|-----------|--------------------|--------------------|
+| `nlp2dsl show` | Pydantic + confidence | opcjonalnie `--plan` + `INTRACT_GATE` |
+| `nlp2cmd plan` | `needs_clarification` zawsze | opcjonalnie `INTRACT_GATE` |
+| `nlp2cmd -q -r` | ActionRegistry (legacy) | opcjonalnie `INTRACT_GATE` |
+
+### Kodowanie UTF-8 (polskie znaki)
+
+CLI (`nlp2dsl`, `nlp2dsl-demo`, `nlp2dsl-show`) automatycznie ustawia stdout na UTF-8.
+Jeśli terminal nadal pokazuje `Przyk?ad` / `znajd?`:
+
+```bash
+export LANG=C.UTF-8
+export PYTHONIOENCODING=utf-8
+./scripts/setup-dev.sh   # ustawia zmienne w skryptach instalacyjnych
+```
+
+Wyłączenie auto-konfiguracji: `NLP2DSL_UTF8=0`.
+
 ## Szybki start
 
 ```bash
@@ -56,6 +133,18 @@ docker compose up --build
 | Backend API | http://localhost:8010/docs | Gateway + workflow engine |
 | NLP Service | http://localhost:8012/docs | NLP + conversation + schema |
 | Worker | http://localhost:8004/docs | Executory akcji |
+
+## Przykłady i tryb interaktywny
+
+Szczegóły (Intract vs MVP, walidacja, logi, dialog): **[`examples/README.md`](examples/README.md)**
+
+```bash
+pip install -e .
+docker compose up -d
+python3 examples/06-interactive-chat/main.py --interactive   # rozmowa w terminalu
+python3 examples/07-email-conversation/main.py               # e-mail + uzupełnianie body
+./examples/run-all.sh
+```
 
 ## Conversation Loop (AI Dialog)
 
@@ -383,9 +472,21 @@ done
 | **05-conversation-flow** | [📁 examples/05-conversation-flow/](examples/05-conversation-flow/) | Pełny cykl konwersacyjny od startu do wykonania | Chat API, state management |
 
 #### Szybki start z przykładami:
+
 ```bash
-cd examples/01-invoice
-python3 main.py
+# Z katalogu głównego repo (nie z examples/01-invoice/)
+pip install -e .
+docker compose up -d                        # backend + nlp-service + worker
+
+./examples/run-all.sh                       # wszystkie przykłady
+# lub pojedynczo:
+cd examples/01-invoice && python3 main.py
+```
+
+Logi serwisu NLP (z **roota** repo, nie `examples/docker-compose.yml`):
+
+```bash
+docker compose logs -f nlp-service
 ```
 
 ## Obsługa błędów i fallback

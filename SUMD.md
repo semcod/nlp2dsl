@@ -21,7 +21,7 @@ Reusable Python SDK for the NLP2DSL platform
 ## Metadata
 
 - **name**: `nlp2dsl`
-- **version**: `0.0.14`
+- **version**: `0.0.15`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -41,7 +41,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: nlp2dsl;
-  version: 0.0.14;
+  version: 0.0.15;
 }
 
 dependencies {
@@ -424,7 +424,7 @@ pipeline:
 ```yaml
 project:
   name: nlp2dsl
-  version: 0.0.14
+  version: 0.0.15
   env: local
 ```
 
@@ -482,13 +482,13 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# nlp2dsl | 135f 13046L | python:116,shell:13,javascript:3,rust:2,less:1 | 2026-06-04
-# stats: 353 func | 122 cls | 135 mod | CC̄=3.3 | critical:13 | cycles:0
-# alerts[5]: CC test_workflow_and_conversation_endpoints=17; CC test_code_generation_methods_hit_expected_services=16; CC _actions_from_yaml_areas=14; CC test_new_workflow_helpers_are_data_driven=14; CC chat_message=12
-# hotspots[5]: _execute_workflow fan=19; websocket_chat fan=16; map_to_dsl fan=14; resolve_intent fan=14; test_code_generation fan=14
+# nlp2dsl | 137f 13387L | python:118,shell:13,javascript:3,rust:2,less:1 | 2026-06-05
+# stats: 361 func | 126 cls | 137 mod | CC̄=3.4 | critical:14 | cycles:0
+# alerts[5]: CC resolve_intent=18; CC test_workflow_and_conversation_endpoints=17; CC test_code_generation_methods_hit_expected_services=16; CC _actions_from_yaml_areas=14; CC test_new_workflow_helpers_are_data_driven=14
+# hotspots[5]: _execute_workflow fan=19; resolve_intent fan=17; websocket_chat fan=16; map_to_dsl fan=14; test_code_generation fan=14
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[135]:
+M[137]:
   .pfix-test-wrapper.sh,16
   app.doql.less,125
   backend/app/__init__.py,1
@@ -503,7 +503,7 @@ M[135]:
   backend/app/routers/chat.py,125
   backend/app/routers/settings.py,82
   backend/app/routers/system.py,30
-  backend/app/routers/workflow.py,190
+  backend/app/routers/workflow.py,200
   backend/app/schemas.py,65
   backend/app/workflow.py,23
   backend/app/workflow_events.py,92
@@ -552,7 +552,7 @@ M[135]:
   nlp-service/app/governance/policy.py,303
   nlp-service/app/governance/uri_match.py,43
   nlp-service/app/logging_setup.py,101
-  nlp-service/app/main.py,584
+  nlp-service/app/main.py,593
   nlp-service/app/mapper.py,6
   nlp-service/app/orchestrator.py,22
   nlp-service/app/parser_llm.py,6
@@ -560,16 +560,17 @@ M[135]:
   nlp-service/app/parsing/__init__.py,4
   nlp-service/app/parsing/facade.py,6
   nlp-service/app/registry.py,391
-  nlp-service/app/routing/__init__.py,15
-  nlp-service/app/routing/intent.py,54
+  nlp-service/app/routing/__init__.py,18
+  nlp-service/app/routing/intent.py,56
   nlp-service/app/routing/native.py,144
   nlp-service/app/routing/observability.py,58
+  nlp-service/app/routing/orientation.py,207
   nlp-service/app/routing/parser/__init__.py,4
   nlp-service/app/routing/parser/facade.py,40
   nlp-service/app/routing/parser/llm.py,188
   nlp-service/app/routing/parser/rules.py,382
-  nlp-service/app/routing/resolve.py,149
-  nlp-service/app/schemas.py,132
+  nlp-service/app/routing/resolve.py,195
+  nlp-service/app/schemas.py,137
   nlp-service/app/settings.py,252
   nlp-service/app/store/__init__.py,31
   nlp-service/app/store/factory.py,47
@@ -586,10 +587,11 @@ M[135]:
   nlp-service/tests/test_execution_delegate.py,25
   nlp-service/tests/test_mapper.py,252
   nlp-service/tests/test_orchestrator.py,222
+  nlp-service/tests/test_orientation.py,63
   nlp-service/tests/test_parser_rules.py,237
   nlp-service/tests/test_registry.py,169
   nlp-service/tests/test_routing_observability.py,42
-  nlp-service/tests/test_routing_resolve.py,66
+  nlp-service/tests/test_routing_resolve.py,62
   nlp-service/tests/test_store.py,193
   nlp-service/tests/test_system_executor.py,422
   nlp2dsl_sdk/__init__.py,34
@@ -679,9 +681,10 @@ D:
     e: system_execute
     system_execute(body)
   backend/app/routers/workflow.py:
-    e: _format_sse,_workflow_snapshot,list_actions,run_workflow_endpoint,start_workflow_endpoint,get_history,get_workflow,stream_workflow,workflow_from_text
+    e: _format_sse,_workflow_snapshot,orient_nlp,list_actions,run_workflow_endpoint,start_workflow_endpoint,get_history,get_workflow,stream_workflow,workflow_from_text
     _format_sse(event;data)
     _workflow_snapshot(run)
+    orient_nlp(body)
     list_actions()
     run_workflow_endpoint(req)
     start_workflow_endpoint(req)
@@ -882,7 +885,8 @@ D:
     get_request_id()
     setup_logging(service;level)
   nlp-service/app/main.py:
-    e: parse_text,text_to_dsl,access_config,access_check,access_reload,list_actions,health,chat_start,chat_message,chat_state,actions_schema,action_schema,get_settings,get_settings_section,update_settings_section,set_setting,reset_settings,system_execute,generate_code,get_supported_languages,_run_parser,websocket_chat,chat_ui
+    e: orient_text,parse_text,text_to_dsl,access_config,access_check,access_reload,list_actions,health,chat_start,chat_message,chat_state,actions_schema,action_schema,get_settings,get_settings_section,update_settings_section,set_setting,reset_settings,system_execute,generate_code,get_supported_languages,_run_parser,websocket_chat,chat_ui
+    orient_text(req)
     parse_text(req)
     text_to_dsl(req)
     access_config()
@@ -942,6 +946,14 @@ D:
     record_intent_decision(decision)
     routing_metrics_snapshot()
     reset_routing_metrics()
+  nlp-service/app/routing/orientation.py:
+    e: _has_registry_hint,_has_host_hint,_is_file_list_query,_file_list_scope,orient_query,OrientationResult
+    OrientationResult: to_dict(0)
+    _has_registry_hint(text)
+    _has_host_hint(text)
+    _is_file_list_query(text)
+    _file_list_scope(text)
+    orient_query(text)
   nlp-service/app/routing/parser/__init__.py:
   nlp-service/app/routing/parser/facade.py:
     e: parse_text
@@ -979,14 +991,15 @@ D:
     _extract_fallback_recipient(entities;text_lower)
     _set_entity(entities;field;value)
   nlp-service/app/routing/resolve.py:
-    e: _parser_source,_intent_from_native,_intent_from_nlp,_apply_auth,resolve_intent
+    e: _parser_source,_intent_from_native,_intent_from_nlp,_apply_auth,_intent_from_orientation,resolve_intent
     _parser_source(text)
     _intent_from_native(native)
     _intent_from_nlp(nlp;source)
     _apply_auth(decision;auth)
+    _intent_from_orientation(text;orientation)
     resolve_intent(text)
   nlp-service/app/schemas.py:
-    e: NLPIntent,NLPEntities,NLPResult,DSLStep,WorkflowDSL,DialogResponse,NLPRequest,ConversationState,FieldSchema,ActionFormSchema,ConversationResponse
+    e: NLPIntent,NLPEntities,NLPResult,DSLStep,WorkflowDSL,DialogResponse,NLPRequest,OrientRequest,ConversationState,FieldSchema,ActionFormSchema,ConversationResponse
     NLPIntent:
     NLPEntities:
     NLPResult:
@@ -994,6 +1007,7 @@ D:
     WorkflowDSL:
     DialogResponse:
     NLPRequest:
+    OrientRequest:
     ConversationState:  # Stan rozmowy — akumuluje dane między turami dialogu.
     FieldSchema:
     ActionFormSchema:
@@ -1036,13 +1050,13 @@ D:
     sample_entities()
     mock_conversation_store()
   nlp-service/tests/test_access.py:
-    e: _point_config,test_config_loads_areas,test_uri_match_mullm,test_files_agent_can_list,test_mail_agent_denied_mullm_execute,test_native_lista_plikow,test_registry_has_yaml_action
+    e: _point_config,test_config_loads_areas,test_uri_match_mullm,test_files_agent_can_list,test_mail_agent_denied_mullm_execute,test_native_lista_plikow_registry,test_registry_has_yaml_action
     _point_config(monkeypatch)
     test_config_loads_areas()
     test_uri_match_mullm()
     test_files_agent_can_list()
     test_mail_agent_denied_mullm_execute()
-    test_native_lista_plikow()
+    test_native_lista_plikow_registry()
     test_registry_has_yaml_action()
   nlp-service/tests/test_execution_delegate.py:
     e: test_mullm_shell_delegated,test_invoice_worker_backend,test_delegate_payload_shape
@@ -1069,6 +1083,10 @@ D:
     TestGetActionForm: test_action_form_send_invoice(0),test_action_form_nonexistent(0)  # Schema-driven UI form generation.
     TestMergeIntoState: test_merge_updates_intent(0),test_merge_preserves_existing(0)  # Internal entity merging logic.
     _patch_store(monkeypatch)
+  nlp-service/tests/test_orientation.py:
+    e: TestOrientQuery,TestResolveIntentOrientation
+    TestOrientQuery: test_lista_plikow_usera_host_default_mullm(0),test_lista_plikow_usera_registry(0),test_pokaz_pliki_local_connector(0),test_run_prefix_shell(0),test_disk_space_shell_nl(0),test_invoice_workflow_hint(0)
+    TestResolveIntentOrientation: test_lista_plikow_usera_short_circuit_shell(0),test_registry_list_short_circuit_mullm_files(0)
   nlp-service/tests/test_parser_rules.py:
     e: TestParseInvoice,TestParseEmail,TestParseReport,TestParseComposite,TestParseSystem,TestParseUnknown,TestAmountExtraction,TestTriggerDetection,TestResultStructure
     TestParseInvoice: test_parse_invoice_simple(0),test_parse_invoice_missing_data(0),test_parse_invoice_eur(0),test_parse_invoice_usd(0)  # Invoice intent detection and entity extraction.
@@ -1305,7 +1323,7 @@ D:
 
 ```prolog markpact:analysis path=project/logic.pl
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('nlp2dsl', '0.0.14', 'python').
+project_metadata('nlp2dsl', '0.0.15', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('.pfix-test-wrapper.sh', 16, 'shell').
@@ -1322,7 +1340,7 @@ project_file('backend/app/routers/__init__.py', 1, 'python').
 project_file('backend/app/routers/chat.py', 125, 'python').
 project_file('backend/app/routers/settings.py', 82, 'python').
 project_file('backend/app/routers/system.py', 30, 'python').
-project_file('backend/app/routers/workflow.py', 190, 'python').
+project_file('backend/app/routers/workflow.py', 200, 'python').
 project_file('backend/app/schemas.py', 65, 'python').
 project_file('backend/app/workflow.py', 23, 'python').
 project_file('backend/app/workflow_events.py', 92, 'python').
@@ -1371,7 +1389,7 @@ project_file('nlp-service/app/governance/config.py', 166, 'python').
 project_file('nlp-service/app/governance/policy.py', 303, 'python').
 project_file('nlp-service/app/governance/uri_match.py', 43, 'python').
 project_file('nlp-service/app/logging_setup.py', 101, 'python').
-project_file('nlp-service/app/main.py', 584, 'python').
+project_file('nlp-service/app/main.py', 593, 'python').
 project_file('nlp-service/app/mapper.py', 6, 'python').
 project_file('nlp-service/app/orchestrator.py', 22, 'python').
 project_file('nlp-service/app/parser_llm.py', 6, 'python').
@@ -1379,16 +1397,17 @@ project_file('nlp-service/app/parser_rules.py', 6, 'python').
 project_file('nlp-service/app/parsing/__init__.py', 4, 'python').
 project_file('nlp-service/app/parsing/facade.py', 6, 'python').
 project_file('nlp-service/app/registry.py', 391, 'python').
-project_file('nlp-service/app/routing/__init__.py', 15, 'python').
-project_file('nlp-service/app/routing/intent.py', 54, 'python').
+project_file('nlp-service/app/routing/__init__.py', 18, 'python').
+project_file('nlp-service/app/routing/intent.py', 56, 'python').
 project_file('nlp-service/app/routing/native.py', 144, 'python').
 project_file('nlp-service/app/routing/observability.py', 58, 'python').
+project_file('nlp-service/app/routing/orientation.py', 207, 'python').
 project_file('nlp-service/app/routing/parser/__init__.py', 4, 'python').
 project_file('nlp-service/app/routing/parser/facade.py', 40, 'python').
 project_file('nlp-service/app/routing/parser/llm.py', 188, 'python').
 project_file('nlp-service/app/routing/parser/rules.py', 382, 'python').
-project_file('nlp-service/app/routing/resolve.py', 149, 'python').
-project_file('nlp-service/app/schemas.py', 132, 'python').
+project_file('nlp-service/app/routing/resolve.py', 195, 'python').
+project_file('nlp-service/app/schemas.py', 137, 'python').
 project_file('nlp-service/app/settings.py', 252, 'python').
 project_file('nlp-service/app/store/__init__.py', 31, 'python').
 project_file('nlp-service/app/store/factory.py', 47, 'python').
@@ -1405,10 +1424,11 @@ project_file('nlp-service/tests/test_access.py', 75, 'python').
 project_file('nlp-service/tests/test_execution_delegate.py', 25, 'python').
 project_file('nlp-service/tests/test_mapper.py', 252, 'python').
 project_file('nlp-service/tests/test_orchestrator.py', 222, 'python').
+project_file('nlp-service/tests/test_orientation.py', 63, 'python').
 project_file('nlp-service/tests/test_parser_rules.py', 237, 'python').
 project_file('nlp-service/tests/test_registry.py', 169, 'python').
 project_file('nlp-service/tests/test_routing_observability.py', 42, 'python').
-project_file('nlp-service/tests/test_routing_resolve.py', 66, 'python').
+project_file('nlp-service/tests/test_routing_resolve.py', 62, 'python').
 project_file('nlp-service/tests/test_store.py', 193, 'python').
 project_file('nlp-service/tests/test_system_executor.py', 422, 'python').
 project_file('nlp2dsl_sdk/__init__.py', 34, 'python').
@@ -1470,6 +1490,7 @@ python_function('backend/app/routers/settings.py', 'reset_settings', 1, 1, 4).
 python_function('backend/app/routers/system.py', 'system_execute', 1, 2, 5).
 python_function('backend/app/routers/workflow.py', '_format_sse', 2, 5, 4).
 python_function('backend/app/routers/workflow.py', '_workflow_snapshot', 1, 1, 1).
+python_function('backend/app/routers/workflow.py', 'orient_nlp', 1, 2, 4).
 python_function('backend/app/routers/workflow.py', 'list_actions', 0, 1, 1).
 python_function('backend/app/routers/workflow.py', 'run_workflow_endpoint', 1, 1, 2).
 python_function('backend/app/routers/workflow.py', 'start_workflow_endpoint', 1, 1, 2).
@@ -1568,6 +1589,7 @@ python_function('nlp-service/app/governance/uri_match.py', 'uri_matches', 2, 8, 
 python_function('nlp-service/app/governance/uri_match.py', 'scheme_allowed', 2, 5, 2).
 python_function('nlp-service/app/logging_setup.py', 'get_request_id', 0, 1, 1).
 python_function('nlp-service/app/logging_setup.py', 'setup_logging', 2, 3, 9).
+python_function('nlp-service/app/main.py', 'orient_text', 1, 1, 3).
 python_function('nlp-service/app/main.py', 'parse_text', 1, 1, 2).
 python_function('nlp-service/app/main.py', 'text_to_dsl', 1, 2, 4).
 python_function('nlp-service/app/main.py', 'access_config', 0, 3, 5).
@@ -1611,6 +1633,14 @@ python_function('nlp-service/app/routing/native.py', '_best_alias_for_action', 4
 python_function('nlp-service/app/routing/observability.py', 'record_intent_decision', 1, 7, 4).
 python_function('nlp-service/app/routing/observability.py', 'routing_metrics_snapshot', 0, 1, 1).
 python_function('nlp-service/app/routing/observability.py', 'reset_routing_metrics', 0, 1, 1).
+python_function('nlp-service/app/routing/orientation.py', '_has_registry_hint', 1, 2, 2).
+python_function('nlp-service/app/routing/orientation.py', '_has_host_hint', 1, 3, 2).
+python_function('nlp-service/app/routing/orientation.py', '_is_file_list_query', 1, 5, 4).
+python_function('nlp-service/app/routing/orientation.py', '_file_list_scope', 1, 8, 5).
+python_function('nlp-service/app/routing/orientation.py', '_host_list_root', 0, 3, 2).
+python_function('nlp-service/app/routing/orientation.py', '_normalize_orient_path', 2, 3, 2).
+python_function('nlp-service/app/routing/orientation.py', '_resolve_file_list_host_command', 1, 7, 7).
+python_function('nlp-service/app/routing/orientation.py', 'orient_query', 1, 15, 14).
 python_function('nlp-service/app/routing/parser/facade.py', 'parse_text', 2, 8, 6).
 python_function('nlp-service/app/routing/parser/llm.py', 'parse_llm', 1, 3, 11).
 python_function('nlp-service/app/routing/parser/llm.py', '_detect_provider', 0, 10, 1).
@@ -1644,7 +1674,8 @@ python_function('nlp-service/app/routing/resolve.py', '_parser_source', 1, 5, 4)
 python_function('nlp-service/app/routing/resolve.py', '_intent_from_native', 1, 3, 3).
 python_function('nlp-service/app/routing/resolve.py', '_intent_from_nlp', 2, 2, 4).
 python_function('nlp-service/app/routing/resolve.py', '_apply_auth', 2, 4, 1).
-python_function('nlp-service/app/routing/resolve.py', 'resolve_intent', 1, 12, 14).
+python_function('nlp-service/app/routing/resolve.py', '_intent_from_orientation', 2, 4, 6).
+python_function('nlp-service/app/routing/resolve.py', 'resolve_intent', 1, 18, 17).
 python_function('nlp-service/app/settings.py', '_coerce_type', 2, 5, 5).
 python_function('nlp-service/app/store/factory.py', 'get_conversation_store', 0, 4, 5).
 python_function('nlp-service/integrations/loader.py', '_integration_names', 0, 5, 4).
@@ -1659,7 +1690,7 @@ python_function('nlp-service/tests/test_access.py', 'test_config_loads_areas', 0
 python_function('nlp-service/tests/test_access.py', 'test_uri_match_mullm', 0, 4, 1).
 python_function('nlp-service/tests/test_access.py', 'test_files_agent_can_list', 0, 3, 1).
 python_function('nlp-service/tests/test_access.py', 'test_mail_agent_denied_mullm_execute', 0, 2, 1).
-python_function('nlp-service/tests/test_access.py', 'test_native_lista_plikow', 0, 3, 1).
+python_function('nlp-service/tests/test_access.py', 'test_native_lista_plikow_registry', 0, 3, 1).
 python_function('nlp-service/tests/test_access.py', 'test_registry_has_yaml_action', 0, 3, 2).
 python_function('nlp-service/tests/test_execution_delegate.py', 'test_mullm_shell_delegated', 0, 3, 2).
 python_function('nlp-service/tests/test_execution_delegate.py', 'test_invoice_worker_backend', 0, 2, 1).
@@ -1941,6 +1972,8 @@ python_method('RequestIDMiddleware', 'dispatch', 2, 2, 5).
 python_class('nlp-service/app/routing/intent.py', 'IntentDecision').
 python_method('IntentDecision', 'to_dict', 0, 1, 0).
 python_method('IntentDecision', 'to_nlp_result', 1, 3, 3).
+python_class('nlp-service/app/routing/orientation.py', 'OrientationResult').
+python_method('OrientationResult', 'to_dict', 0, 1, 0).
 python_class('nlp-service/app/schemas.py', 'NLPIntent').
 python_class('nlp-service/app/schemas.py', 'NLPEntities').
 python_class('nlp-service/app/schemas.py', 'NLPResult').
@@ -1948,6 +1981,7 @@ python_class('nlp-service/app/schemas.py', 'DSLStep').
 python_class('nlp-service/app/schemas.py', 'WorkflowDSL').
 python_class('nlp-service/app/schemas.py', 'DialogResponse').
 python_class('nlp-service/app/schemas.py', 'NLPRequest').
+python_class('nlp-service/app/schemas.py', 'OrientRequest').
 python_class('nlp-service/app/schemas.py', 'ConversationState').
 python_class('nlp-service/app/schemas.py', 'FieldSchema').
 python_class('nlp-service/app/schemas.py', 'ActionFormSchema').
@@ -2032,6 +2066,17 @@ python_method('TestGetActionForm', 'test_action_form_nonexistent', 0, 2, 1).
 python_class('nlp-service/tests/test_orchestrator.py', 'TestMergeIntoState').
 python_method('TestMergeIntoState', 'test_merge_updates_intent', 0, 3, 5).
 python_method('TestMergeIntoState', 'test_merge_preserves_existing', 0, 4, 5).
+python_class('nlp-service/tests/test_orientation.py', 'TestOrientQuery').
+python_method('TestOrientQuery', 'test_lista_plikow_usera_host_default_mullm', 0, 5, 1).
+python_method('TestOrientQuery', 'test_lista_plikow_github_path_hint', 0, 4, 1).
+python_method('TestOrientQuery', 'test_lista_plikow_usera_registry', 0, 3, 1).
+python_method('TestOrientQuery', 'test_pokaz_pliki_local_connector', 0, 3, 1).
+python_method('TestOrientQuery', 'test_run_prefix_shell', 0, 3, 1).
+python_method('TestOrientQuery', 'test_disk_space_shell_nl', 0, 2, 1).
+python_method('TestOrientQuery', 'test_invoice_workflow_hint', 0, 2, 1).
+python_class('nlp-service/tests/test_orientation.py', 'TestResolveIntentOrientation').
+python_method('TestResolveIntentOrientation', 'test_lista_plikow_usera_short_circuit_shell', 0, 7, 1).
+python_method('TestResolveIntentOrientation', 'test_registry_list_short_circuit_mullm_files', 0, 4, 1).
 python_class('nlp-service/tests/test_parser_rules.py', 'TestParseInvoice').
 python_method('TestParseInvoice', 'test_parse_invoice_simple', 0, 6, 1).
 python_method('TestParseInvoice', 'test_parse_invoice_missing_data', 0, 4, 1).
@@ -2094,7 +2139,7 @@ python_method('TestParserSource', 'test_rules_mode', 1, 2, 2).
 python_class('nlp-service/tests/test_routing_resolve.py', 'TestResolveIntent').
 python_method('TestResolveIntent', 'test_invoice_rules_path', 0, 6, 2).
 python_method('TestResolveIntent', 'test_unknown_intent', 0, 4, 1).
-python_method('TestResolveIntent', 'test_native_file_list_route', 0, 4, 2).
+python_method('TestResolveIntent', 'test_native_file_list_route', 0, 4, 1).
 python_method('TestResolveIntent', 'test_decision_serializable', 0, 4, 2).
 python_class('nlp-service/tests/test_routing_resolve.py', 'TestOrchestratorRoutingField').
 python_method('TestOrchestratorRoutingField', 'test_start_conversation_includes_routing', 1, 4, 4).
@@ -2286,36 +2331,38 @@ sumd_deploy_compose_file('docker-compose.yml').
 
 ## Call Graph
 
-*217 nodes · 234 edges · 41 modules · CC̄=2.9*
+*220 nodes · 237 edges · 42 modules · CC̄=2.9*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
 | `_execute_workflow` *(in backend.app.engine)* | 11 ⚠ | 2 | 42 | **44** |
+| `resolve_intent` *(in nlp-service.app.routing.resolve)* | 18 ⚠ | 1 | 31 | **32** |
 | `_actions_from_yaml_areas` *(in nlp-service.app.governance.bootstrap)* | 14 ⚠ | 1 | 26 | **27** |
+| `orient_query` *(in nlp-service.app.routing.orientation)* | 13 ⚠ | 2 | 21 | **23** |
 | `websocket_chat` *(in nlp-service.app.main)* | 10 ⚠ | 0 | 23 | **23** |
-| `resolve_intent` *(in nlp-service.app.routing.resolve)* | 12 ⚠ | 1 | 22 | **23** |
 | `stream_workflow` *(in backend.app.routers.workflow)* | 2 | 0 | 22 | **22** |
 | `chat_message` *(in backend.app.routers.chat)* | 12 ⚠ | 0 | 21 | **21** |
 | `map_to_dsl` *(in nlp-service.app.mapper)* | 8 | 3 | 17 | **20** |
-| `parse_llm` *(in nlp-service.app.parser_llm)* | 3 | 4 | 16 | **20** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/wronai/nlp2dsl
-# generated in 0.15s
-# nodes: 217 | edges: 234 | modules: 41
+# generated in 0.18s
+# nodes: 220 | edges: 237 | modules: 42
 # CC̄=2.9
 
 HUBS[20]:
   backend.app.engine._execute_workflow
     CC=11  in:2  out:42  total:44
+  nlp-service.app.routing.resolve.resolve_intent
+    CC=18  in:1  out:31  total:32
   nlp-service.app.governance.bootstrap._actions_from_yaml_areas
     CC=14  in:1  out:26  total:27
+  nlp-service.app.routing.orientation.orient_query
+    CC=13  in:2  out:21  total:23
   nlp-service.app.main.websocket_chat
     CC=10  in:0  out:23  total:23
-  nlp-service.app.routing.resolve.resolve_intent
-    CC=12  in:1  out:22  total:23
   backend.app.routers.workflow.stream_workflow
     CC=2  in:0  out:22  total:22
   backend.app.routers.chat.chat_message
@@ -2324,30 +2371,28 @@ HUBS[20]:
     CC=8  in:3  out:17  total:20
   nlp-service.app.parser_llm.parse_llm
     CC=3  in:4  out:16  total:20
-  nlp2dsl_sdk.demos._print_workflow_preview
-    CC=4  in:3  out:16  total:19
-  nlp2dsl_sdk.demos.run_action_catalog_demo
-    CC=6  in:0  out:19  total:19
   nlp-service.app.governance.config._build_access_config
     CC=7  in:1  out:18  total:19
-  worker.worker._deliver_notification
-    CC=5  in:3  out:16  total:19
+  nlp2dsl_sdk.demos.run_action_catalog_demo
+    CC=6  in:0  out:19  total:19
   nlp-service.app.audio_parser.stt_audio
     CC=9  in:5  out:14  total:19
-  nlp-service.app.settings.SettingsManager.set
-    CC=4  in:7  out:11  total:18
-  nlp-service.app.conversation.orchestrator._process_message
-    CC=6  in:2  out:16  total:18
+  worker.worker._deliver_notification
+    CC=5  in:3  out:16  total:19
+  nlp2dsl_sdk.demos._print_workflow_preview
+    CC=4  in:3  out:16  total:19
   backend.app.routers.chat._proxy_chat_payload
     CC=9  in:2  out:16  total:18
+  nlp2dsl_sdk.demos._print_execution_result
+    CC=5  in:7  out:11  total:18
+  nlp-service.app.settings.SettingsManager.set
+    CC=4  in:7  out:11  total:18
   nlp-service.app.governance.config._search_paths
     CC=6  in:1  out:17  total:18
   nlp-service.app.system_executor._exec_file_read
     CC=9  in:0  out:18  total:18
-  nlp2dsl_sdk.demos._print_execution_result
-    CC=5  in:7  out:11  total:18
-  worker.worker.handle_generate_code
-    CC=5  in:0  out:17  total:17
+  nlp-service.app.conversation.orchestrator._process_message
+    CC=6  in:2  out:16  total:18
 
 MODULES:
   backend.app.engine  [7 funcs]
@@ -2452,7 +2497,7 @@ MODULES:
     _matched_effect  CC=3  out:4
     _scheme_decision  CC=3  out:2
     _unknown_agent_decision  CC=4  out:3
-  nlp-service.app.main  [14 funcs]
+  nlp-service.app.main  [15 funcs]
     _run_parser  CC=7  out:9
     access_check  CC=3  out:6
     access_config  CC=3  out:12
@@ -2491,6 +2536,9 @@ MODULES:
   nlp-service.app.routing.observability  [2 funcs]
     record_intent_decision  CC=7  out:4
     routing_metrics_snapshot  CC=1  out:1
+  nlp-service.app.routing.orientation  [2 funcs]
+    _is_file_list_query  CC=5  out:8
+    orient_query  CC=13  out:21
   nlp-service.app.routing.parser.facade  [1 funcs]
     parse_text  CC=8  out:8
   nlp-service.app.routing.parser.rules  [25 funcs]
@@ -2505,10 +2553,10 @@ MODULES:
     _extract_fallback_recipient  CC=7  out:5
     _extract_file_path_entity  CC=3  out:2
   nlp-service.app.routing.resolve  [4 funcs]
-    _intent_from_native  CC=3  out:8
     _intent_from_nlp  CC=2  out:7
+    _intent_from_orientation  CC=4  out:9
     _parser_source  CC=5  out:4
-    resolve_intent  CC=12  out:22
+    resolve_intent  CC=18  out:31
   nlp-service.app.settings  [2 funcs]
     set  CC=4  out:11
     _coerce_type  CC=5  out:6

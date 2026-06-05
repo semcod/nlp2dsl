@@ -33,7 +33,7 @@ from app.audio_parser import StreamingSTT, is_stt_available, stt_audio
 from app.code_generator import code_generator
 from app.config import settings as _svc_settings
 from app.logging_setup import RequestIDMiddleware, setup_logging
-from app.mapper import map_to_dsl
+from app.dsl.pipeline import map_to_dsl_with_enrichment
 from app.orchestrator import (
     continue_conversation,
     get_action_form,
@@ -49,6 +49,7 @@ from app.schemas import (
     DialogResponse,
     NLPRequest,
     NLPResult,
+    OrientRequest,
 )
 from app.settings import settings_manager
 from app.store.factory import get_conversation_store
@@ -81,6 +82,14 @@ LLM_FALLBACK_THRESHOLD = _svc_settings.llm_fallback_threshold
 # ── Endpoints ─────────────────────────────────────────────────
 
 
+@app.post("/nlp/orient")
+async def orient_text(req: OrientRequest) -> dict[str, Any]:
+    """Orientacja zapytania (file_list / shell / workflow) — bez LLM, przed pełnym parse."""
+    from app.routing.orientation import orient_query
+
+    return orient_query(req.text, connector=req.connector).to_dict()
+
+
 @app.post("/nlp/parse", response_model=NLPResult)
 async def parse_text(req: NLPRequest) -> NLPResult:
     """
@@ -108,7 +117,7 @@ async def text_to_dsl(req: NLPRequest) -> DialogResponse:
             },
         )
 
-    return map_to_dsl(nlp_result)
+    return await map_to_dsl_with_enrichment(nlp_result)
 
 
 @app.get("/nlp/access/config")
@@ -456,36 +465,14 @@ async def get_supported_languages() -> dict[str, Any]:
 
 async def _run_parser(req: NLPRequest) -> NLPResult:
     """Execute parser according to mode."""
-    mode = req.mode
+    from app.routing.parser.resolve_mode import parse_with_mode
 
-    if mode == "rules":
-        return parse_rules(req.text)
-
-    if mode == "llm":
-        provider = _detect_provider()
-        if provider == "none":
-            raise HTTPException(
-                status_code=HTTPStatus.SERVICE_UNAVAILABLE,
-                detail="No LLM provider configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or OLLAMA_URL.",
-            )
-        return await parse_llm(req.text)
-
-    # mode == "auto": rules first, LLM fallback
-    rules_result = parse_rules(req.text)
-
-    if rules_result.intent.confidence >= LLM_FALLBACK_THRESHOLD:
-        log.info("Rules parser sufficient (confidence=%.2f)", rules_result.intent.confidence)
-        return rules_result
-
-    # Try LLM if available
-    provider = _detect_provider()
-    if provider != "none":
-        log.info("Rules confidence too low (%.2f), trying LLM…", rules_result.intent.confidence)
-        llm_result = await parse_llm(req.text)
-        if llm_result.intent.confidence > rules_result.intent.confidence:
-            return llm_result
-
-    return rules_result
+    if req.mode == "llm" and _detect_provider() == "none":
+        raise HTTPException(
+            status_code=HTTPStatus.SERVICE_UNAVAILABLE,
+            detail="No LLM provider configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or OLLAMA_URL.",
+        )
+    return await parse_with_mode(req.text, req.mode)
 
 
 # ── WebSocket Voice Chat ───────────────────────────────────────

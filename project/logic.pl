@@ -1,5 +1,5 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('nlp2dsl', '0.0.14', 'python').
+project_metadata('nlp2dsl', '0.0.15', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('.pfix-test-wrapper.sh', 16, 'shell').
@@ -16,7 +16,7 @@ project_file('backend/app/routers/__init__.py', 1, 'python').
 project_file('backend/app/routers/chat.py', 125, 'python').
 project_file('backend/app/routers/settings.py', 82, 'python').
 project_file('backend/app/routers/system.py', 30, 'python').
-project_file('backend/app/routers/workflow.py', 190, 'python').
+project_file('backend/app/routers/workflow.py', 200, 'python').
 project_file('backend/app/schemas.py', 65, 'python').
 project_file('backend/app/workflow.py', 23, 'python').
 project_file('backend/app/workflow_events.py', 92, 'python').
@@ -65,7 +65,7 @@ project_file('nlp-service/app/governance/config.py', 166, 'python').
 project_file('nlp-service/app/governance/policy.py', 303, 'python').
 project_file('nlp-service/app/governance/uri_match.py', 43, 'python').
 project_file('nlp-service/app/logging_setup.py', 101, 'python').
-project_file('nlp-service/app/main.py', 584, 'python').
+project_file('nlp-service/app/main.py', 593, 'python').
 project_file('nlp-service/app/mapper.py', 6, 'python').
 project_file('nlp-service/app/orchestrator.py', 22, 'python').
 project_file('nlp-service/app/parser_llm.py', 6, 'python').
@@ -73,16 +73,17 @@ project_file('nlp-service/app/parser_rules.py', 6, 'python').
 project_file('nlp-service/app/parsing/__init__.py', 4, 'python').
 project_file('nlp-service/app/parsing/facade.py', 6, 'python').
 project_file('nlp-service/app/registry.py', 391, 'python').
-project_file('nlp-service/app/routing/__init__.py', 15, 'python').
-project_file('nlp-service/app/routing/intent.py', 54, 'python').
+project_file('nlp-service/app/routing/__init__.py', 18, 'python').
+project_file('nlp-service/app/routing/intent.py', 56, 'python').
 project_file('nlp-service/app/routing/native.py', 144, 'python').
 project_file('nlp-service/app/routing/observability.py', 58, 'python').
+project_file('nlp-service/app/routing/orientation.py', 285, 'python').
 project_file('nlp-service/app/routing/parser/__init__.py', 4, 'python').
 project_file('nlp-service/app/routing/parser/facade.py', 40, 'python').
 project_file('nlp-service/app/routing/parser/llm.py', 188, 'python').
 project_file('nlp-service/app/routing/parser/rules.py', 382, 'python').
-project_file('nlp-service/app/routing/resolve.py', 149, 'python').
-project_file('nlp-service/app/schemas.py', 132, 'python').
+project_file('nlp-service/app/routing/resolve.py', 195, 'python').
+project_file('nlp-service/app/schemas.py', 137, 'python').
 project_file('nlp-service/app/settings.py', 252, 'python').
 project_file('nlp-service/app/store/__init__.py', 31, 'python').
 project_file('nlp-service/app/store/factory.py', 47, 'python').
@@ -99,10 +100,11 @@ project_file('nlp-service/tests/test_access.py', 75, 'python').
 project_file('nlp-service/tests/test_execution_delegate.py', 25, 'python').
 project_file('nlp-service/tests/test_mapper.py', 252, 'python').
 project_file('nlp-service/tests/test_orchestrator.py', 222, 'python').
+project_file('nlp-service/tests/test_orientation.py', 69, 'python').
 project_file('nlp-service/tests/test_parser_rules.py', 237, 'python').
 project_file('nlp-service/tests/test_registry.py', 169, 'python').
 project_file('nlp-service/tests/test_routing_observability.py', 42, 'python').
-project_file('nlp-service/tests/test_routing_resolve.py', 66, 'python').
+project_file('nlp-service/tests/test_routing_resolve.py', 62, 'python').
 project_file('nlp-service/tests/test_store.py', 193, 'python').
 project_file('nlp-service/tests/test_system_executor.py', 422, 'python').
 project_file('nlp2dsl_sdk/__init__.py', 34, 'python').
@@ -164,6 +166,7 @@ python_function('backend/app/routers/settings.py', 'reset_settings', 1, 1, 4).
 python_function('backend/app/routers/system.py', 'system_execute', 1, 2, 5).
 python_function('backend/app/routers/workflow.py', '_format_sse', 2, 5, 4).
 python_function('backend/app/routers/workflow.py', '_workflow_snapshot', 1, 1, 1).
+python_function('backend/app/routers/workflow.py', 'orient_nlp', 1, 2, 4).
 python_function('backend/app/routers/workflow.py', 'list_actions', 0, 1, 1).
 python_function('backend/app/routers/workflow.py', 'run_workflow_endpoint', 1, 1, 2).
 python_function('backend/app/routers/workflow.py', 'start_workflow_endpoint', 1, 1, 2).
@@ -262,6 +265,7 @@ python_function('nlp-service/app/governance/uri_match.py', 'uri_matches', 2, 8, 
 python_function('nlp-service/app/governance/uri_match.py', 'scheme_allowed', 2, 5, 2).
 python_function('nlp-service/app/logging_setup.py', 'get_request_id', 0, 1, 1).
 python_function('nlp-service/app/logging_setup.py', 'setup_logging', 2, 3, 9).
+python_function('nlp-service/app/main.py', 'orient_text', 1, 1, 3).
 python_function('nlp-service/app/main.py', 'parse_text', 1, 1, 2).
 python_function('nlp-service/app/main.py', 'text_to_dsl', 1, 2, 4).
 python_function('nlp-service/app/main.py', 'access_config', 0, 3, 5).
@@ -305,6 +309,14 @@ python_function('nlp-service/app/routing/native.py', '_best_alias_for_action', 4
 python_function('nlp-service/app/routing/observability.py', 'record_intent_decision', 1, 7, 4).
 python_function('nlp-service/app/routing/observability.py', 'routing_metrics_snapshot', 0, 1, 1).
 python_function('nlp-service/app/routing/observability.py', 'reset_routing_metrics', 0, 1, 1).
+python_function('nlp-service/app/routing/orientation.py', '_has_registry_hint', 1, 2, 2).
+python_function('nlp-service/app/routing/orientation.py', '_has_host_hint', 1, 3, 2).
+python_function('nlp-service/app/routing/orientation.py', '_is_file_list_query', 1, 5, 4).
+python_function('nlp-service/app/routing/orientation.py', '_file_list_scope', 1, 8, 5).
+python_function('nlp-service/app/routing/orientation.py', '_host_list_root', 0, 3, 2).
+python_function('nlp-service/app/routing/orientation.py', '_normalize_orient_path', 2, 3, 2).
+python_function('nlp-service/app/routing/orientation.py', '_resolve_file_list_host_command', 1, 7, 7).
+python_function('nlp-service/app/routing/orientation.py', 'orient_query', 1, 15, 14).
 python_function('nlp-service/app/routing/parser/facade.py', 'parse_text', 2, 8, 6).
 python_function('nlp-service/app/routing/parser/llm.py', 'parse_llm', 1, 3, 11).
 python_function('nlp-service/app/routing/parser/llm.py', '_detect_provider', 0, 10, 1).
@@ -338,7 +350,8 @@ python_function('nlp-service/app/routing/resolve.py', '_parser_source', 1, 5, 4)
 python_function('nlp-service/app/routing/resolve.py', '_intent_from_native', 1, 3, 3).
 python_function('nlp-service/app/routing/resolve.py', '_intent_from_nlp', 2, 2, 4).
 python_function('nlp-service/app/routing/resolve.py', '_apply_auth', 2, 4, 1).
-python_function('nlp-service/app/routing/resolve.py', 'resolve_intent', 1, 12, 14).
+python_function('nlp-service/app/routing/resolve.py', '_intent_from_orientation', 2, 4, 6).
+python_function('nlp-service/app/routing/resolve.py', 'resolve_intent', 1, 18, 17).
 python_function('nlp-service/app/settings.py', '_coerce_type', 2, 5, 5).
 python_function('nlp-service/app/store/factory.py', 'get_conversation_store', 0, 4, 5).
 python_function('nlp-service/integrations/loader.py', '_integration_names', 0, 5, 4).
@@ -353,7 +366,7 @@ python_function('nlp-service/tests/test_access.py', 'test_config_loads_areas', 0
 python_function('nlp-service/tests/test_access.py', 'test_uri_match_mullm', 0, 4, 1).
 python_function('nlp-service/tests/test_access.py', 'test_files_agent_can_list', 0, 3, 1).
 python_function('nlp-service/tests/test_access.py', 'test_mail_agent_denied_mullm_execute', 0, 2, 1).
-python_function('nlp-service/tests/test_access.py', 'test_native_lista_plikow', 0, 3, 1).
+python_function('nlp-service/tests/test_access.py', 'test_native_lista_plikow_registry', 0, 3, 1).
 python_function('nlp-service/tests/test_access.py', 'test_registry_has_yaml_action', 0, 3, 2).
 python_function('nlp-service/tests/test_execution_delegate.py', 'test_mullm_shell_delegated', 0, 3, 2).
 python_function('nlp-service/tests/test_execution_delegate.py', 'test_invoice_worker_backend', 0, 2, 1).
@@ -635,6 +648,8 @@ python_method('RequestIDMiddleware', 'dispatch', 2, 2, 5).
 python_class('nlp-service/app/routing/intent.py', 'IntentDecision').
 python_method('IntentDecision', 'to_dict', 0, 1, 0).
 python_method('IntentDecision', 'to_nlp_result', 1, 3, 3).
+python_class('nlp-service/app/routing/orientation.py', 'OrientationResult').
+python_method('OrientationResult', 'to_dict', 0, 1, 0).
 python_class('nlp-service/app/schemas.py', 'NLPIntent').
 python_class('nlp-service/app/schemas.py', 'NLPEntities').
 python_class('nlp-service/app/schemas.py', 'NLPResult').
@@ -642,6 +657,7 @@ python_class('nlp-service/app/schemas.py', 'DSLStep').
 python_class('nlp-service/app/schemas.py', 'WorkflowDSL').
 python_class('nlp-service/app/schemas.py', 'DialogResponse').
 python_class('nlp-service/app/schemas.py', 'NLPRequest').
+python_class('nlp-service/app/schemas.py', 'OrientRequest').
 python_class('nlp-service/app/schemas.py', 'ConversationState').
 python_class('nlp-service/app/schemas.py', 'FieldSchema').
 python_class('nlp-service/app/schemas.py', 'ActionFormSchema').
@@ -726,6 +742,17 @@ python_method('TestGetActionForm', 'test_action_form_nonexistent', 0, 2, 1).
 python_class('nlp-service/tests/test_orchestrator.py', 'TestMergeIntoState').
 python_method('TestMergeIntoState', 'test_merge_updates_intent', 0, 3, 5).
 python_method('TestMergeIntoState', 'test_merge_preserves_existing', 0, 4, 5).
+python_class('nlp-service/tests/test_orientation.py', 'TestOrientQuery').
+python_method('TestOrientQuery', 'test_lista_plikow_usera_host_default_mullm', 0, 5, 1).
+python_method('TestOrientQuery', 'test_lista_plikow_github_path_hint', 0, 4, 1).
+python_method('TestOrientQuery', 'test_lista_plikow_usera_registry', 0, 3, 1).
+python_method('TestOrientQuery', 'test_pokaz_pliki_local_connector', 0, 3, 1).
+python_method('TestOrientQuery', 'test_run_prefix_shell', 0, 3, 1).
+python_method('TestOrientQuery', 'test_disk_space_shell_nl', 0, 2, 1).
+python_method('TestOrientQuery', 'test_invoice_workflow_hint', 0, 2, 1).
+python_class('nlp-service/tests/test_orientation.py', 'TestResolveIntentOrientation').
+python_method('TestResolveIntentOrientation', 'test_lista_plikow_usera_short_circuit_shell', 0, 7, 1).
+python_method('TestResolveIntentOrientation', 'test_registry_list_short_circuit_mullm_files', 0, 4, 1).
 python_class('nlp-service/tests/test_parser_rules.py', 'TestParseInvoice').
 python_method('TestParseInvoice', 'test_parse_invoice_simple', 0, 6, 1).
 python_method('TestParseInvoice', 'test_parse_invoice_missing_data', 0, 4, 1).
@@ -788,7 +815,7 @@ python_method('TestParserSource', 'test_rules_mode', 1, 2, 2).
 python_class('nlp-service/tests/test_routing_resolve.py', 'TestResolveIntent').
 python_method('TestResolveIntent', 'test_invoice_rules_path', 0, 6, 2).
 python_method('TestResolveIntent', 'test_unknown_intent', 0, 4, 1).
-python_method('TestResolveIntent', 'test_native_file_list_route', 0, 4, 2).
+python_method('TestResolveIntent', 'test_native_file_list_route', 0, 4, 1).
 python_method('TestResolveIntent', 'test_decision_serializable', 0, 4, 2).
 python_class('nlp-service/tests/test_routing_resolve.py', 'TestOrchestratorRoutingField').
 python_method('TestOrchestratorRoutingField', 'test_start_conversation_includes_routing', 1, 4, 4).

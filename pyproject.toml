@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nlp2dsl"
-version = "0.0.15"
+version = "0.0.16"
 description = "Reusable Python SDK for the NLP2DSL platform"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,6 +17,7 @@ license = "Apache-2.0"
 Homepage = "https://github.com/wronai/nlp2dsl"
 
 [project.scripts]
+nlp2dsl = "nlp2dsl_sdk.cli:main"
 nlp2dsl-demo = "nlp2dsl_sdk.__main__:main"
 
 [tool.pytest.ini_options]

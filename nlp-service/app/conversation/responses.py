@@ -7,7 +7,7 @@ import logging
 from typing import Callable
 
 from app.dsl.forms import get_action_form
-from app.dsl.mapper import map_to_dsl
+from app.dsl.pipeline import map_to_dsl_with_enrichment
 from app.execution.system import SYSTEM_EXECUTORS
 from app.execution.delegate import execution_backend_for_intent
 from app.registry import SYSTEM_ACTIONS
@@ -55,7 +55,7 @@ def _is_execute_or_continue(text: str) -> bool:
     return any(kw in text_lower for kw in _EXECUTE_KEYWORDS)
 
 
-def check_execute_keyword(state: ConversationState, text: str) -> ConversationResponse | None:
+async def check_execute_keyword(state: ConversationState, text: str) -> ConversationResponse | None:
     if not _is_execute_or_continue(text):
         return None
     if state.status == "ready" and state.dsl:
@@ -70,7 +70,7 @@ def check_execute_keyword(state: ConversationState, text: str) -> ConversationRe
             dsl=state.dsl,
         )
     if state.intent and state.intent != "unknown" and state.status == "in_progress":
-        return build_incomplete_response(state)
+        return await build_incomplete_response(state)
     return None
 
 
@@ -130,8 +130,8 @@ def handle_system_action(state: ConversationState) -> ConversationResponse | Non
     )
 
 
-def build_and_check_dsl(state: ConversationState) -> ConversationResponse | None:
-    dialog = map_to_dsl(_nlp_from_state(state))
+async def build_and_check_dsl(state: ConversationState) -> ConversationResponse | None:
+    dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
     if not (dialog.status == "complete" and dialog.workflow):
         return None
 
@@ -154,8 +154,8 @@ def build_and_check_dsl(state: ConversationState) -> ConversationResponse | None
     )
 
 
-def build_incomplete_response(state: ConversationState) -> ConversationResponse:
-    dialog = map_to_dsl(_nlp_from_state(state))
+async def build_incomplete_response(state: ConversationState) -> ConversationResponse:
+    dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
     state.missing = dialog.missing_fields
     question = dialog.prompt_user or "Podaj brakujące dane."
 

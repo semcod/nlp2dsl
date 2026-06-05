@@ -32,11 +32,14 @@ ACTIONS_REGISTRY: dict[str, dict] = {
     "send_email": {
         "description": "Wysyła e-mail",
         "required": ["to"],
+        "quality_required": ["body"],
         "optional": {"subject": "Automatyczna wiadomość", "body": ""},
         "aliases": [
             "email", "e-mail",
             "wyślij email", "wyślij maila", "send email", "napisz maila",
             "wiadomość", "napisz do", "napisz wiadomość", "wyślij wiadomość",
+            "maila", "maila do",
+            "przypomnij", "przypomnienie", "remind",
         ],
         "param_aliases": {
             "temat": "subject",
@@ -82,10 +85,11 @@ ACTIONS_REGISTRY: dict[str, dict] = {
     "notify_slack": {
         "description": "Wysyła powiadomienie Slack",
         "required": ["channel"],
-        "optional": {"message": "Automatyczne powiadomienie"},
+        "quality_required": ["message"],
+        "optional": {"message": ""},
         "aliases": [
             "slack", "powiadomienie", "powiadom", "notify",
-            "wyślij na slack", "notify slack", "slack notification",
+            "wyślij na slack", "wyślij go na", "notify slack", "slack notification",
         ],
         "param_aliases": {
             "kanał": "channel",
@@ -95,7 +99,8 @@ ACTIONS_REGISTRY: dict[str, dict] = {
     "notify_telegram": {
         "description": "Wysyła powiadomienie Telegram",
         "required": ["chat_id"],
-        "optional": {"message": "Automatyczne powiadomienie"},
+        "quality_required": ["message"],
+        "optional": {"message": ""},
         "aliases": [
             "telegram", "telegramie", "powiadomienie telegram", "notify telegram",
             "wyślij na telegram", "telegram notification",
@@ -110,7 +115,8 @@ ACTIONS_REGISTRY: dict[str, dict] = {
     "notify_teams": {
         "description": "Wysyła powiadomienie Microsoft Teams",
         "required": ["channel"],
-        "optional": {"message": "Automatyczne powiadomienie"},
+        "quality_required": ["message"],
+        "optional": {"message": ""},
         "aliases": [
             "teams", "microsoft teams", "powiadomienie teams", "notify teams",
             "wyślij na teams",
@@ -130,9 +136,10 @@ ACTIONS_REGISTRY: dict[str, dict] = {
         "optional": {"language": "python", "context": None, "include_tests": False},
         "aliases": [
             "generuj kod", "napisz kod", "stwórz kod", "stwórz", "generate code",
-            "write code", "create code", "kod", "program", "funkcja",
+            "write code", "create code", "kod", "program", "funkcja", "funkcję",
             "klasa", "skrypt", "aplikacja", "moduł", "implementuj",
-            "napisz funkcję", "stwórz klasę", "zaimplementuj", "stwórz api",
+            "napisz funkcję", "napisz w pythonie", "w pythonie", "w javie",
+            "stwórz klasę", "zaimplementuj", "stwórz api",
         ],
         "param_aliases": {
             "język": "language",
@@ -388,3 +395,9 @@ def get_defaults(action: str) -> dict:
     """Zwróć domyślne wartości opcjonalnych pól."""
     meta = ACTIONS_REGISTRY.get(action, {})
     return dict(meta.get("optional", {}))
+
+
+def get_quality_required_fields(action: str) -> list[str]:
+    """Pola wymagane jakościowo — puste wartości blokują status complete."""
+    meta = ACTIONS_REGISTRY.get(action, {})
+    return list(meta.get("quality_required", []))

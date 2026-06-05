@@ -33,8 +33,8 @@ class WorkflowRunModel(Base):
     status = Column(String(32), nullable=False, index=True)
     trigger = Column(String(32), default="manual")
     steps = Column(JSONB, default=list)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC), index=True)
-    updated_at = Column(DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC))
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC).replace(tzinfo=None), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC).replace(tzinfo=None), onupdate=lambda: datetime.now(UTC).replace(tzinfo=None))
 
     def to_dict(self) -> dict:
         return {
@@ -94,7 +94,7 @@ class PostgresWorkflowRepo(WorkflowRepo):
         await self._ensure_tables()
 
         async with self._get_session_factory()() as session:
-            now = datetime.now(UTC)
+            now = datetime.now(UTC).replace(tzinfo=None)
             statement = pg_insert(WorkflowRunModel).values(
                 id=workflow_id,
                 name=name,
@@ -124,7 +124,7 @@ class PostgresWorkflowRepo(WorkflowRepo):
         async with self._get_session_factory()() as session:
             await session.execute(
                 text("UPDATE workflow_runs SET status = :status, updated_at = :now WHERE id = :id"),
-                {"status": status, "now": datetime.now(UTC), "id": workflow_id},
+                {"status": status, "now": datetime.now(UTC).replace(tzinfo=None), "id": workflow_id},
             )
             await session.commit()
 
