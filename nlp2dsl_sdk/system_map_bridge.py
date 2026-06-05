@@ -12,12 +12,16 @@ from .system_map_ir import (
     ConversationPolicyIR,
     FieldSpec,
     MimeTypeSpec,
+    ProcessAccessScopeIR,
+    ProcessPathsIR,
+    ProcessPolicyIR,
     ProtocolSpec,
     ResourceSpecIR,
     RuntimeSpecIR,
     SystemMapIR,
 )
 from .system_map_runtimes import build_runtimes_for_example, load_example_profile, resolve_command_runtime
+from .process_policy import apply_process_policies
 
 # Bootstrap field schemas when services.yaml omits required/optional
 _COMMAND_FIELDS: dict[str, tuple[list[str], list[str]]] = {
@@ -38,6 +42,44 @@ def _mime_for_artifact(art: DoqlArtifact) -> MimeTypeSpec | None:
     if path.endswith(".txt"):
         return MimeTypeSpec(type="text/plain", schema_ref="InvoiceMetadata")
     return None
+
+
+def _process_from_ctx(ctx) -> ProcessPolicyIR:
+    proc = getattr(ctx, "process", None)
+    if proc is None:
+        return ProcessPolicyIR()
+    if isinstance(proc, ProcessPolicyIR):
+        return proc
+    return ProcessPolicyIR(
+        mode=getattr(proc, "mode", "balanced"),
+        nlp_parser=getattr(proc, "nlp_parser", "auto"),
+        nlp_confidence_min=float(getattr(proc, "nlp_confidence_min", 0.5)),
+        nlp_enrich_missing=bool(getattr(proc, "nlp_enrich_missing", False)),
+        llm_reasoning=getattr(proc, "llm_reasoning", "shallow"),
+        llm_temperature=getattr(proc, "llm_temperature", None),
+        autonomous_enabled=bool(getattr(proc, "autonomous_enabled", True)),
+        autonomous_max_rounds=int(getattr(proc, "autonomous_max_rounds", 8)),
+        ask_user=getattr(proc, "ask_user", "when_exhausted"),
+        intract_gate=bool(getattr(proc, "intract_gate", False)),
+        intract_enforce_clarification=bool(getattr(proc, "intract_enforce_clarification", False)),
+        access=ProcessAccessScopeIR(
+            agent=str(getattr(proc, "agent", "") or getattr(getattr(proc, "access", None), "agent", "")),
+            allow_resource_areas=list(
+                getattr(proc, "allow_resource_areas", None)
+                or getattr(getattr(proc, "access", None), "allow_resource_areas", [])
+                or []
+            ),
+            deny_resource_areas=list(
+                getattr(proc, "deny_resource_areas", None)
+                or getattr(getattr(proc, "access", None), "deny_resource_areas", [])
+                or []
+            ),
+        ),
+        paths=ProcessPathsIR(
+            read=list(getattr(proc, "paths_read", None) or getattr(getattr(proc, "paths", None), "read", []) or []),
+            write=list(getattr(proc, "paths_write", None) or getattr(getattr(proc, "paths", None), "write", []) or []),
+        ),
+    )
 
 
 def task_context_to_system_map(ctx: DoqlTaskContext, *, example_dir: Path | str | None = None) -> SystemMapIR:
@@ -86,7 +128,7 @@ def task_context_to_system_map(ctx: DoqlTaskContext, *, example_dir: Path | str 
             environment=ctx.environment,
         )
 
-    return SystemMapIR(
+    ir = SystemMapIR(
         example_id=ctx.example_name,
         environment=dict(ctx.environment),
         data=dict(ctx.data),
@@ -127,8 +169,14 @@ def task_context_to_system_map(ctx: DoqlTaskContext, *, example_dir: Path | str 
             generate_invoice_if_missing=ctx.generate_invoice_if_missing,
             sync_auto_execute=ctx.sync_auto_execute,
         ),
+        process=_process_from_ctx(ctx),
         metadata={"source": "doql_context.bootstrap"},
     )
+    if example_dir is not None:
+        root = Path(example_dir).resolve()
+        repo_root = root.parent.parent if root.parent.name == "examples" else root.parent
+        apply_process_policies(ir, example_id=ctx.example_name, repo_root=repo_root)
+    return ir
 
 
 def _command_to_ir(cmd: DoqlCommand, *, profile: dict | None = None) -> CommandSchemaIR:

@@ -19,13 +19,12 @@ def _example_dir() -> Path:
     return Path(__file__).resolve().parent
 
 
-def _run_autonomous(client: NLP2DSLClient, *, attachment: bool = False) -> dict[str, Any]:
-    doql_path = ensure_doql_registry(_example_dir(), attachment=attachment)
+def _run_autonomous(client: NLP2DSLClient) -> dict[str, Any]:
+    doql_path = ensure_doql_registry(_example_dir())
     print(f"📄 DOQL context: {doql_path.relative_to(_example_dir())}\n")
 
     flow = AutonomousFlow(client, reflect=True)
-    task = "Wyślij fakturę do klient@firma.pl" if attachment else INVOICE_TASK
-    result = flow.run_task(task)
+    result = flow.run_task(INVOICE_TASK)
     flow.save_artifacts(_example_dir())
     return result
 
@@ -42,8 +41,6 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
     if mode == "one-shot":
         preview_text_examples(client, "", [INVOICE_PROMPT], finalize_artifacts=False)
         result = execute_from_text(client, INVOICE_PROMPT, label="Wykonywanie z zapytania NLP")
-    elif mode == "attachment":
-        result = _run_autonomous(client, attachment=True)
     else:
         result = _run_autonomous(client)
 

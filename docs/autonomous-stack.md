@@ -1,56 +1,87 @@
-# Autonomiczny stack (compose + cron)
+# Autonomiczny stack — dwie warstwy
 
-Przykład [`13-autonomous-invoice-stack`](../examples/13-autonomous-invoice-stack/) pokazuje pełny proces:
+## Warstwa 1 — infrastruktura (Docker Compose)
 
-1. **Registry** — `environment.doql.less` jako live mapa (runtimes, commands, data, schedules, deploy)
-2. **Autonomiczna pętla** — `autonomous_loop` + `ReflectionReport` (walidacja przed `ready`)
-3. **Multi-turn** — złożone polecenia NL (faktura + harmonogram) z uzupełnianiem braków
-4. **Generacja compose** — `nlp2dsl_sdk.compose_generator` emituje stack + cron
-5. **Nowe usługi** — stub `generated_services[]` gdy brakuje sidecar runnera
+**Cel:** uruchomić platformę NLP2DSL (serwisy, sieć, baza).
 
-## SDK
-
-```python
-from nlp2dsl_sdk.stack_flow import AutonomousStackFlow
-
-flow = AutonomousStackFlow(client, example_dir="examples/13-autonomous-invoice-stack")
-result = flow.run_phases()
-print(result.compose.up_command)
-```
-
-```python
-from nlp2dsl_sdk.compose_generator import generate_stack_compose
-from nlp2dsl_sdk.system_map_bridge import doql_file_to_system_map
-
-ir = doql_file_to_system_map(".nlp2dsl/registry/environment.doql.less")
-gen = generate_stack_compose(ir, example_dir="examples/13-autonomous-invoice-stack")
-```
-
-## SystemMapIR — nowe pola
-
-| Pole | Opis |
-|------|------|
-| `schedules[]` | `id`, `cron`, `task`, `workflow_action` |
-| `deploy` | ścieżki compose, profile Docker, cron service |
-| `generated_services[]` | stub Dockerfile pod `.nlp2dsl/generated/services/` |
-
-Renderowane w DOQL jako bloki `schedules[]`, `deploy {}`, `generated_services[]`.
-
-## Cron w Docker Compose
-
-Generator tworzy usługę `invoice-stack-cron` (Ofelia) z profilem `autonomous-stack`:
-
-- `ofelia.ini` — wpisy `[job-local]` per schedule
-- `run-scheduled-task.sh` — `curl` do `POST /workflow/run` na backendzie
-- mount `./examples:/examples:ro` na platformie (root `docker-compose.yml`)
-
-## Ograniczenia MVP
-
-| Aspekt | Stan |
+| Serwis | Rola |
 |--------|------|
-| Compose merge z platformą | dokumentowany `up_command` (3 pliki compose) |
-| Health-check runtimes przed autofill | planowane |
-| `generate_code` → rejestracja w ACTIONS_REGISTRY | planowane |
-| Post-exec TestQL VALIDATE file | planowane |
+| `backend` | API gateway, `/workflow/run` |
+| `nlp-service` | NLP → DSL, chat, autofill |
+| `worker` | wykonanie kroków (send_invoice, …) |
+| `postgres`, `redis` | persystencja |
 
-Zob. też [`process-agent.md`](process-agent.md), [`doql-dynamic-generation.md`](doql-dynamic-generation.md).
+```bash
+cd ~/github/wronai/nlp2dsl
+examples/13-autonomous-invoice-stack/.nlp2dsl/generated/up-platform.sh
+# albo: docker compose up -d
+```
+
+To **nie** jest jeszcze proces biznesowy — tylko środowisko.
+
+---
+
+## Warstwa 2 — proces (shell / curl / python)
+
+**Cel:** wykonać workflow **w ramach** działającej platformy.
+
+| Sposób | Narzędzie | Gdzie |
+|--------|-----------|--------|
+| Host | `run-process.sh` (curl → `localhost:8010`) | maszyna deweloperska |
+| Kontener jednorazowy | `process-shell` (curl → `backend:8000`) | sieć Docker |
+| Harmonogram | Ofelia + `run-process-docker.sh` | cron w `autonomous-invoice-stack-cron` |
+| Python (dev) | `python3 main.py` w `examples/…` | host → API platformy |
+
+### Jednorazowo (host)
+
+```bash
+sh examples/13-autonomous-invoice-stack/.nlp2dsl/generated/run-process.sh
+```
+
+### Jednorazowo (w sieci Docker — curl w kontenerze)
+
+```bash
+examples/13-autonomous-invoice-stack/.nlp2dsl/generated/run-process-in-docker.sh
+```
+
+### Cyklicznie (cron)
+
+```bash
+examples/13-autonomous-invoice-stack/.nlp2dsl/generated/up-stack.sh
+# Layer 1 (jeśli trzeba) + Layer 2 scheduler (Ofelia)
+```
+
+---
+
+## Diagram
+
+```mermaid
+flowchart TB
+  subgraph L1["Layer 1 — infrastruktura"]
+    DC[docker-compose.yml]
+    B[backend]
+    N[nlp-service]
+    W[worker]
+    DC --> B & N & W
+  end
+
+  subgraph L2["Layer 2 — proces"]
+    SH[run-process.sh / curl]
+    CRON[Ofelia cron]
+    PY[python3 main.py]
+  end
+
+  SH -->|POST /workflow/run| B
+  CRON -->|sh task.sh curl| B
+  PY -->|HTTP chat API| B
+  B --> W
+```
+
+---
+
+## Zasada
+
+> **Docker Compose = środowisko.**  
+> **Shell/curl/python = proces** uruchamiany *wewnątrz* tego środowiska (przez sieć Docker lub port hosta).
+
+Nie uruchamiaj drugiej kopii platformy — dodawaj tylko warstwę procesu (`process-shell`, cron) do tego samego projektu `nlp2dsl`.

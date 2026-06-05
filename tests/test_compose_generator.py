@@ -34,18 +34,20 @@ def test_generate_stack_compose_writes_artifacts(tmp_path: Path) -> None:
     result = generate_stack_compose(ir, example_dir=ex, example_id="13-autonomous-invoice-stack")
 
     assert result.stack_compose.is_file()
-    assert result.ofelia_ini.is_file()
+    assert result.crontab.is_file()
     assert result.run_script.is_file()
     assert result.manifest.is_file()
-    assert result.generated_services
+    assert (ex / ".nlp2dsl/generated/services/process-shell/Dockerfile").is_file()
+    assert (ex / ".nlp2dsl/generated/services/stack-cron/Dockerfile").is_file()
 
     payload = yaml.safe_load(result.stack_compose.read_text(encoding="utf-8"))
     assert "invoice-stack-cron" in payload["services"]
-    assert "autonomous-stack" in payload["services"]["invoice-stack-cron"]["profiles"]
+    assert "process-shell" in payload["services"]
+    assert "build" in payload["services"]["process-shell"]
 
-    ini = result.ofelia_ini.read_text(encoding="utf-8")
-    assert "0 9 * * *" in ini
-    assert "daily-invoice" in ini
+    crontab = result.crontab.read_text(encoding="utf-8")
+    assert "0 9 * * *" in crontab
+    assert "daily-invoice" in crontab
 
     manifest = yaml.safe_load(result.manifest.read_text(encoding="utf-8"))
     assert manifest["example_id"] == "13-autonomous-invoice-stack"
@@ -59,8 +61,6 @@ def test_enrich_ir_adds_defaults(tmp_path: Path) -> None:
     ir = SystemMapIR(example_id="13-autonomous-invoice-stack")
     result = generate_stack_compose(ir, example_dir=ex)
 
-    reg_content = (ex / ".nlp2dsl/registry/environment.doql.less")
-    # registry not auto-written by generator — schedules in manifest
     manifest = yaml.safe_load(result.manifest.read_text(encoding="utf-8"))
     assert len(manifest["schedules"]) >= 1
     assert manifest["deploy"]["target"] == "docker-compose"

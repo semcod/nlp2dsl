@@ -49,3 +49,35 @@ def runtime_unavailable_message(ctx: DoqlTaskContext, intent: str | None) -> str
             "Sprawdź profile Docker lub mapę runtimes w environment.doql.less."
         )
     return None
+
+
+def process_scope_blocked(
+    ctx: DoqlTaskContext,
+    *,
+    action: str | None,
+    resource_area: str | None,
+) -> str | None:
+    """Block when DOQL process_access denies the intent's resource area."""
+    if not action:
+        return None
+    proc = ctx.process
+    area = (resource_area or "").strip()
+    deny = set(proc.deny_resource_areas or [])
+    allow = set(proc.allow_resource_areas or [])
+
+    if area and area in deny:
+        return (
+            f"Akcja `{action}` (obszar `{area}`) jest zablokowana polityką procesu "
+            f"(process_access.deny_areas)."
+        )
+    if action.startswith("mullm_") and deny.intersection({"mullm:rag", "mullm", "mullm:*"}):
+        return (
+            f"Akcja `{action}` wymaga delegacji Mullm, a proces ma wycięty obszar Mullm "
+            f"(process_access.deny_areas)."
+        )
+    if allow and area and area not in allow:
+        return (
+            f"Akcja `{action}` (obszar `{area}`) nie należy do dozwolonych obszarów procesu "
+            f"({', '.join(sorted(allow))})."
+        )
+    return None

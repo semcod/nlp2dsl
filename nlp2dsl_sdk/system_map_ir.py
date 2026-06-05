@@ -133,6 +133,43 @@ class ConversationPolicyIR(BaseModel):
     sync_auto_execute: bool = False
 
 
+class ProcessAccessScopeIR(BaseModel):
+    """Process-level ACL scope (subset of platform grants)."""
+
+    agent: str = ""
+    allow_resource_areas: list[str] = Field(default_factory=list)
+    deny_resource_areas: list[str] = Field(default_factory=list)
+
+
+class ProcessPathsIR(BaseModel):
+    """Filesystem paths available to the process agent."""
+
+    read: list[str] = Field(default_factory=list)
+    write: list[str] = Field(default_factory=list)
+
+
+class ProcessPolicyIR(BaseModel):
+    """
+    Per-example process behaviour — workflow style, NLP/LLM, Intract, paths.
+
+    Merged from examples/example-profiles.yaml → rendered as process {} in DOQL.
+    """
+
+    mode: Literal["deterministic", "balanced", "reactive"] = "balanced"
+    nlp_parser: Literal["rules", "rules_first", "auto", "llm"] = "auto"
+    nlp_confidence_min: float = 0.5
+    nlp_enrich_missing: bool = False
+    llm_reasoning: Literal["shallow", "deep"] = "shallow"
+    llm_temperature: float | None = None
+    autonomous_enabled: bool = True
+    autonomous_max_rounds: int = 8
+    ask_user: Literal["never", "when_exhausted", "always_confirm"] = "when_exhausted"
+    intract_gate: bool = False
+    intract_enforce_clarification: bool = False
+    access: ProcessAccessScopeIR = Field(default_factory=ProcessAccessScopeIR)
+    paths: ProcessPathsIR = Field(default_factory=ProcessPathsIR)
+
+
 class ScheduleSpecIR(BaseModel):
     """Cron / trigger schedule bound to a workflow or NL task."""
 
@@ -187,6 +224,7 @@ class SystemMapIR(BaseModel):
     capabilities: list[str] = Field(default_factory=list)
     workflow_history: dict[str, Any] = Field(default_factory=dict)
     conversation: ConversationPolicyIR = Field(default_factory=ConversationPolicyIR)
+    process: ProcessPolicyIR = Field(default_factory=ProcessPolicyIR)
     schedules: list[ScheduleSpecIR] = Field(default_factory=list)
     deploy: DeploySpecIR | None = None
     generated_services: list[GeneratedServiceIR] = Field(default_factory=list)

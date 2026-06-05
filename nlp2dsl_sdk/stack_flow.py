@@ -130,8 +130,14 @@ class AutonomousStackFlow:
             )
         )
         print(f"\n📦 Stack compose: {compose.stack_compose.relative_to(self.example_dir)}")
-        print(f"⏰ Cron config:   {compose.ofelia_ini.relative_to(self.example_dir)}")
-        print(f"\n🚀 Uruchom stack:\n   {compose.up_command}")
+        print(f"⏰ Cron config:   {compose.crontab.relative_to(self.example_dir)}")
+        print("\n── Layer 1 (infrastruktura Docker) ──")
+        print("   .nlp2dsl/generated/up-platform.sh")
+        print("\n── Layer 2 (proces: shell/curl) ──")
+        print("   Host:    .nlp2dsl/generated/run-process.sh")
+        print("   Docker:  .nlp2dsl/generated/run-process-in-docker.sh")
+        print("\n── Layer 2 (harmonogram cron) ──")
+        print("   .nlp2dsl/generated/up-stack.sh")
 
         result.ok = (
             any(p.status == "executed" for p in result.phases)

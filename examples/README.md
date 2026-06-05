@@ -140,6 +140,40 @@ cd examples/02-email
 python3 main.py
 ```
 
+### CLI `nlp2dsl` z promptem (bez `main.py`)
+
+Po `docker compose up -d` i `pip install -e .` możesz wysłać to samo zdanie NL bezpośrednio z terminala — odpowiednik `workflow_from_text()` z przykładów 01–04:
+
+```bash
+# Podgląd DSL (bez wykonania na workerze)
+nlp2dsl run "Wyślij fakturę na 1500 PLN do klient@firma.pl"
+
+# Jak examples/01-invoice — parse + wykonanie (z katalogu przykładu ładuje DOQL + refleksję)
+cd examples/01-invoice   # opcjonalnie — auto-wykrycie .nlp2dsl/registry/
+nlp2dsl run "Wyślij fakturę na 1500 PLN do klient@firma.pl" --execute
+
+# Bez DOQL (same /workflow/from-text, bez autofill/walidacji załącznika)
+nlp2dsl run "Wyślij fakturę na 1500 PLN do klient@firma.pl" --execute --plain
+
+# Surowy JSON (status, dsl, execution)
+nlp2dsl run "Wyślij email do jan@example.com: treść wiadomości" --execute --json
+
+# Start dialogu (jak examples/05–07)
+nlp2dsl chat "Chcę wysłać fakturę"
+
+# Struktura zapytania IntentIR — ścieżka nlp2cmd, bez wykonania workflow MVP
+nlp2dsl show "znajdź pliki *.py w src" --plan
+```
+
+| Komenda | Backend :8010 | Wykonanie worker |
+|---------|---------------|------------------|
+| `nlp2dsl run "…"` | tak | nie (tylko DSL) |
+| `nlp2dsl run "…" --execute` | tak | tak |
+| `nlp2dsl chat "…"` | tak | nie (konwersacja) |
+| `nlp2dsl show "…"` | nie* | nie |
+
+\* `show` używa lokalnego `nlp2cmd-intent` (wymaga `pip install nlp2cmd-intent` lub `./scripts/setup-dev.sh`).
+
 ---
 
 ## Tryb interaktywny — rozmowa z nlp2dsl

@@ -12,6 +12,7 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from app.conversation.invoice_policy import invoice_attachment_policy_active
 from app.conversation.doql_autofill import (
     load_context_for_state,
     sync_autofill_from_doql,
@@ -38,10 +39,16 @@ class AutonomousResolveResult:
     exhausted: bool = False
 
 
+def _max_autonomous_rounds(ctx: DoqlTaskContext | None) -> int:
+    if ctx is None:
+        return _MAX_AUTONOMOUS_ROUNDS
+    return int(ctx.process.autonomous_max_rounds or _MAX_AUTONOMOUS_ROUNDS)
+
+
 def _autonomous_enabled(ctx: DoqlTaskContext | None) -> bool:
     if ctx is None:
         return False
-    return bool(ctx.autofill)
+    return bool(ctx.autofill and ctx.process.autonomous_enabled)
 
 
 def _example_dir() -> Path | None:
@@ -85,7 +92,7 @@ def _resolve_artifact_file(raw: str, ctx: DoqlTaskContext) -> str | None:
 
 
 def _try_fixture_attachment(state: ConversationState, ctx: DoqlTaskContext) -> str | None:
-    if not ctx.attachment_required and not state.attachment_required:
+    if not invoice_attachment_policy_active(ctx, state):
         return None
     current = str(state.entities.get("attachment_path", "")).strip()
     if current and _attachment_file_ok(current, ctx):
@@ -122,7 +129,7 @@ def _try_generate_attachment(state: ConversationState, ctx: DoqlTaskContext) -> 
         state.entities.pop("attachment_path", None)
     if not ctx.generate_invoice_if_missing:
         return None
-    if not ctx.attachment_required and not state.attachment_required:
+    if not invoice_attachment_policy_active(ctx, state):
         return None
     caps_ok = "generate_invoice" in ctx.capabilities or not ctx.capabilities
     if not caps_ok:
@@ -152,16 +159,9 @@ async def _try_validation_fixes(state: ConversationState, ctx: DoqlTaskContext) 
     issues = validate_step_config(intent, config)
     applied: list[str] = []
     attachment_issues = [i for i in issues if "attachment_path" in i]
-    if attachment_issues and not ctx.attachment_required and not state.attachment_required:
-        state.entities.pop("attachment_path", None)
-        if state.dsl and state.dsl.steps:
-            state.dsl.steps[0].config.pop("attachment_path", None)
-        return ["attachment_path cleared (opcjonalny)"]
-    if attachment_issues and (
-        ctx.attachment_required
-        or state.attachment_required
-        or str(config.get("attachment_path", "")).strip()
-    ):
+    if attachment_issues and not invoice_attachment_policy_active(ctx, state):
+        return []
+    if attachment_issues and invoice_attachment_policy_active(ctx, state):
         raw = str(config.get("attachment_path", "")).strip()
         if raw and not _attachment_file_ok(raw, ctx):
             state.entities.pop("attachment_path", None)
@@ -188,10 +188,11 @@ async def autonomous_resolve_turn(state: ConversationState) -> AutonomousResolve
 
     set_doql_context(ctx)
     steps: list[str] = list(state.autonomous_steps or [])
+    max_rounds = _max_autonomous_rounds(ctx)
 
-    for round_idx in range(_MAX_AUTONOMOUS_ROUNDS):
+    for round_idx in range(max_rounds):
         progress = False
-        log.info("Autonomous round %d/%d intent=%s", round_idx + 1, _MAX_AUTONOMOUS_ROUNDS, state.intent)
+        log.info("Autonomous round %d/%d intent=%s", round_idx + 1, max_rounds, state.intent)
 
         applied = await sync_autofill_from_doql(state)
         if applied:

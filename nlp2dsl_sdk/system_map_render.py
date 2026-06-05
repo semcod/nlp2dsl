@@ -142,12 +142,60 @@ def render_system_map_doql(ir: SystemMapIR) -> str:
     lines.append("conversation {")
     lines.append(f"  autofill: {'true' if conv.autofill else 'false'};")
     lines.append(f"  sync_auto_execute: {'true' if conv.sync_auto_execute else 'false'};")
-    lines.append(f"  attachment_required: {'true' if conv.attachment_required else 'false'};")
+    if conv.attachment_required:
+        lines.append("  attachment_required: true;")
     lines.append(
         f"  generate_invoice_if_missing: {'true' if conv.generate_invoice_if_missing else 'false'};"
     )
     lines.append("}")
     lines.append("")
+
+    proc = ir.process
+    lines.append("process {")
+    for key, val in (
+        ("mode", proc.mode),
+        ("nlp_parser", proc.nlp_parser),
+        ("nlp_confidence_min", proc.nlp_confidence_min),
+        ("nlp_enrich_missing", proc.nlp_enrich_missing),
+        ("llm_reasoning", proc.llm_reasoning),
+        ("autonomous", proc.autonomous_enabled),
+        ("autonomous_max_rounds", proc.autonomous_max_rounds),
+        ("ask_user", proc.ask_user),
+        ("intract_gate", proc.intract_gate),
+        ("intract_enforce_clarification", proc.intract_enforce_clarification),
+    ):
+        if isinstance(val, bool):
+            lines.append(f"  {key}: {'true' if val else 'false'};")
+        elif isinstance(val, float):
+            lines.append(f"  {key}: {val};")
+        else:
+            lines.append(f'  {key}: "{val}";')
+    if proc.llm_temperature is not None:
+        lines.append(f"  llm_temperature: {proc.llm_temperature};")
+    lines.append("}")
+    lines.append("")
+
+    acc = proc.access
+    if acc.agent or acc.allow_resource_areas or acc.deny_resource_areas:
+        lines.append("process_access {")
+        if acc.agent:
+            lines.append(f'  agent: "{acc.agent}";')
+        if acc.allow_resource_areas:
+            lines.append(f'  allow_areas: "{",".join(acc.allow_resource_areas)}";')
+        if acc.deny_resource_areas:
+            lines.append(f'  deny_areas: "{",".join(acc.deny_resource_areas)}";')
+        lines.append("}")
+        lines.append("")
+
+    paths = proc.paths
+    if paths.read or paths.write:
+        lines.append("paths {")
+        if paths.read:
+            lines.append(f'  read: "{",".join(paths.read)}";')
+        if paths.write:
+            lines.append(f'  write: "{",".join(paths.write)}";')
+        lines.append("}")
+        lines.append("")
 
     for idx, sched in enumerate(ir.schedules):
         lines.append(f"schedules[{idx}] {{")

@@ -14,8 +14,14 @@ log = logging.getLogger("nlp.parser")
 _FALLBACK_THRESHOLD = float(os.getenv("LLM_FALLBACK_THRESHOLD", "0.5"))
 
 
-async def parse_with_mode(text: str, mode: str) -> NLPResult:
+async def parse_with_mode(
+    text: str,
+    mode: str,
+    *,
+    confidence_min: float | None = None,
+) -> NLPResult:
     mode = mode.lower().strip()
+    threshold = confidence_min if confidence_min is not None else _FALLBACK_THRESHOLD
 
     if mode == "rules":
         return parse_rules(text)
@@ -34,7 +40,7 @@ async def parse_with_mode(text: str, mode: str) -> NLPResult:
 
     # auto
     rules_result = parse_rules(text)
-    if rules_result.intent.confidence >= _FALLBACK_THRESHOLD:
+    if rules_result.intent.confidence >= threshold:
         return rules_result
     if _detect_provider() == "none":
         return rules_result

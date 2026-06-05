@@ -15,7 +15,7 @@ import logging
 from app.conversation.doql_autofill import load_context_for_state, sync_autofill_from_doql
 from app.conversation.doql_registry import refresh_registry_for_state, reload_context_after_refresh
 from app.conversation.reflection import reflection_from_state
-from app.conversation.runtime_gate import runtime_unavailable_message
+from app.conversation.runtime_gate import process_scope_blocked, runtime_unavailable_message
 from app.conversation.system_map import set_doql_context
 from app.routing import IntentDecision
 from app.schemas import ConversationResponse, ConversationState
@@ -43,6 +43,23 @@ async def preflight_turn(
                 conversation_id=state.id,
                 status="blocked",
                 message=blocked,
+            )
+
+        from app.registry import ACTIONS_REGISTRY
+
+        meta = ACTIONS_REGISTRY.get(state.intent or "", {})
+        scope_msg = process_scope_blocked(
+            ctx,
+            action=state.intent,
+            resource_area=meta.get("resource_area"),
+        )
+        if scope_msg:
+            state.history.append({"role": "assistant", "text": scope_msg})
+            log.info("Process scope blocked: %s", scope_msg[:80])
+            return ConversationResponse(
+                conversation_id=state.id,
+                status="blocked",
+                message=scope_msg,
             )
 
     applied = await sync_autofill_from_doql(state)

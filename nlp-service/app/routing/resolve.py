@@ -10,6 +10,7 @@ from app.routing.native import resolve_native_intent
 from app.routing.orientation import OrientationResult, orient_query
 from app.routing.parser import parse_text
 from app.routing.parser.rules import parse_rules
+from app.conversation.system_map import effective_nlp_confidence_min, effective_nlp_parser_mode
 from app.registry import ACTIONS_REGISTRY, DELEGATED_ACTIONS
 from app.routing.intent import IntentDecision
 from app.routing.observability import record_intent_decision
@@ -19,14 +20,15 @@ _FALLBACK_THRESHOLD = float(os.getenv("LLM_FALLBACK_THRESHOLD", "0.5"))
 
 
 def _parser_source(text: str) -> str:
-    """Etykieta źródła parsera (rules vs llm) — zgodnie z NLP_CHAT_MODE=auto."""
-    mode = (os.getenv("NLP_CHAT_MODE", "auto") or "auto").lower().strip()
+    """Etykieta źródła parsera (rules vs llm) — DOQL process policy lub NLP_CHAT_MODE."""
+    mode = effective_nlp_parser_mode()
     if mode == "rules":
         return "rules"
     if mode == "llm":
         return "llm"
+    threshold = effective_nlp_confidence_min()
     rules_result = parse_rules(text)
-    if rules_result.intent.confidence >= _FALLBACK_THRESHOLD:
+    if rules_result.intent.confidence >= threshold:
         return "rules"
     return "llm"
 
@@ -172,7 +174,7 @@ async def resolve_intent(
         record_intent_decision(decision)
         return decision, None
 
-    nlp = await parse_text(text)
+    nlp = await parse_text(text, mode=effective_nlp_parser_mode())
     source = _parser_source(text)
     decision = _intent_from_nlp(nlp, source)
     decision.agent_id = aid

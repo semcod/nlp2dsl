@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from .doql_context import load_doql_context
+from .invoice_policy import is_invoice_example
 from .system_map_ir import SystemMapIR
 from .system_map_bridge import task_context_to_system_map
 from .system_map_render import render_system_map_doql
@@ -103,6 +104,11 @@ def merge_registry_observations(
             ir.workflow_history[key] = ctx.workflow_history[key]
 
     for key, value in ctx.data.items():
+        if is_invoice_example(ir.example_id) and key in (
+            "attachment_path",
+            "send_invoice.attachment_path",
+        ):
+            continue
         if any(key.startswith(prefix) for prefix in preserve_data_prefixes):
             ir.data.setdefault(key, value)
         elif key.endswith(".last_invoice_id") or key == "attachment_path":

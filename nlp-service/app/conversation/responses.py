@@ -155,10 +155,12 @@ def handle_system_action(state: ConversationState) -> ConversationResponse | Non
 
 
 async def build_and_check_dsl(state: ConversationState) -> ConversationResponse | None:
+    from app.conversation.doql_autofill import load_context_for_state
     from app.validation.path_resolve import resolve_attachment_path
 
+    ctx = load_context_for_state(state)
     dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
-    if dialog.status == "complete" and dialog.workflow and workflow_needs_attachment(state, dialog):
+    if dialog.status == "complete" and dialog.workflow and workflow_needs_attachment(state, dialog, ctx):
         return None
     if not (dialog.status == "complete" and dialog.workflow):
         return None
@@ -190,11 +192,18 @@ async def build_and_check_dsl(state: ConversationState) -> ConversationResponse 
     state.status = "ready"
     state.missing = []
     backend = execution_backend_for_intent(state.intent)
+    auto_execute = bool(ctx and ctx.sync_auto_execute)
+    if state.doql_inline.get("sync_auto_execute") or state.doql_inline.get("auto_execute"):
+        auto_execute = True
     msg = (
-        f"Workflow gotowy: {dialog.workflow.name} ({len(dialog.workflow.steps)} kroków). "
-        f"Wyślij 'uruchom' aby wykonać"
-        + (" (Mullm)." if backend == "mullm" else ".")
+        f"Workflow gotowy: {dialog.workflow.name} ({len(dialog.workflow.steps)} kroków)."
     )
+    if auto_execute:
+        msg += " Backend wykona workflow automatycznie (sync_auto_execute)."
+    elif backend == "mullm":
+        msg += " Wykonaj w Mullm workspace."
+    else:
+        msg += " Wyślij 'uruchom' aby wykonać."
     if state.autofill_applied:
         msg += f"\n(Uzupełniono z environment.doql.less: {', '.join(state.autofill_applied)})"
     state.history.append({"role": "assistant", "text": msg})
@@ -208,8 +217,11 @@ async def build_and_check_dsl(state: ConversationState) -> ConversationResponse 
 
 
 async def build_incomplete_response(state: ConversationState) -> ConversationResponse:
+    from app.conversation.doql_autofill import load_context_for_state
+
+    ctx = load_context_for_state(state)
     dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
-    if dialog.status == "complete" and dialog.workflow and workflow_needs_attachment(state, dialog):
+    if dialog.status == "complete" and dialog.workflow and workflow_needs_attachment(state, dialog, ctx):
         dialog = DialogResponse(
             status="incomplete",
             workflow=dialog.workflow,

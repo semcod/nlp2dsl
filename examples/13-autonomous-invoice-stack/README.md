@@ -9,6 +9,15 @@ Rozszerza [`01-invoice`](../01-invoice/) i [`04-scheduled-report`](../04-schedul
 
 Mapa systemu: [`.nlp2dsl/registry/environment.doql.less`](.nlp2dsl/registry/environment.doql.less)
 
+## Dwie warstwy
+
+| Warstwa | Co robi | Jak uruchomić |
+|---------|---------|---------------|
+| **1 — infrastruktura** | Docker: backend, nlp-service, worker, DB | `up-platform.sh` lub `docker compose up -d` |
+| **2 — proces** | shell/curl/python → API platformy | `run-process.sh`, `run-process-in-docker.sh`, cron |
+
+Szczegóły: [`docs/autonomous-stack.md`](../../docs/autonomous-stack.md)
+
 ---
 
 ## Uruchomienie
@@ -74,15 +83,42 @@ sequenceDiagram
     └── run-task.sh
 ```
 
+```bash
+# z katalogu przykładu
+ls .nlp2dsl/generated/
+
+# z roota repo (źle: examples/13/... gdy jesteś już w 13-autonomous-invoice-stack)
+ls examples/13-autonomous-invoice-stack/.nlp2dsl/generated/
+```
+
 ### Transparentne uruchomienie stacku
 
-Po `main.py` manifest zawiera `up_command`, np.:
+**Z roota repo** (albo skrypt wygenerowany przez `main.py`):
 
 ```bash
-docker compose -f docker-compose.yml -f examples/docker-compose.yml \
+cd ~/github/wronai/nlp2dsl
+
+# rekomendowane — skrypt robi platform + smtp-mock + cron
+examples/13-autonomous-invoice-stack/.nlp2dsl/generated/up-stack.sh
+
+# ręcznie (platforma już musi działać — tylko cron/runner)
+docker compose -f docker-compose.yml \
   -f examples/13-autonomous-invoice-stack/.nlp2dsl/generated/docker-compose.stack.yaml \
-  --profile invoice,email,scheduled,autonomous-stack up -d
+  --profile autonomous-stack up -d \
+  autonomous-invoice-stack-cron autonomous-invoice-stack-runner
 ```
+
+**Posprzątaj duplikat projektu** (jeśli wcześniejszy run utworzył `nlp2dsl-13-autonomous-invoice-stack`):
+
+```bash
+docker compose -p nlp2dsl-13-autonomous-invoice-stack down --remove-orphans
+```
+
+# opcjonalnie MailHog (osobny plik compose — nie merguj z platformą w jednej komendzie)
+docker compose -f examples/docker-compose.yml --profile invoice up -d smtp-mock
+```
+
+> **Uwaga:** nie używaj `--profile invoice,email,scheduled` jako jednego stringa — to jeden profil. Używaj wielu flag: `--profile invoice --profile scheduled` albo skryptu `up-stack.sh`.
 
 Cron (Ofelia) w kontenerze `invoice-stack-cron` wywołuje `run-scheduled-task.sh` według `schedules[].cron` z DOQL.
 

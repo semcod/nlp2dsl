@@ -75,7 +75,7 @@ services:
     volumes:
       - ./nlp-service/static:/app/static:ro
       - ./nlp2dsl.yaml:/app/nlp2dsl.yaml:ro
-      - ./examples:/examples:ro
+      - ./examples:/examples
     restart: unless-stopped
 
   # ── Imperative Worker ────────────────────────────────────────

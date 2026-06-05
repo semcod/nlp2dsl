@@ -7,6 +7,7 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 
+from app.conversation.invoice_policy import invoice_attachment_policy_active
 from app.conversation.attachment_gate import workflow_needs_attachment
 from app.conversation.doql_context import (
     DoqlTaskContext,
@@ -49,25 +50,29 @@ def _resolve_attachment_path(raw: str, ctx: DoqlTaskContext) -> str:
 
 def _nested_generate_invoice(state: ConversationState, ctx: DoqlTaskContext) -> str | None:
     """Synchronous nested step: materialize invoice file when attachment missing."""
+    from app.conversation.invoice_paths import invoice_output_dir, store_attachment_path
+
     amount = state.entities.get("amount")
     to_addr = state.entities.get("to")
     if amount is None or not to_addr:
         return None
 
-    out_dir = Path(os.environ.get("NLP2DSL_INVOICE_DIR", "/tmp/nlp2dsl-invoices"))
-    out_dir.mkdir(parents=True, exist_ok=True)
+    doql = resolve_doql_context_path(state.doql_context_path or None)
+    out_dir, ex_root = invoice_output_dir(doql_path=doql)
     stamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
     currency = state.entities.get("currency", "PLN")
-    filename = f"INV-{stamp}-{amount}-{currency}.pdf"
+    amount_label = int(amount) if float(amount) == int(float(amount)) else amount
+    filename = f"INV-{stamp}-{amount_label}-{currency}.pdf"
     out_path = out_dir / filename
     body = (
         f"FAKTURA\nOdbiorca: {to_addr}\nKwota: {amount} {currency}\n"
         f"Wygenerowano: {datetime.now(UTC).isoformat()}\n"
     )
     out_path.write_text(body, encoding="utf-8")
-    log.info("Nested generate_invoice → %s", out_path)
-    ctx.data["send_invoice.attachment_path"] = str(out_path)
-    return str(out_path)
+    stored = store_attachment_path(out_path, ex_root)
+    log.info("Nested generate_invoice → %s (stored as %s)", out_path, stored)
+    ctx.data["send_invoice.attachment_path"] = stored
+    return stored
 
 
 async def sync_autofill_from_doql(state: ConversationState) -> list[str]:
@@ -79,15 +84,15 @@ async def sync_autofill_from_doql(state: ConversationState) -> list[str]:
     if ctx is None or not ctx.autofill:
         return []
 
-    if ctx.attachment_required:
+    if invoice_attachment_policy_active(ctx, state):
         state.attachment_required = True
 
     applied: list[str] = []
     for _ in range(_MAX_AUTOFILL_ROUNDS):
         dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
-        if dialog.status == "complete" and not workflow_needs_attachment(state, dialog):
+        if dialog.status == "complete" and not workflow_needs_attachment(state, dialog, ctx):
             break
-        if dialog.status == "complete" and workflow_needs_attachment(state, dialog):
+        if dialog.status == "complete" and workflow_needs_attachment(state, dialog, ctx):
             dialog = DialogResponse(
                 status="incomplete",
                 workflow=dialog.workflow,
@@ -112,12 +117,9 @@ async def sync_autofill_from_doql(state: ConversationState) -> list[str]:
             continue
 
         attachment_missing = any("attachment" in m for m in missing)
-        need_attachment = (
-            attachment_missing
-            or (
-                ctx.attachment_required
-                and not str(state.entities.get("attachment_path", "")).strip()
-            )
+        need_attachment = attachment_missing or (
+            invoice_attachment_policy_active(ctx, state)
+            and not str(state.entities.get("attachment_path", "")).strip()
         )
         if (
             need_attachment

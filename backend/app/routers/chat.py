@@ -92,6 +92,26 @@ async def _execute_ready_dsl(result: dict[str, Any], body: dict[str, Any]) -> di
     result["status"] = "executed"
     result["execution"] = wf_result.model_dump()
     result["execution_backend"] = "worker"
+    text_lower = str(body.get("text", "")).lower()
+    execute_keywords = ["uruchom", "wykonaj", "start", "run", "ok", "tak", "go"]
+    explicit_execute = any(kw in text_lower for kw in execute_keywords)
+    auto_flag = bool(
+        result.get("auto_execute")
+        or body.get("sync_auto_execute")
+        or body.get("auto_execute")
+    )
+    if auto_flag and not explicit_execute:
+        ready_msg = str(result.get("message") or "")
+        if "Wyślij 'uruchom'" in ready_msg:
+            result["message"] = ready_msg.replace(
+                "Wyślij 'uruchom' aby wykonać.",
+                "Wykonano automatycznie (sync_auto_execute).",
+            ).replace(
+                "Wyślij 'uruchom' aby wykonać",
+                "Wykonano automatycznie (sync_auto_execute)",
+            )
+        elif "automatycznie" not in ready_msg.lower():
+            result["message"] = f"{ready_msg}\nWykonano automatycznie (sync_auto_execute).".strip()
 
     doql_path = body.get("doql_context_path") or body.get("doqlContextPath")
     if doql_path:

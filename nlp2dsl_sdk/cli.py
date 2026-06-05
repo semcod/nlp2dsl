@@ -4,8 +4,28 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+from pathlib import Path
 from typing import Any
+
+
+def _detect_example_dir() -> Path | None:
+    """Find example dir when cwd contains `.nlp2dsl/` registry (DOQL context)."""
+    cwd = Path.cwd().resolve()
+    for base in (cwd, *cwd.parents):
+        if (base / ".nlp2dsl" / "registry" / "environment.doql.less").is_file():
+            return base
+        if (base / ".nlp2dsl" / "environment.doql.less").is_file():
+            return base
+    return None
+
+
+def _doql_context_label(example_dir: Path) -> str:
+    primary = example_dir / ".nlp2dsl" / "registry" / "environment.doql.less"
+    if primary.is_file():
+        return str(primary.relative_to(example_dir))
+    return str((example_dir / ".nlp2dsl" / "environment.doql.less").relative_to(example_dir))
 
 
 def _analyze(query: str, *, include_plan: bool = False) -> dict[str, Any] | None:
@@ -85,41 +105,52 @@ def _health() -> int:
         return 1
 
 
-def _run(query: str, *, execute: bool = False, json_output: bool = False) -> int:
+def _run_with_doql(client: Any, query: str, *, execute: bool) -> dict[str, Any]:
+    """Chat/start with DOQL inline — autofill, reflection, generate_invoice loop."""
+    from .doql_context import load_doql_inline_from_env, resolve_doql_context_path
+
+    ex_dir = _detect_example_dir()
+    if ex_dir:
+        os.environ.setdefault("NLP2DSL_EXAMPLE_DIR", str(ex_dir))
+        print(f"📄 DOQL context: {_doql_context_label(ex_dir)}")
+
+    inline = dict(load_doql_inline_from_env() or {})
+    payload: dict[str, Any] = {"text": query}
+    if execute:
+        inline["sync_auto_execute"] = True
+        inline["auto_execute"] = True
+        payload["sync_auto_execute"] = True
+        payload["auto_execute"] = True
+    if inline:
+        payload["context_json"] = json.dumps(inline, ensure_ascii=False)
+    doql = resolve_doql_context_path()
+    if doql:
+        payload["doql_context_path"] = str(doql)
+    return client._backend("post", "/workflow/chat/start", json=payload).json()
+
+
+def _run(
+    query: str,
+    *,
+    execute: bool = False,
+    json_output: bool = False,
+    plain: bool = False,
+) -> int:
+    from .preview import print_run_outcome
+
     try:
         c = _client()
-        result = c.workflow_from_text(query, execute=execute)
+        example_dir = None if plain else _detect_example_dir()
+        if example_dir:
+            result = _run_with_doql(c, query, execute=execute)
+        else:
+            result = c.workflow_from_text(query, execute=execute)
         c.close()
         if json_output:
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0
 
-        status = result.get("status", "unknown")
-        print(f"Status: {status}")
-
-        if status == "incomplete":
-            missing = result.get("missing_fields") or []
-            if missing:
-                print(f"❗ Missing: {', '.join(missing)}")
-            prompt = result.get("prompt_user")
-            if prompt:
-                print(f"🤖 {prompt}")
-            return 0
-
-        dsl = result.get("dsl")
-        if dsl:
-            print(f"Workflow: {dsl.get('name', '?')} ({len(dsl.get('steps', []))} kroków)")
-            for i, step in enumerate(dsl.get("steps", []), 1):
-                print(f"  {i}. {step.get('action', '')} -> {step.get('config', {})}")
-
-        execution = result.get("execution")
-        if execution:
-            exec_status = execution.get("status", "?")
-            print(f"Execution: {exec_status}")
-            for step in execution.get("steps", []):
-                step_status = step.get("status", "?")
-                icon = "✅" if step_status == "completed" else "❌"
-                print(f"  {icon} {step.get('action', '')}: {step_status}")
+        print_run_outcome(result, query=query)
         return 0
     except Exception as e:
         print(f"❌ Error: {e}", file=sys.stderr)
@@ -189,6 +220,11 @@ def main(argv: list[str] | None = None) -> int:
     run_parser.add_argument("query", help="Natural language query")
     run_parser.add_argument("--execute", action="store_true", help="Execute workflow immediately")
     run_parser.add_argument("--json", action="store_true", dest="json_output", help="Output raw JSON")
+    run_parser.add_argument(
+        "--plain",
+        action="store_true",
+        help="Skip DOQL from cwd; use /workflow/from-text only",
+    )
 
     # health
     sub.add_parser("health", help="Check backend health")
@@ -210,7 +246,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "show":
         return show(args.query, plan=args.plan)
     if args.command == "run":
-        return _run(args.query, execute=args.execute, json_output=args.json_output)
+        return _run(
+            args.query,
+            execute=args.execute,
+            json_output=args.json_output,
+            plain=args.plain,
+        )
     if args.command == "health":
         return _health()
     if args.command == "actions":

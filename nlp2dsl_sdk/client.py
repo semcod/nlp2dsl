@@ -595,7 +595,7 @@ class ConversationFlow:
             self._handle_in_progress_response(data, message)
         elif status == "ready":
             self._handle_ready_response(data, message)
-        elif status == "completed":
+        elif status in ("completed", "executed"):
             self._handle_completed_response(data, message)
         elif status == "error":
             self._handle_error_response(message)
@@ -740,15 +740,21 @@ class ConversationFlow:
             print()
 
     def _handle_completed_response(self, data: dict[str, Any], message: str) -> None:
-        """Handle completed status response."""
-        print(f"🤖 System: {message}")
-        execution = data.get("execution")
+        """Handle completed / executed status response."""
+        if message:
+            print(f"🤖 System: {message}")
+        execution = data.get("execution") or data.get("result")
         if execution:
             print("✅ Wynik wykonania:")
             for step in execution.get("steps", []):
                 if step.get("status") == "completed":
                     result = step.get("result", {})
                     print(f"   • {step.get('action', '')}: {result}")
+                elif step.get("error"):
+                    print(f"   ❌ {step.get('action', '')}: {step['error']}")
+            auto_steps = data.get("autonomous_steps")
+            if auto_steps:
+                print(f"   🔄 Autonomiczne kroki: {', '.join(auto_steps)}")
             print()
 
     def _handle_error_response(self, message: str) -> None:

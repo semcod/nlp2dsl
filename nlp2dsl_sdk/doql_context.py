@@ -75,6 +75,26 @@ class DoqlAccess:
 
 
 @dataclass
+class DoqlProcessPolicy:
+    mode: str = "balanced"
+    nlp_parser: str = "auto"
+    nlp_confidence_min: float = 0.5
+    nlp_enrich_missing: bool = False
+    llm_reasoning: str = "shallow"
+    llm_temperature: float | None = None
+    autonomous_enabled: bool = True
+    autonomous_max_rounds: int = 8
+    ask_user: str = "when_exhausted"
+    intract_gate: bool = False
+    intract_enforce_clarification: bool = False
+    agent: str = ""
+    allow_resource_areas: list[str] = field(default_factory=list)
+    deny_resource_areas: list[str] = field(default_factory=list)
+    paths_read: list[str] = field(default_factory=list)
+    paths_write: list[str] = field(default_factory=list)
+
+
+@dataclass
 class DoqlTaskContext:
     example_name: str = ""
     generated_at: str = ""
@@ -91,6 +111,7 @@ class DoqlTaskContext:
     attachment_required: bool = False
     generate_invoice_if_missing: bool = True
     runtimes: list[DoqlRuntime] = field(default_factory=list)
+    process: DoqlProcessPolicy = field(default_factory=DoqlProcessPolicy)
 
     def entity_values(self, action: str) -> dict[str, Any]:
         """Map data keys action.field → entity field names."""
@@ -105,7 +126,7 @@ class DoqlTaskContext:
 
 
 _BLOCK_RE = re.compile(
-    r"(environment|data|conversation|capabilities|workflow_history)\s*(?:\[[^\]]*\])?\s*\{([^}]*)\}",
+    r"(environment|data|conversation|capabilities|workflow_history|process|process_access|paths)\s*(?:\[[^\]]*\])?\s*\{([^}]*)\}",
     re.DOTALL,
 )
 _ARTIFACT_RE = re.compile(
@@ -257,6 +278,39 @@ def load_doql_context(path: Path | str) -> DoqlTaskContext:
                 ctx.capabilities = sorted(str(k) for k in kv)
         elif block_type == "workflow_history":
             ctx.workflow_history = dict(kv)
+        elif block_type == "process":
+            ctx.process.mode = str(kv.get("mode", ctx.process.mode))
+            ctx.process.nlp_parser = str(kv.get("nlp_parser", ctx.process.nlp_parser))
+            if "nlp_confidence_min" in kv:
+                ctx.process.nlp_confidence_min = float(kv["nlp_confidence_min"])
+            if "nlp_enrich_missing" in kv:
+                ctx.process.nlp_enrich_missing = bool(kv["nlp_enrich_missing"])
+            if "llm_reasoning" in kv:
+                ctx.process.llm_reasoning = str(kv["llm_reasoning"])
+            if "llm_temperature" in kv:
+                ctx.process.llm_temperature = float(kv["llm_temperature"])
+            if "autonomous" in kv:
+                ctx.process.autonomous_enabled = bool(kv["autonomous"])
+            if "autonomous_max_rounds" in kv:
+                ctx.process.autonomous_max_rounds = int(kv["autonomous_max_rounds"])
+            if "ask_user" in kv:
+                ctx.process.ask_user = str(kv["ask_user"])
+            if "intract_gate" in kv:
+                ctx.process.intract_gate = bool(kv["intract_gate"])
+            if "intract_enforce_clarification" in kv:
+                ctx.process.intract_enforce_clarification = bool(kv["intract_enforce_clarification"])
+        elif block_type == "process_access":
+            if "agent" in kv:
+                ctx.process.agent = str(kv["agent"])
+            if "allow_areas" in kv:
+                ctx.process.allow_resource_areas = _split_csv(str(kv["allow_areas"]))
+            if "deny_areas" in kv:
+                ctx.process.deny_resource_areas = _split_csv(str(kv["deny_areas"]))
+        elif block_type == "paths":
+            if "read" in kv:
+                ctx.process.paths_read = _split_csv(str(kv["read"]))
+            if "write" in kv:
+                ctx.process.paths_write = _split_csv(str(kv["write"]))
 
     for body in _ARTIFACT_RE.findall(text):
         ctx.artifacts.append(_parse_artifact_body(body))
@@ -496,6 +550,10 @@ def collect_task_context(
     services_path = artifact_root / "services.yaml"
     ctx.commands = load_commands_from_services_yaml(services_path)
 
+    from .invoice_policy import apply_invoice_context
+
+    apply_invoice_context(ctx)
+
     return ctx
 
 
@@ -602,7 +660,8 @@ def render_doql_context(ctx: DoqlTaskContext) -> str:
     lines.append("conversation {")
     lines.append(f"  autofill: {'true' if ctx.autofill else 'false'};")
     lines.append(f"  sync_auto_execute: {'true' if ctx.sync_auto_execute else 'false'};")
-    lines.append(f"  attachment_required: {'true' if ctx.attachment_required else 'false'};")
+    if ctx.attachment_required:
+        lines.append("  attachment_required: true;")
     lines.append(
         f"  generate_invoice_if_missing: {'true' if ctx.generate_invoice_if_missing else 'false'};"
     )

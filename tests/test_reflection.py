@@ -55,6 +55,7 @@ def test_build_target_plan_from_data() -> None:
 
 def test_reflect_ready_when_complete() -> None:
     ir = _invoice_ir()
+    ir.conversation.generate_invoice_if_missing = False
     target = build_target_plan(ir, "send_invoice", {"amount": 1500, "to": "a@b.pl"})
     report = reflect(
         "dsl_ready",

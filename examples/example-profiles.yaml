@@ -21,6 +21,24 @@ examples:
     fixtures_dir: .nlp2dsl/fixtures
     doql_context: .nlp2dsl/registry/environment.doql.less
     services: [backend, nlp-service, worker, postgres, redis, smtp-mock]
+    process:
+      mode: deterministic
+      nlp:
+        parser: rules_first
+        enrich_missing: false
+      conversation:
+        autofill: true
+        sync_auto_execute: true
+      autonomous:
+        ask_user: when_exhausted
+      intract:
+        gate: false
+      access:
+        agent: user
+        deny_resource_areas: [mullm:rag, docker:local]
+      paths:
+        artifacts_read: [fixtures/**, .nlp2dsl/generated/**]
+        artifacts_write: [.nlp2dsl/generated/invoices/**]
     validations:
       - execution_status: completed
       - dsl_action: send_invoice
@@ -60,6 +78,12 @@ examples:
     mock_llm: .nlp2dsl/fixtures/mock-llm-replies.yaml
     fixtures_dir: .nlp2dsl/fixtures
     services: [backend, nlp-service, worker, postgres, redis]
+    process:
+      mode: balanced
+      nlp:
+        parser: auto
+      intract:
+        gate: false
     validations:
       - conversation_status: executed
       - dsl_action: send_invoice
@@ -110,6 +134,13 @@ examples:
     fixtures_dir: .nlp2dsl/fixtures
     services: [backend, nlp-service, worker, postgres, redis]
     requires_llm_key: true
+    process:
+      mode: reactive
+      nlp:
+        parser: llm
+        enrich_missing: true
+      llm:
+        reasoning: deep
 
   11-notify-quality:
     title: Powiadomienia quality_required
@@ -133,6 +164,13 @@ examples:
     doql_context: .nlp2dsl/registry/environment.doql.less
     fixtures_dir: fixtures
     services: [backend, nlp-service, worker, postgres, redis, smtp-mock]
+    process:
+      mode: balanced
+      nlp:
+        parser: auto
+      conversation:
+        autofill: true
+        sync_auto_execute: true
     validations:
       - conversation_status: executed
       - artifact_exists: .nlp2dsl/generated/docker-compose.stack.yaml

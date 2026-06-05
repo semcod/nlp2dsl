@@ -117,7 +117,9 @@ def build_target_plan(
     else:
         config.update({k: v for k, v in entities.items() if not str(k).startswith("_")})
 
-    if ir.conversation.attachment_required and intent == "send_invoice":
+    if intent == "send_invoice" and (
+        ir.conversation.attachment_required or ir.conversation.generate_invoice_if_missing
+    ):
         if not str(config.get("attachment_path", "")).strip():
             hint = _data_lookup(ir, intent, "attachment_path")
             if hint:
@@ -239,7 +241,9 @@ def _missing_vs_target(
                 )
             )
 
-    if ir.conversation.attachment_required and step.action == "send_invoice":
+    if step.action == "send_invoice" and (
+        ir.conversation.attachment_required or ir.conversation.generate_invoice_if_missing
+    ):
         if not str(current.get("attachment_path", "")).strip():
             resolution = "generate" if ir.conversation.generate_invoice_if_missing else "ask_user"
             issues.append(
@@ -247,7 +251,7 @@ def _missing_vs_target(
                     phase=phase,
                     kind="missing",
                     field="attachment_path",
-                    message="brak załącznika faktury (attachment_required)",
+                    message="brak załącznika faktury",
                     resolution=resolution,
                     source_hint="generate_invoice" if resolution == "generate" else "fixtures/",
                 )

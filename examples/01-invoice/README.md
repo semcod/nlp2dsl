@@ -18,19 +18,17 @@ Powiązane: [`05-conversation-flow`](../05-conversation-flow/) (multi-turn bez z
 
 | Zmienna | Domyślnie | Opis |
 |---------|-----------|------|
-| `NLP2DSL_INVOICE_MODE=conversation` | ✅ | Jedno zadanie → autofill → validate → auto_execute |
-| `NLP2DSL_INVOICE_MODE=one-shot` | | Jedno zdanie z kwotą i odbiorcą → execute |
-| `NLP2DSL_INVOICE_MODE=attachment` | | Wymagany załącznik PDF; opcjonalnie nested `generate_invoice` |
+| `NLP2DSL_INVOICE_MODE=conversation` | ✅ | Jedno zadanie → autofill → **generate/fixture attachment** → validate → auto_execute |
+| `NLP2DSL_INVOICE_MODE=one-shot` | | Jedno zdanie z kwotą i odbiorcą → execute (bez pętli attachment) |
+
+Domyślnie **wymagany załącznik**: system próbuje `fixtures/*.pdf` → `generate_invoice` → pytanie użytkownika. W DOQL nie ma `attachment_required: false`.
 
 ```bash
 # konwersacja z autofill (domyślnie)
 python3 main.py
 
-# one-shot
+# one-shot (bez pętli attachment)
 NLP2DSL_INVOICE_MODE=one-shot python3 main.py
-
-# załącznik wymagany
-NLP2DSL_INVOICE_MODE=attachment python3 main.py
 ```
 
 Po rebuildzie obrazów Docker (gdy zmieniasz kod nlp-service):

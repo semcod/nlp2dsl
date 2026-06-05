@@ -1,7 +1,5 @@
 # Opcjonalne serwisy dla przykładów NLP2DSL
-# Użyj: docker compose -f docker-compose.yml up -d <service>
-
-version: "3.8"
+# Użyj: docker compose -f docker-compose.yml -f examples/docker-compose.yml --profile email up -d smtp-mock
 
 services:
   # ── SMTP Mock Server ────────────────────────────────────────

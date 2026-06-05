@@ -39,5 +39,43 @@ def runtime_id_for_action(action: str) -> str | None:
     return ctx.runtime_for(action)
 
 
+def effective_nlp_parser_mode() -> str:
+    """NLP parser mode from DOQL process policy (rules | llm | auto)."""
+    ctx = get_doql_context()
+    if ctx is None:
+        import os
+
+        return (os.getenv("NLP_CHAT_MODE", "auto") or "auto").lower().strip()
+    parser = (ctx.process.nlp_parser or "auto").lower()
+    if parser in ("rules", "rules_first"):
+        return "rules"
+    if parser == "llm":
+        return "llm"
+    return "auto"
+
+
+def effective_nlp_confidence_min() -> float:
+    ctx = get_doql_context()
+    if ctx is None:
+        import os
+
+        return float(os.getenv("LLM_FALLBACK_THRESHOLD", "0.5"))
+    return float(ctx.process.nlp_confidence_min)
+
+
+def autonomous_max_rounds() -> int:
+    ctx = get_doql_context()
+    if ctx is None:
+        return 8
+    return int(ctx.process.autonomous_max_rounds)
+
+
+def autonomous_enabled() -> bool:
+    ctx = get_doql_context()
+    if ctx is None:
+        return True
+    return bool(ctx.autofill and ctx.process.autonomous_enabled)
+
+
 def load_doql_from_path(path: str) -> DoqlTaskContext:
     return load_doql_context(path)

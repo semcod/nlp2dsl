@@ -7,6 +7,24 @@ version: 1
 settings:
   default_agent: user
 
+# Domyślna polityka procesu (nadpisywana per przykład w example-profiles.yaml → process:)
+defaults:
+  process:
+    mode: balanced
+    nlp:
+      parser: auto
+      confidence_min: 0.5
+      enrich_missing: false
+    autonomous:
+      enabled: true
+      max_rounds: 8
+      ask_user: when_exhausted
+    intract:
+      gate: false
+      enforce_clarification: false
+    llm:
+      reasoning: shallow
+
 integrations:
   enabled:
     - mullm

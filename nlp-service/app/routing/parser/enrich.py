@@ -35,6 +35,14 @@ _FIELD_TO_ENTITY = {
 
 
 def is_enrich_enabled() -> bool:
+    try:
+        from app.conversation.system_map import get_doql_context
+
+        ctx = get_doql_context()
+        if ctx is not None:
+            return bool(ctx.process.nlp_enrich_missing)
+    except Exception:
+        pass
     return os.getenv("NLP_ENRICH_MISSING", "0").strip().lower() in ("1", "true", "yes")
 
 

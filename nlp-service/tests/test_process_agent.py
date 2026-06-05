@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from app.conversation.doql_context import DoqlCommand, DoqlRuntime, DoqlTaskContext, load_doql_context
+from app.conversation.doql_context import DoqlCommand, DoqlProcessPolicy, DoqlRuntime, DoqlTaskContext, load_doql_context
 from app.conversation.process_agent import preflight_turn
 from app.conversation.system_map import required_fields_for_action, set_doql_context
 from app.dsl.mapper import map_to_dsl
@@ -93,6 +93,33 @@ async def test_preflight_blocks_unavailable_runtime() -> None:
     assert resp is not None
     assert resp.status == "blocked"
     assert "delegate:mullm" in resp.message
+
+
+@pytest.mark.asyncio
+async def test_preflight_blocks_process_scope_deny() -> None:
+    ctx = DoqlTaskContext(
+        runtimes=[DoqlRuntime(id="delegate:mullm", status="available")],
+        process=DoqlProcessPolicy(deny_resource_areas=["mullm:rag"]),
+    )
+    state = ConversationState(id="scope1")
+    state.intent = "mullm_list_files"
+
+    decision = IntentDecision(
+        action="mullm_list_files",
+        intent="mullm_list_files",
+        source="test",
+        confidence=1.0,
+        authorized=True,
+        resource_area="mullm:rag",
+    )
+
+    with patch("app.conversation.process_agent.load_context_for_state", return_value=ctx):
+        with patch("app.conversation.process_agent.sync_autofill_from_doql", new_callable=AsyncMock):
+            resp = await preflight_turn(state, decision)
+
+    assert resp is not None
+    assert resp.status == "blocked"
+    assert "process_access" in resp.message or "mullm:rag" in resp.message
 
 
 def test_required_fields_for_action_helper() -> None:

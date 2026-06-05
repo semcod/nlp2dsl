@@ -41,6 +41,14 @@ def resolve_attachment_path(raw: str, *, doql_path: Path | str | None = None) ->
         if base.name == "registry":
             candidates.append(base.parent / raw)
 
+    mount = os.environ.get("NLP2DSL_EXAMPLES_MOUNT", "").strip()
+    if mount and doql_path:
+        parts = Path(doql_path).parts
+        if "examples" in parts:
+            idx = parts.index("examples")
+            if idx + 1 < len(parts):
+                candidates.append(Path(mount) / parts[idx + 1] / raw)
+
     for candidate in candidates:
         if candidate.is_file():
             return str(candidate.resolve())

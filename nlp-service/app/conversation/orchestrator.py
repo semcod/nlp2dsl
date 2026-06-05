@@ -10,6 +10,7 @@ from uuid import uuid4
 from app.conversation.autonomous_loop import autonomous_resolve_turn
 from app.conversation.doql_autofill import load_context_for_state
 from app.conversation.process_agent import observe_turn, preflight_turn, reflect_turn
+from app.conversation.system_map import set_doql_context
 from app.conversation.merge import merge_into_state
 from app.conversation.responses import (
     build_and_check_dsl,
@@ -130,7 +131,8 @@ def _merge_inline_entities(state: ConversationState, inline: dict) -> None:
             continue
         field = _entity_field_from_inline_key(key)
         if field == "attachment_path" and not state.attachment_required:
-            continue
+            if not inline.get("conversation.attachment_required"):
+                continue
         if field is not None:
             state.entities[field] = value
 
@@ -155,6 +157,9 @@ async def _process_message(state: ConversationState, text: str) -> ConversationR
     execute_response = await check_execute_keyword(state, text)
     if execute_response:
         return execute_response
+
+    ctx = load_context_for_state(state)
+    set_doql_context(ctx)
 
     decision, nlp = await resolve_intent(text)
     log.info(
@@ -190,7 +195,8 @@ async def _process_message(state: ConversationState, text: str) -> ConversationR
         ctx = load_context_for_state(state)
         if ctx and ctx.sync_auto_execute and auto.response.status == "ready":
             auto.response.auto_execute = True
-            auto.response.message = (auto.response.message or "") + "\n(sync_auto_execute — backend wykona workflow)"
+            if "sync_auto_execute" not in (auto.response.message or ""):
+                auto.response.message = (auto.response.message or "") + "\n(sync_auto_execute — backend wykona workflow)"
         return _attach_reflection(
             _attach_autofill(_attach_routing(auto.response, decision), state),
             state,
