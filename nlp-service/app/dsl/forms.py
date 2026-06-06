@@ -1,6 +1,6 @@
-"""Schema-driven UI — formularze akcji z ACTIONS_REGISTRY."""
+"""Schema-driven UI — formularze akcji z DOQL commands[] lub ACTIONS_REGISTRY."""
 
-from app.registry import ACTIONS_REGISTRY
+from app.conversation.system_map import command_meta, known_action_names
 from app.schemas import ActionFormSchema, FieldSchema
 
 FIELD_TYPES: dict[str, dict] = {
@@ -52,40 +52,38 @@ FIELD_TYPES: dict[str, dict] = {
 }
 
 
+def _field_schema(field_name: str, *, required: bool, default_val: str | None = None) -> FieldSchema:
+    fmeta = FIELD_TYPES.get(field_name, {"type": "string", "label": field_name})
+    return FieldSchema(
+        name=field_name,
+        type=fmeta["type"],
+        label=fmeta["label"],
+        required=required,
+        options=fmeta.get("options", []),
+        default=default_val,
+    )
+
+
 def get_action_form(action: str) -> ActionFormSchema | None:
-    meta = ACTIONS_REGISTRY.get(action)
+    if action not in known_action_names():
+        return None
+
+    meta = command_meta(action)
     if not meta:
         return None
 
-    fields = []
-    for field_name in meta["required"]:
-        fmeta = FIELD_TYPES.get(field_name, {"type": "string", "label": field_name})
-        fields.append(
-            FieldSchema(
-                name=field_name,
-                type=fmeta["type"],
-                label=fmeta["label"],
-                required=True,
-                options=fmeta.get("options", []),
-            )
-        )
+    fields: list[FieldSchema] = []
+    for field_name in meta.get("required", []):
+        fields.append(_field_schema(field_name, required=True))
 
-    for field_name in meta.get("optional", {}):
-        fmeta = FIELD_TYPES.get(field_name, {"type": "string", "label": field_name})
-        default_val = meta["optional"][field_name]
-        fields.append(
-            FieldSchema(
-                name=field_name,
-                type=fmeta["type"],
-                label=fmeta["label"],
-                required=False,
-                options=fmeta.get("options", []),
-                default=str(default_val) if default_val else None,
-            )
-        )
+    optional = meta.get("optional", {})
+    if isinstance(optional, dict):
+        for field_name, default_val in optional.items():
+            default_str = str(default_val) if default_val else None
+            fields.append(_field_schema(field_name, required=False, default_val=default_str))
 
     return ActionFormSchema(
         action=action,
-        description=meta["description"],
+        description=str(meta.get("description", action)),
         fields=fields,
     )

@@ -17,6 +17,7 @@ from app.registry import (
     COMPOSITE_INTENTS,
     get_trigger,
 )
+from app.conversation.system_map import command_meta, known_action_names
 from app.schemas import NLPEntities, NLPIntent, NLPResult
 
 log = logging.getLogger("nlp.rules")
@@ -230,7 +231,10 @@ def _apply_context_filters(text_lower: str, scores: dict[str, int]) -> dict[str,
 def _action_alias_scores(text_lower: str) -> dict[str, int]:
     """Return best alias length per action."""
     scores: dict[str, int] = {}
+    allowed = known_action_names()
     for action_name, meta in ACTIONS_REGISTRY.items():
+        if action_name not in allowed:
+            continue
         score = _longest_alias_match(text_lower, meta.get("aliases") or [])
         if score:
             scores[action_name] = score
@@ -281,7 +285,7 @@ def _dominant_overlap_action(
 
 
 def _action_category(action_name: str) -> str:
-    return str(ACTIONS_REGISTRY[action_name].get("category", "business"))
+    return str(command_meta(action_name).get("category", "business"))
 
 
 def _top_system_action_wins(
@@ -481,7 +485,10 @@ def _extract_notification_message(entities: NLPEntities, text: str) -> None:
 
 def _extract_param_aliases(entities: NLPEntities, text_lower: str) -> None:
     """Extract entities from registry param_aliases."""
+    allowed = known_action_names()
     for action_name, meta in ACTIONS_REGISTRY.items():
+        if action_name not in allowed:
+            continue
         for alias_key, target in meta.get("param_aliases", {}).items():
             if _alias_in_text(text_lower, alias_key):
                 if "=" in target:

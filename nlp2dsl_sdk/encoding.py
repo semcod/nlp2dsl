@@ -18,11 +18,12 @@ def utf8_auto_enabled() -> bool:
 
 
 def _explicit_utf8_locale() -> bool:
-    """True only when LANG/LC_* explicitly name a UTF-8 locale."""
-    for key in ("LC_ALL", "LANG", "LC_CTYPE"):
-        value = (os.environ.get(key) or "").lower()
-        if "utf" in value:
-            return True
+    """True only when the effective character locale is UTF-8."""
+    for key in ("LC_ALL", "LC_CTYPE", "LANG"):
+        value = os.environ.get(key)
+        if not value:
+            continue
+        return "utf" in value.lower()
     return False
 
 

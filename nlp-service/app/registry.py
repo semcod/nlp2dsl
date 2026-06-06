@@ -380,12 +380,17 @@ TRIGGER_ALIASES: dict[str, str] = {
 
 
 def get_action_by_alias(text: str) -> str | None:
-    """Dopasuj tekst do akcji po aliasach."""
+    """Dopasuj tekst do akcji po aliasach (w zakresie DOQL commands gdy aktywne)."""
+    from app.conversation.system_map import known_action_names
+
     text_lower = text.lower()
     best_match = None
     best_length = 0
+    allowed = known_action_names()
 
     for action_name, meta in ACTIONS_REGISTRY.items():
+        if action_name not in allowed:
+            continue
         for alias in meta["aliases"]:
             if alias in text_lower and len(alias) > best_length:
                 best_match = action_name
@@ -404,18 +409,32 @@ def get_trigger(text: str) -> str:
 
 
 def get_required_fields(action: str) -> list[str]:
-    """Zwróć wymagane pola dla akcji."""
+    """Zwróć wymagane pola dla akcji (DOQL commands[] pierwsze)."""
+    from app.conversation.system_map import required_fields_for_action
+
+    doql_fields = required_fields_for_action(action)
+    if doql_fields is not None:
+        return doql_fields
     meta = ACTIONS_REGISTRY.get(action, {})
     return meta.get("required", [])
 
 
 def get_defaults(action: str) -> dict:
     """Zwróć domyślne wartości opcjonalnych pól."""
+    from app.conversation.system_map import optional_defaults_for_action
+
+    doql_defaults = optional_defaults_for_action(action)
+    if doql_defaults is not None:
+        return doql_defaults
     meta = ACTIONS_REGISTRY.get(action, {})
     return dict(meta.get("optional", {}))
 
 
 def get_quality_required_fields(action: str) -> list[str]:
     """Pola wymagane jakościowo — puste wartości blokują status complete."""
-    meta = ACTIONS_REGISTRY.get(action, {})
+    from app.conversation.system_map import command_meta, known_action_names
+
+    if action not in known_action_names():
+        return []
+    meta = command_meta(action)
     return list(meta.get("quality_required", []))

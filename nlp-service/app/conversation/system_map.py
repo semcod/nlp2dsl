@@ -43,13 +43,37 @@ def command_meta(action: str) -> dict[str, Any]:
     if ctx:
         cmd = ctx.command(action)
         if cmd is not None:
+            registry_meta = ACTIONS_REGISTRY.get(action, {})
             return {
+                "description": cmd.description or registry_meta.get("description", action),
                 "required": list(cmd.required),
-                "optional": list(cmd.optional),
+                "optional": {
+                    field: registry_meta.get("optional", {}).get(field, "")
+                    for field in cmd.optional
+                },
                 "runtime": cmd.runtime,
-                "resource_area": ACTIONS_REGISTRY.get(action, {}).get("resource_area"),
+                "resource_area": registry_meta.get("resource_area"),
+                "quality_required": list(registry_meta.get("quality_required", [])),
+                "aliases": list(registry_meta.get("aliases", [])),
+                "param_aliases": dict(registry_meta.get("param_aliases", {})),
             }
     return dict(ACTIONS_REGISTRY.get(action, {}))
+
+
+def optional_defaults_for_action(action: str) -> dict[str, Any] | None:
+    """Optional field defaults from DOQL optional[] + registry values."""
+    ctx = get_doql_context()
+    if ctx is None or not ctx.commands:
+        return None
+    cmd = ctx.command(action)
+    if cmd is None:
+        return None
+    from app.registry import ACTIONS_REGISTRY
+
+    registry_optional = ACTIONS_REGISTRY.get(action, {}).get("optional", {})
+    if not cmd.optional:
+        return {}
+    return {field: registry_optional.get(field, "") for field in cmd.optional}
 
 
 def required_fields_for_action(action: str) -> list[str] | None:

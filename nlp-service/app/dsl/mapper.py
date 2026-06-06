@@ -11,13 +11,13 @@ Mapper gwarantuje: przewidywalność, debugowalność, kontrolę.
 import logging
 
 from app.registry import (
-    ACTIONS_REGISTRY,
     COMPOSITE_INTENTS,
     get_defaults,
     get_quality_required_fields,
     get_required_fields,
     get_trigger,
 )
+from app.conversation.system_map import known_action_names
 from app.schemas import DialogResponse, DSLStep, NLPEntities, NLPResult, WorkflowDSL
 
 log = logging.getLogger("nlp.mapper")
@@ -38,11 +38,12 @@ def map_to_dsl(nlp: NLPResult) -> DialogResponse:
     actions = _resolve_actions(intent)
 
     if not actions:
+        allowed = sorted(known_action_names())
         return DialogResponse(
             status="error",
             prompt_user=(
                 f"Nie rozpoznano intencji '{intent}'. "
-                f"Dostępne akcje: {', '.join(ACTIONS_REGISTRY.keys())}"
+                f"Dostępne akcje: {', '.join(allowed)}"
             ),
         )
 
@@ -84,21 +85,22 @@ def map_to_dsl(nlp: NLPResult) -> DialogResponse:
 
 def _resolve_actions(intent: str) -> list[str]:
     """Resolve intent → list of action names."""
-    # Direct action match
-    if intent in ACTIONS_REGISTRY:
+    allowed = known_action_names()
+
+    if intent in allowed:
         return [intent]
 
-    # Composite intent
     if intent in COMPOSITE_INTENTS:
-        return list(COMPOSITE_INTENTS[intent])
+        composite = [a for a in COMPOSITE_INTENTS[intent] if a in allowed]
+        if composite:
+            return composite
 
-    # Dynamic composite (e.g. "send_invoice_and_notify_slack")
     if "_and_" in intent:
         parts = intent.split("_and_")
         resolved = []
         for part in parts:
             part = part.strip()
-            if part in ACTIONS_REGISTRY:
+            if part in allowed:
                 resolved.append(part)
         if resolved:
             return resolved
