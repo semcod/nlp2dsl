@@ -98,7 +98,12 @@ def test_workflow_and_conversation_endpoints(client_factory: Any) -> None:
     assert schema["fields"][0]["name"] == "to"
 
     assert session.calls[0][1] == "http://backend.test/workflow/from-text"
-    assert session.calls[0][2]["json"] == {"text": "Wyślij fakturę", "execute": False, "mode": "auto"}
+    assert session.calls[0][2]["json"] == {
+        "text": "Wyślij fakturę",
+        "execute": False,
+        "mode": "auto",
+        "simulate": False,
+    }
 
     assert session.calls[1][1] == "http://backend.test/workflow/run"
     assert session.calls[1][2]["json"]["steps"][0]["config"]["amount"] == 1500.0

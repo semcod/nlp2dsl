@@ -330,7 +330,7 @@ class TestFromText:
         }
 
         with patch("app.routers.workflow.AsyncClient") as MockClient, patch(
-            "app.routers.workflow.run_workflow", AsyncMock()
+            "app.workflow_execute.run_workflow", AsyncMock()
         ) as run_workflow:
             mock_instance = AsyncMock()
             mock_instance.post.return_value = mock_nlp_resp
@@ -349,6 +349,53 @@ class TestFromText:
         assert data["missing_fields"] == ["steps.0.action"]
         assert data["validation_issues"][0]["code"] == "workflow.missing_action"
         run_workflow.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_from_text_replays_with_idempotency_key(self, client: AsyncClient) -> None:
+        await idempotency_store.clear()
+        workflow = {
+            "name": "auto_send_invoice",
+            "trigger": "manual",
+            "steps": [{"action": "send_invoice", "config": {"amount": 500, "to": "test@firma.pl"}}],
+        }
+        mock_nlp_resp = MagicMock(spec=Response)
+        mock_nlp_resp.status_code = 200
+        mock_nlp_resp.is_success = True
+        mock_nlp_resp.headers = {"content-type": "application/json"}
+        mock_nlp_resp.json.return_value = {"status": "complete", "workflow": workflow}
+
+        mock_result = MagicMock()
+        mock_result.model_dump.return_value = {
+            "workflow_id": "wf-from-text",
+            "name": "auto_send_invoice",
+            "status": "completed",
+            "steps": [],
+        }
+
+        with patch("app.routers.workflow.AsyncClient") as MockClient, patch(
+            "app.workflow_execute.run_workflow", AsyncMock(return_value=mock_result)
+        ) as run_workflow:
+            mock_instance = AsyncMock()
+            mock_instance.post.return_value = mock_nlp_resp
+            mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+            mock_instance.__aexit__ = AsyncMock(return_value=False)
+            MockClient.return_value = mock_instance
+
+            first = await client.post(
+                "/workflow/from-text",
+                json={"text": "Wyślij fakturę", "execute": True, "idempotency_key": "idem-from-text"},
+            )
+            second = await client.post(
+                "/workflow/from-text",
+                json={"text": "Wyślij fakturę", "execute": True, "idempotency_key": "idem-from-text"},
+            )
+
+        assert first.status_code == 200
+        assert second.status_code == 200
+        assert first.json()["idempotent_replay"] is False
+        assert second.json()["idempotent_replay"] is True
+        assert second.json()["result"]["workflow_id"] == "wf-from-text"
+        run_workflow.assert_awaited_once()
 
 
 # ── Plan ─────────────────────────────────────────────────────────
@@ -439,6 +486,31 @@ class TestWorkflowValidate:
     """POST /workflow/validate endpoint."""
 
     @pytest.mark.asyncio
+    async def test_validate_with_check_policy_blocks_email_domain(self, client: AsyncClient) -> None:
+        resp = await client.post(
+            "/workflow/validate",
+            json={
+                "workflow": {
+                    "name": "policy_demo",
+                    "steps": [
+                        {
+                            "action": "send_invoice",
+                            "config": {"to": "x@evil.example", "amount": 100},
+                        }
+                    ],
+                },
+                "check_policy": True,
+                "policy": {"allowed_email_domains": ["company.com"]},
+                "skip_access_check": True,
+            },
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["status"] == "blocked"
+        assert data["can_execute"] is False
+        assert any(i.get("code") == "policy.recipient_not_allowed" for i in data.get("policy_issues", []))
+
+    @pytest.mark.asyncio
     async def test_validate_complete_workflow(self, client: AsyncClient) -> None:
         resp = await client.post(
             "/workflow/validate",
@@ -504,7 +576,7 @@ class TestWorkflowExecute:
 
     @pytest.mark.asyncio
     async def test_execute_dry_run_validates_without_running(self, client: AsyncClient) -> None:
-        with patch("app.routers.workflow.run_workflow", AsyncMock()) as run_workflow:
+        with patch("app.workflow_execute.run_workflow", AsyncMock()) as run_workflow:
             resp = await client.post(
                 "/workflow/execute",
                 json={"workflow": self._valid_workflow(), "dry_run": True},
@@ -520,7 +592,7 @@ class TestWorkflowExecute:
 
     @pytest.mark.asyncio
     async def test_execute_rejects_invalid_workflow(self, client: AsyncClient) -> None:
-        with patch("app.routers.workflow.run_workflow", AsyncMock()) as run_workflow:
+        with patch("app.workflow_execute.run_workflow", AsyncMock()) as run_workflow:
             resp = await client.post(
                 "/workflow/execute",
                 json={"workflow": {"name": "broken", "steps": [{"config": {}}]}},
@@ -543,7 +615,7 @@ class TestWorkflowExecute:
             "steps": [],
         }
 
-        with patch("app.routers.workflow.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
+        with patch("app.workflow_execute.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
             resp = await client.post(
                 "/workflow/execute",
                 json={
@@ -571,7 +643,7 @@ class TestWorkflowExecute:
             "steps": [],
         }
 
-        with patch("app.routers.workflow.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
+        with patch("app.workflow_execute.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
             first = await client.post(
                 "/workflow/execute",
                 json={
@@ -607,7 +679,7 @@ class TestWorkflowExecute:
         changed = self._valid_workflow()
         changed["steps"][0]["config"]["amount"] = 2000
 
-        with patch("app.routers.workflow.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
+        with patch("app.workflow_execute.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
             first = await client.post(
                 "/workflow/execute",
                 json={
@@ -627,3 +699,97 @@ class TestWorkflowExecute:
         assert second.status_code == 409
         assert second.json()["detail"]["error"] == "idempotency_key_conflict"
         run_workflow.assert_awaited_once()
+
+
+# ── Simulate ─────────────────────────────────────────────────────
+
+
+class TestWorkflowSimulate:
+    """POST /workflow/simulate endpoint."""
+
+    def _valid_workflow(self) -> dict:
+        return {
+            "name": "full_report_flow",
+            "trigger": "weekly",
+            "steps": [
+                {"action": "generate_report", "config": {"report_type": "sales", "format": "pdf"}},
+                {"action": "send_email", "config": {"to": "a@b.pl", "subject": "x", "body": "y"}},
+                {"action": "notify_slack", "config": {"channel": "#sales", "message": "ok"}},
+            ],
+        }
+
+    @pytest.mark.asyncio
+    async def test_simulate_workflow_dsl_without_execution(self, client: AsyncClient) -> None:
+        with patch("app.workflow_execute.run_workflow", AsyncMock()) as run_workflow:
+            resp = await client.post("/workflow/simulate", json={"workflow": self._valid_workflow()})
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["stage"] == "simulate"
+        assert data["status"] == "ready"
+        assert data["step_count"] == 3
+        assert data["side_effect_count"] == 2
+        assert data["can_execute"] is True
+        run_workflow.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_simulate_from_text_composes_plan(self, client: AsyncClient) -> None:
+        mock_nlp_resp = MagicMock(spec=Response)
+        mock_nlp_resp.status_code = 200
+        mock_nlp_resp.is_success = True
+        mock_nlp_resp.headers = {"content-type": "application/json"}
+        mock_nlp_resp.json.return_value = {
+            "status": "complete",
+            "workflow": self._valid_workflow(),
+        }
+
+        with patch("app.routers.workflow.AsyncClient") as MockClient, patch(
+            "app.workflow_execute.run_workflow", AsyncMock()
+        ) as run_workflow:
+            mock_instance = AsyncMock()
+            mock_instance.post.return_value = mock_nlp_resp
+            mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+            mock_instance.__aexit__ = AsyncMock(return_value=False)
+            MockClient.return_value = mock_instance
+
+            resp = await client.post(
+                "/workflow/simulate",
+                json={"text": "raport PDF email slack", "mode": "rules"},
+            )
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["stage"] == "simulate"
+        assert data["step_count"] == 3
+        run_workflow.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_from_text_simulate_flag(self, client: AsyncClient) -> None:
+        mock_nlp_resp = MagicMock(spec=Response)
+        mock_nlp_resp.status_code = 200
+        mock_nlp_resp.is_success = True
+        mock_nlp_resp.headers = {"content-type": "application/json"}
+        mock_nlp_resp.json.return_value = {
+            "status": "complete",
+            "workflow": self._valid_workflow(),
+        }
+
+        with patch("app.routers.workflow.AsyncClient") as MockClient, patch(
+            "app.workflow_execute.run_workflow", AsyncMock()
+        ) as run_workflow:
+            mock_instance = AsyncMock()
+            mock_instance.post.return_value = mock_nlp_resp
+            mock_instance.__aenter__ = AsyncMock(return_value=mock_instance)
+            mock_instance.__aexit__ = AsyncMock(return_value=False)
+            MockClient.return_value = mock_instance
+
+            resp = await client.post(
+                "/workflow/from-text",
+                json={"text": "raport PDF email slack", "simulate": True, "mode": "rules"},
+            )
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["stage"] == "simulate"
+        assert "dsl" in data
+        run_workflow.assert_not_awaited()

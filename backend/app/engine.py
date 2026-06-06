@@ -64,19 +64,26 @@ async def _publish_workflow_event(
     total_steps: int | None = None,
     payload: dict | None = None,
 ) -> None:
-    await workflow_event_hub.publish(
-        WorkflowEvent(
-            workflow_id=workflow_id,
-            event_type=event_type,
-            status=status,
-            message=message,
-            step_id=step_id,
-            action=action,
-            step_index=step_index,
-            total_steps=total_steps,
-            payload=payload or {},
-        )
+    from nlp2dsl_sdk.workflow.events import lifecycle_event_from_payload
+
+    event = WorkflowEvent(
+        workflow_id=workflow_id,
+        event_type=event_type,
+        status=status,
+        message=message,
+        step_id=step_id,
+        action=action,
+        step_index=step_index,
+        total_steps=total_steps,
+        payload=payload or {},
     )
+    await workflow_event_hub.publish(event)
+
+    lifecycle = lifecycle_event_from_payload(
+        event.to_dict(),
+        correlation_id=get_request_id(),
+    )
+    await _repo.append_event(workflow_id, lifecycle.model_dump(mode="json"))
 
 
 async def _execute_workflow(

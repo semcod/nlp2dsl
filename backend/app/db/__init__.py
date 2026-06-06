@@ -36,6 +36,20 @@ class WorkflowRepo(ABC):
     async def count_runs(self) -> int:
         ...
 
+    @abstractmethod
+    async def append_event(self, workflow_id: str, event: dict) -> None:
+        """Persist one lifecycle event for audit/replay."""
+
+    @abstractmethod
+    async def list_events(
+        self,
+        workflow_id: str,
+        *,
+        limit: int = 200,
+        offset: int = 0,
+    ) -> list[dict]:
+        """Return lifecycle events in chronological order."""
+
 
 def create_workflow_repo() -> WorkflowRepo:
     """Factory: zwraca Postgres repo jeśli URL jest ustawiony, inaczej memory."""

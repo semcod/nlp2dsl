@@ -20,13 +20,13 @@ _FALLBACK_ACTION_FIELDS: dict[str, dict[str, list[str]]] = {
     "send_invoice": {"required": ["amount", "to"], "quality_required": []},
     "generate_invoice": {"required": ["amount", "to"], "quality_required": []},
     "send_email": {
-        "required": ["to", "subject", "body"],
+        "required": ["to"],
         "quality_required": ["body"],
     },
     "generate_report": {"required": ["report_type"], "quality_required": []},
-    "notify_slack": {"required": [], "quality_required": ["message"]},
-    "notify_telegram": {"required": [], "quality_required": ["message"]},
-    "notify_teams": {"required": [], "quality_required": ["message"]},
+    "notify_slack": {"required": ["channel"], "quality_required": ["message"]},
+    "notify_telegram": {"required": ["chat_id"], "quality_required": ["message"]},
+    "notify_teams": {"required": ["channel"], "quality_required": ["message"]},
 }
 
 _CATALOG_CACHE: dict[str, Any] | None = None

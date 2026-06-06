@@ -16,16 +16,21 @@ from .pactown import (
 
 from .publish import (
     PublishExportBundle,
+    PublishValidationResult,
+    assert_publish_layer_valid,
     catalog_from_nlp_client,
     export_workflow_publish_layer,
     print_publish_summary,
     validate_publish_layer,
+    validate_publish_layer_result,
 )
 
 __all__ = [
     "MarkpactExportBundle",
     "PactownExportBundle",
     "PublishExportBundle",
+    "PublishValidationResult",
+    "assert_publish_layer_valid",
     "catalog_from_nlp_client",
     "composite_workflow_spec",
     "contract_to_yaml_dict",
@@ -36,5 +41,6 @@ __all__ = [
     "platform_service_readme",
     "print_publish_summary",
     "validate_publish_layer",
+    "validate_publish_layer_result",
     "workflow_dsl_to_markpact_readme",
 ]

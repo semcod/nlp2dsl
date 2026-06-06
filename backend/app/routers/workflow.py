@@ -5,6 +5,7 @@ Workflow router — /workflow/run, /workflow/history/*, /workflow/actions, /work
 import asyncio
 import json
 import logging
+import os
 from http import HTTPStatus
 from typing import Any
 
@@ -15,16 +16,18 @@ from starlette.responses import StreamingResponse
 from app.engine import NLP_SERVICE_URL, _repo, run_workflow, start_workflow
 from app.action_catalog import fetch_action_catalog
 from app.dsl_validation import dsl_validation_response, validate_dsl_for_execution
-from app.idempotency import idempotency_store, workflow_fingerprint
+from app.workflow_execute import resolve_idempotency_key, run_idempotent_workflow
 from app.logging_setup import get_request_id
 from app.workflow_events import TERMINAL_EVENT_TYPES, workflow_event_hub
+from app.execution_policy import policy_blocked_response, validate_workflow_execution_policy
 from app.workflow_lifecycle import (
     attach_validation_to_plan,
-    run_request_from_workflow,
     validation_report_for_workflow,
     workflow_from_lifecycle_body,
     workflow_validation_payload,
 )
+from nlp2dsl_sdk.workflow.events import workflow_snapshot_from_events
+from nlp2dsl_sdk.workflow.simulate import simulate_workflow_payload
 from app.schemas import ActionInfo, RunWorkflowRequest, WorkflowResult
 
 log = logging.getLogger("router.workflow")
@@ -113,6 +116,24 @@ async def get_workflow(workflow_id: str) -> dict[str, Any]:
     return run
 
 
+@router.get("/history/{workflow_id}/events")
+async def get_workflow_events(workflow_id: str, limit: int = 200, offset: int = 0) -> dict[str, Any]:
+    """Return persisted lifecycle events and a reconstructed status snapshot."""
+    run = await _repo.get_run(workflow_id)
+    if not run:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Workflow not found")
+
+    events = await _repo.list_events(workflow_id, limit=limit, offset=offset)
+    reconstructed = workflow_snapshot_from_events(events)
+    return {
+        "workflow_id": workflow_id,
+        "run": _workflow_snapshot(run),
+        "events": events,
+        "reconstructed": reconstructed,
+        "count": len(events),
+    }
+
+
 @router.get("/stream/{workflow_id}")
 async def stream_workflow(workflow_id: str, request: Request) -> StreamingResponse:
     """SSE stream with live workflow lifecycle events."""
@@ -163,16 +184,61 @@ async def stream_workflow(workflow_id: str, request: Request) -> StreamingRespon
     return StreamingResponse(event_generator(), media_type="text/event-stream", headers=headers)
 
 
+@router.get("/catalog/drift")
+async def workflow_catalog_drift() -> dict[str, Any]:
+    """Preflight diagnostics: nlp-service catalog vs worker handler registry."""
+    from nlp2dsl_sdk.validation.contract_drift import build_catalog_drift_report
+
+    try:
+        async with AsyncClient(
+            timeout=_PROXY_TIMEOUT_SECONDS,
+            headers={"X-Request-ID": get_request_id()},
+        ) as client:
+            resp = await client.get(f"{NLP_SERVICE_URL}/nlp/actions")
+        resp.raise_for_status()
+        nlp_catalog = resp.json()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_GATEWAY,
+            detail=f"Could not load action catalog from nlp-service: {exc}",
+        ) from exc
+
+    worker_url = os.getenv("WORKER_URL", "http://worker:8004").rstrip("/")
+    try:
+        async with AsyncClient(timeout=_PROXY_TIMEOUT_SECONDS) as client:
+            wresp = await client.get(f"{worker_url}/health")
+        wresp.raise_for_status()
+        worker_handlers = sorted(wresp.json().get("actions", []))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_GATEWAY,
+            detail=f"Could not load worker actions: {exc}",
+        ) from exc
+
+    if not isinstance(nlp_catalog, dict):
+        nlp_catalog = {}
+
+    report = build_catalog_drift_report(
+        nlp_catalog=nlp_catalog,
+        worker_handlers=worker_handlers,
+    )
+    payload = report.to_dict()
+    payload["stage"] = "preflight"
+    payload["status"] = "ready" if report.ok else "validation_failed"
+    return payload
+
+
 @router.post("/from-text")
 async def workflow_from_text(body: dict) -> dict[str, Any]:
     """
     Pełny pipeline: tekst → NLP → DSL → (opcjonalne) wykonanie.
 
-    Body: {"text": "...", "mode": "auto|rules|llm", "execute": true|false}
+    Body: {"text": "...", "mode": "auto|rules|llm", "execute": true|false, "simulate": true|false}
     """
     text = body.get("text", "")
     mode = body.get("mode", "auto")
     execute = body.get("execute", False)
+    simulate = body.get("simulate", False)
 
     if not text.strip():
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Field 'text' is required")
@@ -202,10 +268,33 @@ async def workflow_from_text(body: dict) -> dict[str, Any]:
     if contract_issues:
         return dsl_validation_response(workflow_data, contract_issues)
 
+    if simulate and workflow_data:
+        report = validation_report_for_workflow(workflow_data)
+        payload = simulate_workflow_payload(workflow_data)
+        payload["validation"] = report.model_dump()
+        payload["dsl"] = workflow_data
+        payload["can_execute"] = report.can_execute and payload.get("can_execute", False)
+        if not report.can_execute:
+            payload["status"] = "validation_failed"
+            payload["missing_fields"] = report.missing_fields
+        return payload
+
     if execute and workflow_data:
-        req = run_request_from_workflow(workflow_data)
-        result = await run_workflow(req)
-        return {"status": "executed", "dsl": workflow_data, "result": result.model_dump()}
+        idempotency_key = resolve_idempotency_key(
+            explicit_key=str(body.get("idempotency_key") or "").strip() or None,
+            workflow=workflow_data,
+        )
+        execution = await run_idempotent_workflow(
+            workflow_data,
+            idempotency_key=idempotency_key,
+        )
+        return {
+            "status": "executed",
+            "dsl": workflow_data,
+            "result": execution["result"],
+            "idempotency_key": execution.get("idempotency_key"),
+            "idempotent_replay": execution.get("idempotent_replay", False),
+        }
 
     return {"status": "complete", "dsl": workflow_data, "message": "Workflow DSL wygenerowany. Wyślij z 'execute': true aby uruchomić."}
 
@@ -245,7 +334,7 @@ async def workflow_validate(body: dict[str, Any]) -> dict[str, Any]:
     """
     Validate workflow DSL without execution.
 
-    Body: {"workflow": {...}} or {"dsl": {...}}.
+    Body: {"workflow": {...}} or {"dsl": {...}}, optional `"check_policy": true`.
     """
     workflow_data = workflow_from_lifecycle_body(body)
     if workflow_data is None:
@@ -253,7 +342,73 @@ async def workflow_validate(body: dict[str, Any]) -> dict[str, Any]:
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Field 'workflow' is required",
         )
-    return workflow_validation_payload(workflow_data)
+    payload = workflow_validation_payload(workflow_data)
+    if bool(body.get("check_policy", False)):
+        policy_issues = await validate_workflow_execution_policy(
+            workflow_data,
+            body,
+            executing=True,
+            skip_access_check=bool(body.get("skip_access_check", False)),
+        )
+        if policy_issues:
+            blocked = policy_blocked_response(workflow_data, policy_issues)
+            payload.update(blocked)
+            payload["workflow"] = workflow_data
+    return payload
+
+
+@router.post("/simulate")
+async def workflow_simulate(body: dict[str, Any]) -> dict[str, Any]:
+    """
+    Simulate workflow execution without side effects.
+
+    Body: {"workflow": {...}} or {"dsl": {...}} or {"text": "...", "mode": "auto|rules|llm"}.
+    """
+    text = str(body.get("text") or "").strip()
+    mode = body.get("mode", "auto")
+
+    if text:
+        async with AsyncClient(
+            timeout=_PROXY_TIMEOUT_SECONDS,
+            headers={"X-Request-ID": get_request_id()},
+        ) as client:
+            nlp_resp = await client.post(f"{NLP_SERVICE_URL}/nlp/to-dsl", json={"text": text, "mode": mode})
+
+        if not nlp_resp.is_success:
+            ct = nlp_resp.headers.get("content-type", "")
+            raise HTTPException(
+                status_code=nlp_resp.status_code,
+                detail=nlp_resp.json() if ct.startswith("application/json") else nlp_resp.text,
+            )
+
+        dsl_response = nlp_resp.json()
+        if dsl_response.get("status") != "complete":
+            return {
+                "stage": "simulate",
+                "status": dsl_response.get("status", "incomplete"),
+                "missing_fields": dsl_response.get("missing_fields", []),
+                "prompt_user": dsl_response.get("prompt_user"),
+                "partial_workflow": dsl_response.get("workflow"),
+            }
+
+        workflow_data = dsl_response.get("workflow")
+    else:
+        workflow_data = workflow_from_lifecycle_body(body)
+
+    if workflow_data is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Field 'workflow' or 'text' is required",
+        )
+
+    report = validation_report_for_workflow(workflow_data)
+    payload = simulate_workflow_payload(workflow_data)
+    payload["validation"] = report.model_dump()
+    payload["can_execute"] = report.can_execute and payload.get("can_execute", False)
+    if not report.can_execute:
+        payload["status"] = "validation_failed"
+        payload["missing_fields"] = report.missing_fields
+    return payload
 
 
 @router.post("/execute")
@@ -281,7 +436,10 @@ async def workflow_execute(body: dict[str, Any]) -> dict[str, Any]:
             "can_execute": False,
         }
 
-    idempotency_key = str(body.get("idempotency_key") or "").strip() or None
+    idempotency_key = resolve_idempotency_key(
+        explicit_key=str(body.get("idempotency_key") or "").strip() or None,
+        workflow=workflow_data,
+    )
 
     if bool(body.get("dry_run", False)):
         return {
@@ -294,44 +452,30 @@ async def workflow_execute(body: dict[str, Any]) -> dict[str, Any]:
             "idempotency_key": idempotency_key,
         }
 
-    if idempotency_key:
-        start_status, cached_response = await idempotency_store.start(
-            idempotency_key,
-            workflow_fingerprint(workflow_data),
+    if not bool(body.get("skip_policy_check", False)):
+        policy_issues = await validate_workflow_execution_policy(
+            workflow_data,
+            body,
+            executing=True,
+            skip_access_check=bool(body.get("skip_access_check", False)),
         )
-        if start_status == "conflict":
-            raise HTTPException(
-                status_code=HTTPStatus.CONFLICT,
-                detail={
-                    "error": "idempotency_key_conflict",
-                    "idempotency_key": idempotency_key,
-                    "message": "Ten idempotency_key został użyty z innym workflow.",
-                },
-            )
-        if start_status == "in_progress":
-            raise HTTPException(
-                status_code=HTTPStatus.CONFLICT,
-                detail={
-                    "error": "idempotency_key_in_progress",
-                    "idempotency_key": idempotency_key,
-                    "message": "Wykonanie z tym idempotency_key jest już w toku.",
-                },
-            )
-        if start_status == "replay" and cached_response is not None:
-            replay = dict(cached_response)
-            replay["idempotent_replay"] = True
-            return replay
+        if policy_issues:
+            blocked = policy_blocked_response(workflow_data, policy_issues)
+            blocked["stage"] = "execute"
+            blocked["workflow"] = workflow_data
+            blocked["validation"] = report.model_dump()
+            return blocked
 
-    result = await run_workflow(run_request_from_workflow(workflow_data))
-    response = {
+    execution = await run_idempotent_workflow(
+        workflow_data,
+        idempotency_key=idempotency_key,
+    )
+    return {
         "stage": "execute",
         "status": "executed",
         "workflow": workflow_data,
         "validation": report.model_dump(),
-        "result": result.model_dump(mode="json"),
-        "idempotency_key": idempotency_key,
-        "idempotent_replay": False,
+        "result": execution["result"],
+        "idempotency_key": execution.get("idempotency_key"),
+        "idempotent_replay": execution.get("idempotent_replay", False),
     }
-    if idempotency_key:
-        await idempotency_store.finish(idempotency_key, response)
-    return response

@@ -20,6 +20,9 @@ examples/
 ├── 12-ir-show/              # MVP workflow vs nlp2dsl show (IntentIR)
 ├── 13-autonomous-invoice-stack/  # Stack autonomiczny: multi-turn + compose + cron
 ├── 14-markpact-export/        # ActionContract + DSL → markpact README + pactown ecosystem
+├── 15-idempotency-replay/     # Side effects: replay z idempotency_key (from-text + chat uruchom)
+├── 16-golden-eval/            # Golden dataset — metryki per klasa błędu
+├── 17-execution-policy/       # Capability layer — approval, ACL, allowlisty domen/kanałów
 └── README.md
 ```
 
@@ -430,6 +433,102 @@ Szczegóły: [`docs/artifacts.md`](../docs/artifacts.md)
 bash run-all.sh
 python3 ../scripts/aggregate-example-testql.py   # → testql-scenarios/generated-examples.testql.toon.yaml
 ```
+
+---
+
+## 17 — Execution policy (capability layer)
+
+Bramka **przed workerem**: approval, ACL agentów (`nlp2dsl.yaml`), allowlisty domen e-mail i kanałów powiadomień.
+
+**Wymagania:** aktywny Python z zależnościami SDK (`pydantic`, …). Jeśli używasz venv z innego repo (np. koru), uruchom raz:
+
+```bash
+cd ~/github/wronai/nlp2dsl
+pip install -e .
+```
+
+Albo użyj wrapperów (same doinstalują SDK): `bash scripts/validate-contract-draft.sh --strict` lub `./run-all.sh`.
+
+**Backend Docker:** po zmianach w `backend/` przebuduj obraz — inaczej `check_policy` jest ignorowany:
+
+```bash
+docker compose build backend && docker compose up -d backend
+```
+
+```bash
+cd examples/17-execution-policy
+python3 main.py
+```
+
+### SDK (Python)
+
+```python
+from nlp2dsl_sdk.client import NLP2DSLClient, workflow_step
+
+client = NLP2DSLClient.from_env()
+
+workflow = {
+    "name": "invoice_with_policy",
+    "steps": [
+        workflow_step("send_invoice", to="finance@company.com", amount=500, currency="PLN"),
+    ],
+}
+
+# Preflight — domena spoza allowlisty → status=blocked
+blocked = client.workflow_validate(
+    workflow,
+    check_policy=True,
+    policy={"allowed_email_domains": ["company.com"]},
+    skip_access_check=True,  # tylko demo allowlisty; w prod zostaw False
+)
+assert blocked["status"] == "blocked"
+
+# Execute z approval_grants
+result = client.workflow_execute(
+    workflow,
+    approval_grants=["send_invoice"],
+    policy={"allowed_email_domains": ["company.com"]},
+    skip_access_check=True,
+)
+```
+
+### HTTP (curl)
+
+```bash
+# Validate + polityka
+curl -s http://localhost:8010/workflow/validate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "workflow": {
+      "name": "demo",
+      "steps": [{"action": "send_email", "config": {"to": "x@evil.com", "body": "hi"}}]
+    },
+    "check_policy": true,
+    "policy": {"allowed_email_domains": ["company.com"]},
+    "skip_access_check": true
+  }' | jq .status
+
+# Execute z approval + ACL agenta (nlp-service musi działać)
+curl -s http://localhost:8010/workflow/execute \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "workflow": {
+      "name": "demo",
+      "steps": [{"action": "mullm_shell_task", "config": {"shell_command": "echo hi"}}]
+    },
+    "agent_id": "mail_agent"
+  }' | jq '{status, policy_issues}'
+```
+
+| Pole body | Opis |
+|-----------|------|
+| `check_policy` | Na `/workflow/validate` — uruchom policy layer |
+| `agent_id` | Agent z `nlp2dsl.yaml` (domyślnie `user`) |
+| `approval_grants` | Lista akcji zatwierdzonych do wykonania |
+| `policy.allowed_email_domains` | Dozwolone domeny `to` dla e-mail/faktury |
+| `policy.allowed_notify_channels` | Dozwolone kanały Slack/Teams/Telegram |
+| `skip_access_check` | Pomiń `GET /nlp/access/check` (tylko testy lokalne) |
+| `skip_policy_check` | Pomiń całą bramkę (tylko debug) |
 
 ---
 

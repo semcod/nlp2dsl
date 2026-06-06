@@ -56,6 +56,22 @@ class PublishExportBundle:
     pactown: PactownExportBundle
 
 
+@dataclass
+class PublishValidationResult:
+    markpact: str
+    pactown: str
+    ok: bool
+    skipped: bool
+
+    def to_dict(self) -> dict[str, str | bool]:
+        return {
+            "markpact": self.markpact,
+            "pactown": self.pactown,
+            "ok": self.ok,
+            "skipped": self.skipped,
+        }
+
+
 def catalog_from_nlp_client(client: Any | None) -> dict[str, Any]:
     """Fetch /nlp/actions or return minimal fallback catalog."""
     if client is not None:
@@ -97,14 +113,22 @@ def export_workflow_publish_layer(
     return PublishExportBundle(markpact=markpact, pactown=pactown)
 
 
-def validate_publish_layer(bundle: PublishExportBundle) -> dict[str, str]:
-    """Optional validation when markpact/pactown are installed."""
+def validate_publish_layer_result(
+    bundle: PublishExportBundle,
+    *,
+    require_packages: bool = False,
+) -> PublishValidationResult:
+    """Validate exported markpact/pactown artifacts when packages are available."""
     report: dict[str, str] = {}
+    markpact_ok = False
+    pactown_ok = False
+
     try:
         from markpact.parser import parse_blocks
 
         n = len(parse_blocks(bundle.markpact.readme.read_text(encoding="utf-8")))
         report["markpact"] = f"{n} blocks OK"
+        markpact_ok = n > 0
     except ImportError:
         report["markpact"] = "skipped (markpact not installed)"
     except Exception as exc:
@@ -115,12 +139,47 @@ def validate_publish_layer(bundle: PublishExportBundle) -> dict[str, str]:
 
         cfg = load_config(bundle.pactown.ecosystem_yaml)
         report["pactown"] = f"{cfg.name}: {len(cfg.services)} services OK"
+        pactown_ok = len(cfg.services) > 0
     except ImportError:
         report["pactown"] = "skipped (pactown not installed)"
     except Exception as exc:
         report["pactown"] = f"error: {exc}"
 
-    return report
+    skipped = report["markpact"].startswith("skipped") and report["pactown"].startswith("skipped")
+    if require_packages and skipped:
+        if report["markpact"].startswith("skipped"):
+            report["markpact"] = "error: markpact required but not installed"
+        if report["pactown"].startswith("skipped"):
+            report["pactown"] = "error: pactown required but not installed"
+        markpact_ok = False
+        pactown_ok = False
+        skipped = False
+
+    ok = markpact_ok and pactown_ok and not any(msg.startswith("error:") for msg in report.values())
+    return PublishValidationResult(
+        markpact=report["markpact"],
+        pactown=report["pactown"],
+        ok=ok,
+        skipped=skipped,
+    )
+
+
+def validate_publish_layer(bundle: PublishExportBundle) -> dict[str, str]:
+    """Legacy dict report for examples."""
+    result = validate_publish_layer_result(bundle)
+    return {"markpact": result.markpact, "pactown": result.pactown}
+
+
+def assert_publish_layer_valid(
+    bundle: PublishExportBundle,
+    *,
+    require_packages: bool = True,
+) -> PublishValidationResult:
+    """Validate export bundle; raises ValueError when validation fails."""
+    result = validate_publish_layer_result(bundle, require_packages=require_packages)
+    if not result.ok and not (result.skipped and not require_packages):
+        raise ValueError(f"Publish layer validation failed: {result.to_dict()}")
+    return result
 
 
 def print_publish_summary(bundle: PublishExportBundle, *, validation: Mapping[str, str] | None = None) -> None:

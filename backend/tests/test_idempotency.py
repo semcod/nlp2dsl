@@ -44,3 +44,26 @@ def test_idempotency_factory_uses_memory_without_postgres() -> None:
 def test_idempotency_factory_uses_postgres_with_url() -> None:
     store = create_idempotency_store("postgresql://user:pass@localhost:5432/testdb")
     assert isinstance(store, PostgresIdempotencyStore)
+
+
+def test_workflow_fingerprint_ignores_empty_optional_fields() -> None:
+    from app.idempotency import normalize_workflow_for_fingerprint
+
+    a = {
+        "name": "auto_send_invoice",
+        "steps": [{"action": "send_invoice", "config": {"amount": 500, "to": "a@b.pl"}}],
+    }
+    b = {
+        "name": "auto_send_invoice",
+        "steps": [
+            {
+                "action": "send_invoice",
+                "config": {"amount": 500, "to": "a@b.pl", "attachment_path": ""},
+            }
+        ],
+    }
+    assert workflow_fingerprint(a) == workflow_fingerprint(b)
+    assert normalize_workflow_for_fingerprint(a)["steps"][0]["config"] == {
+        "amount": 500,
+        "to": "a@b.pl",
+    }

@@ -8,6 +8,7 @@ Indeks dokumentacji platformy MVP (NLP → DSL → CMD → Docker).
 |-------|----------|
 | Instalacja, porty, conversation API | [README główny](../README.md) |
 | Przykłady i scenariusze | [examples/README.md](../examples/README.md) |
+| Aktualny stan przykładów 01-14 i publish layer | [system-status-examples-01-14.md](system-status-examples-01-14.md) |
 | Przykład faktury (autonomiczny) | [examples/01-invoice/README.md](../examples/01-invoice/README.md) |
 
 ## Architektura i mapa systemu

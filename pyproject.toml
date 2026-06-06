@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nlp2dsl"
-version = "0.0.31"
+version = "0.0.32"
 description = "Reusable Python SDK for the NLP2DSL platform"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -43,7 +43,10 @@ filterwarnings = [
 ]
 
 [tool.setuptools]
-packages = ["nlp2dsl_sdk", "nlp2dsl_sdk.validation", "nlp2dsl_sdk.validation.rules", "nlp2dsl_sdk.doql", "nlp2dsl_sdk.contracts", "nlp2dsl_sdk.workflow", "nlp2dsl_sdk.export"]
+packages = ["nlp2dsl_sdk", "nlp2dsl_sdk.validation", "nlp2dsl_sdk.validation.rules", "nlp2dsl_sdk.doql", "nlp2dsl_sdk.contracts", "nlp2dsl_sdk.workflow", "nlp2dsl_sdk.export", "nlp2dsl_sdk.evaluation", "nlp2dsl_sdk.mullm"]
+
+[tool.setuptools.package-data]
+"nlp2dsl_sdk.evaluation" = ["data/*.yaml"]
 
 [tool.pfix]
 # Self-healing Python configuration

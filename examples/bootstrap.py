@@ -3,7 +3,18 @@
 from __future__ import annotations
 
 import os
+import subprocess
+import sys
 from pathlib import Path
+
+
+def _ensure_sdk_installed(repo_root: Path) -> None:
+    """Install editable nlp2dsl when the active venv lacks SDK deps (e.g. koru .venv)."""
+    try:
+        import pydantic  # noqa: F401
+    except ImportError:
+        print(f"==> Brak pydantic — instaluję nlp2dsl: pip install -e {repo_root}", file=sys.stderr)
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", str(repo_root), "-q"])
 
 
 def bootstrap(example_dir: Path | str, *, title: str = "") -> Path:
@@ -12,11 +23,14 @@ def bootstrap(example_dir: Path | str, *, title: str = "") -> Path:
 
     Sets NLP2DSL_EXAMPLE_DIR so preview/scenarios write .nlp2dsl/ artifacts.
     """
-    from nlp2dsl_sdk.encoding import configure_utf8
+    root = Path(example_dir).resolve()
+    repo_root = root.parent.parent
+    _ensure_sdk_installed(repo_root)
 
+    from nlp2dsl_sdk.encoding import configure_utf8
     configure_utf8(force=True)
 
-    root = Path(example_dir).resolve()
+    os.environ.setdefault("NLP2DSL_REPO_ROOT", str(repo_root))
     os.environ["NLP2DSL_EXAMPLE_DIR"] = str(root)
     backend = os.environ.get("NLP2DSL_BACKEND_URL", "http://localhost:8010")
     os.environ.setdefault("NLP2DSL_BACKEND_URL", backend)

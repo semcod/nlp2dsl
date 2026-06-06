@@ -11,11 +11,14 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Request
 from httpx import AsyncClient, Response
 
-from app.engine import NLP_SERVICE_URL, run_workflow
+from app.engine import NLP_SERVICE_URL
+from app.execution_policy import policy_blocked_response, validate_workflow_execution_policy
+from app.mullm_execute import execute_mullm_dsl
+from app.workflow_execute import resolve_idempotency_key, run_idempotent_workflow
+from nlp2dsl_sdk.mullm.executor import is_mullm_only_workflow, workflow_has_mullm_steps
 from app.attachment_validation import ensure_attachment_validation
 from app.dsl_validation import dsl_validation_response, validate_dsl_for_execution
 from app.logging_setup import get_request_id
-from app.schemas import RunWorkflowRequest, Step
 
 log = logging.getLogger("router.chat")
 router = APIRouter(prefix="/workflow", tags=["chat"])
@@ -115,26 +118,6 @@ def _uses_mullm_backend(result: dict[str, Any], steps: list[dict[str, Any]]) -> 
     return bool(_mullm_steps(steps) or result.get("execution_backend") == "mullm")
 
 
-def _prepare_mullm_execution(result: dict[str, Any], steps: list[dict[str, Any]]) -> dict[str, Any]:
-    mullm_only_steps = _mullm_steps(steps)
-    result["status"] = "ready"
-    result["execution_backend"] = "mullm"
-    result["execution"] = {
-        "backend": "mullm",
-        "steps": mullm_only_steps or steps,
-        "hint": "Wykonaj w Mullm workspace (conductor / BFF).",
-    }
-    return result
-
-
-def _workflow_request_from_dsl(dsl: dict[str, Any], steps: list[dict[str, Any]]) -> RunWorkflowRequest:
-    return RunWorkflowRequest(
-        name=dsl.get("name", "chat_generated"),
-        trigger=dsl.get("trigger", "manual"),
-        steps=[Step(action=step["action"], config=step.get("config", {})) for step in steps],
-    )
-
-
 def _mark_auto_execute_message(result: dict[str, Any], body: dict[str, Any]) -> None:
     if not _is_auto_execute_requested(result, body) or _is_explicit_execute_request(body):
         return
@@ -205,14 +188,50 @@ async def _execute_ready_dsl(result: dict[str, Any], body: dict[str, Any]) -> di
         return result
 
     steps = _dsl_steps(dsl)
-    if _uses_mullm_backend(result, steps):
-        return _prepare_mullm_execution(result, steps)
+    conversation_id = str(
+        result.get("conversation_id") or body.get("conversation_id") or ""
+    ).strip() or None
 
-    req = _workflow_request_from_dsl(dsl, steps)
-    wf_result = await run_workflow(req)
+    if workflow_has_mullm_steps(dsl) and not is_mullm_only_workflow(dsl):
+        result["status"] = "validation_failed"
+        result["message"] = (
+            "Workflow łączy kroki Mullm i worker — wykonanie mieszane nie jest jeszcze obsługiwane."
+        )
+        result["execution_backend"] = None
+        result.pop("execution", None)
+        return result
+
+    policy_issues = await validate_workflow_execution_policy(dsl, body, executing=True)
+    if policy_issues:
+        result.update(policy_blocked_response(dsl, policy_issues))
+        result["execution_backend"] = None
+        result.pop("execution", None)
+        return result
+
+    if _uses_mullm_backend(result, steps):
+        execution = await execute_mullm_dsl(dsl, conversation_id=conversation_id)
+        result["status"] = "executed"
+        result["execution"] = execution
+        result["execution_backend"] = "mullm"
+        _mark_auto_execute_message(result, body)
+        await _observe_registry_execution(result, body)
+        return result
+
+    idempotency_key = resolve_idempotency_key(
+        explicit_key=str(body.get("idempotency_key") or "").strip() or None,
+        workflow=dsl,
+        conversation_id=conversation_id,
+    )
+    execution = await run_idempotent_workflow(
+        dsl,
+        idempotency_key=idempotency_key,
+    )
     result["status"] = "executed"
-    result["execution"] = wf_result.model_dump()
+    result["execution"] = execution["result"]
     result["execution_backend"] = "worker"
+    if execution.get("idempotency_key"):
+        result["idempotency_key"] = execution["idempotency_key"]
+    result["idempotent_replay"] = execution.get("idempotent_replay", False)
     _merge_attachment_validation(result)
     ensure_attachment_validation(result)
     _mark_auto_execute_message(result, body)

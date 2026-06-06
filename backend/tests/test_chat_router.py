@@ -43,7 +43,11 @@ async def test_ready_chat_auto_executes_worker_workflow() -> None:
     }
 
     run_workflow = AsyncMock(return_value=DummyWorkflowResult(wf_payload))
-    with patch("app.routers.chat.run_workflow", run_workflow):
+    with patch("app.routers.chat.run_idempotent_workflow", AsyncMock(return_value={
+        "result": wf_payload,
+        "idempotency_key": None,
+        "idempotent_replay": False,
+    })) as run_idempotent:
         executed = await chat._maybe_auto_execute(result, {"text": "", "sync_auto_execute": True})
 
     assert executed["status"] == "executed"
@@ -51,15 +55,15 @@ async def test_ready_chat_auto_executes_worker_workflow() -> None:
     assert executed["execution"] == wf_payload
     assert executed["message"] == "Gotowe. Wykonano automatycznie (sync_auto_execute)."
 
-    req = run_workflow.await_args.args[0]
-    assert req.name == "invoice_chat"
-    assert req.trigger == "manual"
-    assert req.steps[0].action == "send_invoice"
-    assert req.steps[0].config == {"to": "client@example.com", "amount": 1500}
+    run_idempotent.assert_awaited_once()
+    assert run_idempotent.await_args.kwargs["idempotency_key"] is None
 
 
 @pytest.mark.asyncio
-async def test_ready_chat_delegates_mullm_steps_without_worker_execution() -> None:
+async def test_ready_chat_delegates_mullm_steps_without_worker_execution(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("MULLM_DELEGATE_MODE", "simulate")
     result = {
         "status": "ready",
         "dsl": {
@@ -74,14 +78,68 @@ async def test_ready_chat_delegates_mullm_steps_without_worker_execution() -> No
     }
 
     run_workflow = AsyncMock()
-    with patch("app.routers.chat.run_workflow", run_workflow):
+    with patch("app.routers.chat.run_idempotent_workflow", run_workflow):
         delegated = await chat._maybe_auto_execute(result, {"text": "uruchom"})
 
     run_workflow.assert_not_awaited()
-    assert delegated["status"] == "ready"
+    assert delegated["status"] == "executed"
     assert delegated["execution_backend"] == "mullm"
-    assert delegated["execution"]["backend"] == "mullm"
-    assert delegated["execution"]["steps"] == result["dsl"]["steps"]
+    assert delegated["execution"]["status"] == "completed"
+    assert delegated["execution"]["steps"][0]["action"] == "mullm_shell_task"
+    assert delegated["execution"]["steps"][0]["result"]["transport"] == "simulated"
+
+
+@pytest.mark.asyncio
+async def test_ready_chat_replays_uruchom_with_conversation_id() -> None:
+    wf_payload = {
+        "workflow_id": "wf-chat-repeat",
+        "name": "invoice_chat",
+        "status": "completed",
+        "steps": [],
+    }
+    result = {
+        "status": "ready",
+        "conversation_id": "conv-repeat-1",
+        "dsl": {
+            "name": "invoice_chat",
+            "trigger": "manual",
+            "steps": [
+                {
+                    "action": "send_invoice",
+                    "config": {"to": "client@example.com", "amount": 1500},
+                }
+            ],
+        },
+    }
+
+    calls = {"count": 0}
+
+    async def _run_idempotent(workflow, *, idempotency_key=None):
+        calls["count"] += 1
+        if calls["count"] == 1:
+            return {
+                "result": wf_payload,
+                "idempotency_key": idempotency_key,
+                "idempotent_replay": False,
+            }
+        return {
+            "result": wf_payload,
+            "idempotency_key": idempotency_key,
+            "idempotent_replay": True,
+        }
+
+    with patch("app.routers.chat.run_idempotent_workflow", side_effect=_run_idempotent) as run_idempotent:
+        first = await chat._maybe_auto_execute(dict(result), {"text": "uruchom"})
+        second = await chat._maybe_auto_execute(dict(result), {"text": "uruchom"})
+
+    assert first["idempotent_replay"] is False
+    assert second["idempotent_replay"] is True
+    assert run_idempotent.await_count == 2
+    assert run_idempotent.await_args_list[0].kwargs["idempotency_key"] is not None
+    assert (
+        run_idempotent.await_args_list[0].kwargs["idempotency_key"]
+        == run_idempotent.await_args_list[1].kwargs["idempotency_key"]
+    )
 
 
 @pytest.mark.asyncio
@@ -96,7 +154,7 @@ async def test_ready_chat_rejects_invalid_dsl_contract_before_execution() -> Non
     }
 
     run_workflow = AsyncMock()
-    with patch("app.routers.chat.run_workflow", run_workflow):
+    with patch("app.routers.chat.run_idempotent_workflow", run_workflow):
         rejected = await chat._maybe_auto_execute(result, {"text": "uruchom"})
 
     run_workflow.assert_not_awaited()

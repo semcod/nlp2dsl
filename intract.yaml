@@ -1,0 +1,51 @@
+version: intract.v1
+
+project:
+  name: nlp2dsl
+  intent: serve:workflow_platform
+
+contracts:
+  - id: platform.action_registry
+    scope: project
+    intent: validate:action_catalog
+    priority: 1
+    domain: platform
+    input: [nlp_service_registry, worker_handlers]
+    output: [drift_report]
+    effect: [read]
+    forbid: [side_effect]
+    require:
+      - validate.contract_drift
+    validate:
+      - required_intents
+    meaning: "ActionContract registry must stay aligned across nlp-service and worker."
+
+  - id: platform.publish_layer
+    scope: project
+    intent: validate:publish_export
+    priority: 2
+    domain: platform
+    input: [workflow_dsl, action_contracts]
+    output: [markpact_readme, pactown_ecosystem]
+    effect: [read]
+    require:
+      - validate.markpact_blocks
+      - validate.pactown_manifest
+    meaning: "Exported markpact/pactown artifacts must parse and reference a coherent platform."
+
+artifacts:
+  scripts/validate-contract-drift.py:
+    kind: python_script
+    provides: [validate.contract_drift]
+
+  scripts/validate-publish-export.py:
+    kind: python_script
+    provides: [validate.markpact_blocks, validate.pactown_manifest]
+
+  nlp-service/app/registry.py:
+    kind: python_module
+    provides: [nlp_service_registry]
+
+  worker/worker.py:
+    kind: python_module
+    provides: [worker_handlers]

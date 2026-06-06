@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-06T10:43:46.197216+00:00",
-  "examples": 13,
-  "passed": 13,
+  "generated_at": "2026-06-06T11:33:38.266177+00:00",
+  "examples": 14,
+  "passed": 14,
   "failed": 0,
   "warning": 0,
   "results": [
@@ -9,11 +9,11 @@
       "run_id": "examples/01-invoice",
       "example_id": "01-invoice",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197233+00:00",
+      "generated_at": "2026-06-06T11:33:38.266192+00:00",
       "checks_total": 8,
-      "checks_passed": 8,
+      "checks_passed": 7,
       "checks_failed": 0,
-      "checks_skipped": 0,
+      "checks_skipped": 1,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -23,16 +23,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 4 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -64,14 +57,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -94,11 +82,11 @@
       "run_id": "examples/02-email",
       "example_id": "02-email",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197241+00:00",
+      "generated_at": "2026-06-06T11:33:38.266206+00:00",
       "checks_total": 8,
-      "checks_passed": 7,
+      "checks_passed": 6,
       "checks_failed": 0,
-      "checks_skipped": 1,
+      "checks_skipped": 2,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -108,16 +96,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 4 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -149,14 +130,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -177,11 +153,11 @@
       "run_id": "examples/03-report-and-notify",
       "example_id": "03-report-and-notify",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197247+00:00",
+      "generated_at": "2026-06-06T11:33:38.266211+00:00",
       "checks_total": 8,
-      "checks_passed": 7,
+      "checks_passed": 6,
       "checks_failed": 0,
-      "checks_skipped": 1,
+      "checks_skipped": 2,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -191,16 +167,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 4 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -232,14 +201,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -260,11 +224,11 @@
       "run_id": "examples/04-scheduled-report",
       "example_id": "04-scheduled-report",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197252+00:00",
+      "generated_at": "2026-06-06T11:33:38.266216+00:00",
       "checks_total": 5,
-      "checks_passed": 3,
+      "checks_passed": 2,
       "checks_failed": 0,
-      "checks_skipped": 2,
+      "checks_skipped": 3,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -274,16 +238,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 4 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.conversation.generated",
@@ -311,11 +268,11 @@
       "run_id": "examples/05-conversation-flow",
       "example_id": "05-conversation-flow",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197256+00:00",
+      "generated_at": "2026-06-06T11:33:38.266220+00:00",
       "checks_total": 20,
-      "checks_passed": 20,
+      "checks_passed": 19,
       "checks_failed": 0,
-      "checks_skipped": 0,
+      "checks_skipped": 1,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -325,24 +282,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 12 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -458,16 +400,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 6 steps, endpoints=chatstart,chatmessage,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "nlp_dsl",
-              "assert_json",
-              "conversation",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage",
@@ -491,11 +426,11 @@
       "run_id": "examples/06-interactive-chat",
       "example_id": "06-interactive-chat",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197262+00:00",
+      "generated_at": "2026-06-06T11:33:38.266226+00:00",
       "checks_total": 11,
-      "checks_passed": 11,
+      "checks_passed": 10,
       "checks_failed": 0,
-      "checks_skipped": 0,
+      "checks_skipped": 1,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -505,18 +440,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 6 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -569,15 +495,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 5 steps, endpoints=chatstart,chatmessage,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage",
@@ -601,11 +521,11 @@
       "run_id": "examples/07-email-conversation",
       "example_id": "07-email-conversation",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197268+00:00",
+      "generated_at": "2026-06-06T11:33:38.266231+00:00",
       "checks_total": 8,
-      "checks_passed": 8,
+      "checks_passed": 7,
       "checks_failed": 0,
-      "checks_skipped": 0,
+      "checks_skipped": 1,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -615,16 +535,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 4 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -656,16 +569,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 6 steps, endpoints=chatstart,chatmessage,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "conversation",
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage",
@@ -689,11 +595,11 @@
       "run_id": "examples/08-multi-object-benchmark",
       "example_id": "08-multi-object-benchmark",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197273+00:00",
+      "generated_at": "2026-06-06T11:33:38.266235+00:00",
       "checks_total": 125,
-      "checks_passed": 124,
+      "checks_passed": 123,
       "checks_failed": 0,
-      "checks_skipped": 1,
+      "checks_skipped": 2,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -703,94 +609,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 82 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -1641,14 +1462,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -1669,11 +1485,11 @@
       "run_id": "examples/09-execution-smoke",
       "example_id": "09-execution-smoke",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197292+00:00",
+      "generated_at": "2026-06-06T11:33:38.266253+00:00",
       "checks_total": 11,
-      "checks_passed": 10,
+      "checks_passed": 9,
       "checks_failed": 0,
-      "checks_skipped": 1,
+      "checks_skipped": 2,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -1683,18 +1499,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 6 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -1747,14 +1554,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -1775,11 +1577,11 @@
       "run_id": "examples/10-llm-benchmark",
       "example_id": "10-llm-benchmark",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197296+00:00",
+      "generated_at": "2026-06-06T11:33:38.266257+00:00",
       "checks_total": 11,
-      "checks_passed": 10,
+      "checks_passed": 9,
       "checks_failed": 0,
-      "checks_skipped": 1,
+      "checks_skipped": 2,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -1789,18 +1591,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 6 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -1853,14 +1646,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -1881,11 +1669,11 @@
       "run_id": "examples/11-notify-quality",
       "example_id": "11-notify-quality",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197301+00:00",
+      "generated_at": "2026-06-06T11:33:38.266262+00:00",
       "checks_total": 17,
-      "checks_passed": 16,
+      "checks_passed": 15,
       "checks_failed": 0,
-      "checks_skipped": 1,
+      "checks_skipped": 2,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -1895,22 +1683,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 10 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -2005,14 +1780,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -2033,11 +1803,11 @@
       "run_id": "examples/12-ir-show",
       "example_id": "12-ir-show",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197308+00:00",
+      "generated_at": "2026-06-06T11:33:38.266267+00:00",
       "checks_total": 20,
-      "checks_passed": 19,
+      "checks_passed": 18,
       "checks_failed": 0,
-      "checks_skipped": 1,
+      "checks_skipped": 2,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -2047,24 +1817,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 12 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -2180,14 +1935,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -2208,11 +1958,11 @@
       "run_id": "examples/13-autonomous-invoice-stack",
       "example_id": "13-autonomous-invoice-stack",
       "status": "passed",
-      "generated_at": "2026-06-06T10:43:46.197314+00:00",
+      "generated_at": "2026-06-06T11:33:38.266273+00:00",
       "checks_total": 8,
-      "checks_passed": 8,
+      "checks_passed": 7,
       "checks_failed": 0,
-      "checks_skipped": 0,
+      "checks_skipped": 1,
       "checks": [
         {
           "id": "check.testql.commands_dry_run",
@@ -2222,16 +1972,9 @@
         },
         {
           "id": "check.testql.ir_parse",
-          "status": "passed",
-          "summary": "IR plan: 4 steps, type=cli",
-          "details": {
-            "step_kinds": [
-              "commands",
-              "commands",
-              "commands",
-              "commands"
-            ]
-          }
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
         },
         {
           "id": "check.artifact.pipeline.1",
@@ -2263,14 +2006,9 @@
         {
           "id": "check.conversation.dry_run",
           "status": "passed",
-          "summary": "structural dry-run: 4 steps, endpoints=chatstart,chatmessage",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
           "details": {
-            "step_kinds": [
-              "nlp_dsl",
-              "assert_json",
-              "nlp_dsl",
-              "assert_json"
-            ],
+            "step_kinds": [],
             "endpoints": [
               "chatstart",
               "chatmessage"
@@ -2284,6 +2022,77 @@
           "details": {
             "path": "conversation.transcript.md"
           }
+        }
+      ],
+      "findings": [],
+      "actions": []
+    },
+    {
+      "run_id": "examples/14-markpact-export",
+      "example_id": "14-markpact-export",
+      "status": "passed",
+      "generated_at": "2026-06-06T11:33:38.266278+00:00",
+      "checks_total": 8,
+      "checks_passed": 6,
+      "checks_failed": 0,
+      "checks_skipped": 2,
+      "checks": [
+        {
+          "id": "check.testql.commands_dry_run",
+          "status": "passed",
+          "summary": "commands.testql.toon.yaml parses and dry-runs",
+          "details": {}
+        },
+        {
+          "id": "check.testql.ir_parse",
+          "status": "skipped",
+          "summary": "testql adapter not installed",
+          "details": {}
+        },
+        {
+          "id": "check.artifact.pipeline.1",
+          "status": "passed",
+          "summary": "pipeline present: codziennie-o-900-raport-sprzedaży-pdf-i-wyślij-e",
+          "details": {}
+        },
+        {
+          "id": "check.artifact.process.1",
+          "status": "passed",
+          "summary": "process present: codziennie-o-900-raport-sprzedaży-pdf-i-wyślij-e",
+          "details": {}
+        },
+        {
+          "id": "check.nlp2dsl.query.Codziennie-o-9:00-raport-sprzedaży-PDF-i",
+          "status": "passed",
+          "summary": "offline artifact ok (status=exported): Codziennie o 9:00 raport sprzedaży PDF i wyślij email do manager@firma",
+          "details": {
+            "source": "pipeline/codziennie-o-900-raport-sprzedaży-pdf-i-wyślij-e.json",
+            "mode": "export"
+          }
+        },
+        {
+          "id": "check.conversation.generated",
+          "status": "passed",
+          "summary": "wrote conversation.testql.toon.yaml",
+          "details": {}
+        },
+        {
+          "id": "check.conversation.dry_run",
+          "status": "passed",
+          "summary": "structural dry-run: text scan, endpoints=chatstart,chatmessage",
+          "details": {
+            "step_kinds": [],
+            "endpoints": [
+              "chatstart",
+              "chatmessage"
+            ]
+          }
+        },
+        {
+          "id": "check.conversation.transcript",
+          "status": "skipped",
+          "summary": "no conversation.transcript.md",
+          "details": {}
         }
       ],
       "findings": [],

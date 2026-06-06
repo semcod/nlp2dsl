@@ -14,6 +14,7 @@ class MemoryWorkflowRepo(WorkflowRepo):
 
     def __init__(self, max_size: int = DEFAULT_MAX_SIZE):
         self._data: OrderedDict[str, dict] = OrderedDict()
+        self._events: dict[str, list[dict]] = {}
         self._max_size = max_size
 
     async def save_run(self, workflow_id: str, name: str, status: str, data: dict) -> None:
@@ -35,3 +36,16 @@ class MemoryWorkflowRepo(WorkflowRepo):
 
     async def count_runs(self) -> int:
         return len(self._data)
+
+    async def append_event(self, workflow_id: str, event: dict) -> None:
+        self._events.setdefault(workflow_id, []).append(dict(event))
+
+    async def list_events(
+        self,
+        workflow_id: str,
+        *,
+        limit: int = 200,
+        offset: int = 0,
+    ) -> list[dict]:
+        events = self._events.get(workflow_id, [])
+        return events[offset : offset + limit]

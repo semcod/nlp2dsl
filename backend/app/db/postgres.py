@@ -6,6 +6,7 @@ Używa asyncpg + SQLAlchemy async dla nieblokujących operacji.
 """
 
 import logging
+from collections.abc import Mapping
 from datetime import UTC, datetime
 
 from sqlalchemy import Column, DateTime, String, text
@@ -46,6 +47,20 @@ class WorkflowRunModel(Base):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
+
+
+class WorkflowEventModel(Base):
+    __tablename__ = "workflow_events"
+
+    id = Column(String(64), primary_key=True)
+    workflow_id = Column(String(32), nullable=False, index=True)
+    event_type = Column(String(64), nullable=False, index=True)
+    data = Column(JSONB, nullable=False, default=dict)
+    created_at = Column(
+        DateTime,
+        default=lambda: datetime.now(UTC).replace(tzinfo=None),
+        index=True,
+    )
 
 
 class PostgresWorkflowRepo(WorkflowRepo):
@@ -166,6 +181,49 @@ class PostgresWorkflowRepo(WorkflowRepo):
         async with self._get_session_factory()() as session:
             result = await session.execute(text("SELECT COUNT(*) FROM workflow_runs"))
             return result.scalar() or 0
+
+    async def append_event(self, workflow_id: str, event: dict) -> None:
+        await self._ensure_tables()
+        event_id = str(event.get("event_id") or "")
+        if not event_id:
+            raise ValueError("event_id is required")
+
+        async with self._get_session_factory()() as session:
+            now = datetime.now(UTC).replace(tzinfo=None)
+            statement = pg_insert(WorkflowEventModel).values(
+                id=event_id,
+                workflow_id=workflow_id,
+                event_type=str(event.get("event_type") or ""),
+                data=event,
+                created_at=now,
+            )
+            statement = statement.on_conflict_do_nothing(index_elements=[WorkflowEventModel.id])
+            await session.execute(statement)
+            await session.commit()
+
+    async def list_events(
+        self,
+        workflow_id: str,
+        *,
+        limit: int = 200,
+        offset: int = 0,
+    ) -> list[dict]:
+        await self._ensure_tables()
+
+        async with self._get_session_factory()() as session:
+            result = await session.execute(
+                text(
+                    """
+                    SELECT data FROM workflow_events
+                    WHERE workflow_id = :workflow_id
+                    ORDER BY created_at ASC, id ASC
+                    LIMIT :limit OFFSET :offset
+                    """
+                ),
+                {"workflow_id": workflow_id, "limit": limit, "offset": offset},
+            )
+            rows = result.mappings().all()
+            return [dict(row["data"]) for row in rows]
 
     async def close(self) -> None:
         if self._engine is not None:

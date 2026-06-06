@@ -426,3 +426,19 @@ ASSERT_EXIT_CODE 0
 # Query 1: autonomous-invoice-stack
 SHELL "nlp2dsl run \"autonomous-invoice-stack\" --json" 30000
 ASSERT_EXIT_CODE 0
+
+# --- 14-markpact-export ---
+# PIPELINE: NLP → DSL → CMD → process
+
+CONFIG[3]{key, value}:
+  cli_command, python3 main.py
+  timeout_ms, 120000
+  example_dir, examples/14-markpact-export
+
+# Run full example scenario
+SHELL "cd examples/14-markpact-export && python3 main.py" 120000
+ASSERT_EXIT_CODE 0
+
+# Query 1: Codziennie o 9:00 raport sprzedaży PDF i wyślij email do man
+SHELL "nlp2dsl run \"Codziennie o 9:00 raport sprzedaży PDF i wyślij email do manager@firma.pl\" --json" 30000
+ASSERT_EXIT_CODE 0

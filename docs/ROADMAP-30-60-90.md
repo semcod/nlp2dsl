@@ -86,13 +86,27 @@ worker/
    - Dodać `idempotency_key` do workflow/step execution.
    - Backend deduplikuje `send_email`, `send_invoice`, `crm_update` na poziomie requestu.
    - Kryterium: ponowne `uruchom` nie wykonuje side effect drugi raz i zwraca poprzedni wynik.
-   - Status: rozpoczęte dla `/workflow/execute`; memory fallback i trwały
-     Postgres store obsługują replay, in-progress i konflikt klucza.
+   - Status: **zrobione** — wspólny helper `backend/app/workflow_execute.py` obsługuje
+     `/workflow/execute`, `/workflow/from-text?execute=true` (jawny key) oraz chat `uruchom`
+     (auto-key z `conversation_id` + fingerprint DSL); memory/Postgres store, replay i konflikt.
 
 4. Rozszerzyć golden dataset.
    - Osobne przypadki dla: entity extraction, DSL mapping, unnecessary clarification,
      unsafe execution block, attachment validation.
    - Kryterium: raport pokazuje metryki per akcja i per klasa błędu.
+   - Status: **zrobione** — `nlp2dsl_sdk/evaluation/` (golden_cases.yaml, metrics),
+     przykład `16-golden-eval`, klasyfikacja outcome per focus/action.
+
+5. CI validate exportu markpact/pactown.
+   - Kryterium: canonical DSL (`report_and_email`, `full_report_flow`) przechodzi
+     `markpact` parse + `pactown` load w CI.
+   - Status: **zrobione** — `scripts/validate-publish-export.py --strict`,
+     workflow `platform-ci.yml`.
+
+6. Contract drift gate (intract-aligned preflight).
+   - Kryterium: nlp-service registry, worker handlers i backend fallback bez driftu.
+   - Status: **zrobione** — `nlp2dsl_sdk/validation/contract_drift.py`,
+     `scripts/validate-contract-drift.py`, `GET /workflow/catalog/drift`, `intract.yaml`.
 
 ## Roadmap 60 dni
 
@@ -110,16 +124,24 @@ worker/
    - `POST /workflow/simulate`
    - `POST /workflow/execute`
    - Kryterium: `/workflow/from-text` i chat są kompozycją tych etapów, nie osobną logiką.
+   - Status: **częściowo** — `/workflow/plan`, `/validate`, `/simulate`, `/execute` działają;
+     `/workflow/from-text` obsługuje `execute` i `simulate` jako kompozycję plan→validate→stage.
 
 3. Event-driven execution v1.
    - Zdarzenia: `WorkflowCreated`, `StepPlanned`, `StepValidated`, `AwaitingUserInput`,
      `StepExecutionRequested`, `StepExecuted`, `ExecutionFailed`, `WorkflowCompleted`.
    - Zapisać eventy w repo backendu obok obecnej historii workflow.
    - Kryterium: da się odtworzyć status workflow z eventów i zbudować transcript/audit.
+   - Status: **zrobione (v1)** — `nlp2dsl_sdk/workflow/events.py`, persystencja w
+     `WorkflowRepo.append_event`, `GET /workflow/history/{id}/events`, correlation ID
+     z `X-Request-ID`, replay snapshot przez `workflow_snapshot_from_events`.
 
 4. Capability/policy layer.
    - Polityki: kto może wykonać akcję, czy wymaga approval, limity kanałów/URI, dry-run only.
    - Kryterium: walidacja blokuje wykonanie zanim worker dostanie request.
+   - Status: **zrobione (v1)** — `nlp2dsl_sdk/validation/capability_policy.py`,
+     `backend/app/execution_policy.py`, bramka na `/workflow/execute` i chat `uruchom`,
+     opcjonalnie `POST /workflow/validate?check_policy`, ACL przez `/nlp/access/check`.
 
 ## Roadmap 90 dni
 
@@ -130,6 +152,9 @@ worker/
    - System zapisuje ją jako draft w `.nlp2dsl/generated/contracts`.
    - Runtime ładuje tylko kontrakty zatwierdzone albo podpisane lokalnie.
    - Kryterium: nowa akcja może przejść `draft -> validate -> approve -> active`.
+   - Status: **rozpoczęte (v1)** — `nlp2dsl_sdk/contracts/draft.py`,
+     `scripts/validate-contract-draft.py`, przykładowy draft `example_notify_webhook.draft.yaml`,
+     CI gate `--strict` (drafty z błędami failują; status `draft` OK bez `--require-approved`).
 
 2. Plugin SDK.
    - Struktura pluginu: `plugin.yaml`, `contracts/*.yaml`, `validators/*.py`,

@@ -67,4 +67,8 @@ if [[ "$testql_failed" -ne 0 ]]; then
 fi
 
 echo ""
+echo "==> Contract draft validate (LLM-generated) ..."
+"$PY" "$ROOT/scripts/validate-contract-draft.py" --strict
+
+echo ""
 echo "All examples passed."

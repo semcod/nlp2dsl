@@ -19,6 +19,14 @@ install_one "$ROOT/nlp2cmd-planner"
 install_one "$ROOT/nlp2cmd-propact"
 install_one "$ROOT/nlp2dsl-show"
 
+# Optional sibling publish-layer packages (markpact, pactown)
+MONO_ROOT="$(cd "$ROOT/.." && pwd)"
+for extra in "$MONO_ROOT/../markpact" "$MONO_ROOT/../pactown"; do
+  if [[ -f "$extra/pyproject.toml" ]]; then
+    install_one "$extra"
+  fi
+done
+
 echo "Done."
 echo "  nlp2dsl show 'znajdz pliki *.py'        # SDK: query structure (IntentIR)"
 echo "  nlp2dsl-show show 'znajdz pliki *.py'  # package CLI (same)"

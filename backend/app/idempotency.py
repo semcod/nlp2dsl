@@ -8,6 +8,7 @@ import json
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from collections.abc import Mapping
 from typing import Any, Literal
 
 from sqlalchemy import Column, DateTime, String, delete, select, update
@@ -178,7 +179,8 @@ class PostgresIdempotencyStore(IdempotencyStore):
         async with self._get_session_factory()() as session:
             result = await session.get(IdempotencyRecordModel, key)
             if result is None:
-                return "started", None
+                log.warning("idempotency insert conflict but row missing for key=%s", key)
+                return "in_progress", None
             if result.fingerprint != fingerprint:
                 return "conflict", None
             if result.status == "in_progress":
@@ -211,8 +213,39 @@ class PostgresIdempotencyStore(IdempotencyStore):
 
 
 def workflow_fingerprint(workflow: Any) -> str:
-    payload = json.dumps(workflow, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    normalized = normalize_workflow_for_fingerprint(workflow)
+    payload = json.dumps(normalized, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def normalize_workflow_for_fingerprint(workflow: Any) -> dict[str, Any]:
+    """Stable fingerprint input — ignores empty optional fields and step order drift."""
+    if not isinstance(workflow, Mapping):
+        return {}
+    steps: list[dict[str, Any]] = []
+    for step in workflow.get("steps") or []:
+        if not isinstance(step, Mapping):
+            continue
+        raw_cfg = step.get("config") if isinstance(step.get("config"), Mapping) else {}
+        config = {
+            str(k): v
+            for k, v in raw_cfg.items()
+            if v is not None and v != "" and v != [] and v != {}
+        }
+        steps.append({"action": str(step.get("action") or ""), "config": config})
+    steps.sort(
+        key=lambda item: (
+            item["action"],
+            json.dumps(item["config"], sort_keys=True, ensure_ascii=False),
+        )
+    )
+    out: dict[str, Any] = {}
+    if workflow.get("name"):
+        out["name"] = workflow.get("name")
+    if workflow.get("trigger"):
+        out["trigger"] = workflow.get("trigger")
+    out["steps"] = steps
+    return out
 
 
 def create_idempotency_store(postgres_url: str | None = None) -> IdempotencyStore:

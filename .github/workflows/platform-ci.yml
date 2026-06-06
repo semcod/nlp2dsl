@@ -1,0 +1,83 @@
+name: Platform CI
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - "nlp-service/**"
+      - "worker/**"
+      - "nlp2dsl_sdk/**"
+      - "scripts/validate-*.py"
+      - "tests/**"
+      - "intract.yaml"
+      - ".github/workflows/platform-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-and-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install nlp2dsl + test deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Unit tests (SDK gates)
+        run: |
+          python -m pytest tests/test_contract_drift.py tests/test_golden_eval.py \
+            tests/test_workflow_simulate.py tests/test_export_markpact.py \
+            tests/test_capability_policy.py tests/test_contract_draft.py -q
+
+      - name: Contract draft validate (LLM-generated)
+        run: python3 scripts/validate-contract-draft.py --strict
+
+      - name: Contract drift gate (nlp-service vs worker)
+        run: python3 scripts/validate-contract-drift.py --check-backend-fallback
+
+      - name: Install publish-layer packages
+        run: pip install markpact pactown
+
+      - name: Publish export validate (markpact + pactown)
+        run: python3 scripts/validate-publish-export.py --strict
+
+      - name: Optional Intract manifest validate
+        continue-on-error: true
+        run: |
+          pip install intract
+          python -m intract validate . --manifest intract.yaml
+
+  backend-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install backend test deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-asyncio httpx
+
+      - name: Backend workflow API tests
+        working-directory: backend
+        run: |
+          python -m pytest tests/test_workflow_api.py::TestWorkflowSimulate \
+            tests/test_workflow_execute.py tests/test_execution_policy.py -q

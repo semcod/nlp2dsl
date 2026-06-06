@@ -40,6 +40,29 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
         label="Wykonywanie workflow z wieloma krokami",
     )
 
+    dsl = result.get("dsl") if isinstance(result.get("dsl"), dict) else None
+    if dsl and dsl.get("steps"):
+        from nlp2dsl_sdk.export.publish import (
+            catalog_from_nlp_client,
+            export_workflow_publish_layer,
+            print_publish_summary,
+            validate_publish_layer,
+        )
+        from nlp2dsl_sdk.artifacts import example_artifact_root
+
+        import os
+
+        artifact_root = example_artifact_root(os.environ.get("NLP2DSL_EXAMPLE_DIR", "."))
+        print("\n📦 Export markpact + pactown (full_report_flow):")
+        bundle = export_workflow_publish_layer(
+            artifact_root,
+            dsl,
+            catalog_from_nlp_client(client),
+            source_query=REPORT_EXECUTION_QUERY,
+            title=f"{dsl.get('name', 'full_report_flow')} — report + email + slack",
+        )
+        print_publish_summary(bundle, validation=validate_publish_layer(bundle))
+
     if result.get("status") == "executed":
         execution = result.get("result", {})
         if execution.get("status") == "completed":

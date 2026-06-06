@@ -149,9 +149,98 @@ class NLP2DSLClient:
                 time.sleep(interval_s)
         return False
 
-    def workflow_from_text(self, text: str, execute: bool = False, mode: str = "auto") -> dict[str, Any]:
-        payload = {"text": text, "execute": execute, "mode": mode}
+    def workflow_from_text(
+        self,
+        text: str,
+        execute: bool = False,
+        mode: str = "auto",
+        *,
+        simulate: bool = False,
+        idempotency_key: Optional[str] = None,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {"text": text, "execute": execute, "mode": mode, "simulate": simulate}
+        if idempotency_key:
+            payload["idempotency_key"] = idempotency_key
         return self._backend("post", "/workflow/from-text", json=payload).json()
+
+    def workflow_simulate(
+        self,
+        workflow: Optional[Mapping[str, Any]] = None,
+        *,
+        text: Optional[str] = None,
+        mode: str = "auto",
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {"mode": mode}
+        if text:
+            payload["text"] = text
+        elif workflow is not None:
+            payload["workflow"] = dict(workflow)
+        else:
+            raise ValueError("workflow_simulate requires text or workflow")
+        return self._backend("post", "/workflow/simulate", json=payload).json()
+
+    def workflow_validate(
+        self,
+        workflow: Mapping[str, Any],
+        *,
+        check_policy: bool = False,
+        agent_id: Optional[str] = None,
+        approval_grants: Optional[Sequence[str]] = None,
+        approval_token: Optional[str] = None,
+        policy: Optional[Mapping[str, Any]] = None,
+        process: Optional[Mapping[str, Any]] = None,
+        skip_access_check: bool = False,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "workflow": dict(workflow),
+            "check_policy": check_policy,
+        }
+        if agent_id:
+            payload["agent_id"] = agent_id
+        if approval_grants:
+            payload["approval_grants"] = list(approval_grants)
+        if approval_token:
+            payload["approval_token"] = approval_token
+        if policy:
+            payload["policy"] = dict(policy)
+        if process:
+            payload["process"] = dict(process)
+        if skip_access_check:
+            payload["skip_access_check"] = True
+        return self._backend("post", "/workflow/validate", json=payload).json()
+
+    def workflow_execute(
+        self,
+        workflow: Mapping[str, Any],
+        *,
+        dry_run: bool = False,
+        idempotency_key: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        approval_grants: Optional[Sequence[str]] = None,
+        approval_token: Optional[str] = None,
+        policy: Optional[Mapping[str, Any]] = None,
+        process: Optional[Mapping[str, Any]] = None,
+        skip_policy_check: bool = False,
+        skip_access_check: bool = False,
+    ) -> dict[str, Any]:
+        payload: dict[str, Any] = {"workflow": dict(workflow), "dry_run": dry_run}
+        if idempotency_key:
+            payload["idempotency_key"] = idempotency_key
+        if agent_id:
+            payload["agent_id"] = agent_id
+        if approval_grants:
+            payload["approval_grants"] = list(approval_grants)
+        if approval_token:
+            payload["approval_token"] = approval_token
+        if policy:
+            payload["policy"] = dict(policy)
+        if process:
+            payload["process"] = dict(process)
+        if skip_policy_check:
+            payload["skip_policy_check"] = True
+        if skip_access_check:
+            payload["skip_access_check"] = True
+        return self._backend("post", "/workflow/execute", json=payload).json()
 
     def run_workflow(
         self,
