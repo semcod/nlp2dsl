@@ -11,7 +11,7 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import nlp2cmd_intent.keywords as _keywords_pkg
 from nlp2cmd_intent.data_files import find_data_files as _find_data_files_default
@@ -59,9 +59,11 @@ class KeywordPatterns:
         self.fast_path_browser_keywords: List[str] = []
         self.fast_path_search_keywords: List[str] = []
         self.fast_path_common_images: set[str] = set()
+        self.explicit_overrides: List[Tuple[str, str, str, str]] = []
         
         self._load_patterns_from_json(custom_patterns_file)
         self._load_detector_config_from_json()
+        self._load_fast_path_overrides_from_json()
 
         strict = os.environ.get("NLP2CMD_STRICT_CONFIG", "").strip().lower() in {"1", "true", "yes"}
         if strict and not self.patterns:
@@ -184,6 +186,37 @@ class KeywordPatterns:
             except Exception as e:
                 logger.warning(f"Failed to load detector config from {p}: {e}")
                 continue
+
+    def _load_fast_path_overrides_from_json(self) -> None:
+        """Load high-priority substring overrides for fast-path detection."""
+        for p in _find_data_files(
+            explicit_path=os.environ.get("NLP2CMD_FAST_PATH_OVERRIDES_FILE"),
+            default_filename="fast_path_overrides.json",
+        ):
+            try:
+                with open(p, encoding="utf-8") as f:
+                    payload = json.load(f)
+                if not isinstance(payload, dict):
+                    continue
+                rows = payload.get("explicit_overrides")
+                if not isinstance(rows, list):
+                    continue
+                loaded: List[Tuple[str, str, str, str]] = []
+                for row in rows:
+                    if not isinstance(row, dict):
+                        continue
+                    keyword = str(row.get("keyword", "")).strip().lower()
+                    domain = str(row.get("domain", "")).strip()
+                    intent = str(row.get("intent", "")).strip()
+                    matched = str(row.get("matched_keyword", keyword)).strip()
+                    if keyword and domain and intent:
+                        loaded.append((keyword, domain, intent, matched))
+                if loaded:
+                    self.explicit_overrides = loaded
+                    logger.debug("Loaded %d fast-path overrides from %s", len(loaded), p)
+                    return
+            except Exception as e:
+                logger.warning("Failed to load fast-path overrides from %s: %s", p, e)
     
     def get_domain_patterns(self, domain: str) -> Dict[str, List[str]]:
         """Get all patterns for a domain."""

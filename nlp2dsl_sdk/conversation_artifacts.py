@@ -21,9 +21,8 @@ def _routing_summary(data: Mapping[str, Any]) -> str | None:
     return ", ".join(parts) if parts else None
 
 
-def format_transcript(trace: Mapping[str, Any]) -> str:
-    """Render user ↔ nlp2dsl dialog with parser/LLM hints."""
-    lines = [
+def _format_transcript_header(trace: Mapping[str, Any]) -> list[str]:
+    return [
         "# Conversation transcript",
         "",
         f"- **conversation_id:** `{trace.get('conversation_id', '?')}`",
@@ -32,58 +31,76 @@ def format_transcript(trace: Mapping[str, Any]) -> str:
         "",
     ]
 
-    for idx, turn in enumerate(trace.get("turns") or [], start=1):
-        if not isinstance(turn, dict):
+
+def _format_execution_steps(execution: Mapping[str, Any]) -> list[str]:
+    lines = [f"- **execution:** status=`{execution.get('status', '?')}`"]
+    for step in execution.get("steps") or []:
+        if not isinstance(step, dict):
             continue
-        role = turn.get("role", "?")
-        text = turn.get("text", "")
-        endpoint = turn.get("endpoint", "")
-        response = turn.get("response") if isinstance(turn.get("response"), dict) else {}
+        action = step.get("action", "?")
+        step_status = step.get("status", "?")
+        result = step.get("result")
+        lines.append(f"  - `{action}` → {step_status}: {result}")
+    return lines
 
-        lines.append(f"## Turn {idx} — {role}")
-        if endpoint:
-            lines.append(f"- **endpoint:** `{endpoint}`")
-        lines.append(f"- **user/system text:** {text!r}")
 
-        status = response.get("status")
-        if status:
-            lines.append(f"- **nlp2dsl status:** `{status}`")
-        missing = response.get("missing")
-        if missing:
-            lines.append(f"- **missing fields:** {', '.join(str(m) for m in missing)}")
-        routing = _routing_summary(response)
-        if routing:
-            lines.append(f"- **parser/LLM routing:** {routing}")
-        message = response.get("message")
-        if message:
-            lines.append(f"- **assistant message:** {message}")
-        dsl = response.get("dsl")
-        if isinstance(dsl, dict):
-            steps = dsl.get("steps") or []
-            actions = [str(s.get("action", "")) for s in steps if isinstance(s, dict)]
-            lines.append(f"- **workflow:** `{dsl.get('name', '?')}` → {', '.join(actions) or '(no steps)'}")
-        execution = response.get("execution")
-        if isinstance(execution, dict):
-            exec_status = execution.get("status", "?")
-            lines.append(f"- **execution:** status=`{exec_status}`")
-            for step in execution.get("steps") or []:
-                if not isinstance(step, dict):
-                    continue
-                action = step.get("action", "?")
-                step_status = step.get("status", "?")
-                result = step.get("result")
-                lines.append(f"  - `{action}` → {step_status}: {result}")
-        lines.append("")
+def _format_turn(idx: int, turn: Mapping[str, Any]) -> list[str]:
+    role = turn.get("role", "?")
+    text = turn.get("text", "")
+    endpoint = turn.get("endpoint", "")
+    response = turn.get("response") if isinstance(turn.get("response"), dict) else {}
+
+    lines = [f"## Turn {idx} — {role}"]
+    if endpoint:
+        lines.append(f"- **endpoint:** `{endpoint}`")
+    lines.append(f"- **user/system text:** {text!r}")
+
+    status = response.get("status")
+    if status:
+        lines.append(f"- **nlp2dsl status:** `{status}`")
+    missing = response.get("missing")
+    if missing:
+        lines.append(f"- **missing fields:** {', '.join(str(m) for m in missing)}")
+    routing = _routing_summary(response)
+    if routing:
+        lines.append(f"- **parser/LLM routing:** {routing}")
+    message = response.get("message")
+    if message:
+        lines.append(f"- **assistant message:** {message}")
+    dsl = response.get("dsl")
+    if isinstance(dsl, dict):
+        steps = dsl.get("steps") or []
+        actions = [str(s.get("action", "")) for s in steps if isinstance(s, dict)]
+        lines.append(f"- **workflow:** `{dsl.get('name', '?')}` → {', '.join(actions) or '(no steps)'}")
+    execution = response.get("execution")
+    if isinstance(execution, dict):
+        lines.extend(_format_execution_steps(execution))
+    lines.append("")
+    return lines
+
+
+def _format_validations(validations: list[Any]) -> list[str]:
+    lines = ["## Validations"]
+    for v in validations:
+        if not isinstance(v, dict):
+            continue
+        mark = "✅" if v.get("passed") else "❌"
+        lines.append(f"- {mark} {v.get('id', 'check')}: {v.get('summary', '')}")
+    lines.append("")
+    return lines
+
+
+def format_transcript(trace: Mapping[str, Any]) -> str:
+    """Render user ↔ nlp2dsl dialog with parser/LLM hints."""
+    lines = _format_transcript_header(trace)
+
+    for idx, turn in enumerate(trace.get("turns") or [], start=1):
+        if isinstance(turn, dict):
+            lines.extend(_format_turn(idx, turn))
 
     validations = trace.get("validations") or []
     if validations:
-        lines.append("## Validations")
-        for v in validations:
-            if not isinstance(v, dict):
-                continue
-            mark = "✅" if v.get("passed") else "❌"
-            lines.append(f"- {mark} {v.get('id', 'check')}: {v.get('summary', '')}")
-        lines.append("")
+        lines.extend(_format_validations(validations))
 
     return "\n".join(lines).rstrip() + "\n"
 

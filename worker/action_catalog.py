@@ -7,23 +7,11 @@ from typing import Any
 
 import httpx
 
-_FIELD_TYPES: dict[str, str] = {
-    "amount": "float",
-    "to": "str",
-    "currency": "str",
-    "subject": "str",
-    "body": "str",
-    "report_type": "str",
-    "format": "str",
-    "entity": "str",
-    "data": "dict",
-    "channel": "str",
-    "message": "str",
-    "chat_id": "str",
-    "webhook_url": "str",
-    "attachment_path": "str",
-    "output_path": "str",
-}
+from nlp2dsl_sdk.contracts import (
+    known_action_names,
+    quality_fields_for_action as contract_quality_fields_for_action,
+    required_fields_for_action as contract_required_fields_for_action,
+)
 
 _FALLBACK_ACTION_FIELDS: dict[str, dict[str, list[str]]] = {
     "send_invoice": {"required": ["amount", "to"], "quality_required": []},
@@ -74,18 +62,12 @@ def load_action_field_catalog(
 
 
 def required_fields_for_action(action: str, *, catalog: dict[str, Any] | None = None) -> list[str]:
-    meta = (catalog or load_action_field_catalog()).get(action, {})
-    if not isinstance(meta, dict):
-        return []
-    return list(meta.get("required") or [])
+    return contract_required_fields_for_action(action, catalog=catalog or load_action_field_catalog())
 
 
 def quality_fields_for_action(action: str, *, catalog: dict[str, Any] | None = None) -> list[str]:
-    meta = (catalog or load_action_field_catalog()).get(action, {})
-    if not isinstance(meta, dict):
-        return []
-    return list(meta.get("quality_required") or [])
+    return contract_quality_fields_for_action(action, catalog=catalog or load_action_field_catalog())
 
 
 def known_action_names_from_catalog(*, catalog: dict[str, Any] | None = None) -> frozenset[str]:
-    return frozenset((catalog or load_action_field_catalog()).keys())
+    return known_action_names(catalog=catalog or load_action_field_catalog())

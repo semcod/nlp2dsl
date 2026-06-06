@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 _NLP_KINDS = frozenset({"nlp_dsl", "nlp2dsl"})
 _ALLOWED_ENDPOINTS = frozenset({"chatstart", "chatmessage", "workflowfrom-text", "runworkflow"})
@@ -32,32 +33,25 @@ def _endpoints_from_text(text: str) -> list[str]:
     return [m.group(1).lower() for m in _ENDPOINT_RE.finditer(text)]
 
 
-def validate_conversation_scenario(path: Path | str) -> ConversationValidation:
-    """
-    Parse and structurally validate a conversation TestTOON file.
-
-    Uses testql.adapters.testtoon_adapter when available (no nlp2dsl adapter required).
-    Falls back to scanning NLP_DSL rows when older testql builds omit step.extra metadata.
-    """
-    path = Path(path)
-    if not path.is_file():
-        return ConversationValidation(False, f"missing file: {path.name}")
-
-    text = path.read_text(encoding="utf-8")
+def _missing_type_header(text: str) -> str | None:
     if "TYPE: conversation" not in text:
-        return ConversationValidation(False, "missing TYPE: conversation header")
+        return "missing TYPE: conversation header"
+    return None
 
+
+def _parse_plan(path: Path) -> tuple[Any | None, str | None]:
     try:
         from testql.adapters.testtoon_adapter import TestToonAdapter
     except ImportError:
-        return ConversationValidation(False, "testql not installed")
+        return None, "testql not installed"
 
     try:
-        plan = TestToonAdapter().parse(path)
+        return TestToonAdapter().parse(path), None
     except Exception as exc:
-        return ConversationValidation(False, f"parse error: {exc}")
+        return None, f"parse error: {exc}"
 
-    kinds = [str(s.kind) for s in plan.steps]
+
+def _endpoints_from_steps(plan: Any, text: str) -> tuple[list[str], list[str]]:
     endpoints: list[str] = []
     issues: list[str] = []
 
@@ -74,26 +68,97 @@ def validate_conversation_scenario(path: Path | str) -> ConversationValidation:
 
     if not endpoints:
         endpoints = _endpoints_from_text(text)
+    return endpoints, issues
 
+
+def _structural_issues(kinds: list[str], endpoints: list[str], text: str) -> list[str]:
+    issues: list[str] = []
     has_nlp = any(_is_nlp_kind(k) for k in kinds) or bool(_NLP_BLOCK_RE.search(text))
     if not has_nlp:
         issues.append("no NLP_DSL steps")
     if not any(ep in _ALLOWED_ENDPOINTS for ep in endpoints):
         issues.append("no chatstart/chatmessage/workflowfrom-text endpoints")
+    return issues
 
+
+def _validation_result(
+    passed: bool,
+    summary: str,
+    *,
+    kinds: list[str] | None = None,
+    endpoints: list[str] | None = None,
+    issues: list[str] | None = None,
+) -> ConversationValidation:
+    return ConversationValidation(
+        passed,
+        summary,
+        step_kinds=kinds or [],
+        endpoints=endpoints or [],
+        issues=issues or [],
+    )
+
+
+def validate_conversation_scenario_text(text: str) -> ConversationValidation:
+    """Structural checks from raw TestTOON text (no testql parse required)."""
+    if header_issue := _missing_type_header(text):
+        return _validation_result(False, header_issue)
+
+    endpoints = _endpoints_from_text(text)
+    issues = _structural_issues([], endpoints, text)
     if issues:
-        return ConversationValidation(
+        return _validation_result(
             False,
             "; ".join(issues),
-            step_kinds=kinds,
+            endpoints=endpoints,
+            issues=issues,
+        )
+    return _validation_result(
+        True,
+        f"text scan, endpoints={','.join(endpoints) or 'none'}",
+        endpoints=endpoints,
+    )
+
+
+def validate_conversation_scenario(path: Path | str) -> ConversationValidation:
+    """
+    Parse and structurally validate a conversation TestTOON file.
+
+    Uses testql.adapters.testtoon_adapter when available (no nlp2dsl adapter required).
+    Falls back to scanning NLP_DSL rows when older testql builds omit step.extra metadata.
+    """
+    path = Path(path)
+    if not path.is_file():
+        return _validation_result(False, f"missing file: {path.name}")
+
+    text = path.read_text(encoding="utf-8")
+    if header_issue := _missing_type_header(text):
+        return _validation_result(False, header_issue)
+
+    plan, parse_error = _parse_plan(path)
+    if parse_error == "testql not installed":
+        return validate_conversation_scenario_text(text)
+    if parse_error:
+        return _validation_result(False, parse_error)
+    if plan is None:
+        return validate_conversation_scenario_text(text)
+
+    kinds = [str(s.kind) for s in plan.steps]
+    endpoints, step_issues = _endpoints_from_steps(plan, text)
+    issues = step_issues + _structural_issues(kinds, endpoints, text)
+
+    if issues:
+        return _validation_result(
+            False,
+            "; ".join(issues),
+            kinds=kinds,
             endpoints=endpoints,
             issues=issues,
         )
 
-    return ConversationValidation(
+    return _validation_result(
         True,
         f"{len(plan.steps)} steps, endpoints={','.join(endpoints) or 'none'}",
-        step_kinds=kinds,
+        kinds=kinds,
         endpoints=endpoints,
     )
 

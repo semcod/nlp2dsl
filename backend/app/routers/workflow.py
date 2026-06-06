@@ -18,6 +18,7 @@ from app.dsl_validation import dsl_validation_response, validate_dsl_for_executi
 from app.logging_setup import get_request_id
 from app.workflow_events import TERMINAL_EVENT_TYPES, workflow_event_hub
 from app.schemas import ActionInfo, RunWorkflowRequest, Step, WorkflowResult
+from nlp2dsl_sdk.workflow import validation_report_from_issues
 
 log = logging.getLogger("router.workflow")
 router = APIRouter(prefix="/workflow", tags=["workflow"])
@@ -205,3 +206,42 @@ async def workflow_from_text(body: dict) -> dict[str, Any]:
         return {"status": "executed", "dsl": workflow_data, "result": result.model_dump()}
 
     return {"status": "complete", "dsl": workflow_data, "message": "Workflow DSL wygenerowany. Wyślij z 'execute': true aby uruchomić."}
+
+
+@router.post("/plan")
+async def workflow_plan(body: dict[str, Any]) -> dict[str, Any]:
+    """
+    Lifecycle plan endpoint: text → NLP plan → DSL validation report.
+
+    Body: {"text": "...", "mode": "auto|rules|llm"}
+    """
+    text = body.get("text", "")
+    mode = body.get("mode", "auto")
+
+    if not str(text).strip():
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Field 'text' is required")
+
+    async with AsyncClient(
+        timeout=_PROXY_TIMEOUT_SECONDS,
+        headers={"X-Request-ID": get_request_id()},
+    ) as client:
+        nlp_resp = await client.post(f"{NLP_SERVICE_URL}/nlp/plan", json={"text": text, "mode": mode})
+
+    if not nlp_resp.is_success:
+        ct = nlp_resp.headers.get("content-type", "")
+        raise HTTPException(
+            status_code=nlp_resp.status_code,
+            detail=nlp_resp.json() if ct.startswith("application/json") else nlp_resp.text,
+        )
+
+    plan = nlp_resp.json()
+    workflow_data = plan.get("workflow")
+    if plan.get("status") == "complete" and workflow_data:
+        issues = validate_dsl_for_execution(workflow_data)
+        report = validation_report_from_issues(issues)
+        plan["validation"] = report.model_dump()
+        if issues:
+            plan["status"] = "validation_failed"
+            plan["missing_fields"] = report.missing_fields
+
+    return plan

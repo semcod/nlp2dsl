@@ -1,8 +1,8 @@
-# nlp2dsl | 1098 func | 172f | 42963L | python | 2026-06-06
+# nlp2dsl | 1179 func | 188f | 43468L | python | 2026-06-06
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.5  critical=115 (limit:10)  dup=3  cycles=0
+  CC̄=4.4  critical=118 (limit:10)  dup=3  cycles=0
 
 ALERTS[20]:
   !!! cc_exceeded      KeywordIntentDetector._fast_path_detection = 73 (limit:15)
@@ -16,13 +16,12 @@ ALERTS[20]:
   !!! cc_exceeded      run_scenario = 29 (limit:15)
   !!! high_fan_out     KeywordIntentDetector._fast_path_detection = 29 (limit:10)
 
-MODULES[298] (top by size):
+MODULES[315] (top by size):
+  M[examples/testql-results.json] 2293L C:0 F:0 CC↑0 D:0 (json)
   M[packages/nlp2cmd-intent/src/nlp2cmd_intent/data/patterns.json] 2016L C:0 F:0 CC↑0 D:0 (json)
-  M[examples/testql-results.json] 1980L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
   M[packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_detector.py] 1209L C:2 F:22 CC↑73 D:0 (python)
-  M[nlp2dsl_sdk/client.py] 893L C:2 F:60 CC↑14 D:0 (python)
-  M[nlp-service/app/main.py] 648L C:0 F:26 CC↑14 D:0 (python)
+  M[nlp2dsl_sdk/client.py] 893L C:2 F:60 CC↑14 D:1 (python)
   M[examples/08-multi-object-benchmark/results/benchmark_1780668530.json] 642L C:0 F:0 CC↑0 D:0 (json)
   M[examples/08-multi-object-benchmark/results/benchmark_1780672619.json] 636L C:0 F:0 CC↑0 D:0 (json)
   M[examples/08-multi-object-benchmark/results/benchmark_1780673613.json] 636L C:0 F:0 CC↑0 D:0 (json)
@@ -30,9 +29,10 @@ MODULES[298] (top by size):
   M[examples/08-multi-object-benchmark/results/benchmark_1780734808.json] 636L C:0 F:0 CC↑0 D:0 (json)
   M[examples/08-multi-object-benchmark/results/benchmark_1780737026.json] 636L C:0 F:0 CC↑0 D:0 (json)
   M[examples/08-multi-object-benchmark/results/benchmark_1780738187.json] 636L C:0 F:0 CC↑0 D:0 (json)
-  M[examples/08-multi-object-benchmark/results/benchmark_1780738565.json] 636L C:0 F:0 CC↑0 D:0 (json)
   M[examples/08-multi-object-benchmark/results/benchmark_1780739013.json] 636L C:0 F:0 CC↑0 D:0 (json)
-  LANGS: python:220/json:23/shell:12/toml:10/yaml:10/other:9/txt:6/yml:3/javascript:2/rust:2/ini:1
+  M[nlp-service/app/routing/parser/rules.py] 586L C:0 F:31 CC↑24 D:3 (python)
+  M[scripts/run-example-testql-results.py] 524L C:2 F:14 CC↑23 D:0 (python)
+  LANGS: python:239/json:21/shell:12/toml:10/yaml:10/other:9/txt:6/yml:3/javascript:2/rust:2/ini:1
 
 HOTSPOTS[10]:
   ★ generate_stack_compose fan=57  // Emit transparent docker-compose stack + cron sidecar under .nlp2dsl/generated/.
@@ -44,9 +44,9 @@ HOTSPOTS[10]:
 REFACTOR[15]:
   [1] H/L Split KeywordPatterns._load_detector_config_from_json (CC=33)
   [2] H/L Split KeywordIntentDetector._fast_path_detection (CC=73)
-  [3] H/L Split format_transcript (CC=25)
-  [4] H/L Split build_and_check_dsl (CC=26)
-  [5] H/L Split process_example (CC=40)
+  [3] H/L Split task_context_to_system_map (CC=25)
+  [4] H/L Split process_example (CC=40)
+  [5] H/L Split main (CC=26)
 
 EVOLUTION:
-  2026-06-06 CC̄=4.5 crit=115 42963L // Automated analysis
+  2026-06-06 CC̄=4.4 crit=118 43468L // Automated analysis

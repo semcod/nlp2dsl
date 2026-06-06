@@ -9,6 +9,7 @@ import pytest
 from nlp2dsl_sdk.conversation_testql import (
     _endpoints_from_text,
     validate_conversation_scenario,
+    validate_conversation_scenario_text,
 )
 
 
@@ -21,6 +22,19 @@ NLP_DSL[1]{endpoint, payload}:
   chatmessage, {"conversationId": "x", "text": "uruchom"}
 """
     assert _endpoints_from_text(text) == ["chatstart", "chatmessage"]
+
+
+def test_validate_text_only_without_testql_parse() -> None:
+    text = """
+# TYPE: conversation
+NLP_DSL[1]{endpoint, payload}:
+  chatstart, {"userId": "test"}
+NLP_DSL[1]{endpoint, payload}:
+  chatmessage, {"conversationId": "x", "text": "hello"}
+"""
+    result = validate_conversation_scenario_text(text)
+    assert result.passed, result.summary
+    assert "chatstart" in result.endpoints
 
 
 def test_validate_hand_authored_conversation() -> None:

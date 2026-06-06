@@ -69,12 +69,15 @@ worker/
      `input_model`, `execution_backend`, `capabilities`, `approval_required`.
    - Adaptery: istniejący registry nlp-service -> `ActionContract`.
    - Kryterium: `/nlp/actions`, `/workflow/actions`, worker drift check i formularze używają tych samych danych.
+   - Status: rozpoczęte w `nlp2dsl_sdk/contracts/` jako warstwa kompatybilna z obecnym registry.
 
 2. Ujednolicić lifecycle requestu.
    - Dodać jawne modele: `ParseResult`, `ClarificationRequest`, `PlanResult`,
      `ValidationReport`, `ExecutionRequest`.
    - Obecne endpointy mogą zostać, ale wewnątrz powinny składać te etapy.
    - Kryterium: trace conversation pokazuje etap, status i źródło decyzji.
+   - Status: rozpoczęte w `nlp2dsl_sdk/workflow/`; dodany plan lifecycle oraz
+     kompatybilny endpoint `/workflow/plan`.
 
 3. Domknąć idempotencję side effects.
    - Dodać `idempotency_key` do workflow/step execution.
@@ -193,4 +196,3 @@ niekontrolowany side effect. Granica bezpieczeństwa musi być po stronie regist
 | Idempotencja | retry/ponowny `uruchom` nie duplikuje side effects |
 | Ewaluacja | raport per action: parse accuracy, entity accuracy, DSL accuracy, clarification rate |
 | Observability | każdy workflow ma correlation ID, event log, transcript i artifact trace |
-

@@ -166,9 +166,61 @@ def handle_system_action(state: ConversationState) -> ConversationResponse | Non
     )
 
 
+def _missing_from_validation_failures(validation_failures: list) -> list[str]:
+    missing = [
+        issue.split(":", 1)[0].strip()
+        for _, _, issues in validation_failures
+        for issue in issues
+        if issue.startswith("brak ")
+    ]
+    return missing or ["validation"]
+
+
+def _resolve_workflow_attachment_paths(workflow) -> None:
+    from app.validation.path_resolve import resolve_attachment_path
+
+    for step in workflow.steps:
+        raw_att = step.config.get("attachment_path")
+        if raw_att and isinstance(raw_att, str) and str(raw_att).strip():
+            step.config["attachment_path"] = resolve_attachment_path(str(raw_att))
+
+
+def _ready_workflow_message(
+    workflow,
+    *,
+    backend: str,
+    auto_execute: bool,
+    autofill_applied: list[str],
+) -> str:
+    msg = f"Workflow gotowy: {workflow.name} ({len(workflow.steps)} kroków)."
+    if auto_execute:
+        msg += " Backend wykona workflow automatycznie (sync_auto_execute)."
+    elif backend == "mullm":
+        msg += " Wykonaj w Mullm workspace."
+    else:
+        msg += " Wyślij 'uruchom' aby wykonać."
+    if autofill_applied:
+        msg += f"\n(Uzupełniono z environment.doql.less: {', '.join(autofill_applied)})"
+    return msg
+
+
+def _attachment_validation_for_workflow(workflow, intent: str | None):
+    if not workflow.steps:
+        return None
+    att_raw = str(workflow.steps[0].config.get("attachment_path", "") or "").strip()
+    if not att_raw:
+        return None
+    from app.validation.attachment_validation import build_attachment_validation
+
+    return build_attachment_validation(
+        att_raw,
+        action=intent or workflow.steps[0].action,
+        config=dict(workflow.steps[0].config),
+    )
+
+
 async def build_and_check_dsl(state: ConversationState) -> ConversationResponse | None:
     from app.conversation.doql_autofill import load_context_for_state
-    from app.validation.path_resolve import resolve_attachment_path
 
     ctx = load_context_for_state(state)
     dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
@@ -177,21 +229,12 @@ async def build_and_check_dsl(state: ConversationState) -> ConversationResponse 
     if not (dialog.status == "complete" and dialog.workflow):
         return None
 
-    for step in dialog.workflow.steps:
-        raw_att = step.config.get("attachment_path")
-        if raw_att and isinstance(raw_att, str) and str(raw_att).strip():
-            step.config["attachment_path"] = resolve_attachment_path(str(raw_att))
+    _resolve_workflow_attachment_paths(dialog.workflow)
 
     validation_failures = validate_workflow_steps(dialog.workflow.steps)
     if validation_failures:
         msg = format_validation_message(validation_failures)
-        missing = [
-            issue.split(":", 1)[0].strip()
-            for _, _, issues in validation_failures
-            for issue in issues
-            if issue.startswith("brak ")
-        ]
-        state.missing = missing or ["validation"]
+        state.missing = _missing_from_validation_failures(validation_failures)
         state.history.append({"role": "assistant", "text": msg})
         return ConversationResponse(
             conversation_id=state.id,
@@ -207,28 +250,13 @@ async def build_and_check_dsl(state: ConversationState) -> ConversationResponse 
     auto_execute = bool(ctx and ctx.sync_auto_execute)
     if state.doql_inline.get("sync_auto_execute") or state.doql_inline.get("auto_execute"):
         auto_execute = True
-    msg = (
-        f"Workflow gotowy: {dialog.workflow.name} ({len(dialog.workflow.steps)} kroków)."
+    msg = _ready_workflow_message(
+        dialog.workflow,
+        backend=backend,
+        auto_execute=auto_execute,
+        autofill_applied=state.autofill_applied,
     )
-    if auto_execute:
-        msg += " Backend wykona workflow automatycznie (sync_auto_execute)."
-    elif backend == "mullm":
-        msg += " Wykonaj w Mullm workspace."
-    else:
-        msg += " Wyślij 'uruchom' aby wykonać."
-    if state.autofill_applied:
-        msg += f"\n(Uzupełniono z environment.doql.less: {', '.join(state.autofill_applied)})"
-    attachment_validation = None
-    if dialog.workflow.steps:
-        att_raw = str(dialog.workflow.steps[0].config.get("attachment_path", "") or "").strip()
-        if att_raw:
-            from app.validation.attachment_validation import build_attachment_validation
-
-            attachment_validation = build_attachment_validation(
-                att_raw,
-                action=state.intent or dialog.workflow.steps[0].action,
-                config=dict(dialog.workflow.steps[0].config),
-            )
+    attachment_validation = _attachment_validation_for_workflow(dialog.workflow, state.intent)
     state.history.append({"role": "assistant", "text": msg})
     response = ConversationResponse(
         conversation_id=state.id,

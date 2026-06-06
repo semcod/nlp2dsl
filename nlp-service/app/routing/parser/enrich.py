@@ -12,9 +12,15 @@ import logging
 import os
 
 from app.registry import get_quality_required_fields
+from app.routing.parser.llm import _detect_provider
 from app.schemas import NLPEntities, NLPResult
 
 log = logging.getLogger("nlp.enrich")
+
+try:
+    from litellm import acompletion
+except Exception:  # pragma: no cover - dependency absence is handled at runtime
+    acompletion = None
 
 # config field → entity field
 _FIELD_TO_ENTITY = {
@@ -51,7 +57,6 @@ def get_enrichable_missing(missing_fields: list[str]) -> list[str]:
 def can_enrich_missing(missing_fields: list[str]) -> bool:
     if not missing_fields or not is_enrich_enabled():
         return False
-    from app.routing.parser.llm import _detect_provider
 
     if _detect_provider() == "none":
         return False
@@ -101,8 +106,6 @@ Kontekst:
 Uzupełnij brakujące pola zgodnie z intencją użytkownika."""
 
     try:
-        from litellm import acompletion
-
         from app.routing.parser.llm import (
             LLM_API_BASE,
             LLM_MAX_TOKENS,
@@ -110,6 +113,10 @@ Uzupełnij brakujące pola zgodnie z intencją użytkownika."""
             LLM_TEMPERATURE,
             _parse_json_response,
         )
+
+        if acompletion is None:
+            log.warning("LLM enrichment unavailable: litellm.acompletion missing")
+            return None
 
         kwargs: dict = {
             "model": LLM_MODEL,

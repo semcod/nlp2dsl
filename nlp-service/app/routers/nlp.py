@@ -9,9 +9,10 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 
 from app.conversation.system_map import command_meta, known_action_names
-from app.dsl.pipeline import map_to_dsl_with_enrichment
+from app.dsl.pipeline import map_to_dsl_with_enrichment, plan_lifecycle_from_nlp
 from app.parser_llm import LLM_MODEL, _detect_provider
 from app.schemas import DialogResponse, NLPRequest, NLPResult, OrientRequest
+from nlp2dsl_sdk.workflow import PlanResult, parse_result_from_nlp
 
 log = logging.getLogger("router.nlp")
 router = APIRouter(tags=["nlp"])
@@ -47,6 +48,26 @@ async def text_to_dsl(req: NLPRequest) -> DialogResponse:
         )
 
     return await map_to_dsl_with_enrichment(nlp_result)
+
+
+@router.post("/nlp/plan", response_model=PlanResult)
+async def plan_text(req: NLPRequest) -> PlanResult:
+    """Lifecycle plan: text → parse → deterministic workflow plan."""
+    nlp_result = await _run_parser(req)
+
+    if nlp_result.intent.intent == "unknown":
+        parse = parse_result_from_nlp(req.text, req.mode, nlp_result)
+        return PlanResult(
+            status="blocked",
+            parse=parse,
+            prompt_user=(
+                "Nie rozpoznano intencji. Spróbuj podać akcję, odbiorcę i wymagane dane."
+            ),
+            source="nlp-service.parser",
+            trace=[{"stage": "parse", "status": "blocked", "intent": "unknown"}],
+        )
+
+    return await plan_lifecycle_from_nlp(nlp_result, text=req.text, mode=req.mode)
 
 
 @router.get("/nlp/access/config")
@@ -111,20 +132,10 @@ async def access_reload() -> dict[str, str]:
 @router.get("/nlp/actions")
 async def list_actions() -> dict[str, Any]:
     """Zwraca rejestr akcji z aliasami (vocabulary DSL) — w zakresie DOQL gdy aktywne."""
-    result: dict[str, Any] = {}
-    for name in sorted(known_action_names()):
-        meta = command_meta(name)
-        if not meta:
-            continue
-        optional = meta.get("optional", {})
-        result[name] = {
-            "description": meta.get("description", name),
-            "required": list(meta.get("required", [])),
-            "optional": list(optional.keys()) if isinstance(optional, dict) else list(optional),
-            "quality_required": list(meta.get("quality_required", [])),
-            "aliases": list(meta.get("aliases", [])),
-        }
-    return result
+    from app.registry import get_action_contracts
+    from nlp2dsl_sdk.contracts import action_catalog_payload
+
+    return action_catalog_payload(get_action_contracts())
 
 
 @router.get("/health")

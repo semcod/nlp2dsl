@@ -1,0 +1,1043 @@
+{
+  "$schema": "fast_path_overrides.v1",
+  "explicit_overrides": [
+    {
+      "keyword": "kamer w sieci",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "kamer w sieci"
+    },
+    {
+      "keyword": "kamery w sieci",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "kamery w sieci"
+    },
+    {
+      "keyword": "kamer podłączon",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "kamer podłączon"
+    },
+    {
+      "keyword": "kamer podlaczon",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "kamer podlaczon"
+    },
+    {
+      "keyword": "kamery podłączon",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "kamery podłączon"
+    },
+    {
+      "keyword": "kamer sieciow",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "kamer sieciow"
+    },
+    {
+      "keyword": "kamery sieciow",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "kamery sieciow"
+    },
+    {
+      "keyword": "ip kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "ip kamer"
+    },
+    {
+      "keyword": "ip kamery",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "ip kamery"
+    },
+    {
+      "keyword": "ip camera",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "ip camera"
+    },
+    {
+      "keyword": "network camera",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "network camera"
+    },
+    {
+      "keyword": "skanuj kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "skanuj kamer"
+    },
+    {
+      "keyword": "znajdź kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "znajdź kamer"
+    },
+    {
+      "keyword": "znajdz kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "znajdz kamer"
+    },
+    {
+      "keyword": "wyszukaj kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "wyszukaj kamer"
+    },
+    {
+      "keyword": "liste kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "liste kamer"
+    },
+    {
+      "keyword": "listę kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "listę kamer"
+    },
+    {
+      "keyword": "lista kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "lista kamer"
+    },
+    {
+      "keyword": "pokaż kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "pokaż kamer"
+    },
+    {
+      "keyword": "pokaz kamer",
+      "domain": "shell",
+      "intent": "camera_scan",
+      "matched_keyword": "pokaz kamer"
+    },
+    {
+      "keyword": "skanuj sieć",
+      "domain": "shell",
+      "intent": "network_scan",
+      "matched_keyword": "skanuj sieć"
+    },
+    {
+      "keyword": "skanuj siec",
+      "domain": "shell",
+      "intent": "network_scan",
+      "matched_keyword": "skanuj siec"
+    },
+    {
+      "keyword": "skanowanie sieci",
+      "domain": "shell",
+      "intent": "network_scan",
+      "matched_keyword": "skanowanie sieci"
+    },
+    {
+      "keyword": "urządzenia w sieci",
+      "domain": "shell",
+      "intent": "network_scan",
+      "matched_keyword": "urządzenia w sieci"
+    },
+    {
+      "keyword": "urzadzenia w sieci",
+      "domain": "shell",
+      "intent": "network_scan",
+      "matched_keyword": "urzadzenia w sieci"
+    },
+    {
+      "keyword": "hosty w sieci",
+      "domain": "shell",
+      "intent": "network_scan",
+      "matched_keyword": "hosty w sieci"
+    },
+    {
+      "keyword": "adres ip",
+      "domain": "shell",
+      "intent": "network",
+      "matched_keyword": "adres ip"
+    },
+    {
+      "keyword": "ip address",
+      "domain": "shell",
+      "intent": "network",
+      "matched_keyword": "ip address"
+    },
+    {
+      "keyword": "show my ip",
+      "domain": "shell",
+      "intent": "network",
+      "matched_keyword": "show my ip"
+    },
+    {
+      "keyword": "pokaż ip",
+      "domain": "shell",
+      "intent": "network",
+      "matched_keyword": "pokaż ip"
+    },
+    {
+      "keyword": "parsuj json",
+      "domain": "shell",
+      "intent": "json_jq",
+      "matched_keyword": "parsuj json"
+    },
+    {
+      "keyword": "parse json",
+      "domain": "shell",
+      "intent": "json_jq",
+      "matched_keyword": "parse json"
+    },
+    {
+      "keyword": "json z pliku",
+      "domain": "shell",
+      "intent": "json_jq",
+      "matched_keyword": "json z pliku"
+    },
+    {
+      "keyword": "użyj jq",
+      "domain": "utility",
+      "intent": "jq",
+      "matched_keyword": "użyj jq"
+    },
+    {
+      "keyword": "jq do",
+      "domain": "utility",
+      "intent": "jq",
+      "matched_keyword": "jq do"
+    },
+    {
+      "keyword": "ps aux",
+      "domain": "shell",
+      "intent": "list_processes",
+      "matched_keyword": "ps aux"
+    },
+    {
+      "keyword": "ls -la",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "ls -la"
+    },
+    {
+      "keyword": "logi poda",
+      "domain": "kubernetes",
+      "intent": "logs",
+      "matched_keyword": "logi poda"
+    },
+    {
+      "keyword": "logi pod",
+      "domain": "kubernetes",
+      "intent": "logs",
+      "matched_keyword": "logi pod"
+    },
+    {
+      "keyword": "kubectl logs",
+      "domain": "kubernetes",
+      "intent": "logs",
+      "matched_keyword": "kubectl logs"
+    },
+    {
+      "keyword": "pokaż logi poda",
+      "domain": "kubernetes",
+      "intent": "logs",
+      "matched_keyword": "pokaż logi poda"
+    },
+    {
+      "keyword": "pokaz logi poda",
+      "domain": "kubernetes",
+      "intent": "logs",
+      "matched_keyword": "pokaz logi poda"
+    },
+    {
+      "keyword": "wszystkie pody",
+      "domain": "kubernetes",
+      "intent": "get",
+      "matched_keyword": "wszystkie pody"
+    },
+    {
+      "keyword": "pokaż pody",
+      "domain": "kubernetes",
+      "intent": "get",
+      "matched_keyword": "pokaż pody"
+    },
+    {
+      "keyword": "pokaz pody",
+      "domain": "kubernetes",
+      "intent": "get",
+      "matched_keyword": "pokaz pody"
+    },
+    {
+      "keyword": "pody w namespace",
+      "domain": "kubernetes",
+      "intent": "get",
+      "matched_keyword": "pody w namespace"
+    },
+    {
+      "keyword": "docker exec",
+      "domain": "docker",
+      "intent": "exec",
+      "matched_keyword": "docker exec"
+    },
+    {
+      "keyword": "docker compose restart",
+      "domain": "docker",
+      "intent": "restart",
+      "matched_keyword": "docker compose restart"
+    },
+    {
+      "keyword": "docker-compose restart",
+      "domain": "docker",
+      "intent": "restart",
+      "matched_keyword": "docker-compose restart"
+    },
+    {
+      "keyword": "docker compose",
+      "domain": "docker",
+      "intent": "compose_up",
+      "matched_keyword": "docker compose"
+    },
+    {
+      "keyword": "docker-compose",
+      "domain": "docker",
+      "intent": "compose_up",
+      "matched_keyword": "docker-compose"
+    },
+    {
+      "keyword": "docker images",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "docker images"
+    },
+    {
+      "keyword": "docker logs",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "docker logs"
+    },
+    {
+      "keyword": "docker build",
+      "domain": "docker",
+      "intent": "build",
+      "matched_keyword": "docker build"
+    },
+    {
+      "keyword": "docker stop",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "docker stop"
+    },
+    {
+      "keyword": "docker run",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "docker run"
+    },
+    {
+      "keyword": "docker ps",
+      "domain": "docker",
+      "intent": "list",
+      "matched_keyword": "docker ps"
+    },
+    {
+      "keyword": "docker pull",
+      "domain": "docker",
+      "intent": "pull",
+      "matched_keyword": "docker pull"
+    },
+    {
+      "keyword": "docker push",
+      "domain": "docker",
+      "intent": "push",
+      "matched_keyword": "docker push"
+    },
+    {
+      "keyword": "wyłącz kontener",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "wyłącz kontener"
+    },
+    {
+      "keyword": "wylacz kontener",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "wylacz kontener"
+    },
+    {
+      "keyword": "kill kontener",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "kill kontener"
+    },
+    {
+      "keyword": "zatrzymaj kontener",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "zatrzymaj kontener"
+    },
+    {
+      "keyword": "zatrzymaj container",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "zatrzymaj container"
+    },
+    {
+      "keyword": "stop container",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "stop container"
+    },
+    {
+      "keyword": "odpal kontener",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "odpal kontener"
+    },
+    {
+      "keyword": "wystartuj kontener",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "wystartuj kontener"
+    },
+    {
+      "keyword": "uruchom kontener",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "uruchom kontener"
+    },
+    {
+      "keyword": "uruchom container",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "uruchom container"
+    },
+    {
+      "keyword": "run container",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "run container"
+    },
+    {
+      "keyword": "restartuj kontener",
+      "domain": "docker",
+      "intent": "restart",
+      "matched_keyword": "restartuj kontener"
+    },
+    {
+      "keyword": "wejdź do kontenera",
+      "domain": "docker",
+      "intent": "exec",
+      "matched_keyword": "wejdź do kontenera"
+    },
+    {
+      "keyword": "wejdz do kontenera",
+      "domain": "docker",
+      "intent": "exec",
+      "matched_keyword": "wejdz do kontenera"
+    },
+    {
+      "keyword": "terminal kontenera",
+      "domain": "docker",
+      "intent": "exec",
+      "matched_keyword": "terminal kontenera"
+    },
+    {
+      "keyword": "connect to container",
+      "domain": "docker",
+      "intent": "exec",
+      "matched_keyword": "connect to container"
+    },
+    {
+      "keyword": "shell kontenera",
+      "domain": "docker",
+      "intent": "exec",
+      "matched_keyword": "shell kontenera"
+    },
+    {
+      "keyword": "pokaż logi",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "pokaż logi"
+    },
+    {
+      "keyword": "pokaz logi",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "pokaz logi"
+    },
+    {
+      "keyword": "show logs",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "show logs"
+    },
+    {
+      "keyword": "logi kontenera",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "logi kontenera"
+    },
+    {
+      "keyword": "wyświetl logi",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "wyświetl logi"
+    },
+    {
+      "keyword": "śledź logi",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "śledź logi"
+    },
+    {
+      "keyword": "sledz logi",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "sledz logi"
+    },
+    {
+      "keyword": "lista obrazów",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "lista obrazów"
+    },
+    {
+      "keyword": "lista obrazow",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "lista obrazow"
+    },
+    {
+      "keyword": "pokaż obrazy",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "pokaż obrazy"
+    },
+    {
+      "keyword": "pokaz obrazy",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "pokaz obrazy"
+    },
+    {
+      "keyword": "list images",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "list images"
+    },
+    {
+      "keyword": "zbuduj obraz",
+      "domain": "docker",
+      "intent": "build",
+      "matched_keyword": "zbuduj obraz"
+    },
+    {
+      "keyword": "zbuduj image",
+      "domain": "docker",
+      "intent": "build",
+      "matched_keyword": "zbuduj image"
+    },
+    {
+      "keyword": "build image",
+      "domain": "docker",
+      "intent": "build",
+      "matched_keyword": "build image"
+    },
+    {
+      "keyword": "stwórz obraz",
+      "domain": "docker",
+      "intent": "build",
+      "matched_keyword": "stwórz obraz"
+    },
+    {
+      "keyword": "stworz obraz",
+      "domain": "docker",
+      "intent": "build",
+      "matched_keyword": "stworz obraz"
+    },
+    {
+      "keyword": "doker images",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "doker images"
+    },
+    {
+      "keyword": "dokcer images",
+      "domain": "docker",
+      "intent": "images",
+      "matched_keyword": "dokcer images"
+    },
+    {
+      "keyword": "doker run",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "doker run"
+    },
+    {
+      "keyword": "dokcer run",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "dokcer run"
+    },
+    {
+      "keyword": "doker stop",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "doker stop"
+    },
+    {
+      "keyword": "dokcer stop",
+      "domain": "docker",
+      "intent": "stop",
+      "matched_keyword": "dokcer stop"
+    },
+    {
+      "keyword": "doker ps",
+      "domain": "docker",
+      "intent": "list",
+      "matched_keyword": "doker ps"
+    },
+    {
+      "keyword": "dokcer ps",
+      "domain": "docker",
+      "intent": "list",
+      "matched_keyword": "dokcer ps"
+    },
+    {
+      "keyword": "doker kontenery",
+      "domain": "docker",
+      "intent": "list",
+      "matched_keyword": "doker kontenery"
+    },
+    {
+      "keyword": "dokcer kontenery",
+      "domain": "docker",
+      "intent": "list",
+      "matched_keyword": "dokcer kontenery"
+    },
+    {
+      "keyword": "doker",
+      "domain": "docker",
+      "intent": "list",
+      "matched_keyword": "doker"
+    },
+    {
+      "keyword": "dokcer",
+      "domain": "docker",
+      "intent": "list",
+      "matched_keyword": "dokcer"
+    },
+    {
+      "keyword": "restartuj usług",
+      "domain": "shell",
+      "intent": "service_restart",
+      "matched_keyword": "restartuj usługę"
+    },
+    {
+      "keyword": "restartuj uslug",
+      "domain": "shell",
+      "intent": "service_restart",
+      "matched_keyword": "restartuj usluge"
+    },
+    {
+      "keyword": "zatrzymaj usług",
+      "domain": "shell",
+      "intent": "service_stop",
+      "matched_keyword": "zatrzymaj usługę"
+    },
+    {
+      "keyword": "zatrzymaj uslug",
+      "domain": "shell",
+      "intent": "service_stop",
+      "matched_keyword": "zatrzymaj usluge"
+    },
+    {
+      "keyword": "uruchom usług",
+      "domain": "shell",
+      "intent": "service_start",
+      "matched_keyword": "uruchom usługę"
+    },
+    {
+      "keyword": "uruchom uslug",
+      "domain": "shell",
+      "intent": "service_start",
+      "matched_keyword": "uruchom usluge"
+    },
+    {
+      "keyword": "status usług",
+      "domain": "shell",
+      "intent": "service_status",
+      "matched_keyword": "status usługi"
+    },
+    {
+      "keyword": "status uslug",
+      "domain": "shell",
+      "intent": "service_status",
+      "matched_keyword": "status uslugi"
+    },
+    {
+      "keyword": "docker uruchom",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "docker uruchom"
+    },
+    {
+      "keyword": "docker run",
+      "domain": "docker",
+      "intent": "run",
+      "matched_keyword": "docker run"
+    },
+    {
+      "keyword": "startuj system",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "startuj system"
+    },
+    {
+      "keyword": "startuj sistem",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "startuj sistem"
+    },
+    {
+      "keyword": "system uruchom",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "system uruchom"
+    },
+    {
+      "keyword": "system startuj",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "system startuj"
+    },
+    {
+      "keyword": "komputer zrestartuj",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "komputer zrestartuj"
+    },
+    {
+      "keyword": "uruchom system",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "uruchom system"
+    },
+    {
+      "keyword": "uruchom sistem",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "uruchom sistem"
+    },
+    {
+      "keyword": "restartuj system",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "restartuj system"
+    },
+    {
+      "keyword": "restartuj sistem",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "restartuj sistem"
+    },
+    {
+      "keyword": "zrestartuj komputer",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "zrestartuj komputer"
+    },
+    {
+      "keyword": "zrestartuj system",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "zrestartuj system"
+    },
+    {
+      "keyword": "usuwanie pliku",
+      "domain": "shell",
+      "intent": "remove",
+      "matched_keyword": "usuwanie pliku"
+    },
+    {
+      "keyword": "usuwanie plik",
+      "domain": "shell",
+      "intent": "remove",
+      "matched_keyword": "usuwanie pliku"
+    },
+    {
+      "keyword": "tworzenie katalogu",
+      "domain": "shell",
+      "intent": "create",
+      "matched_keyword": "tworzenie katalogu"
+    },
+    {
+      "keyword": "uruchomienie usługi",
+      "domain": "shell",
+      "intent": "service_start",
+      "matched_keyword": "uruchomienie usługi"
+    },
+    {
+      "keyword": "restartowanie systemu",
+      "domain": "shell",
+      "intent": "reboot",
+      "matched_keyword": "restartowanie systemu"
+    },
+    {
+      "keyword": "plik znajdź",
+      "domain": "shell",
+      "intent": "find",
+      "matched_keyword": "plik znajdź"
+    },
+    {
+      "keyword": "znajdź plik",
+      "domain": "shell",
+      "intent": "find",
+      "matched_keyword": "znajdź plik"
+    },
+    {
+      "keyword": "znajdz plik",
+      "domain": "shell",
+      "intent": "find",
+      "matched_keyword": "znajdz plik"
+    },
+    {
+      "keyword": "skopiuj plik",
+      "domain": "shell",
+      "intent": "copy",
+      "matched_keyword": "skopiuj plik"
+    },
+    {
+      "keyword": "kopiuj plik",
+      "domain": "shell",
+      "intent": "copy",
+      "matched_keyword": "kopiuj plik"
+    },
+    {
+      "keyword": "plik skopiuj",
+      "domain": "shell",
+      "intent": "copy",
+      "matched_keyword": "plik skopiuj"
+    },
+    {
+      "keyword": "usuń plik",
+      "domain": "shell",
+      "intent": "remove",
+      "matched_keyword": "usuń plik"
+    },
+    {
+      "keyword": "usun plik",
+      "domain": "shell",
+      "intent": "remove",
+      "matched_keyword": "usun plik"
+    },
+    {
+      "keyword": "plik usuń",
+      "domain": "shell",
+      "intent": "remove",
+      "matched_keyword": "plik usuń"
+    },
+    {
+      "keyword": "lista procesów",
+      "domain": "shell",
+      "intent": "list_processes",
+      "matched_keyword": "lista procesów"
+    },
+    {
+      "keyword": "lista procesow",
+      "domain": "shell",
+      "intent": "list_processes",
+      "matched_keyword": "lista procesow"
+    },
+    {
+      "keyword": "pokaż procesy",
+      "domain": "shell",
+      "intent": "list_processes",
+      "matched_keyword": "pokaż procesy"
+    },
+    {
+      "keyword": "pokaz procesy",
+      "domain": "shell",
+      "intent": "list_processes",
+      "matched_keyword": "pokaz procesy"
+    },
+    {
+      "keyword": "procesy systemowe",
+      "domain": "shell",
+      "intent": "list_processes",
+      "matched_keyword": "procesy systemowe"
+    },
+    {
+      "keyword": "lista plików",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "lista plików"
+    },
+    {
+      "keyword": "lista plikow",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "lista plikow"
+    },
+    {
+      "keyword": "lista plik",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "lista plik"
+    },
+    {
+      "keyword": "pokaż pliki",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "pokaż pliki"
+    },
+    {
+      "keyword": "pokaz pliki",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "pokaz pliki"
+    },
+    {
+      "keyword": "show files",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "show files"
+    },
+    {
+      "keyword": "list files",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "list files"
+    },
+    {
+      "keyword": "pokaż foldery",
+      "domain": "shell",
+      "intent": "list_dirs",
+      "matched_keyword": "pokaż foldery"
+    },
+    {
+      "keyword": "pokaz foldery",
+      "domain": "shell",
+      "intent": "list_dirs",
+      "matched_keyword": "pokaz foldery"
+    },
+    {
+      "keyword": "foldery pokaż",
+      "domain": "shell",
+      "intent": "list_dirs",
+      "matched_keyword": "foldery pokaż"
+    },
+    {
+      "keyword": "folderze usera",
+      "domain": "shell",
+      "intent": "list_dirs",
+      "matched_keyword": "folderze usera"
+    },
+    {
+      "keyword": "folderze użytkownika",
+      "domain": "shell",
+      "intent": "list_dirs",
+      "matched_keyword": "folderze użytkownika"
+    },
+    {
+      "keyword": "folderow w folderze",
+      "domain": "shell",
+      "intent": "list_dirs",
+      "matched_keyword": "folderow w folderze"
+    },
+    {
+      "keyword": "zawartość katalogu",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "directory contents"
+    },
+    {
+      "keyword": "zawartość folderu",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "directory contents"
+    },
+    {
+      "keyword": "lista folder",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "directory contents"
+    },
+    {
+      "keyword": "list folder",
+      "domain": "shell",
+      "intent": "list",
+      "matched_keyword": "directory contents"
+    },
+    {
+      "keyword": "użytkowników systemu",
+      "domain": "shell",
+      "intent": "user_list",
+      "matched_keyword": "user_list"
+    },
+    {
+      "keyword": "userów systemu",
+      "domain": "shell",
+      "intent": "user_list",
+      "matched_keyword": "userów systemu"
+    },
+    {
+      "keyword": "userow systemu",
+      "domain": "shell",
+      "intent": "user_list",
+      "matched_keyword": "userow systemu"
+    },
+    {
+      "keyword": "system users",
+      "domain": "shell",
+      "intent": "user_list",
+      "matched_keyword": "user_list"
+    },
+    {
+      "keyword": "zawartość pliku",
+      "domain": "shell",
+      "intent": "text_cat",
+      "matched_keyword": "file content"
+    },
+    {
+      "keyword": "zawartosc pliku",
+      "domain": "shell",
+      "intent": "text_cat",
+      "matched_keyword": "file content"
+    },
+    {
+      "keyword": "pokaż plik ",
+      "domain": "shell",
+      "intent": "text_cat",
+      "matched_keyword": "file content"
+    },
+    {
+      "keyword": "show file content",
+      "domain": "shell",
+      "intent": "text_cat",
+      "matched_keyword": "file content"
+    },
+    {
+      "keyword": "logi aplikacji",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "logi aplikacji"
+    },
+    {
+      "keyword": "application logs",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "application logs"
+    },
+    {
+      "keyword": "app logs",
+      "domain": "docker",
+      "intent": "logs",
+      "matched_keyword": "app logs"
+    }
+  ]
+}
