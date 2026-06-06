@@ -1,58 +1,58 @@
-# code2llm/evolution | 1078 func | 164f | 2026-06-06
+# code2llm/evolution | 1135 func | 170f | 2026-06-06
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_detector.py
-      WHY: 1209L, 2 classes, max CC=73
-      EFFORT: ~4h  IMPACT: 88257
+  [1] !! SPLIT-FUNC      run_domain_fast_path_after_exact  CC=69  fan=26
+      WHY: CC=69 exceeds 15
+      EFFORT: ~1h  IMPACT: 1794
 
-  [2] !! SPLIT-FUNC      KeywordIntentDetector._fast_path_detection  CC=73  fan=29
-      WHY: CC=73 exceeds 15
-      EFFORT: ~1h  IMPACT: 2117
-
-  [3] !! SPLIT-FUNC      KeywordPatterns._load_detector_config_from_json  CC=33  fan=18
-      WHY: CC=33 exceeds 15
-      EFFORT: ~1h  IMPACT: 594
-
-  [4] !! SPLIT-FUNC      task_context_to_system_map  CC=25  fan=20
+  [2] !! SPLIT-FUNC      task_context_to_system_map  CC=25  fan=20
       WHY: CC=25 exceeds 15
       EFFORT: ~1h  IMPACT: 500
 
-  [5] !  SPLIT-FUNC      collect_task_context  CC=19  fan=26
+  [3] !  SPLIT-FUNC      collect_task_context  CC=19  fan=26
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 494
 
-  [6] !  SPLIT-FUNC      autonomous_resolve_turn  CC=21  fan=23
+  [4] !  SPLIT-FUNC      autonomous_resolve_turn  CC=21  fan=23
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 483
 
-  [7] !  SPLIT-FUNC      sync_autofill_from_doql  CC=20  fan=20
+  [5] !  SPLIT-FUNC      sync_autofill_from_doql  CC=20  fan=20
       WHY: CC=20 exceeds 15
       EFFORT: ~1h  IMPACT: 400
 
-  [8] !  SPLIT-FUNC      _build_config  CC=23  fan=17
+  [6] !  SPLIT-FUNC      _build_config  CC=23  fan=17
       WHY: CC=23 exceeds 15
       EFFORT: ~1h  IMPACT: 391
 
-  [9] !  SPLIT-FUNC      resolve_intent  CC=18  fan=20
+  [7] !  SPLIT-FUNC      resolve_intent  CC=18  fan=20
       WHY: CC=18 exceeds 15
       EFFORT: ~1h  IMPACT: 360
 
-  [10] !  SPLIT-FUNC      _process_message  CC=17  fan=20
+  [8] !  SPLIT-FUNC      _process_message  CC=17  fan=20
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 340
+
+  [9] !  SPLIT-FUNC      enrich_entities  CC=15  fan=21
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 315
+
+  [10] !  SPLIT-FUNC      validate_execution_outcome  CC=20  fan=14
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 280
 
 
 RISKS[3]:
   ⚠ Splitting packages/nlp2cmd-intent/src/nlp2cmd_intent/data/patterns.json may break 0 import paths
   ⚠ Splitting planfile.yaml may break 0 import paths
-  ⚠ Splitting packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_detector.py may break 22 import paths
+  ⚠ Splitting packages/nlp2cmd-intent/src/nlp2cmd_intent/data/fast_path_overrides.json may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          4.2 → ≤2.9
-  max-CC:      73 → ≤20
-  god-modules: 7 → 0
-  high-CC(≥15): 32 → ≤16
+  CC̄:          4.1 → ≤2.9
+  max-CC:      69 → ≤20
+  god-modules: 8 → 0
+  high-CC(≥15): 23 → ≤11
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.2 → now CC̄=4.2
+  prev CC̄=4.2 → now CC̄=4.1

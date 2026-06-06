@@ -51,6 +51,34 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
     print("\n💡 W systemie produkcyjnym te workflow byłyby uruchamiane")
     print("   automatycznie według triggerów rozpoznanych z tekstu.")
 
+    last = results[-1] if results else {}
+    dsl = last.get("dsl") if isinstance(last.get("dsl"), dict) else None
+    if not dsl or not dsl.get("steps"):
+        plan = client.workflow_from_text(SCHEDULED_REPORT_QUERIES[0], execute=False, mode="rules")
+        dsl = plan.get("dsl") if isinstance(plan.get("dsl"), dict) else None
+
+    if dsl and dsl.get("steps"):
+        from nlp2dsl_sdk.export.publish import (
+            catalog_from_nlp_client,
+            export_workflow_publish_layer,
+            print_publish_summary,
+            validate_publish_layer,
+        )
+        from nlp2dsl_sdk.artifacts import example_artifact_root
+
+        import os
+
+        artifact_root = example_artifact_root(os.environ.get("NLP2DSL_EXAMPLE_DIR", "."))
+        print("\n📦 Export markpact + pactown (publish layer):")
+        bundle = export_workflow_publish_layer(
+            artifact_root,
+            dsl,
+            catalog_from_nlp_client(client),
+            source_query=SCHEDULED_REPORT_QUERIES[0],
+            title=f"{dsl.get('name', 'workflow')} — scheduled report",
+        )
+        print_publish_summary(bundle, validation=validate_publish_layer(bundle))
+
     from nlp2dsl_sdk.artifacts import get_example_writer
 
     writer = get_example_writer()

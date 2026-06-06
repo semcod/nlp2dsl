@@ -95,36 +95,49 @@ def _data_lookup(ir: SystemMapIR, action: str, field: str) -> Any:
     return None
 
 
+def _config_from_command(
+    ir: SystemMapIR,
+    intent: str,
+    entities: Mapping[str, Any],
+    cmd: CommandSchemaIR,
+) -> dict[str, Any]:
+    config: dict[str, Any] = {}
+    for spec in cmd.fields:
+        val = entities.get(spec.name)
+        if val is None or (isinstance(val, str) and not val.strip()):
+            val = _data_lookup(ir, intent, spec.name)
+        if val is not None and not (isinstance(val, str) and not str(val).strip()):
+            config[spec.name] = val
+        elif not spec.required:
+            config.setdefault(spec.name, "" if spec.name == "attachment_path" else None)
+    return config
+
+
+def _apply_invoice_attachment_hint(ir: SystemMapIR, intent: str, config: dict[str, Any]) -> None:
+    if intent != "send_invoice":
+        return
+    if not (ir.conversation.attachment_required or ir.conversation.generate_invoice_if_missing):
+        return
+    if str(config.get("attachment_path", "")).strip():
+        return
+    hint = _data_lookup(ir, intent, "attachment_path")
+    if hint:
+        config["attachment_path"] = hint
+
+
 def build_target_plan(
     ir: SystemMapIR,
     intent: str,
     entities: Mapping[str, Any] | None = None,
 ) -> TargetPlan:
     """Zbuduj docelowy model kroków i configu z mapy systemu."""
-    entities = dict(entities or {})
+    entity_map = dict(entities or {})
     cmd = ir.command(intent)
-    config: dict[str, Any] = {}
-
     if cmd:
-        for spec in cmd.fields:
-            val = entities.get(spec.name)
-            if val is None or (isinstance(val, str) and not val.strip()):
-                val = _data_lookup(ir, intent, spec.name)
-            if val is not None and not (isinstance(val, str) and not str(val).strip()):
-                config[spec.name] = val
-            elif not spec.required:
-                config.setdefault(spec.name, "" if spec.name == "attachment_path" else None)
+        config = _config_from_command(ir, intent, entity_map, cmd)
     else:
-        config.update({k: v for k, v in entities.items() if not str(k).startswith("_")})
-
-    if intent == "send_invoice" and (
-        ir.conversation.attachment_required or ir.conversation.generate_invoice_if_missing
-    ):
-        if not str(config.get("attachment_path", "")).strip():
-            hint = _data_lookup(ir, intent, "attachment_path")
-            if hint:
-                config["attachment_path"] = hint
-
+        config = {k: v for k, v in entity_map.items() if not str(k).startswith("_")}
+    _apply_invoice_attachment_hint(ir, intent, config)
     steps = [TargetStep(action=intent, config=config)] if intent else []
     return TargetPlan(
         intent=intent,
@@ -147,37 +160,59 @@ def _parse_validation_issue(raw: str) -> ReflectionIssue | None:
     )
 
 
+def _is_empty_value(value: Any) -> bool:
+    return value is None or (isinstance(value, str) and not str(value).strip())
+
+
+def _missing_field_issue(
+    phase: str,
+    *,
+    field: str,
+    step_action: str,
+    ir: SystemMapIR,
+) -> ReflectionIssue:
+    hint = _data_lookup(ir, step_action, field)
+    resolution: Resolution = "autofill" if hint is not None else "ask_user"
+    return ReflectionIssue(
+        phase=phase,
+        kind="missing",
+        field=field,
+        message=f"brak {field} w bieżącym stanie",
+        resolution=resolution,
+        source_hint=f"data.{step_action}.{field}" if hint is not None else None,
+    )
+
+
+def _attachment_missing_issue(phase: str, ir: SystemMapIR) -> ReflectionIssue:
+    resolution: Resolution = "generate" if ir.conversation.generate_invoice_if_missing else "ask_user"
+    return ReflectionIssue(
+        phase=phase,
+        kind="missing",
+        field="attachment_path",
+        message="brak załącznika faktury",
+        resolution=resolution,
+        source_hint="generate_invoice" if resolution == "generate" else "fixtures/",
+    )
+
+
 def _missing_vs_target(
     phase: str,
     target: TargetPlan,
     current: Mapping[str, Any],
     ir: SystemMapIR,
 ) -> list[ReflectionIssue]:
-    issues: list[ReflectionIssue] = []
     if not target.steps:
-        return issues
+        return []
 
     step = target.steps[0]
     cmd = ir.command(step.action)
+    issues: list[ReflectionIssue] = []
 
-    required = cmd.required_names if cmd else []
-    for field in required:
+    for field in (cmd.required_names if cmd else []):
         target_val = step.config.get(field)
         current_val = current.get(field)
-        if target_val is None or (isinstance(target_val, str) and not target_val.strip()):
-            if current_val is None or (isinstance(current_val, str) and not str(current_val).strip()):
-                hint = _data_lookup(ir, step.action, field)
-                resolution: Resolution = "autofill" if hint is not None else "ask_user"
-                issues.append(
-                    ReflectionIssue(
-                        phase=phase,
-                        kind="missing",
-                        field=field,
-                        message=f"brak {field} w bieżącym stanie",
-                        resolution=resolution,
-                        source_hint=f"data.{step.action}.{field}" if hint is not None else None,
-                    )
-                )
+        if _is_empty_value(target_val) and _is_empty_value(current_val):
+            issues.append(_missing_field_issue(phase, field=field, step_action=step.action, ir=ir))
         elif current_val != target_val and current_val is not None:
             issues.append(
                 ReflectionIssue(
@@ -192,18 +227,8 @@ def _missing_vs_target(
     if step.action == "send_invoice" and (
         ir.conversation.attachment_required or ir.conversation.generate_invoice_if_missing
     ):
-        if not str(current.get("attachment_path", "")).strip():
-            resolution = "generate" if ir.conversation.generate_invoice_if_missing else "ask_user"
-            issues.append(
-                ReflectionIssue(
-                    phase=phase,
-                    kind="missing",
-                    field="attachment_path",
-                    message="brak załącznika faktury",
-                    resolution=resolution,
-                    source_hint="generate_invoice" if resolution == "generate" else "fixtures/",
-                )
-            )
+        if _is_empty_value(current.get("attachment_path")):
+            issues.append(_attachment_missing_issue(phase, ir))
 
     return issues
 

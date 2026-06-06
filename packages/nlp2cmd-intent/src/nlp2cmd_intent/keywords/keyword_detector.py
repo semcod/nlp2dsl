@@ -204,6 +204,47 @@ class DetectionResult:
             self.metadata = {}
 
 
+_BROWSER_OVERRIDE_PATTERNS = (
+    r"otw[oó]rz\s+przegl[aą]dark[eę]",
+    r"uruchom\s+przegl[aą]dark[eę]",
+    r"w[łl][aą]cz\s+przegl[aą]dark[eę]",
+    r"(?:wejd[zź]|przejd[zź]|id[zź])\s+na\s+stron[eę]",
+    r"otw[oó]rz\s+stron[eę]",
+    r"(?:otw[oó]rz|wejd[zź]|uruchom).+\.[a-z]{2,}",
+)
+
+_BROWSER_ANTI_NETWORKING_SIGNALS = (
+    "przegladark", "przeglądark", "stron", "tab", "kart",
+    ".com", ".org", ".net", ".io", ".ai", ".pl", ".app",
+    "klucz", "api", "key", "token", "formularz",
+)
+
+
+def _super_fast_browser_override(text_lower: str) -> Optional[DetectionResult]:
+    try:
+        if not any(re.search(p, text_lower) for p in _BROWSER_OVERRIDE_PATTERNS):
+            return None
+        url_match = re.search(r"\b(https?://[^\s'\"]+)", text_lower)
+        domain_in_text = re.search(
+            r"\b([a-zA-Z0-9][\w\-]*\.(?:com|org|net|io|ai|dev|pl|app|co|de|uk|eu)(?:/[^\s'\"]*)?)",
+            text_lower,
+        )
+        entities: dict[str, str] = {}
+        if url_match:
+            entities["url"] = _normalize_url(url_match.group(1))
+        elif domain_in_text:
+            entities["url"] = _normalize_url(domain_in_text.group(1))
+        return DetectionResult(
+            domain="browser",
+            intent="navigate",
+            confidence=0.96,
+            entities=entities,
+            matched_keyword="super_fast_browser_override",
+        )
+    except Exception:
+        return None
+
+
 class KeywordIntentDetector:
     """
     Rule-based intent detection using keyword matching.
@@ -242,6 +283,20 @@ class KeywordIntentDetector:
         """Add custom patterns for a domain/intent pair."""
         self.patterns.add_pattern(domain, intent, patterns)
     
+    def _prepare_detect_text(self, text: str) -> tuple[str, str] | None:
+        if not text or not text.strip():
+            return None
+        normalizer = _get_query_normalizer()
+        if normalizer is not None:
+            normalized = normalizer.normalize(text)
+            text = normalized if isinstance(normalized, str) else normalized.text
+        return text, text.lower()
+
+    def _accept_detection(self, result: Optional[DetectionResult]) -> Optional[DetectionResult]:
+        if result and result.confidence >= self.confidence_threshold:
+            return result
+        return None
+
     def detect(self, text: str) -> DetectionResult:
         """
         Detect domain and intent from text.
@@ -252,79 +307,29 @@ class KeywordIntentDetector:
         Returns:
             DetectionResult with detected domain, intent, and confidence
         """
-        if not text or not text.strip():
+        prepared = self._prepare_detect_text(text)
+        if prepared is None:
             return DetectionResult(domain="unknown", intent="unknown", confidence=0.0, matched=False)
-        
-        # ═══ LAYER 0: Query Normalization (Etap 1) ═══
-        _normalizer = _get_query_normalizer()
-        _normalized = None
-        if _normalizer is not None:
-            _normalized = _normalizer.normalize(text)
-            text = _normalized if isinstance(_normalized, str) else _normalized.text
+        text, text_lower = prepared
 
-        text_lower = text.lower()
+        if browser := _super_fast_browser_override(text_lower):
+            return browser
 
-        # ═══ SUPER-FAST BROWSER OVERRIDE (before ML/fuzzy/semantic) ═══
-        # Prevent false positives like openrouter.ai -> networking_ext/route or multi_step/rule_decomposer.
-        # If the user clearly asks to open a browser / open a site / navigate to a domain, prefer browser.
-        try:
-            _browser_override_patterns = [
-                r"otw[oó]rz\s+przegl[aą]dark[eę]",
-                r"uruchom\s+przegl[aą]dark[eę]",
-                r"w[łl][aą]cz\s+przegl[aą]dark[eę]",
-                r"(?:wejd[zź]|przejd[zź]|id[zź])\s+na\s+stron[eę]",
-                r"otw[oó]rz\s+stron[eę]",
-                r"(?:otw[oó]rz|wejd[zź]|uruchom).+\.[a-z]{2,}",
-            ]
-            if any(re.search(p, text_lower) for p in _browser_override_patterns):
-                url_match = re.search(r"\b(https?://[^\s'\"]+)", text_lower)
-                domain_in_text = re.search(
-                    r"\b([a-zA-Z0-9][\w\-]*\.(?:com|org|net|io|ai|dev|pl|app|co|de|uk|eu)(?:/[^\s'\"]*)?)",
-                    text_lower,
-                )
-                entities = {}
-                if url_match:
-                    entities["url"] = _normalize_url(url_match.group(1))
-                elif domain_in_text:
-                    entities["url"] = _normalize_url(domain_in_text.group(1))
-                return DetectionResult(
-                    domain="browser",
-                    intent="navigate",
-                    confidence=0.96,
-                    entities=entities,
-                    matched_keyword="super_fast_browser_override",
-                )
-        except Exception:
-            pass
+        for candidate in (
+            self._ml_detection(text),
+            self._fuzzy_detection(text),
+        ):
+            if accepted := self._accept_detection(candidate):
+                return accepted
 
-        # ML-based detection if available (highest quality, checked first)
-        ml_result = self._ml_detection(text)
-        if ml_result and ml_result.confidence >= self.confidence_threshold:
-            return ml_result
-
-        # Enhanced detection with fuzzy matching
-        fuzzy_result = self._fuzzy_detection(text)
-        if fuzzy_result and fuzzy_result.confidence >= self.confidence_threshold:
-            return fuzzy_result
-
-        # Fast path checks for explicit patterns (browser, SQL syntax, docker, k8s, shell)
-        # Only run domain-specific fast-path when patterns are loaded
-        has_patterns = bool(self.patterns.patterns)
-        fast_result = self._fast_path_detection(text_lower, domain_rules=has_patterns)
-        if fast_result:
+        if fast_result := self._fast_path_detection(text_lower, domain_rules=bool(self.patterns.patterns)):
             return fast_result
 
-        # Semantic matching if available
-        semantic_result = self._semantic_detection(text)
-        if semantic_result and semantic_result.confidence >= self.confidence_threshold:
-            return semantic_result
+        if accepted := self._accept_detection(self._semantic_detection(text)):
+            return accepted
 
-        # Traditional keyword matching
         result = self._keyword_detection(text, text_lower)
-
-        # Set matched based on confidence threshold
         result.matched = result.confidence >= self.confidence_threshold
-
         return result
 
     def detect_intent_ir(self, text: str):
@@ -448,72 +453,66 @@ class KeywordIntentDetector:
         
         return None
     
+    def _best_keyword_match(self, text_lower: str, *, priority_only: bool) -> DetectionResult:
+        best = DetectionResult(domain="unknown", intent="unknown", confidence=0.0, matched=False)
+        for domain in self.patterns.list_domains():
+            intents = (
+                self.patterns.get_priority_intents(domain)
+                if priority_only
+                else [
+                    intent
+                    for intent in self.patterns.list_intents(domain)
+                    if intent not in self.patterns.get_priority_intents(domain)
+                ]
+            )
+            for intent in intents:
+                confidence = self._calculate_keyword_confidence(
+                    text_lower,
+                    self.patterns.get_intent_patterns(domain, intent),
+                )
+                if confidence > best.confidence:
+                    best = DetectionResult(domain=domain, intent=intent, confidence=confidence)
+        return best
+
+    def _apply_domain_booster(self, match: DetectionResult, text_lower: str) -> DetectionResult:
+        if not match.domain:
+            return match
+        boosters = self.patterns.get_domain_boosters(match.domain)
+        if self._calculate_keyword_confidence(text_lower, boosters) > 0:
+            match.confidence = min(1.0, match.confidence + 0.1)
+        return match
+
+    def _anti_networking_browser_override(
+        self,
+        match: DetectionResult,
+        text_lower: str,
+    ) -> DetectionResult:
+        if match.domain != "networking_ext":
+            return match
+        if not any(signal in text_lower for signal in _BROWSER_ANTI_NETWORKING_SIGNALS):
+            return match
+        domain_match = re.search(
+            r'\b([a-zA-Z0-9][\w\-]*\.(?:com|org|net|io|ai|dev|pl|app|co)(?:/[^\s\'\"]*)?)',
+            text_lower,
+        )
+        entities = {"url": _normalize_url(domain_match.group(1))} if domain_match else {}
+        return DetectionResult(
+            domain="browser",
+            intent="navigate",
+            confidence=0.85,
+            entities=entities,
+            matched_keyword="anti_networking_override",
+        )
+
     def _keyword_detection(self, text: str, text_lower: str) -> DetectionResult:
         """Traditional keyword-based detection."""
-        best_match = DetectionResult(domain="unknown", intent="unknown", confidence=0.0, matched=False)
-        
-        # Check priority intents first
-        for domain in self.patterns.list_domains():
-            priority_intents = self.patterns.get_priority_intents(domain)
-            for intent in priority_intents:
-                patterns = self.patterns.get_intent_patterns(domain, intent)
-                confidence = self._calculate_keyword_confidence(text_lower, patterns)
-                
-                if confidence > best_match.confidence:
-                    best_match = DetectionResult(
-                        domain=domain,
-                        intent=intent,
-                        confidence=confidence,
-                    )
-        
-        # Check all intents if no priority match found
+        best_match = self._best_keyword_match(text_lower, priority_only=True)
         if best_match.confidence < self.confidence_threshold:
-            for domain in self.patterns.list_domains():
-                for intent in self.patterns.list_intents(domain):
-                    # Skip if already checked as priority
-                    if intent in self.patterns.get_priority_intents(domain):
-                        continue
-                    
-                    patterns = self.patterns.get_intent_patterns(domain, intent)
-                    confidence = self._calculate_keyword_confidence(text_lower, patterns)
-                    
-                    if confidence > best_match.confidence:
-                        best_match = DetectionResult(
-                            domain=domain,
-                            intent=intent,
-                            confidence=confidence,
-                        )
-        
-        # Apply domain boosters
-        if best_match.domain:
-            boosters = self.patterns.get_domain_boosters(best_match.domain)
-            booster_confidence = self._calculate_keyword_confidence(text_lower, boosters)
-            if booster_confidence > 0:
-                best_match.confidence = min(1.0, best_match.confidence + 0.1)
-        
-        # ═══ Anti-networking override ═══
-        # If networking_ext was detected but text contains browser signals,
-        # it's a false positive (e.g. "stronę" substring-matching "route").
-        if best_match.domain == "networking_ext":
-            _browser_signals = [
-                "przegladark", "przeglądark", "stron", "tab", "kart",
-                ".com", ".org", ".net", ".io", ".ai", ".pl", ".app",
-                "klucz", "api", "key", "token", "formularz",
-            ]
-            if any(signal in text_lower for signal in _browser_signals):
-                # Extract URL if present
-                _dm = re.search(
-                    r'\b([a-zA-Z0-9][\w\-]*\.(?:com|org|net|io|ai|dev|pl|app|co)(?:/[^\s\'\"]*)?)',
-                    text_lower,
-                )
-                entities = {"url": _normalize_url(_dm.group(1))} if _dm else {}
-                best_match = DetectionResult(
-                    domain="browser", intent="navigate",
-                    confidence=0.85, entities=entities,
-                    matched_keyword="anti_networking_override",
-                )
-        
-        return best_match
+            fallback = self._best_keyword_match(text_lower, priority_only=False)
+            if fallback.confidence > best_match.confidence:
+                best_match = fallback
+        best_match = self._apply_domain_booster(best_match, text_lower)
+        return self._anti_networking_browser_override(best_match, text_lower)
     
     def _calculate_keyword_confidence(self, text: str, keywords: list[str]) -> float:
         """Calculate confidence based on keyword matches."""

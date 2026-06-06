@@ -15,10 +15,17 @@ from starlette.responses import StreamingResponse
 from app.engine import NLP_SERVICE_URL, _repo, run_workflow, start_workflow
 from app.action_catalog import fetch_action_catalog
 from app.dsl_validation import dsl_validation_response, validate_dsl_for_execution
+from app.idempotency import idempotency_store, workflow_fingerprint
 from app.logging_setup import get_request_id
 from app.workflow_events import TERMINAL_EVENT_TYPES, workflow_event_hub
-from app.schemas import ActionInfo, RunWorkflowRequest, Step, WorkflowResult
-from nlp2dsl_sdk.workflow import validation_report_from_issues
+from app.workflow_lifecycle import (
+    attach_validation_to_plan,
+    run_request_from_workflow,
+    validation_report_for_workflow,
+    workflow_from_lifecycle_body,
+    workflow_validation_payload,
+)
+from app.schemas import ActionInfo, RunWorkflowRequest, WorkflowResult
 
 log = logging.getLogger("router.workflow")
 router = APIRouter(prefix="/workflow", tags=["workflow"])
@@ -196,12 +203,7 @@ async def workflow_from_text(body: dict) -> dict[str, Any]:
         return dsl_validation_response(workflow_data, contract_issues)
 
     if execute and workflow_data:
-        steps = workflow_data.get("steps", [])
-        req = RunWorkflowRequest(
-            name=workflow_data.get("name", "nlp_generated"),
-            trigger=workflow_data.get("trigger", "manual"),
-            steps=[Step(action=s["action"], config=s.get("config", {})) for s in steps],
-        )
+        req = run_request_from_workflow(workflow_data)
         result = await run_workflow(req)
         return {"status": "executed", "dsl": workflow_data, "result": result.model_dump()}
 
@@ -235,13 +237,101 @@ async def workflow_plan(body: dict[str, Any]) -> dict[str, Any]:
         )
 
     plan = nlp_resp.json()
-    workflow_data = plan.get("workflow")
-    if plan.get("status") == "complete" and workflow_data:
-        issues = validate_dsl_for_execution(workflow_data)
-        report = validation_report_from_issues(issues)
-        plan["validation"] = report.model_dump()
-        if issues:
-            plan["status"] = "validation_failed"
-            plan["missing_fields"] = report.missing_fields
+    return attach_validation_to_plan(plan)
 
-    return plan
+
+@router.post("/validate")
+async def workflow_validate(body: dict[str, Any]) -> dict[str, Any]:
+    """
+    Validate workflow DSL without execution.
+
+    Body: {"workflow": {...}} or {"dsl": {...}}.
+    """
+    workflow_data = workflow_from_lifecycle_body(body)
+    if workflow_data is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Field 'workflow' is required",
+        )
+    return workflow_validation_payload(workflow_data)
+
+
+@router.post("/execute")
+async def workflow_execute(body: dict[str, Any]) -> dict[str, Any]:
+    """
+    Execute validated workflow DSL.
+
+    Body: {"workflow": {...}, "dry_run": false, "idempotency_key": "..."}.
+    """
+    workflow_data = workflow_from_lifecycle_body(body)
+    if workflow_data is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Field 'workflow' is required",
+        )
+
+    report = validation_report_for_workflow(workflow_data)
+    if not report.can_execute:
+        return {
+            "stage": "execute",
+            "status": "validation_failed",
+            "workflow": workflow_data,
+            "validation": report.model_dump(),
+            "missing_fields": report.missing_fields,
+            "can_execute": False,
+        }
+
+    idempotency_key = str(body.get("idempotency_key") or "").strip() or None
+
+    if bool(body.get("dry_run", False)):
+        return {
+            "stage": "execute",
+            "status": "ready",
+            "workflow": workflow_data,
+            "validation": report.model_dump(),
+            "dry_run": True,
+            "can_execute": True,
+            "idempotency_key": idempotency_key,
+        }
+
+    if idempotency_key:
+        start_status, cached_response = await idempotency_store.start(
+            idempotency_key,
+            workflow_fingerprint(workflow_data),
+        )
+        if start_status == "conflict":
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail={
+                    "error": "idempotency_key_conflict",
+                    "idempotency_key": idempotency_key,
+                    "message": "Ten idempotency_key został użyty z innym workflow.",
+                },
+            )
+        if start_status == "in_progress":
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail={
+                    "error": "idempotency_key_in_progress",
+                    "idempotency_key": idempotency_key,
+                    "message": "Wykonanie z tym idempotency_key jest już w toku.",
+                },
+            )
+        if start_status == "replay" and cached_response is not None:
+            replay = dict(cached_response)
+            replay["idempotent_replay"] = True
+            return replay
+
+    result = await run_workflow(run_request_from_workflow(workflow_data))
+    response = {
+        "stage": "execute",
+        "status": "executed",
+        "workflow": workflow_data,
+        "validation": report.model_dump(),
+        "result": result.model_dump(mode="json"),
+        "idempotency_key": idempotency_key,
+        "idempotent_replay": False,
+    }
+    if idempotency_key:
+        await idempotency_store.finish(idempotency_key, response)
+    return response

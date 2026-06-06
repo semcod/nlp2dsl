@@ -1,45 +1,45 @@
 # code2llm call graph | /home/tom/github/wronai/nlp2dsl
-# generated in 0.29s
-# nodes: 463 | edges: 500 | modules: 73
-# CC̄=4.4
+# generated in 0.25s
+# nodes: 455 | edges: 500 | modules: 81
+# CC̄=4.3
 
 HUBS[20]:
   nlp2dsl_sdk.compose_generator.generate_stack_compose
     CC=13  in:1  out:79  total:80
   backend.app.engine._execute_workflow
     CC=13  in:2  out:50  total:52
-  packages.nlp2cmd-intent.src.nlp2cmd_intent.keywords.keyword_patterns.KeywordPatterns._load_detector_config_from_json
-    CC=33  in:0  out:48  total:48
-  nlp2dsl_sdk.preview.print_workflow_preview
-    CC=18  in:8  out:38  total:46
+  nlp-service.app.settings.SettingsManager.set
+    CC=4  in:32  out:11  total:43
   nlp2dsl_sdk.system_map_render.render.render_system_map_doql
     CC=1  in:5  out:37  total:42
-  nlp-service.app.settings.SettingsManager.set
-    CC=4  in:30  out:11  total:41
-  nlp2dsl_sdk.preview.print_run_outcome
-    CC=21  in:1  out:40  total:41
   nlp2dsl_sdk.system_map_runtimes.build_runtimes_for_example
     CC=18  in:1  out:35  total:36
   backend.app.path_resolve.resolve_attachment_path
     CC=13  in:9  out:26  total:35
   nlp2dsl_sdk.doql.parse.collect_task_context
     CC=19  in:3  out:32  total:35
+  nlp2dsl_sdk.conversation_artifacts._format_turn
+    CC=14  in:1  out:32  total:33
+  nlp2dsl_sdk.doql.parse.load_platform_map
+    CC=18  in:1  out:32  total:33
   nlp2dsl_sdk.system_map_bridge.task_context_to_system_map
     CC=25  in:3  out:30  total:33
   nlp2dsl_sdk.doql.render.render_doql_context
     CC=1  in:2  out:29  total:31
-  nlp2dsl_sdk.validation.profile_checks.parse_profile_validation
-    CC=20  in:3  out:28  total:31
+  nlp2dsl_sdk.artifacts.build_process_trace
+    CC=17  in:1  out:29  total:30
   nlp2dsl_sdk.contracts.registry.contract_from_registry_entry
     CC=8  in:3  out:27  total:30
   nlp2dsl_sdk.doql.parse.enrich_task_context_from_client
     CC=19  in:1  out:29  total:30
-  nlp2dsl_sdk.artifacts.build_process_trace
-    CC=17  in:1  out:29  total:30
   nlp2dsl_sdk.cli._display
     CC=13  in:1  out:27  total:28
   nlp2dsl_sdk.validation.rules.step_config.validate_step
     CC=13  in:9  out:18  total:27
+  nlp2dsl_sdk.validation.rules.post_execute.validate_execution_outcome
+    CC=20  in:1  out:25  total:26
+  examples.08-multi-object-benchmark.scenario.run_benchmark
+    CC=16  in:2  out:24  total:26
   nlp2dsl_sdk.preview.ensure_services
     CC=5  in:18  out:8  total:26
   nlp2dsl_sdk.cli.main
@@ -114,9 +114,29 @@ MODULES:
     _validation_context  CC=1  out:4
     validate_step_config  CC=1  out:2
     validate_step_config_issues  CC=2  out:3
-  backend.app.workflow_events  [2 funcs]
+  backend.app.workflow_events  [3 funcs]
+    to_dict  CC=1  out:1
     publish  CC=2  out:4
     subscriber_count  CC=1  out:3
+  examples.04-scheduled-report.scenario  [1 funcs]
+    run  CC=11  out:21
+  examples.05-conversation-flow.scenario  [4 funcs]
+    _save_conversation_artifacts  CC=1  out:2
+    run  CC=2  out:2
+    run_demo  CC=2  out:18
+    run_interactive  CC=1  out:2
+  examples.08-multi-object-benchmark.scenario  [1 funcs]
+    run_benchmark  CC=16  out:24
+  examples.09-execution-smoke.scenario  [1 funcs]
+    run  CC=9  out:22
+  examples.10-llm-benchmark.scenario  [1 funcs]
+    run  CC=3  out:10
+  examples.13-autonomous-invoice-stack.scenario  [1 funcs]
+    run  CC=20  out:24
+  examples.bootstrap  [1 funcs]
+    bootstrap  CC=11  out:16
+  examples.code_generation_examples  [1 funcs]
+    main  CC=1  out:1
   nlp-service.app.settings  [1 funcs]
     set  CC=4  out:11
   nlp2dsl_sdk.__main__  [1 funcs]
@@ -195,8 +215,24 @@ MODULES:
     contract_from_registry_entry  CC=8  out:27
     known_action_names  CC=2  out:3
     quality_fields_for_action  CC=2  out:3
-  nlp2dsl_sdk.conversation_artifacts  [1 funcs]
+  nlp2dsl_sdk.conversation_artifacts  [6 funcs]
+    _format_transcript_header  CC=1  out:5
+    _format_turn  CC=14  out:32
+    _format_validations  CC=4  out:6
+    _routing_summary  CC=6  out:4
+    format_transcript  CC=6  out:11
     write_conversation_artifacts  CC=1  out:13
+  nlp2dsl_sdk.conversation_testql  [10 funcs]
+    _endpoints_from_steps  CC=9  out:12
+    _endpoints_from_text  CC=2  out:3
+    _is_nlp_kind  CC=1  out:2
+    _missing_type_header  CC=2  out:0
+    _parse_plan  CC=3  out:2
+    _structural_issues  CC=6  out:7
+    _validation_result  CC=4  out:1
+    dry_run_conversation_scenario  CC=1  out:1
+    validate_conversation_scenario  CC=9  out:18
+    validate_conversation_scenario_text  CC=4  out:8
   nlp2dsl_sdk.demos  [10 funcs]
     _get_supported_languages  CC=3  out:6
     _print_code_generation_preview  CC=3  out:11
@@ -218,17 +254,19 @@ MODULES:
     render_context_process_access  CC=7  out:6
     render_context_resources  CC=5  out:9
     render_context_workflow_history  CC=6  out:9
-  nlp2dsl_sdk.doql.parse  [19 funcs]
+  nlp2dsl_sdk.doql.models  [1 funcs]
+    runtime_for  CC=6  out:3
+  nlp2dsl_sdk.doql.parse  [24 funcs]
     _append_collection_blocks  CC=12  out:18
     _apply_capabilities_block  CC=5  out:7
     _apply_context_block  CC=10  out:10
+    _apply_context_metadata  CC=3  out:4
     _apply_conversation_block  CC=1  out:10
     _apply_paths_block  CC=3  out:4
     _apply_process_access_block  CC=4  out:5
     _apply_process_block  CC=9  out:12
+    _command_transport  CC=3  out:2
     _parse_access_body  CC=1  out:12
-    _parse_artifact_body  CC=3  out:6
-    _parse_block_body  CC=2  out:4
   nlp2dsl_sdk.doql.render  [2 funcs]
     render_doql_context  CC=1  out:29
     write_doql_context  CC=1  out:4
@@ -274,17 +312,12 @@ MODULES:
   nlp2dsl_sdk.path_resolve  [2 funcs]
     _examples_portable_candidates  CC=8  out:16
     resolve_attachment_path  CC=9  out:19
-  nlp2dsl_sdk.preview  [12 funcs]
+  nlp2dsl_sdk.preview  [5 funcs]
     ensure_services  CC=5  out:8
     execute_from_text  CC=8  out:15
-    execute_text_examples  CC=8  out:9
-    execution_payload  CC=3  out:3
-    finalize_example_artifacts  CC=2  out:2
     preview_text_examples  CC=9  out:13
     print_execution_result  CC=5  out:11
-    print_json  CC=1  out:2
-    print_run_context_hints  CC=13  out:20
-    print_run_outcome  CC=21  out:40
+    print_run_outcome  CC=5  out:9
   nlp2dsl_sdk.process_policy  [16 funcs]
     _apply_autonomous_policy  CC=5  out:4
     _apply_llm_policy  CC=4  out:3
@@ -296,22 +329,12 @@ MODULES:
     _merge_access  CC=5  out:10
     _merge_conversation_from_profile  CC=5  out:4
     _merge_paths  CC=4  out:8
-  nlp2dsl_sdk.reflection  [12 funcs]
-    _context_queries_from_issues  CC=9  out:4
-    _data_lookup  CC=3  out:0
-    _entities_from_response  CC=6  out:5
-    _intent_from_response  CC=10  out:8
-    _missing_vs_target  CC=20  out:18
-    _parse_validation_issue  CC=2  out:3
-    _resolutions_available  CC=6  out:4
-    build_target_plan  CC=20  out:21
+  nlp2dsl_sdk.reflection  [2 funcs]
     format_reflection_summary  CC=6  out:6
-    reflect  CC=9  out:11
+    reflect_from_doql_path  CC=2  out:4
   nlp2dsl_sdk.stack_flow  [2 funcs]
     _emit_compose  CC=3  out:8
     bootstrap_registry  CC=1  out:6
-  nlp2dsl_sdk.step_validation  [1 funcs]
-    validate_step_config_from_map  CC=1  out:1
   nlp2dsl_sdk.system_map_bridge  [3 funcs]
     _command_to_ir  CC=12  out:10
     doql_file_to_system_map  CC=1  out:3
@@ -381,17 +404,8 @@ MODULES:
     validate_post_health_for_intent  CC=1  out:2
     validate_post_health_from_map  CC=1  out:2
     validate_post_health_issues  CC=1  out:1
-  nlp2dsl_sdk.validation.profile_checks  [15 funcs]
-    _failed  CC=4  out:2
-    _pass_summary  CC=5  out:0
-    _resolve_artifact_path  CC=3  out:4
-    _validation_id  CC=5  out:3
+  nlp2dsl_sdk.validation.profile_checks  [1 funcs]
     apply_profile_validations  CC=3  out:2
-    check_profile_validation  CC=11  out:15
-    conversation_executed  CC=2  out:3
-    dsl_actions_from_response  CC=7  out:8
-    execution_completed  CC=8  out:9
-    load_profile_validations  CC=3  out:5
   nlp2dsl_sdk.validation.resolutions  [9 funcs]
     _append_attachment_plans  CC=4  out:11
     _append_autofill_plans  CC=4  out:3
@@ -425,6 +439,17 @@ MODULES:
     _format_issues  CC=11  out:21
     validate_step  CC=13  out:18
     validate_workflow_steps  CC=4  out:5
+  nlp2dsl_sdk.workflow.lifecycle  [12 funcs]
+    _compact_dict  CC=3  out:2
+    _float_or_default  CC=2  out:1
+    _get  CC=2  out:3
+    _issue_to_payload  CC=4  out:9
+    _missing_fields_from_payloads  CC=8  out:8
+    _string_list  CC=5  out:2
+    _to_dict  CC=5  out:10
+    clarification_from_dialog  CC=4  out:5
+    execution_request_from_workflow  CC=3  out:2
+    parse_result_from_nlp  CC=4  out:13
   packages.nlp2cmd-intent.src.nlp2cmd_intent.clarification  [2 funcs]
     clarification_enforced  CC=1  out:3
     ensure_intent_clear  CC=4  out:3
@@ -438,25 +463,6 @@ MODULES:
     default_intent_detector  CC=1  out:1
   packages.nlp2cmd-intent.src.nlp2cmd_intent.input  [1 funcs]
     analyze_query  CC=3  out:8
-  packages.nlp2cmd-intent.src.nlp2cmd_intent.keywords.keyword_detector  [14 funcs]
-    _calculate_keyword_confidence  CC=6  out:5
-    _fuzzy_detection  CC=6  out:4
-    _ml_detection  CC=6  out:4
-    _semantic_detection  CC=6  out:4
-    _tokenize_text  CC=11  out:15
-    detect  CC=17  out:21
-    detect_all  CC=8  out:10
-    detect_intent_ir  CC=1  out:2
-    _get_fuzzy_schema_matcher  CC=7  out:7
-    _get_ml_classifier  CC=8  out:6
-  packages.nlp2cmd-intent.src.nlp2cmd_intent.keywords.keyword_patterns  [7 funcs]
-    __init__  CC=3  out:7
-    _load_detector_config_from_json  CC=33  out:48
-    _load_patterns_from_json  CC=19  out:26
-    add_pattern  CC=6  out:6
-    _dedupe_case_insensitive  CC=3  out:4
-    _find_data_files  CC=1  out:2
-    _normalize_polish_text  CC=1  out:2
   packages.nlp2cmd-intent.src.nlp2cmd_intent.nlp2cmd_convert  [1 funcs]
     detection_to_intent_ir  CC=10  out:22
   packages.nlp2cmd-planner.src.nlp2cmd_planner.strategies.rest_workflow  [2 funcs]

@@ -68,42 +68,28 @@ def print_run_context_hints(result: Mapping[str, Any]) -> None:
             print(f"🧾 Generowanie faktury: {config}")
 
 
-def print_run_outcome(result: Mapping[str, Any], *, query: str | None = None) -> None:
-    """Human-readable output for `nlp2dsl run` and examples."""
-    if query:
-        print(f"🧠 Zapytanie: {query!r}")
-
-    status = result.get("status", "unknown")
-    print(f"Status: {status}")
-
-    if status == "incomplete":
-        missing = result.get("missing_fields") or result.get("missing") or []
-        if missing:
-            print(f"❗ Missing: {', '.join(str(m) for m in missing)}")
-        prompt = result.get("prompt_user") or result.get("message")
-        if prompt:
-            print(f"🤖 {prompt}")
-        partial = result.get("partial_workflow") or result.get("dsl")
-        if partial:
-            print("⚠️  Częściowy DSL:")
-            print_json(partial)
-        print_run_context_hints(result)
-        return
-
-    if status == "error":
-        print(f"❌ {result.get('error') or result.get('message', 'nieznany błąd')}")
-        print_run_context_hints(result)
-        return
-
+def _print_incomplete_run_outcome(result: Mapping[str, Any]) -> None:
+    missing = result.get("missing_fields") or result.get("missing") or []
+    if missing:
+        print(f"❗ Missing: {', '.join(str(m) for m in missing)}")
+    prompt = result.get("prompt_user") or result.get("message")
+    if prompt:
+        print(f"🤖 {prompt}")
+    partial = result.get("partial_workflow") or result.get("dsl")
+    if partial:
+        print("⚠️  Częściowy DSL:")
+        print_json(partial)
     print_run_context_hints(result)
 
+
+def _print_success_run_outcome(result: Mapping[str, Any]) -> None:
+    print_run_context_hints(result)
     dsl = result.get("dsl")
     if dsl:
         print(f"Workflow: {dsl.get('name', '?')} ({len(dsl.get('steps', []))} kroków)")
         for i, step in enumerate(dsl.get("steps", []), 1):
             if isinstance(step, dict):
                 print(f"  {i}. {step.get('action', '')} -> {step.get('config', {})}")
-
     execution = execution_payload(result)
     if execution:
         print(f"Execution: {execution.get('status', '?')}")
@@ -115,48 +101,73 @@ def print_run_outcome(result: Mapping[str, Any], *, query: str | None = None) ->
             print(f"  workflow_id: {wf_id}")
 
 
+def print_run_outcome(result: Mapping[str, Any], *, query: str | None = None) -> None:
+    """Human-readable output for `nlp2dsl run` and examples."""
+    if query:
+        print(f"🧠 Zapytanie: {query!r}")
+
+    status = result.get("status", "unknown")
+    print(f"Status: {status}")
+
+    if status == "incomplete":
+        _print_incomplete_run_outcome(result)
+        return
+    if status == "error":
+        print(f"❌ {result.get('error') or result.get('message', 'nieznany błąd')}")
+        print_run_context_hints(result)
+        return
+    _print_success_run_outcome(result)
+
+
+def _print_workflow_dsl_summary(result: Mapping[str, Any]) -> None:
+    print("✅ Wygenerowany DSL:")
+    print_json(result["dsl"])
+    steps = result["dsl"].get("steps", [])
+    print(f"   Liczba kroków: {len(steps)}")
+
+
+def _print_workflow_execution_summary(result: Mapping[str, Any]) -> None:
+    execution = execution_payload(result)
+    if execution is None:
+        return
+    print("✅ Wynik wykonania:")
+    print_json(execution)
+    print_run_context_hints(result)
+    for index, step in enumerate(execution.get("steps") or [], 1):
+        if isinstance(step, dict):
+            icon = "✅" if step.get("status") == "completed" else "❌"
+            print(f"   Krok {index} ({step.get('action')}): {icon}")
+            step_result = step.get("result")
+            if isinstance(step_result, dict):
+                for key, value in step_result.items():
+                    if value not in (None, "", {}):
+                        print(f"      {key}: {value}")
+
+
+def _print_incomplete_workflow_preview(result: Mapping[str, Any]) -> None:
+    partial = result.get("partial_workflow") or result.get("dsl")
+    if partial:
+        print("⚠️  Częściowy DSL (brakuje pól):")
+        print_json(partial)
+    missing = result.get("missing_fields") or []
+    if missing:
+        print(f"   Brakuje: {', '.join(missing)}")
+    prompt = result.get("prompt_user")
+    if prompt:
+        print(f"   💬 {prompt}")
+
+
 def print_workflow_preview(result: Mapping[str, Any]) -> None:
     status = result.get("status")
-
-    if status == "complete":
-        print("✅ Wygenerowany DSL:")
-        print_json(result["dsl"])
-        steps = result["dsl"].get("steps", [])
-        print(f"   Liczba kroków: {len(steps)}")
-    elif status == "executed":
-        print("✅ Wygenerowany DSL:")
-        print_json(result["dsl"])
-        steps = result["dsl"].get("steps", [])
-        print(f"   Liczba kroków: {len(steps)}")
-        execution = execution_payload(result)
-        if execution is not None:
-            print("✅ Wynik wykonania:")
-            print_json(execution)
-            print_run_context_hints(result)
-            for index, step in enumerate(execution.get("steps") or [], 1):
-                if isinstance(step, dict):
-                    icon = "✅" if step.get("status") == "completed" else "❌"
-                    print(f"   Krok {index} ({step.get('action')}): {icon}")
-                    step_result = step.get("result")
-                    if isinstance(step_result, dict):
-                        for key, value in step_result.items():
-                            if value not in (None, "", {}):
-                                print(f"      {key}: {value}")
-    elif status == "incomplete":
-        partial = result.get("partial_workflow") or result.get("dsl")
-        if partial:
-            print("⚠️  Częściowy DSL (brakuje pól):")
-            print_json(partial)
-        missing = result.get("missing_fields") or []
-        if missing:
-            print(f"   Brakuje: {', '.join(missing)}")
-        prompt = result.get("prompt_user")
-        if prompt:
-            print(f"   💬 {prompt}")
-    elif status == "error":
-        print(f"❌ Workflow nie powiódł się: {result.get('error', 'nieznany błąd')}")
-    else:
-        print(f"❌ Workflow nie powiódł się: {result.get('error', 'nieznany błąd')}")
+    if status in ("complete", "executed"):
+        _print_workflow_dsl_summary(result)
+        if status == "executed":
+            _print_workflow_execution_summary(result)
+        return
+    if status == "incomplete":
+        _print_incomplete_workflow_preview(result)
+        return
+    print(f"❌ Workflow nie powiódł się: {result.get('error', 'nieznany błąd')}")
 
 
 def print_execution_result(result: Mapping[str, Any]) -> None:

@@ -13,6 +13,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from httpx import AsyncClient, Response
 
+from app.idempotency import idempotency_store
+
 # ── Health ───────────────────────────────────────────────────────
 
 
@@ -394,6 +396,7 @@ class TestWorkflowPlan:
         assert data["status"] == "complete"
         assert data["validation"]["status"] == "complete"
         assert data["validation"]["issues"] == []
+        assert data["validation"]["missing_fields"] == []
 
     @pytest.mark.asyncio
     async def test_plan_validation_failure_is_reported(self, client: AsyncClient) -> None:
@@ -427,3 +430,200 @@ class TestWorkflowPlan:
         data = resp.json()
         assert data["status"] == "validation_failed"
         assert data["validation"]["missing_fields"] == ["steps.0.action"]
+
+
+# ── Validate ─────────────────────────────────────────────────────
+
+
+class TestWorkflowValidate:
+    """POST /workflow/validate endpoint."""
+
+    @pytest.mark.asyncio
+    async def test_validate_complete_workflow(self, client: AsyncClient) -> None:
+        resp = await client.post(
+            "/workflow/validate",
+            json={
+                "workflow": {
+                    "name": "auto_send_invoice",
+                    "trigger": "manual",
+                    "steps": [
+                        {
+                            "action": "send_invoice",
+                            "config": {"amount": 1500, "to": "a@b.pl"},
+                        }
+                    ],
+                }
+            },
+        )
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["stage"] == "validate"
+        assert data["status"] == "complete"
+        assert data["can_execute"] is True
+        assert data["issues"] == []
+
+    @pytest.mark.asyncio
+    async def test_validate_invalid_workflow(self, client: AsyncClient) -> None:
+        resp = await client.post(
+            "/workflow/validate",
+            json={"workflow": {"name": "broken", "steps": [{"config": {"amount": 1500}}]}},
+        )
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["status"] == "validation_failed"
+        assert data["can_execute"] is False
+        assert data["missing_fields"] == ["steps.0.action"]
+        assert data["issues"][0]["code"] == "workflow.missing_action"
+
+    @pytest.mark.asyncio
+    async def test_validate_requires_workflow(self, client: AsyncClient) -> None:
+        resp = await client.post("/workflow/validate", json={})
+        assert resp.status_code == 400
+
+
+# ── Execute ──────────────────────────────────────────────────────
+
+
+class TestWorkflowExecute:
+    """POST /workflow/execute endpoint."""
+
+    @staticmethod
+    def _valid_workflow() -> dict:
+        return {
+            "name": "auto_send_invoice",
+            "trigger": "manual",
+            "steps": [
+                {
+                    "action": "send_invoice",
+                    "config": {"amount": 1500, "to": "a@b.pl"},
+                }
+            ],
+        }
+
+    @pytest.mark.asyncio
+    async def test_execute_dry_run_validates_without_running(self, client: AsyncClient) -> None:
+        with patch("app.routers.workflow.run_workflow", AsyncMock()) as run_workflow:
+            resp = await client.post(
+                "/workflow/execute",
+                json={"workflow": self._valid_workflow(), "dry_run": True},
+            )
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["stage"] == "execute"
+        assert data["status"] == "ready"
+        assert data["can_execute"] is True
+        assert data["dry_run"] is True
+        run_workflow.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_execute_rejects_invalid_workflow(self, client: AsyncClient) -> None:
+        with patch("app.routers.workflow.run_workflow", AsyncMock()) as run_workflow:
+            resp = await client.post(
+                "/workflow/execute",
+                json={"workflow": {"name": "broken", "steps": [{"config": {}}]}},
+            )
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["status"] == "validation_failed"
+        assert data["validation"]["missing_fields"] == ["steps.0.action"]
+        run_workflow.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_execute_runs_valid_workflow(self, client: AsyncClient) -> None:
+        await idempotency_store.clear()
+        mock_result = MagicMock()
+        mock_result.model_dump.return_value = {
+            "workflow_id": "wf-1",
+            "name": "auto_send_invoice",
+            "status": "completed",
+            "steps": [],
+        }
+
+        with patch("app.routers.workflow.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
+            resp = await client.post(
+                "/workflow/execute",
+                json={
+                    "workflow": self._valid_workflow(),
+                    "idempotency_key": "idem-1",
+                },
+            )
+
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["status"] == "executed"
+        assert data["result"]["workflow_id"] == "wf-1"
+        assert data["idempotency_key"] == "idem-1"
+        run_workflow.assert_awaited_once()
+        mock_result.model_dump.assert_called_once_with(mode="json")
+
+    @pytest.mark.asyncio
+    async def test_execute_replays_same_idempotency_key(self, client: AsyncClient) -> None:
+        await idempotency_store.clear()
+        mock_result = MagicMock()
+        mock_result.model_dump.return_value = {
+            "workflow_id": "wf-repeat",
+            "name": "auto_send_invoice",
+            "status": "completed",
+            "steps": [],
+        }
+
+        with patch("app.routers.workflow.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
+            first = await client.post(
+                "/workflow/execute",
+                json={
+                    "workflow": self._valid_workflow(),
+                    "idempotency_key": "idem-repeat",
+                },
+            )
+            second = await client.post(
+                "/workflow/execute",
+                json={
+                    "workflow": self._valid_workflow(),
+                    "idempotency_key": "idem-repeat",
+                },
+            )
+
+        assert first.status_code == 200
+        assert second.status_code == 200
+        assert first.json()["idempotent_replay"] is False
+        assert second.json()["idempotent_replay"] is True
+        assert second.json()["result"]["workflow_id"] == "wf-repeat"
+        run_workflow.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_execute_rejects_reused_key_for_different_workflow(self, client: AsyncClient) -> None:
+        await idempotency_store.clear()
+        mock_result = MagicMock()
+        mock_result.model_dump.return_value = {
+            "workflow_id": "wf-conflict",
+            "name": "auto_send_invoice",
+            "status": "completed",
+            "steps": [],
+        }
+        changed = self._valid_workflow()
+        changed["steps"][0]["config"]["amount"] = 2000
+
+        with patch("app.routers.workflow.run_workflow", AsyncMock(return_value=mock_result)) as run_workflow:
+            first = await client.post(
+                "/workflow/execute",
+                json={
+                    "workflow": self._valid_workflow(),
+                    "idempotency_key": "idem-conflict",
+                },
+            )
+            second = await client.post(
+                "/workflow/execute",
+                json={
+                    "workflow": changed,
+                    "idempotency_key": "idem-conflict",
+                },
+            )
+
+        assert first.status_code == 200
+        assert second.status_code == 409
+        assert second.json()["detail"]["error"] == "idempotency_key_conflict"
+        run_workflow.assert_awaited_once()

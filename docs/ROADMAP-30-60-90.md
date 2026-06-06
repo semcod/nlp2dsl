@@ -44,6 +44,9 @@ nlp2dsl_sdk/
   evaluation/
     golden.py
     metrics.py
+  export/
+    markpact.py           # ActionContract + DSL → README
+    pactown.py            # ecosystem manifest
 
 nlp-service/app/
   routing/              # intent + parser orchestration
@@ -77,12 +80,14 @@ worker/
    - Obecne endpointy mogą zostać, ale wewnątrz powinny składać te etapy.
    - Kryterium: trace conversation pokazuje etap, status i źródło decyzji.
    - Status: rozpoczęte w `nlp2dsl_sdk/workflow/`; dodany plan lifecycle oraz
-     kompatybilny endpoint `/workflow/plan`.
+     kompatybilne endpointy `/workflow/plan`, `/workflow/validate` i `/workflow/execute`.
 
 3. Domknąć idempotencję side effects.
    - Dodać `idempotency_key` do workflow/step execution.
    - Backend deduplikuje `send_email`, `send_invoice`, `crm_update` na poziomie requestu.
    - Kryterium: ponowne `uruchom` nie wykonuje side effect drugi raz i zwraca poprzedni wynik.
+   - Status: rozpoczęte dla `/workflow/execute`; memory fallback i trwały
+     Postgres store obsługują replay, in-progress i konflikt klucza.
 
 4. Rozszerzyć golden dataset.
    - Osobne przypadki dla: entity extraction, DSL mapping, unnecessary clarification,

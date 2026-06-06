@@ -1,6 +1,6 @@
 flowchart TD
-%% generated in 0.10s
-    backend__app["backend.app<br/>113 funcs"]
+%% generated in 0.09s
+    backend__app["backend.app<br/>125 funcs"]
     examples__01_invoice["examples.01-invoice<br/>4 funcs"]
     examples__02_email["examples.02-email<br/>1 funcs"]
     examples__03_report_and_notify["examples.03-report-and-notify<br/>1 funcs"]
@@ -34,23 +34,25 @@ flowchart TD
     nlp2dsl_sdk__doql_registry["nlp2dsl_sdk.doql_registry<br/>12 funcs"]
     nlp2dsl_sdk__encoding["nlp2dsl_sdk.encoding<br/>8 funcs"]
     nlp2dsl_sdk__example_bootstrap["nlp2dsl_sdk.example_bootstrap<br/>1 funcs"]
+    nlp2dsl_sdk__export["nlp2dsl_sdk.export<br/>11 funcs"]
     nlp2dsl_sdk__invoice_pdf["nlp2dsl_sdk.invoice_pdf<br/>3 funcs"]
     nlp2dsl_sdk__invoice_policy["nlp2dsl_sdk.invoice_policy<br/>3 funcs"]
-    nlp2dsl_sdk__preview["nlp2dsl_sdk.preview<br/>13 funcs"]
+    nlp2dsl_sdk__preview["nlp2dsl_sdk.preview<br/>18 funcs"]
     nlp2dsl_sdk__process_policy["nlp2dsl_sdk.process_policy<br/>20 funcs"]
-    nlp2dsl_sdk__reflection["nlp2dsl_sdk.reflection<br/>12 funcs"]
+    nlp2dsl_sdk__reflection["nlp2dsl_sdk.reflection<br/>17 funcs"]
     nlp2dsl_sdk__stack_flow["nlp2dsl_sdk.stack_flow<br/>6 funcs"]
     nlp2dsl_sdk__step_validation["nlp2dsl_sdk.step_validation<br/>2 funcs"]
     nlp2dsl_sdk__system_map_bridge["nlp2dsl_sdk.system_map_bridge<br/>5 funcs"]
     nlp2dsl_sdk__system_map_generator["nlp2dsl_sdk.system_map_generator<br/>5 funcs"]
     nlp2dsl_sdk__system_map_render["nlp2dsl_sdk.system_map_render<br/>26 funcs"]
     nlp2dsl_sdk__system_map_runtimes["nlp2dsl_sdk.system_map_runtimes<br/>4 funcs"]
-    nlp2dsl_sdk__validation["nlp2dsl_sdk.validation<br/>85 funcs"]
+    nlp2dsl_sdk__validation["nlp2dsl_sdk.validation<br/>88 funcs"]
     nlp2dsl_sdk__workflow["nlp2dsl_sdk.workflow<br/>12 funcs"]
-    packages__nlp2cmd_intent["packages.nlp2cmd-intent<br/>57 funcs"]
+    packages__nlp2cmd_intent["packages.nlp2cmd-intent<br/>78 funcs"]
     packages__nlp2dsl_show["packages.nlp2dsl-show<br/>3 funcs"]
+    scripts___conversation_scenario["scripts._conversation_scenario<br/>14 funcs"]
     scripts___dotenv["scripts._dotenv<br/>1 funcs"]
-    scripts__run_conversation_scenario["scripts.run-conversation-scenario<br/>8 funcs"]
+    scripts__run_conversation_scenario["scripts.run-conversation-scenario<br/>2 funcs"]
     scripts__run_example_docker_e2e["scripts.run-example-docker-e2e<br/>12 funcs"]
     scripts__run_example_testql_results["scripts.run-example-testql-results<br/>14 funcs"]
     scripts__run_execution_scenario["scripts.run-execution-scenario<br/>8 funcs"]
@@ -66,8 +68,9 @@ flowchart TD
     nlp_service__app ==>|11| backend__app
     nlp_service__app ==>|11| nlp2dsl_sdk__validation
     nlp2dsl_sdk__demos ==>|10| nlp2dsl_sdk__preview
+    scripts__run_conversation_scenario ==>|8| scripts___conversation_scenario
+    packages__nlp2cmd_intent ==>|7| nlp_service__app
     nlp2dsl_sdk__client ==>|7| nlp2dsl_sdk__doql
-    packages__nlp2cmd_intent ==>|5| nlp_service__app
     nlp2dsl_sdk__client ==>|5| nlp2dsl_sdk__artifact_layout
     backend__app ==>|4| nlp2dsl_sdk__validation
     nlp2dsl_sdk__artifacts ==>|4| nlp2dsl_sdk__artifact_layout
@@ -79,16 +82,16 @@ flowchart TD
     nlp2dsl_sdk__client -->|3| nlp2dsl_sdk__attachment_validation
     nlp2dsl_sdk__attachment_validation -->|3| nlp2dsl_sdk__validation
     nlp2dsl_sdk__stack_flow -->|3| nlp2dsl_sdk__compose_generator
-    nlp2dsl_sdk__preview -->|3| nlp2dsl_sdk__artifacts
     examples__11_notify_quality -->|3| nlp2dsl_sdk__preview
     examples__01_invoice -->|3| nlp2dsl_sdk__preview
     examples__12_ir_show -->|3| nlp2dsl_sdk__preview
     examples__03_report_and_notify -->|3| nlp2dsl_sdk__preview
     examples__02_email -->|3| nlp2dsl_sdk__preview
+    nlp_service__app -->|3| nlp2dsl_sdk__workflow
     nlp_service__app -->|3| nlp2dsl_sdk__process_policy
     worker__step_validator -->|3| backend__app
     scripts__run_example_docker_e2e -->|3| nlp2dsl_sdk__validation
-    nlp_service__app -->|3| nlp2dsl_sdk__workflow
+    nlp2dsl_sdk__preview -->|3| nlp2dsl_sdk__artifacts
     nlp2dsl_sdk__system_map_generator -->|2| nlp2dsl_sdk__doql
     nlp2dsl_sdk__artifacts -->|2| nlp2dsl_sdk__doql
     nlp2dsl_sdk__cli -->|2| nlp2dsl_sdk__doql
@@ -112,8 +115,8 @@ flowchart TD
     worker__worker -->|2| worker__registry
     scripts__run_execution_scenario -->|2| nlp2dsl_sdk__validation
     scripts__run_example_testql_results -->|2| nlp2dsl_sdk__artifact_layout
-    scripts__run_conversation_scenario -->|2| nlp2dsl_sdk__validation
-    scripts__run_conversation_scenario -->|2| nlp2dsl_sdk__doql
+    scripts___conversation_scenario -->|2| nlp2dsl_sdk__validation
+    scripts___conversation_scenario -->|2| nlp2dsl_sdk__doql
     backend__app -->|1| nlp2dsl_sdk__client
     packages__nlp2dsl_show -->|1| nlp2dsl_sdk__encoding
     packages__nlp2dsl_show -->|1| packages__nlp2cmd_intent
@@ -145,20 +148,16 @@ flowchart TD
     nlp2dsl_sdk__attachment_validation -->|1| nlp2dsl_sdk__doql
     nlp2dsl_sdk__system_map_bridge -->|1| nlp2dsl_sdk__process_policy
     nlp2dsl_sdk__system_map_bridge -->|1| nlp2dsl_sdk__doql
-    nlp2dsl_sdk__reflection -->|1| nlp2dsl_sdk__validation
-    nlp2dsl_sdk__reflection -->|1| nlp_service__app
-    nlp2dsl_sdk__reflection -->|1| nlp2dsl_sdk__step_validation
-    nlp2dsl_sdk__reflection -->|1| nlp2dsl_sdk__system_map_bridge
     nlp2dsl_sdk__stack_flow -->|1| nlp2dsl_sdk__example_bootstrap
     nlp2dsl_sdk__stack_flow -->|1| nlp2dsl_sdk__preview
     nlp2dsl_sdk__stack_flow -->|1| nlp2dsl_sdk__system_map_bridge
     nlp2dsl_sdk__compose_generator -->|1| nlp_service__app
     nlp2dsl_sdk__compose_generator -->|1| nlp2dsl_sdk__system_map_runtimes
-    nlp2dsl_sdk__preview -->|1| nlp2dsl_sdk__reflection
     nlp2dsl_sdk__process_policy -->|1| nlp2dsl_sdk__validation
     nlp2dsl_sdk__process_policy -->|1| nlp2dsl_sdk__system_map_runtimes
     nlp2dsl_sdk__artifact_layout -->|1| nlp2dsl_sdk__doql
-    nlp2dsl_sdk__validation -->|1| nlp2dsl_sdk__system_map_runtimes
+    nlp2dsl_sdk__workflow -->|1| backend__app
+    nlp2dsl_sdk__workflow -->|1| nlp_service__app
     nlp2dsl_sdk__validation -->|1| backend__app
     nlp2dsl_sdk__doql -->|1| nlp2dsl_sdk__artifact_layout
     nlp2dsl_sdk__doql -->|1| nlp_service__app
@@ -203,8 +202,13 @@ flowchart TD
     scripts__run_example_testql_results -->|1| nlp_service__app
     scripts__run_example_docker_e2e -->|1| nlp_service__app
     scripts__run_example_docker_e2e -->|1| scripts___dotenv
-    scripts__run_conversation_scenario -->|1| nlp2dsl_sdk__conversation_artifacts
-    scripts__run_conversation_scenario -->|1| nlp2dsl_sdk__artifacts
     backend__app -->|1| nlp2dsl_sdk__workflow
-    nlp2dsl_sdk__workflow -->|1| backend__app
-    nlp2dsl_sdk__workflow -->|1| nlp_service__app
+    nlp2dsl_sdk__reflection -->|1| nlp2dsl_sdk__validation
+    nlp2dsl_sdk__reflection -->|1| nlp_service__app
+    nlp2dsl_sdk__reflection -->|1| nlp2dsl_sdk__step_validation
+    nlp2dsl_sdk__reflection -->|1| nlp2dsl_sdk__system_map_bridge
+    nlp2dsl_sdk__preview -->|1| nlp2dsl_sdk__reflection
+    nlp2dsl_sdk__export -->|1| nlp2dsl_sdk__contracts
+    nlp2dsl_sdk__validation -->|1| nlp2dsl_sdk__system_map_runtimes
+    scripts___conversation_scenario -->|1| nlp2dsl_sdk__artifacts
+    scripts__run_conversation_scenario -->|1| nlp2dsl_sdk__conversation_artifacts

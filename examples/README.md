@@ -19,6 +19,7 @@ examples/
 ├── 11-notify-quality/       # Powiadomienia: quality_required + enrich
 ├── 12-ir-show/              # MVP workflow vs nlp2dsl show (IntentIR)
 ├── 13-autonomous-invoice-stack/  # Stack autonomiczny: multi-turn + compose + cron
+├── 14-markpact-export/        # ActionContract + DSL → markpact README + pactown ecosystem
 └── README.md
 ```
 

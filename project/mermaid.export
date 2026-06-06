@@ -477,6 +477,19 @@ flowchart TD
     subgraph nlp2dsl_sdk__example_loader
         nlp2dsl_sdk__example_loader__load_example_runner["load_example_runner"]
     end
+    subgraph nlp2dsl_sdk__export
+        nlp2dsl_sdk__export__pactown__platform_service_readme["platform_service_readme"]
+        nlp2dsl_sdk__export__pactown__nlp2dsl_platform_ecosystem["nlp2dsl_platform_ecosystem"]
+        nlp2dsl_sdk__export__pactown__ecosystem_to_yaml["ecosystem_to_yaml"]
+        nlp2dsl_sdk__export__pactown__export_pactown_bundle["export_pactown_bundle"]
+        nlp2dsl_sdk__export__markpact__contract_to_yaml_dict["contract_to_yaml_dict"]
+        nlp2dsl_sdk__export__markpact__contract_to_yaml_string["contract_to_yaml_string"]
+        nlp2dsl_sdk__export__markpact__composite_workflow_spec("composite_workflow_spec CC=9")
+        nlp2dsl_sdk__export__markpact___yaml_file_block["_yaml_file_block"]
+        nlp2dsl_sdk__export__markpact___contracts_section["_contracts_section"]
+        nlp2dsl_sdk__export__markpact__workflow_dsl_to_markpact_readme("workflow_dsl_to_markpact_readme CC=11")
+        nlp2dsl_sdk__export__markpact__export_markpact_bundle("export_markpact_bundle CC=8")
+    end
     subgraph nlp2dsl_sdk__invoice_pdf
         nlp2dsl_sdk__invoice_pdf___pdf_escape["_pdf_escape"]
         nlp2dsl_sdk__invoice_pdf__build_invoice_pdf_bytes["build_invoice_pdf_bytes"]
@@ -496,8 +509,13 @@ flowchart TD
         nlp2dsl_sdk__preview__execution_payload["execution_payload"]
         nlp2dsl_sdk__preview__print_execution_step_detail["print_execution_step_detail"]
         nlp2dsl_sdk__preview__print_run_context_hints("print_run_context_hints CC=13")
-        nlp2dsl_sdk__preview__print_run_outcome{{print_run_outcome CC=21}}
-        nlp2dsl_sdk__preview__print_workflow_preview{{print_workflow_preview CC=18}}
+        nlp2dsl_sdk__preview___print_incomplete_run_outcome("_print_incomplete_run_outcome CC=9")
+        nlp2dsl_sdk__preview___print_success_run_outcome("_print_success_run_outcome CC=9")
+        nlp2dsl_sdk__preview__print_run_outcome["print_run_outcome"]
+        nlp2dsl_sdk__preview___print_workflow_dsl_summary["_print_workflow_dsl_summary"]
+        nlp2dsl_sdk__preview___print_workflow_execution_summary("_print_workflow_execution_summary CC=9")
+        nlp2dsl_sdk__preview___print_incomplete_workflow_preview["_print_incomplete_workflow_preview"]
+        nlp2dsl_sdk__preview__print_workflow_preview["print_workflow_preview"]
         nlp2dsl_sdk__preview__print_execution_result["print_execution_result"]
         nlp2dsl_sdk__preview__workflow_http_error_result("workflow_http_error_result CC=11")
         nlp2dsl_sdk__preview__preview_text_examples("preview_text_examples CC=9")
@@ -532,9 +550,14 @@ flowchart TD
         nlp2dsl_sdk__reflection___intent_from_response("_intent_from_response CC=10")
         nlp2dsl_sdk__reflection___entities_from_response["_entities_from_response"]
         nlp2dsl_sdk__reflection___data_lookup["_data_lookup"]
-        nlp2dsl_sdk__reflection__build_target_plan{{build_target_plan CC=20}}
+        nlp2dsl_sdk__reflection___config_from_command("_config_from_command CC=10")
+        nlp2dsl_sdk__reflection___apply_invoice_attachment_hint["_apply_invoice_attachment_hint"]
+        nlp2dsl_sdk__reflection__build_target_plan["build_target_plan"]
         nlp2dsl_sdk__reflection___parse_validation_issue["_parse_validation_issue"]
-        nlp2dsl_sdk__reflection___missing_vs_target{{_missing_vs_target CC=20}}
+        nlp2dsl_sdk__reflection___is_empty_value["_is_empty_value"]
+        nlp2dsl_sdk__reflection___missing_field_issue["_missing_field_issue"]
+        nlp2dsl_sdk__reflection___attachment_missing_issue["_attachment_missing_issue"]
+        nlp2dsl_sdk__reflection___missing_vs_target("_missing_vs_target CC=12")
         nlp2dsl_sdk__reflection___context_queries_from_issues("_context_queries_from_issues CC=9")
         nlp2dsl_sdk__reflection___resolutions_available["_resolutions_available"]
         nlp2dsl_sdk__reflection__reflect("reflect CC=9")
@@ -621,22 +644,6 @@ flowchart TD
         nlp2dsl_sdk__validation__helpers__pdf_amount_mismatch["pdf_amount_mismatch"]
         nlp2dsl_sdk__validation____getattr__["__getattr__"]
         nlp2dsl_sdk__validation__context__ValidationContext__from_map["from_map"]
-        nlp2dsl_sdk__validation__profile_checks__parse_profile_validation{{parse_profile_validation CC=20}}
-        nlp2dsl_sdk__validation__profile_checks__parse_profile_validations["parse_profile_validations"]
-        nlp2dsl_sdk__validation__profile_checks__load_profile_validations["load_profile_validations"]
-        nlp2dsl_sdk__validation__profile_checks__apply_profile_validations["apply_profile_validations"]
-        nlp2dsl_sdk__validation__profile_checks__dsl_actions_from_response["dsl_actions_from_response"]
-        nlp2dsl_sdk__validation__profile_checks__execution_completed("execution_completed CC=8")
-        nlp2dsl_sdk__validation__profile_checks__conversation_executed["conversation_executed"]
-        nlp2dsl_sdk__validation__profile_checks___resolve_artifact_path["_resolve_artifact_path"]
-        nlp2dsl_sdk__validation__profile_checks__check_profile_validation("check_profile_validation CC=11")
-        nlp2dsl_sdk__validation__profile_checks__run_profile_validation_checks["run_profile_validation_checks"]
-        nlp2dsl_sdk__validation__profile_checks__validate_profile_expectations["validate_profile_expectations"]
-        nlp2dsl_sdk__validation__profile_checks__response_from_e2e_trace("response_from_e2e_trace CC=11")
-        nlp2dsl_sdk__validation__profile_checks__run_validations_from_raw["run_validations_from_raw"]
-        nlp2dsl_sdk__validation__profile_checks___validation_id["_validation_id"]
-        nlp2dsl_sdk__validation__profile_checks___pass_summary["_pass_summary"]
-        nlp2dsl_sdk__validation__profile_checks___failed["_failed"]
         nlp2dsl_sdk__validation__resolutions__plan_resolutions["plan_resolutions"]
         nlp2dsl_sdk__validation__resolutions___attachment_issues["_attachment_issues"]
         nlp2dsl_sdk__validation__resolutions___is_attachment_issue["_is_attachment_issue"]
@@ -675,6 +682,22 @@ flowchart TD
         nlp2dsl_sdk__validation__messages___attachment_issue["_attachment_issue"]
         nlp2dsl_sdk__validation__messages___field_format_issue["_field_format_issue"]
         nlp2dsl_sdk__validation__messages___unknown_action_issue["_unknown_action_issue"]
+        nlp2dsl_sdk__validation__messages___missing_action_issue["_missing_action_issue"]
+        nlp2dsl_sdk__validation__messages___field_after_colon["_field_after_colon"]
+        nlp2dsl_sdk__validation__messages___invalid_field_issue["_invalid_field_issue"]
+        nlp2dsl_sdk__validation__messages___attachment_resolution["_attachment_resolution"]
+        nlp2dsl_sdk__validation__messages___attachment_kind["_attachment_kind"]
+        nlp2dsl_sdk__validation__messages___attachment_code["_attachment_code"]
+        nlp2dsl_sdk__validation__messages___other_issue["_other_issue"]
+        nlp2dsl_sdk__validation__rules__attachment___resolve_path["_resolve_path"]
+        nlp2dsl_sdk__validation__rules__attachment__validate_attachment_path("validate_attachment_path CC=11")
+        nlp2dsl_sdk__validation__rules__attachment__attachment_issues_for_config["attachment_issues_for_config"]
+        nlp2dsl_sdk__validation__rules__post_execute__validate_execution_outcome{{validate_execution_outcome CC=20}}
+        nlp2dsl_sdk__validation__rules__step_config__validate_step("validate_step CC=13")
+        nlp2dsl_sdk__validation__rules__step_config___format_issues("_format_issues CC=11")
+        nlp2dsl_sdk__validation__rules__step_config__validate_workflow_steps["validate_workflow_steps"]
+        nlp2dsl_sdk__validation__rules__runtime_health__runtime_id_for_intent["runtime_id_for_intent"]
+        nlp2dsl_sdk__validation__rules__runtime_health__probe_health_endpoint("probe_health_endpoint CC=9")
     end
     subgraph nlp2dsl_sdk__workflow
         nlp2dsl_sdk__workflow__lifecycle__parse_result_from_nlp["parse_result_from_nlp"]
@@ -718,8 +741,11 @@ flowchart TD
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns___normalize_polish_text["_normalize_polish_text"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns___dedupe_case_insensitive["_dedupe_case_insensitive"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns____init__["__init__"]
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_patterns_from_json{{_load_patterns_from_json CC=19}}
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_detector_config_from_json{{_load_detector_config_from_json CC=33}}
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___pattern_files["_pattern_files"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_patterns_from_json["_load_patterns_from_json"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___apply_detector_config["_apply_detector_config"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_detector_config_from_json["_load_detector_config_from_json"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_fast_path_overrides_from_json["_load_fast_path_overrides_from_json"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns__get_domain_patterns["get_domain_patterns"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns__get_intent_patterns["get_intent_patterns"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns__has_domain["has_domain"]
@@ -737,20 +763,20 @@ flowchart TD
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_spacy_model("_get_spacy_model CC=8")
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___normalize_url("_normalize_url CC=8")
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__DetectionResult____post_init__["__post_init__"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___super_fast_browser_override["_super_fast_browser_override"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector____init__["__init__"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__add_pattern["add_pattern"]
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect{{detect CC=17}}
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___prepare_detect_text["_prepare_detect_text"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___accept_detection["_accept_detection"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect["detect"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect_intent_ir["detect_intent_ir"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect_all("detect_all CC=8")
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___match_keyword["_match_keyword"]
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___fast_path_detection{{_fast_path_detection CC=73}}
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___fast_path_detection["_fast_path_detection"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___fuzzy_detection["_fuzzy_detection"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___ml_detection["_ml_detection"]
         packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___semantic_detection["_semantic_detection"]
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___keyword_detection{{_keyword_detection CC=15}}
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___calculate_keyword_confidence["_calculate_keyword_confidence"]
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___tokenize_text("_tokenize_text CC=11")
-        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___keyword_matches["_keyword_matches"]
+        packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___best_keyword_match["_best_keyword_match"]
     end
     subgraph packages__nlp2cmd_planner
         packages__nlp2cmd_planner__src__nlp2cmd_planner__router__UnsupportedIntentError____init__["__init__"]
@@ -813,6 +839,22 @@ flowchart TD
         run_all_tests___py["_py"]
         run_all_tests__run_tests["run_tests"]
     end
+    subgraph scripts___conversation_scenario
+        scripts___conversation_scenario__load_yaml["load_yaml"]
+        scripts___conversation_scenario__wait_health["wait_health"]
+        scripts___conversation_scenario__dsl_actions["dsl_actions"]
+        scripts___conversation_scenario__execution_completed["execution_completed"]
+        scripts___conversation_scenario___check_status["_check_status"]
+        scripts___conversation_scenario___check_missing("_check_missing CC=10")
+        scripts___conversation_scenario___check_dsl_actions["_check_dsl_actions"]
+        scripts___conversation_scenario___check_routing_and_autofill{{_check_routing_and_autofill CC=16}}
+        scripts___conversation_scenario__check_expect["check_expect"]
+        scripts___conversation_scenario__run_validation["run_validation"]
+        scripts___conversation_scenario__prepare_doql_context["prepare_doql_context"]
+        scripts___conversation_scenario__run_turn["run_turn"]
+        scripts___conversation_scenario__turn_loop_action["turn_loop_action"]
+        scripts___conversation_scenario__finalize_trace["finalize_trace"]
+    end
     subgraph scripts___dotenv
         scripts___dotenv__load_dotenv("load_dotenv CC=9")
     end
@@ -823,13 +865,7 @@ flowchart TD
         scripts__publish_all__require_tool["require_tool"]
     end
     subgraph scripts__run_conversation_scenario
-        scripts__run_conversation_scenario___load_yaml["_load_yaml"]
-        scripts__run_conversation_scenario___wait_health["_wait_health"]
-        scripts__run_conversation_scenario___dsl_actions["_dsl_actions"]
-        scripts__run_conversation_scenario___execution_completed["_execution_completed"]
-        scripts__run_conversation_scenario___check_expect{{_check_expect CC=36}}
-        scripts__run_conversation_scenario___run_validation["_run_validation"]
-        scripts__run_conversation_scenario__run_scenario{{run_scenario CC=29}}
+        scripts__run_conversation_scenario__run_scenario{{run_scenario CC=17}}
         scripts__run_conversation_scenario__main("main CC=11")
     end
     subgraph scripts__run_example_docker_e2e
@@ -1060,21 +1096,6 @@ flowchart TD
     packages__nlp2cmd_intent__src__nlp2cmd_intent__data_files__find_data_files --> packages__nlp2cmd_intent__src__nlp2cmd_intent__data_files___package_data_dir
     packages__nlp2cmd_intent__src__nlp2cmd_intent__data_files__find_data_files --> packages__nlp2cmd_intent__src__nlp2cmd_intent__data_files___nlp2cmd_data_dir
     packages__nlp2cmd_intent__src__nlp2cmd_intent__data_files__find_data_files --> packages__nlp2cmd_intent__src__nlp2cmd_intent__data_files__get_user_config_dir
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns___dedupe_case_insensitive --> nlp_service__app__settings__SettingsManager__set
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns____init__ --> nlp_service__app__settings__SettingsManager__set
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_patterns_from_json --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns___find_data_files
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_detector_config_from_json --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns___find_data_files
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns__add_pattern --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns___normalize_polish_text
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns__add_pattern --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns___dedupe_case_insensitive
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_query_normalizer
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect_intent_ir --> packages__nlp2cmd_intent__src__nlp2cmd_intent__nlp2cmd_convert__detection_to_intent_ir
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect_all --> nlp_service__app__settings__SettingsManager__set
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___fuzzy_detection --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_fuzzy_schema_matcher
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___ml_detection --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_ml_classifier
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___semantic_detection --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_semantic_matcher
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___calculate_keyword_confidence --> nlp_service__app__settings__SettingsManager__set
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___tokenize_text --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_spacy_model
-    packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___tokenize_text --> packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_polish_support
     packages__nlp2cmd_planner__src__nlp2cmd_planner__workflow_backend__fetch_workflow_from_text --> packages__nlp2cmd_planner__src__nlp2cmd_planner__workflow_backend__workflow_backend_url
     packages__nlp2cmd_planner__src__nlp2cmd_planner__strategies__rule_shell__RuleShellPlanStrategy__plan --> packages__nlp2cmd_planner__src__nlp2cmd_planner__strategies__rule_shell___parse_file_search
     packages__nlp2cmd_planner__src__nlp2cmd_planner__strategies__rest_workflow__RestWorkflowPlanStrategy__supports --> packages__nlp2cmd_planner__src__nlp2cmd_planner__workflow_backend__workflow_backend_enabled
@@ -1221,6 +1242,11 @@ flowchart TD
     nlp2dsl_sdk__client__ConversationFlow___reflect_executed_turn --> nlp2dsl_sdk__reflection__reflect_from_doql_path
     nlp2dsl_sdk__client__ConversationFlow___reflect_executed_turn --> nlp2dsl_sdk__artifact_layout__write_reflection_snapshot
     nlp2dsl_sdk__client__ConversationFlow___reflect_executed_turn --> nlp2dsl_sdk__reflection__format_reflection_summary
+    nlp2dsl_sdk__conversation_artifacts___format_turn --> nlp2dsl_sdk__conversation_artifacts___routing_summary
+    nlp2dsl_sdk__conversation_artifacts__format_transcript --> nlp2dsl_sdk__conversation_artifacts___format_transcript_header
+    nlp2dsl_sdk__conversation_artifacts__format_transcript --> nlp2dsl_sdk__conversation_artifacts___format_validations
+    nlp2dsl_sdk__conversation_artifacts__format_transcript --> nlp2dsl_sdk__conversation_artifacts___format_turn
+    nlp2dsl_sdk__conversation_artifacts__write_conversation_artifacts --> nlp2dsl_sdk__conversation_artifacts__format_transcript
     nlp2dsl_sdk__invoice_policy__apply_invoice_policies --> nlp_service__app__settings__SettingsManager__set
     nlp2dsl_sdk__invoice_policy__apply_invoice_policies --> nlp2dsl_sdk__invoice_policy__is_invoice_example
     nlp2dsl_sdk__invoice_policy__apply_invoice_context --> nlp_service__app__settings__SettingsManager__set
@@ -1243,21 +1269,6 @@ flowchart TD
     nlp2dsl_sdk__system_map_bridge___command_to_ir --> nlp2dsl_sdk__system_map_runtimes__resolve_command_runtime
     nlp2dsl_sdk__system_map_bridge__doql_file_to_system_map --> nlp2dsl_sdk__doql__parse__load_doql_context
     nlp2dsl_sdk__system_map_bridge__doql_file_to_system_map --> nlp2dsl_sdk__system_map_bridge__task_context_to_system_map
-    nlp2dsl_sdk__reflection__build_target_plan --> nlp2dsl_sdk__reflection___data_lookup
-    nlp2dsl_sdk__reflection___parse_validation_issue --> nlp2dsl_sdk__validation__messages__legacy_message_to_issue
-    nlp2dsl_sdk__reflection___missing_vs_target --> nlp2dsl_sdk__reflection___data_lookup
-    nlp2dsl_sdk__reflection___context_queries_from_issues --> nlp_service__app__settings__SettingsManager__set
-    nlp2dsl_sdk__reflection__reflect --> nlp2dsl_sdk__reflection___context_queries_from_issues
-    nlp2dsl_sdk__reflection__reflect --> nlp2dsl_sdk__reflection___parse_validation_issue
-    nlp2dsl_sdk__reflection__reflect --> nlp2dsl_sdk__reflection___resolutions_available
-    nlp2dsl_sdk__reflection__reflect --> nlp2dsl_sdk__reflection___missing_vs_target
-    nlp2dsl_sdk__reflection__reflect_from_chat_turn --> nlp2dsl_sdk__reflection___intent_from_response
-    nlp2dsl_sdk__reflection__reflect_from_chat_turn --> nlp2dsl_sdk__reflection___entities_from_response
-    nlp2dsl_sdk__reflection__reflect_from_chat_turn --> nlp2dsl_sdk__reflection__build_target_plan
-    nlp2dsl_sdk__reflection__reflect_from_chat_turn --> nlp2dsl_sdk__reflection__reflect
-    nlp2dsl_sdk__reflection__reflect_from_chat_turn --> nlp2dsl_sdk__step_validation__validate_step_config_from_map
-    nlp2dsl_sdk__reflection__reflect_from_doql_path --> nlp2dsl_sdk__system_map_bridge__doql_file_to_system_map
-    nlp2dsl_sdk__reflection__reflect_from_doql_path --> nlp2dsl_sdk__reflection__reflect_from_chat_turn
     nlp2dsl_sdk__stack_flow__AutonomousStackFlow__bootstrap_registry --> nlp2dsl_sdk__example_bootstrap__ensure_doql_registry
     nlp2dsl_sdk__stack_flow__AutonomousStackFlow__bootstrap_registry --> nlp2dsl_sdk__system_map_generator__generate_system_map
     nlp2dsl_sdk__stack_flow__AutonomousStackFlow__bootstrap_registry --> nlp2dsl_sdk__system_map_runtimes__load_example_profile
@@ -1287,25 +1298,23 @@ flowchart TD
     nlp2dsl_sdk__compose_generator___run_process_docker_script --> nlp2dsl_sdk__compose_generator___run_script_content
     nlp2dsl_sdk__compose_generator___stack_compose_dict --> nlp2dsl_sdk__compose_generator___default_deploy
     nlp2dsl_sdk__compose_generator__generate_stack_compose --> nlp2dsl_sdk__compose_generator__enrich_ir_for_stack
+    nlp2dsl_sdk__conversation_testql___endpoints_from_steps --> nlp2dsl_sdk__conversation_testql___is_nlp_kind
+    nlp2dsl_sdk__conversation_testql___endpoints_from_steps --> nlp2dsl_sdk__conversation_testql___endpoints_from_text
+    nlp2dsl_sdk__conversation_testql___structural_issues --> nlp2dsl_sdk__conversation_testql___is_nlp_kind
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario_text --> nlp2dsl_sdk__conversation_testql___endpoints_from_text
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario_text --> nlp2dsl_sdk__conversation_testql___structural_issues
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario_text --> nlp2dsl_sdk__conversation_testql___validation_result
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario_text --> nlp2dsl_sdk__conversation_testql___missing_type_header
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario --> nlp2dsl_sdk__conversation_testql___parse_plan
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario --> nlp2dsl_sdk__conversation_testql___endpoints_from_steps
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario --> nlp2dsl_sdk__conversation_testql___validation_result
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario --> nlp2dsl_sdk__conversation_testql___missing_type_header
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario --> nlp2dsl_sdk__conversation_testql__validate_conversation_scenario_text
+    nlp2dsl_sdk__conversation_testql__validate_conversation_scenario --> nlp2dsl_sdk__conversation_testql___structural_issues
+    nlp2dsl_sdk__conversation_testql__dry_run_conversation_scenario --> nlp2dsl_sdk__conversation_testql__validate_conversation_scenario
     nlp2dsl_sdk__autonomous_flow__AutonomousFlow___start_with_extra --> nlp2dsl_sdk__doql__runtime__resolve_doql_context_path
     nlp2dsl_sdk__autonomous_flow__AutonomousFlow___start_with_extra --> nlp2dsl_sdk__artifact_layout__ensure_layout
     nlp2dsl_sdk__autonomous_flow__AutonomousFlow___start_with_extra --> nlp2dsl_sdk__artifact_layout__current_run_id
-    nlp2dsl_sdk__preview__print_run_context_hints --> nlp2dsl_sdk__reflection__format_reflection_summary
-    nlp2dsl_sdk__preview__print_run_outcome --> nlp2dsl_sdk__preview__print_run_context_hints
-    nlp2dsl_sdk__preview__print_run_outcome --> nlp2dsl_sdk__preview__execution_payload
-    nlp2dsl_sdk__preview__print_workflow_preview --> nlp2dsl_sdk__preview__print_json
-    nlp2dsl_sdk__preview__print_workflow_preview --> nlp2dsl_sdk__preview__execution_payload
-    nlp2dsl_sdk__preview__print_workflow_preview --> nlp2dsl_sdk__preview__print_run_context_hints
-    nlp2dsl_sdk__preview__print_execution_result --> nlp2dsl_sdk__preview__print_json
-    nlp2dsl_sdk__preview__preview_text_examples --> nlp2dsl_sdk__artifacts__get_example_writer
-    nlp2dsl_sdk__preview__preview_text_examples --> nlp2dsl_sdk__preview__print_workflow_preview
-    nlp2dsl_sdk__preview__preview_text_examples --> nlp2dsl_sdk__preview__workflow_http_error_result
-    nlp2dsl_sdk__preview__execute_from_text --> nlp2dsl_sdk__preview__print_workflow_preview
-    nlp2dsl_sdk__preview__execute_from_text --> nlp2dsl_sdk__preview__workflow_http_error_result
-    nlp2dsl_sdk__preview__execute_text_examples --> nlp2dsl_sdk__artifacts__get_example_writer
-    nlp2dsl_sdk__preview__execute_text_examples --> nlp2dsl_sdk__preview__print_workflow_preview
-    nlp2dsl_sdk__preview__execute_text_examples --> nlp2dsl_sdk__preview__workflow_http_error_result
-    nlp2dsl_sdk__preview__finalize_example_artifacts --> nlp2dsl_sdk__artifacts__get_example_writer
     nlp2dsl_sdk__process_policy__load_platform_process_defaults --> nlp2dsl_sdk__process_policy___load_nlp2dsl_payload
     nlp2dsl_sdk__process_policy___merge_access --> nlp2dsl_sdk__process_policy___as_list
     nlp2dsl_sdk__process_policy___merge_paths --> nlp2dsl_sdk__process_policy___as_list
@@ -1332,6 +1341,22 @@ flowchart TD
     nlp2dsl_sdk__artifact_layout__write_turn_snapshot --> nlp2dsl_sdk__artifact_layout__run_dir
     nlp2dsl_sdk__artifact_layout__write_reflection_snapshot --> nlp2dsl_sdk__artifact_layout__run_dir
     nlp2dsl_sdk__artifact_layout__write_last_run_report --> nlp2dsl_sdk__artifact_layout__ensure_layout
+    nlp2dsl_sdk__workflow__lifecycle__parse_result_from_nlp --> nlp2dsl_sdk__workflow__lifecycle___to_dict
+    nlp2dsl_sdk__workflow__lifecycle__parse_result_from_nlp --> nlp2dsl_sdk__workflow__lifecycle___get
+    nlp2dsl_sdk__workflow__lifecycle__parse_result_from_nlp --> nlp2dsl_sdk__workflow__lifecycle___float_or_default
+    nlp2dsl_sdk__workflow__lifecycle__parse_result_from_nlp --> nlp2dsl_sdk__workflow__lifecycle___compact_dict
+    nlp2dsl_sdk__workflow__lifecycle__parse_result_from_nlp --> nlp2dsl_sdk__workflow__lifecycle___string_list
+    nlp2dsl_sdk__workflow__lifecycle__clarification_from_dialog --> nlp2dsl_sdk__workflow__lifecycle___string_list
+    nlp2dsl_sdk__workflow__lifecycle__clarification_from_dialog --> nlp2dsl_sdk__workflow__lifecycle___get
+    nlp2dsl_sdk__workflow__lifecycle__plan_result_from_dialog --> nlp2dsl_sdk__workflow__lifecycle___get
+    nlp2dsl_sdk__workflow__lifecycle__plan_result_from_dialog --> nlp2dsl_sdk__workflow__lifecycle__clarification_from_dialog
+    nlp2dsl_sdk__workflow__lifecycle__plan_result_from_dialog --> nlp2dsl_sdk__workflow__lifecycle___string_list
+    nlp2dsl_sdk__workflow__lifecycle__plan_result_from_dialog --> nlp2dsl_sdk__workflow__lifecycle___to_dict
+    nlp2dsl_sdk__workflow__lifecycle__validation_report_from_issues --> nlp2dsl_sdk__workflow__lifecycle___missing_fields_from_payloads
+    nlp2dsl_sdk__workflow__lifecycle__validation_report_from_issues --> nlp2dsl_sdk__workflow__lifecycle___issue_to_payload
+    nlp2dsl_sdk__workflow__lifecycle__execution_request_from_workflow --> nlp2dsl_sdk__workflow__lifecycle___to_dict
+    nlp2dsl_sdk__workflow__lifecycle___issue_to_payload --> backend__app__workflow_events__WorkflowEvent__to_dict
+    nlp2dsl_sdk__workflow__lifecycle___missing_fields_from_payloads --> nlp_service__app__settings__SettingsManager__set
     nlp2dsl_sdk__system_map_render__blocks__render_environment_block --> nlp2dsl_sdk__system_map_render__helpers__esc_str
     nlp2dsl_sdk__system_map_render__blocks__render_data_block --> nlp2dsl_sdk__system_map_render__helpers__data_value_line
     nlp2dsl_sdk__system_map_render__blocks__render_runtimes_block --> nlp2dsl_sdk__system_map_render__helpers__join_csv
@@ -1355,22 +1380,6 @@ flowchart TD
     nlp2dsl_sdk__system_map_render__helpers__data_value_line --> nlp2dsl_sdk__system_map_render__helpers__esc_str_full
     nlp2dsl_sdk__system_map_render__helpers__data_value_line --> nlp2dsl_sdk__system_map_render__helpers__bool_lit
     nlp2dsl_sdk__system_map_render__helpers__process_field_line --> nlp2dsl_sdk__system_map_render__helpers__bool_lit
-    nlp2dsl_sdk__validation__profile_checks__parse_profile_validations --> nlp2dsl_sdk__validation__profile_checks__parse_profile_validation
-    nlp2dsl_sdk__validation__profile_checks__load_profile_validations --> nlp2dsl_sdk__validation__profile_checks__parse_profile_validations
-    nlp2dsl_sdk__validation__profile_checks__load_profile_validations --> nlp2dsl_sdk__system_map_runtimes__load_example_profile
-    nlp2dsl_sdk__validation__profile_checks__apply_profile_validations --> nlp2dsl_sdk__validation__profile_checks__parse_profile_validations
-    nlp2dsl_sdk__validation__profile_checks__conversation_executed --> nlp2dsl_sdk__validation__profile_checks__execution_completed
-    nlp2dsl_sdk__validation__profile_checks__check_profile_validation --> nlp2dsl_sdk__validation__profile_checks___failed
-    nlp2dsl_sdk__validation__profile_checks__check_profile_validation --> nlp2dsl_sdk__validation__profile_checks___resolve_artifact_path
-    nlp2dsl_sdk__validation__profile_checks__check_profile_validation --> nlp2dsl_sdk__validation__profile_checks__dsl_actions_from_response
-    nlp2dsl_sdk__validation__profile_checks__check_profile_validation --> nlp2dsl_sdk__validation__profile_checks__execution_completed
-    nlp2dsl_sdk__validation__profile_checks__check_profile_validation --> nlp2dsl_sdk__validation__profile_checks__conversation_executed
-    nlp2dsl_sdk__validation__profile_checks__run_profile_validation_checks --> nlp2dsl_sdk__validation__profile_checks__check_profile_validation
-    nlp2dsl_sdk__validation__profile_checks__run_profile_validation_checks --> nlp2dsl_sdk__validation__profile_checks___validation_id
-    nlp2dsl_sdk__validation__profile_checks__run_profile_validation_checks --> nlp2dsl_sdk__validation__profile_checks___pass_summary
-    nlp2dsl_sdk__validation__profile_checks__validate_profile_expectations --> nlp2dsl_sdk__validation__profile_checks__check_profile_validation
-    nlp2dsl_sdk__validation__profile_checks__run_validations_from_raw --> nlp2dsl_sdk__validation__profile_checks__parse_profile_validations
-    nlp2dsl_sdk__validation__profile_checks__run_validations_from_raw --> nlp2dsl_sdk__validation__profile_checks__run_profile_validation_checks
     nlp2dsl_sdk__validation__resolutions__plan_resolutions --> nlp_service__app__settings__SettingsManager__set
     nlp2dsl_sdk__validation__resolutions__plan_resolutions --> nlp2dsl_sdk__validation__resolutions___append_attachment_plans
     nlp2dsl_sdk__validation__resolutions__plan_resolutions --> nlp2dsl_sdk__validation__resolutions___append_autofill_plans
@@ -1555,8 +1564,35 @@ flowchart TD
     examples__03_report_and_notify__scenario__run --> nlp2dsl_sdk__preview__execute_from_text
     examples__03_report_and_notify__scenario__run --> nlp2dsl_sdk__artifacts__get_example_writer
     examples__03_report_and_notify__scenario__run --> nlp2dsl_sdk__preview__ensure_services
+    examples__02_email__scenario__run --> nlp2dsl_sdk__preview__preview_text_examples
+    examples__02_email__scenario__run --> nlp2dsl_sdk__preview__execute_from_text
+    examples__02_email__scenario__run --> nlp2dsl_sdk__artifacts__get_example_writer
+    examples__02_email__scenario__run --> nlp2dsl_sdk__preview__ensure_services
+    examples__06_interactive_chat__scenario__run_demo --> nlp2dsl_sdk__preview__ensure_services
+    examples__06_interactive_chat__scenario__run_demo --> nlp2dsl_sdk__conversation_artifacts__write_conversation_artifacts
+    examples__06_interactive_chat__scenario__run --> examples__06_interactive_chat__scenario__run_demo
+    examples__06_interactive_chat__scenario__run --> examples__06_interactive_chat__scenario__run_interactive
+    examples__08_multi_object_benchmark__scenario___evaluate --> examples__08_multi_object_benchmark__scenario___extract_actions
+    examples__08_multi_object_benchmark__scenario__run_benchmark --> examples__08_multi_object_benchmark__scenario___evaluate
+    examples__08_multi_object_benchmark__scenario__run --> nlp2dsl_sdk__artifacts__get_example_writer
+    examples__08_multi_object_benchmark__scenario__run --> nlp2dsl_sdk__preview__ensure_services
+    examples__08_multi_object_benchmark__scenario__run --> examples__08_multi_object_benchmark__scenario__run_benchmark
+    nlp_service__app__audio_parser__stt_file --> nlp_service__app__audio_parser__stt_audio
+    nlp_service__app__audio_parser__StreamingSTT__send_audio --> nlp_service__app__audio_parser__stt_audio
+    nlp_service__app__registry__get_action_by_alias --> nlp2dsl_sdk__contracts__registry__known_action_names
+    nlp_service__app__registry__get_required_fields --> nlp_service__app__conversation__system_map__get_doql_context
+    nlp_service__app__registry__get_required_fields --> backend__app__action_catalog__required_fields_for_action
+    nlp_service__app__registry__get_required_fields --> nlp2dsl_sdk__contracts__registry__known_action_names
+    nlp_service__app__registry__get_defaults --> nlp_service__app__conversation__system_map__get_doql_context
+    nlp_service__app__registry__get_defaults --> nlp_service__app__conversation__system_map__optional_defaults_for_action
+    nlp_service__app__registry__get_defaults --> nlp2dsl_sdk__contracts__registry__known_action_names
+    nlp_service__app__registry__get_quality_required_fields --> nlp_service__app__conversation__system_map__command_meta
+    nlp_service__app__registry__get_quality_required_fields --> nlp2dsl_sdk__contracts__registry__known_action_names
+    nlp_service__app__registry__get_action_contract --> nlp_service__app__conversation__system_map__command_meta
+    nlp_service__app__registry__get_action_contract --> nlp2dsl_sdk__contracts__registry__contract_from_registry_entry
+    nlp_service__app__registry__get_action_contract --> nlp2dsl_sdk__contracts__registry__known_action_names
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class backend__app__attachment_validation__ensure_attachment_validation,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_patterns_from_json,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_patterns__KeywordPatterns___load_detector_config_from_json,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___fast_path_detection,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___keyword_detection,nlp2dsl_sdk__artifacts__build_process_trace,nlp2dsl_sdk__system_map_runtimes__build_runtimes_for_example,nlp2dsl_sdk__system_map_bridge__task_context_to_system_map,nlp2dsl_sdk__reflection__build_target_plan,nlp2dsl_sdk__reflection___missing_vs_target,nlp2dsl_sdk__preview__print_run_outcome,nlp2dsl_sdk__preview__print_workflow_preview,nlp2dsl_sdk__validation__profile_checks__parse_profile_validation,nlp2dsl_sdk__validation__rules__post_execute__validate_execution_outcome,nlp2dsl_sdk__doql__context_blocks__render_context_process,nlp2dsl_sdk__doql__parse__load_platform_map,nlp2dsl_sdk__doql__parse__enrich_task_context_from_client,nlp2dsl_sdk__doql__parse__collect_task_context,examples__13_autonomous_invoice_stack__scenario__run,examples__01_invoice__scenario__run,examples__08_multi_object_benchmark__scenario__run_benchmark,nlp_service__app__conversation__doql_registry__refresh_registry_for_state,nlp_service__app__conversation__autonomous_loop___try_fixture_attachment,nlp_service__app__conversation__autonomous_loop__autonomous_resolve_turn,nlp_service__app__conversation__doql_autofill__sync_autofill_from_doql,nlp_service__app__conversation__orchestrator___process_message,nlp_service__app__validation__attachment_validation__build_attachment_validation,nlp_service__app__routing__orientation___resolve_file_list_host_command,nlp_service__app__routing__orientation__orient_query highCC
-    class tauri_wrapper__scripts__dev__main,tauri_wrapper__scripts__serve_dist__resolveRequestPath,backend__app__engine___execute_workflow,backend__app__attachment_validation__build_attachment_validation,backend__app__attachment_validation___attachment_from_dsl,backend__app__path_resolve___examples_portable_candidates,backend__app__path_resolve__resolve_attachment_path,backend__app__routers__testql_compat___resolve_text,backend__app__routers__chat___merge_attachment_validation,backend__app__routers__chat___proxy_chat_payload,packages__nlp2cmd_intent__src__nlp2cmd_intent__nlp2cmd_convert__detection_to_intent_ir,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_ml_classifier,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___get_spacy_model,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector___normalize_url,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector__detect_all,packages__nlp2cmd_intent__src__nlp2cmd_intent__keywords__keyword_detector__KeywordIntentDetector___tokenize_text,packages__nlp2cmd_planner__src__nlp2cmd_planner__strategies__rule_shell___parse_file_search,packages__nlp2cmd_propact__src__nlp2cmd_propact__runner__PropactRunner__run,packages__nlp2cmd_propact__src__nlp2cmd_propact__adapter__step_to_propact_block,packages__nlp2cmd_propact__src__nlp2cmd_propact__executor__HybridPlanExecutor__run,nlp2dsl_sdk__system_map_generator__build_introspection_payload,nlp2dsl_sdk__system_map_generator__generate_system_map,nlp2dsl_sdk__system_map_models___annotation_for_field,nlp2dsl_sdk__cli___display,nlp2dsl_sdk__doql_registry__merge_registry_observations,nlp2dsl_sdk__doql_registry__refresh_doql_registry,nlp2dsl_sdk__client__NLP2DSLClient___request,nlp2dsl_sdk__client__ConversationFlow___persist_reflection,nlp2dsl_sdk__client__ConversationFlow___refresh_doql_registry,nlp2dsl_sdk__client__ConversationFlow___handle_completed_response medCC
+    class backend__app__attachment_validation__ensure_attachment_validation,nlp2dsl_sdk__artifacts__build_process_trace,nlp2dsl_sdk__system_map_runtimes__build_runtimes_for_example,nlp2dsl_sdk__system_map_bridge__task_context_to_system_map,nlp2dsl_sdk__validation__rules__post_execute__validate_execution_outcome,nlp2dsl_sdk__doql__context_blocks__render_context_process,nlp2dsl_sdk__doql__parse__load_platform_map,nlp2dsl_sdk__doql__parse__enrich_task_context_from_client,nlp2dsl_sdk__doql__parse__collect_task_context,examples__13_autonomous_invoice_stack__scenario__run,examples__01_invoice__scenario__run,examples__08_multi_object_benchmark__scenario__run_benchmark,nlp_service__app__conversation__doql_registry__refresh_registry_for_state,nlp_service__app__conversation__autonomous_loop___try_fixture_attachment,nlp_service__app__conversation__autonomous_loop__autonomous_resolve_turn,nlp_service__app__conversation__doql_autofill__sync_autofill_from_doql,nlp_service__app__conversation__orchestrator___process_message,nlp_service__app__validation__attachment_validation__build_attachment_validation,nlp_service__app__routing__orientation___resolve_file_list_host_command,nlp_service__app__routing__orientation__orient_query,nlp_service__app__routing__resolve__resolve_intent,nlp_service__app__routing__parser__enrich__enrich_entities,nlp_service__app__routing__parser__rules__parse_rules,nlp_service__app__routing__parser__rules___apply_context_filters,nlp_service__app__dsl__mapper___build_config,scripts__run_execution_scenario___check_expect,scripts__run_execution_scenario__run_scenario,scripts__run_example_testql_results___nlp2dsl_run_query,scripts__run_example_testql_results__process_example,scripts__run_example_testql_results__main highCC
+    class tauri_wrapper__scripts__dev__main,tauri_wrapper__scripts__serve_dist__resolveRequestPath,backend__app__engine___execute_workflow,backend__app__attachment_validation__build_attachment_validation,backend__app__attachment_validation___attachment_from_dsl,backend__app__path_resolve___examples_portable_candidates,backend__app__path_resolve__resolve_attachment_path,backend__app__routers__testql_compat___resolve_text,backend__app__routers__chat___merge_attachment_validation,backend__app__routers__chat___proxy_chat_payload,packages__nlp2cmd_intent__src__nlp2cmd_intent__nlp2cmd_convert__detection_to_intent_ir,packages__nlp2cmd_planner__src__nlp2cmd_planner__strategies__rule_shell___parse_file_search,packages__nlp2cmd_propact__src__nlp2cmd_propact__runner__PropactRunner__run,packages__nlp2cmd_propact__src__nlp2cmd_propact__adapter__step_to_propact_block,packages__nlp2cmd_propact__src__nlp2cmd_propact__executor__HybridPlanExecutor__run,nlp2dsl_sdk__system_map_generator__build_introspection_payload,nlp2dsl_sdk__system_map_generator__generate_system_map,nlp2dsl_sdk__system_map_models___annotation_for_field,nlp2dsl_sdk__cli___display,nlp2dsl_sdk__doql_registry__merge_registry_observations,nlp2dsl_sdk__doql_registry__refresh_doql_registry,nlp2dsl_sdk__client__NLP2DSLClient___request,nlp2dsl_sdk__client__ConversationFlow___persist_reflection,nlp2dsl_sdk__client__ConversationFlow___refresh_doql_registry,nlp2dsl_sdk__client__ConversationFlow___handle_completed_response,nlp2dsl_sdk__conversation_artifacts___format_turn,nlp2dsl_sdk__attachment_validation__format_attachment_validation,nlp2dsl_sdk__attachment_validation__build_attachment_validation,nlp2dsl_sdk__attachment_validation___attachment_from_dsl,nlp2dsl_sdk__attachment_validation__enrich_chat_response medCC

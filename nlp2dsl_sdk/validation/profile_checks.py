@@ -23,19 +23,16 @@ class ProfileCheckContext:
     example_dir: Path | None = None
 
 
-def parse_profile_validation(raw: Any) -> ProfileValidationIR | None:
-    """Parse one validation entry from example-profiles.yaml or scenario YAML."""
-    if not isinstance(raw, dict) or not raw:
-        return None
+def _parse_profile_validation_by_code(raw: dict[str, Any]) -> ProfileValidationIR:
+    return ProfileValidationIR(
+        code=str(raw["code"]),
+        action=str(raw.get("action") or ""),
+        status=str(raw.get("status") or ""),
+        path=str(raw.get("path") or ""),
+    )
 
-    if "code" in raw:
-        return ProfileValidationIR(
-            code=str(raw["code"]),
-            action=str(raw.get("action") or ""),
-            status=str(raw.get("status") or ""),
-            path=str(raw.get("path") or ""),
-        )
 
+def _parse_profile_validation_by_type(raw: dict[str, Any]) -> ProfileValidationIR | None:
     vtype = str(raw.get("type", "")).strip()
     if vtype == "dsl_action":
         action = str(raw.get("action", "")).strip()
@@ -45,21 +42,35 @@ def parse_profile_validation(raw: Any) -> ProfileValidationIR | None:
         return ProfileValidationIR(code=PROFILE_EXECUTION_COMPLETED)
     if vtype == "conversation_executed":
         return ProfileValidationIR(code=PROFILE_CONVERSATION_EXECUTED)
-
-    if len(raw) == 1:
-        key, value = next(iter(raw.items()))
-        key = str(key)
-        value_str = str(value)
-        if key == "execution_status" and value_str == "completed":
-            return ProfileValidationIR(code=PROFILE_EXECUTION_COMPLETED, status=value_str)
-        if key == "dsl_action" and value_str:
-            return ProfileValidationIR(code=PROFILE_DSL_ACTION, action=value_str)
-        if key == "conversation_status" and value_str == "executed":
-            return ProfileValidationIR(code=PROFILE_CONVERSATION_EXECUTED, status=value_str)
-        if key == "artifact_exists" and value_str:
-            return ProfileValidationIR(code=PROFILE_ARTIFACT_EXISTS, path=value_str)
-
     return None
+
+
+def _parse_profile_validation_shorthand(raw: dict[str, Any]) -> ProfileValidationIR | None:
+    if len(raw) != 1:
+        return None
+    key, value = next(iter(raw.items()))
+    key = str(key)
+    value_str = str(value)
+    if key == "execution_status" and value_str == "completed":
+        return ProfileValidationIR(code=PROFILE_EXECUTION_COMPLETED, status=value_str)
+    if key == "dsl_action" and value_str:
+        return ProfileValidationIR(code=PROFILE_DSL_ACTION, action=value_str)
+    if key == "conversation_status" and value_str == "executed":
+        return ProfileValidationIR(code=PROFILE_CONVERSATION_EXECUTED, status=value_str)
+    if key == "artifact_exists" and value_str:
+        return ProfileValidationIR(code=PROFILE_ARTIFACT_EXISTS, path=value_str)
+    return None
+
+
+def parse_profile_validation(raw: Any) -> ProfileValidationIR | None:
+    """Parse one validation entry from example-profiles.yaml or scenario YAML."""
+    if not isinstance(raw, dict) or not raw:
+        return None
+    if "code" in raw:
+        return _parse_profile_validation_by_code(raw)
+    if typed := _parse_profile_validation_by_type(raw):
+        return typed
+    return _parse_profile_validation_shorthand(raw)
 
 
 def parse_profile_validations(raw_list: list[Any] | None) -> list[ProfileValidationIR]:
