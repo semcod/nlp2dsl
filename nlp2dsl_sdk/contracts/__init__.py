@@ -6,18 +6,6 @@ from .action import (
     ExecutionContract,
     FieldContract,
 )
-from .draft import (
-    ContractDraft,
-    active_draft_contracts,
-    draft_ready_for_activation,
-    draft_path,
-    drafts_dir,
-    list_draft_files,
-    load_draft,
-    load_drafts,
-    save_draft,
-    validate_draft,
-)
 from .registry import (
     action_catalog_payload,
     action_contracts_from_catalog,
@@ -29,6 +17,28 @@ from .registry import (
     quality_fields_for_action,
     required_fields_for_action,
 )
+
+_DRAFT_EXPORTS = {
+    "ContractDraft",
+    "active_draft_contracts",
+    "draft_ready_for_activation",
+    "draft_path",
+    "drafts_dir",
+    "list_draft_files",
+    "load_draft",
+    "load_drafts",
+    "save_draft",
+    "validate_draft",
+}
+
+
+def __getattr__(name: str):
+    if name in _DRAFT_EXPORTS:
+        from . import draft
+
+        return getattr(draft, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = [
     "ActionContract",
