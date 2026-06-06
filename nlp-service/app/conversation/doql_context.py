@@ -5,15 +5,15 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from nlp2dsl_sdk.doql.models import (
+from env2llm.doql.models import (
     DoqlArtifact,
     DoqlCommand,
     DoqlProcessPolicy,
     DoqlRuntime,
     DoqlTaskContext,
 )
-from nlp2dsl_sdk.doql.parse import load_doql_context
-from nlp2dsl_sdk.doql.runtime import autofill_entities, merge_inline_context
+from env2llm.doql.parse import load_doql_context
+from env2llm.doql.runtime import autofill_entities, merge_inline_context
 
 __all__ = [
     "DoqlArtifact",
@@ -47,6 +47,6 @@ def resolve_doql_context_path(explicit: str | None = None) -> Path | None:
         ):
             if candidate.is_file():
                 return candidate
-    from nlp2dsl_sdk.doql.runtime import resolve_doql_context_path as sdk_resolve
+    from env2llm.doql.runtime import resolve_doql_context_path as sdk_resolve
 
     return sdk_resolve()

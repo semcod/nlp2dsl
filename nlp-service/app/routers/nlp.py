@@ -133,7 +133,7 @@ async def access_reload() -> dict[str, str]:
 async def list_actions() -> dict[str, Any]:
     """Zwraca rejestr akcji z aliasami (vocabulary DSL) — w zakresie DOQL gdy aktywne."""
     from app.registry import get_action_contracts
-    from nlp2dsl_sdk.contracts import action_catalog_payload
+    from dsl_contracts import action_catalog_payload
 
     return action_catalog_payload(get_action_contracts())
 

@@ -13,7 +13,7 @@ from app.engine import run_workflow
 from app.idempotency import idempotency_store, workflow_fingerprint
 from app.mullm_execute import execute_mullm_dsl
 from app.workflow_lifecycle import run_request_from_workflow
-from nlp2dsl_sdk.contracts.registry import SIDE_EFFECT_ACTIONS
+from dsl_contracts.registry import SIDE_EFFECT_ACTIONS
 from nlp2dsl_sdk.mullm.executor import is_mullm_only_workflow
 
 

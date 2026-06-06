@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nlp2dsl-mcp"
+version = "0.1.0"
+description = "MCP server exposing NLP2DSL workflow tools to AI agents"
+requires-python = ">=3.10"
+dependencies = [
+    "nlp2dsl",
+    "mcp>=1.0",
+]
+
+[project.scripts]
+nlp2dsl-mcp = "nlp2dsl_mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

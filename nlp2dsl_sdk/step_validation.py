@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from .system_map_ir import SystemMapIR
-from .validation import (
+from env2llm.ir import SystemMapIR
+from dsl_validate import (
     Phase,
     ValidationIssue,
     validate_step_config_from_map as _validate_messages,

@@ -94,7 +94,7 @@ async def test_validate_workflow_execution_policy_uses_access_check() -> None:
 
 
 def test_policy_blocked_response_shape() -> None:
-    from nlp2dsl_sdk.validation.issue import ValidationIssue
+    from dsl_validate.issue import ValidationIssue
 
     issues = [
         ValidationIssue(

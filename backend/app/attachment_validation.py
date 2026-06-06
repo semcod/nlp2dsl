@@ -7,8 +7,8 @@ from typing import Any, Literal
 
 from app.path_resolve import resolve_attachment_path
 from app.step_validator import validate_step_config_issues
-from nlp2dsl_sdk.validation.issue import Phase
-from nlp2dsl_sdk.validation.pipeline import validate_post_execute_execution
+from dsl_validate.issue import Phase
+from dsl_validate.pipeline import validate_post_execute_execution
 
 AttachmentStatus = Literal["ok", "missing", "invalid", "denied", "skipped"]
 
@@ -86,38 +86,44 @@ def validation_from_chat_result(result: dict[str, Any]) -> dict[str, Any] | None
     )
 
 
+def _append_post_execute_issues(result: dict[str, Any]) -> None:
+    execution = result.get("execution") or {}
+    if not (isinstance(execution, dict) and execution.get("steps")):
+        return
+    outcome_issues = validate_post_execute_execution(
+        execution,
+        dsl=result.get("dsl") if isinstance(result.get("dsl"), dict) else None,
+        path_resolver=resolve_attachment_path,
+    )
+    if not outcome_issues:
+        return
+    result.setdefault("validation_issues", [])
+    result["validation_issues"].extend(i.to_dict() for i in outcome_issues)
+
+
+def _propagate_attachment_validation(result: dict[str, Any], av: dict[str, Any]) -> None:
+    result["attachment_validation"] = av
+    execution = result.get("execution") or {}
+    for step in execution.get("steps") or []:
+        if not isinstance(step, dict):
+            continue
+        step_result = step.setdefault("result", {})
+        if not isinstance(step_result, dict):
+            continue
+        step_result["attachment_validation"] = av
+        if av.get("status") != "ok" and step_result.get("attachment_used") is True:
+            step_result["attachment_used"] = False
+        break
+
+
 def ensure_attachment_validation(result: dict[str, Any]) -> None:
     """Attach validation to top-level response and execution step result (in place)."""
-    # Drop stale ready-phase validation — re-validate after worker execute.
     if result.get("status") == "executed":
         result.pop("attachment_validation", None)
 
-    execution = result.get("execution") or {}
-    if isinstance(execution, dict) and execution.get("steps"):
-        outcome_issues = validate_post_execute_execution(
-            execution,
-            dsl=result.get("dsl") if isinstance(result.get("dsl"), dict) else None,
-            path_resolver=resolve_attachment_path,
-        )
-        if outcome_issues:
-            result.setdefault("validation_issues", [])
-            result["validation_issues"].extend(
-                i.to_dict() for i in outcome_issues
-            )
+    _append_post_execute_issues(result)
 
     av = validation_from_chat_result(result)
     if not av:
         return
-    result["attachment_validation"] = av
-
-    execution = result.get("execution") or {}
-    steps = execution.get("steps") or []
-    for step in steps:
-        if not isinstance(step, dict):
-            continue
-        step_result = step.setdefault("result", {})
-        if isinstance(step_result, dict):
-            step_result["attachment_validation"] = av
-            if av.get("status") != "ok" and step_result.get("attachment_used") is True:
-                step_result["attachment_used"] = False
-        break
+    _propagate_attachment_validation(result, av)

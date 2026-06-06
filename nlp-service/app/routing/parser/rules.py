@@ -156,28 +156,44 @@ def parse_rules(text: str) -> NLPResult:
         entities_dict["_trigger"] = trigger
 
     confidence = min(0.6 + 0.1 * len(detected_actions), 0.9) if detected_actions else 0.3
-
-    # Handle description for generate_code (rules mode)
-    if intent_name == "generate_code" and not entities.description:
-        entities.description = text
-    if intent_name == "generate_code" and not entities.language:
-        if "python" in text_lower:
-            entities.language = "python"
-        elif "javascript" in text_lower or "js" in text_lower:
-            entities.language = "javascript"
-        elif "java" in text_lower:
-            entities.language = "java"
-    if intent_name == "crm_update" and not entities.entity:
-        for kw, ent in (("lead", "lead"), ("kontakt", "contact"), ("contact", "contact"), ("klient", "client"), ("deal", "deal")):
-            if kw in text_lower:
-                entities.entity = ent
-                break
+    _apply_intent_defaults(intent_name, entities, text, text_lower)
 
     return NLPResult(
         intent=NLPIntent(intent=intent_name, confidence=confidence),
         entities=entities,
         raw_text=text,
     )
+
+
+def _apply_intent_defaults(
+    intent_name: str,
+    entities: NLPEntities,
+    text: str,
+    text_lower: str,
+) -> None:
+    if intent_name == "generate_code":
+        if not entities.description:
+            entities.description = text
+        if not entities.language:
+            if "python" in text_lower:
+                entities.language = "python"
+            elif "javascript" in text_lower or "js" in text_lower:
+                entities.language = "javascript"
+            elif "java" in text_lower:
+                entities.language = "java"
+        return
+
+    if intent_name == "crm_update" and not entities.entity:
+        for kw, ent in (
+            ("lead", "lead"),
+            ("kontakt", "contact"),
+            ("contact", "contact"),
+            ("klient", "client"),
+            ("deal", "deal"),
+        ):
+            if kw in text_lower:
+                entities.entity = ent
+                break
 
 
 def _detect_actions(text_lower: str) -> list[str]:
@@ -199,47 +215,67 @@ def _detect_actions(text_lower: str) -> list[str]:
     return sorted_actions
 
 
-def _apply_context_filters(text_lower: str, scores: dict[str, int]) -> dict[str, int]:
-    """Suppress false positives and add implicit actions from context."""
-    filtered = dict(scores)
+_CRM_HINTS = ("crm", "lead", "kontakt", "contact", "deal")
+_EMAIL_HINTS = ("wyślij email", "wyslij email", "napisz do", "send email", "maila do", "wiadomość do")
+_CODE_LANG_HINTS = ("python", "javascript", "funkcj")
+_CODE_VERB_HINTS = ("napisz", "stwórz", "generuj kod", "program", "kod")
+_SLACK_VERB_HINTS = ("powiadom", "wyślij", "wyslij", "slack", "#")
+_BUSINESS_ACTIONS = ("generate_report", "send_invoice", "send_email", "crm_update")
+_SYSTEM_ACTIONS = ("system_file_list", "system_status", "system_registry_list")
 
-    if any(k in text_lower for k in ("crm", "lead", "kontakt", "contact", "deal")):
-        filtered.pop("system_status", None)
-        filtered.pop("system_file_list", None)
-        if not any(
-            k in text_lower
-            for k in ("wyślij email", "wyslij email", "napisz do", "send email", "maila do", "wiadomość do")
-        ):
-            filtered.pop("send_email", None)
 
+def _filter_crm_context(text_lower: str, filtered: dict[str, int]) -> None:
+    if not any(k in text_lower for k in _CRM_HINTS):
+        return
+    filtered.pop("system_status", None)
+    filtered.pop("system_file_list", None)
+    if not any(k in text_lower for k in _EMAIL_HINTS):
+        filtered.pop("send_email", None)
+
+
+def _filter_notify_context(text_lower: str, filtered: dict[str, int]) -> None:
     if "telegram" in text_lower:
         filtered.pop("notify_slack", None)
-        if "notify_telegram" not in filtered:
-            filtered["notify_telegram"] = 8
-
+        filtered.setdefault("notify_telegram", 8)
     if SLACK_CHANNEL_PATTERN.search(text_lower) and "notify_slack" not in filtered:
-        if any(k in text_lower for k in ("powiadom", "wyślij", "wyslij", "slack", "#")):
+        if any(k in text_lower for k in _SLACK_VERB_HINTS):
             filtered["notify_slack"] = max(filtered.get("notify_slack", 0), 6)
 
-    if "python" in text_lower or "javascript" in text_lower or "funkcj" in text_lower:
-        if "generate_code" not in filtered and any(
-            k in text_lower for k in ("napisz", "stwórz", "generuj kod", "program", "kod")
-        ):
-            filtered["generate_code"] = max(filtered.get("generate_code", 0), 10)
 
+def _filter_code_context(text_lower: str, filtered: dict[str, int]) -> None:
+    if not any(k in text_lower for k in _CODE_LANG_HINTS):
+        return
+    if "generate_code" in filtered:
+        return
+    if any(k in text_lower for k in _CODE_VERB_HINTS):
+        filtered["generate_code"] = max(filtered.get("generate_code", 0), 10)
+
+
+def _filter_email_context(text_lower: str, filtered: dict[str, int]) -> None:
     if SEND_TO_EMAIL_PATTERN.search(text_lower):
         filtered["send_email"] = max(filtered.get("send_email", 0), 9)
-
     if filtered.get("generate_report") and REPORT_DELIVERY_EMAIL_PATTERN.search(text_lower):
         filtered["send_email"] = max(filtered.get("send_email", 0), 8)
 
-    for business in ("generate_report", "send_invoice", "send_email", "crm_update"):
-        biz_score = filtered.get(business, 0)
-        if biz_score >= 6:
-            for sys_action in ("system_file_list", "system_status", "system_registry_list"):
-                if filtered.get(sys_action, 0) < biz_score:
-                    filtered.pop(sys_action, None)
 
+def _suppress_system_when_business(filtered: dict[str, int]) -> None:
+    for business in _BUSINESS_ACTIONS:
+        biz_score = filtered.get(business, 0)
+        if biz_score < 6:
+            continue
+        for sys_action in _SYSTEM_ACTIONS:
+            if filtered.get(sys_action, 0) < biz_score:
+                filtered.pop(sys_action, None)
+
+
+def _apply_context_filters(text_lower: str, scores: dict[str, int]) -> dict[str, int]:
+    """Suppress false positives and add implicit actions from context."""
+    filtered = dict(scores)
+    _filter_crm_context(text_lower, filtered)
+    _filter_notify_context(text_lower, filtered)
+    _filter_code_context(text_lower, filtered)
+    _filter_email_context(text_lower, filtered)
+    _suppress_system_when_business(filtered)
     return filtered
 
 

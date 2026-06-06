@@ -53,7 +53,7 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
     else:
         print("\n⚠️  Część faz nie powiodła się — sprawdź .nlp2dsl/runs/ i reflection.")
 
-    from nlp2dsl_sdk.artifacts import get_example_writer
+    from nlp2dsl_artifacts import get_example_writer
 
     writer = get_example_writer()
     if writer:

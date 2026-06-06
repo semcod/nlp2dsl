@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from nlp2dsl_sdk.path_resolve import resolve_attachment_path
+from dsl_validate.path_resolve import resolve_attachment_path
 from nlp2dsl_sdk.invoice_pdf import write_invoice_pdf
 from nlp2dsl_sdk.step_validation import validate_step_config_from_map
-from nlp2dsl_sdk.system_map_ir import CommandSchemaIR, FieldSpec, SystemMapIR
+from env2llm.ir import CommandSchemaIR, FieldSpec, SystemMapIR
 
 
 def test_resolve_fixture_relative_path(tmp_path: Path, monkeypatch) -> None:

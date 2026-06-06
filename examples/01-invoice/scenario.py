@@ -8,7 +8,7 @@ from typing import Any, Optional
 
 from nlp2dsl_sdk.autonomous_flow import AutonomousFlow
 from nlp2dsl_sdk.client import NLP2DSLClient
-from nlp2dsl_sdk.example_bootstrap import ensure_doql_registry
+from env2llm.bootstrap import ensure_doql_registry
 from nlp2dsl_sdk.preview import ensure_services, execute_from_text, preview_text_examples
 
 INVOICE_PROMPT = "Wyślij fakturę na 1500 PLN do klient@firma.pl"
@@ -82,7 +82,7 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
         for q in reflection.get("context_queries") or []:
             print(f"   ❓ {q}")
 
-    from nlp2dsl_sdk.artifacts import get_example_writer
+    from nlp2dsl_artifacts import get_example_writer
 
     writer = get_example_writer()
     if writer:

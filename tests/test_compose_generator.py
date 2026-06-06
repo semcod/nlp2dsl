@@ -6,8 +6,8 @@ from pathlib import Path
 
 import yaml
 
-from nlp2dsl_sdk.compose_generator import generate_stack_compose
-from nlp2dsl_sdk.system_map_ir import DeploySpecIR, ScheduleSpecIR, SystemMapIR
+from nlp2dsl_stack import generate_stack_compose
+from env2llm.ir import DeploySpecIR, ScheduleSpecIR, SystemMapIR
 
 
 def test_generate_stack_compose_writes_artifacts(tmp_path: Path) -> None:

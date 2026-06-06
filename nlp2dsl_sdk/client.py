@@ -270,6 +270,28 @@ class NLP2DSLClient:
             return items[:limit]
         return []
 
+    def workflow_audit(
+        self,
+        *,
+        limit: int = 50,
+        offset: int = 0,
+        agent_id: Optional[str] = None,
+        action: Optional[str] = None,
+    ) -> dict[str, Any]:
+        params: dict[str, Any] = {"limit": limit, "offset": offset}
+        if agent_id:
+            params["agent_id"] = agent_id
+        if action:
+            params["action"] = action
+        return self._backend("get", "/workflow/audit", params=params).json()
+
+    def purge_idempotency(self, ttl_seconds: int = 604800) -> dict[str, Any]:
+        return self._backend(
+            "post",
+            "/workflow/idempotency/purge",
+            json={"ttl_seconds": ttl_seconds},
+        ).json()
+
     def workflow_action_schema(self, action: Optional[str] = None) -> dict[str, Any]:
         path = "/workflow/actions/schema" if action is None else f"/workflow/actions/schema/{action}"
         return self._backend("get", path).json()
@@ -294,7 +316,7 @@ class NLP2DSLClient:
         return self._backend("post", "/workflow/idempotency/clear").json()
 
     def chat_start(self, text: str, audio_path: Optional[str] = None) -> dict[str, Any]:
-        from .doql_context import load_doql_inline_from_env, resolve_doql_context_path
+        from env2llm.doql_context import load_doql_inline_from_env, resolve_doql_context_path
 
         inline = load_doql_inline_from_env()
         extra: dict[str, Any] = {}
@@ -323,7 +345,7 @@ class NLP2DSLClient:
         *,
         context_inline: Optional[Mapping[str, Any]] = None,
     ) -> dict[str, Any]:
-        from .doql_context import load_doql_inline_from_env, resolve_doql_context_path
+        from env2llm.doql_context import load_doql_inline_from_env, resolve_doql_context_path
 
         inline = dict(context_inline or {})
         if not inline:
@@ -627,7 +649,7 @@ class ConversationFlow:
     def start(self, text: str, audio_path: Optional[str] = None) -> dict[str, Any]:
         import os
 
-        from .artifact_layout import current_run_id, ensure_layout
+        from env2llm.layout import current_run_id, ensure_layout
         from .preview import ensure_services
 
         ensure_services(self.client)
@@ -691,7 +713,7 @@ class ConversationFlow:
         """Write conversation trace + transcript under .nlp2dsl/."""
         import os
 
-        from .conversation_artifacts import write_conversation_artifacts
+        from testql_conversations.artifacts import write_conversation_artifacts
 
         root = Path(artifact_root or os.environ.get("NLP2DSL_EXAMPLE_DIR", ".")) / ".nlp2dsl"
         return write_conversation_artifacts(root, self.export_trace())
@@ -747,10 +769,10 @@ class ConversationFlow:
             return
 
         try:
-            from .artifact_layout import write_reflection_snapshot
-            from .doql_context import resolve_doql_context_path
+            from env2llm.layout import write_reflection_snapshot
+            from env2llm.doql_context import resolve_doql_context_path
             from .reflection import reflect_from_doql_path
-            from .system_map_bridge import doql_file_to_system_map
+            from env2llm.bridge import doql_file_to_system_map
 
             phase = str(data.get("status", "unknown"))
             if isinstance(reflection, dict):
@@ -778,8 +800,8 @@ class ConversationFlow:
     def _refresh_doql_registry(self, data: dict[str, Any]) -> None:
         """Sync environment.doql.less on client after each chat step (source of truth)."""
         try:
-            from nlp2dsl_sdk.doql_context import resolve_doql_context_path
-            from nlp2dsl_sdk.doql_registry import refresh_doql_registry
+            from env2llm.doql_context import resolve_doql_context_path
+            from env2llm.registry import refresh_doql_registry
         except ImportError:
             return
 
@@ -813,7 +835,7 @@ class ConversationFlow:
         example_dir = os.environ.get("NLP2DSL_EXAMPLE_DIR", "").strip()
         if example_dir:
             try:
-                from .artifact_layout import write_turn_snapshot
+                from env2llm.layout import write_turn_snapshot
 
                 write_turn_snapshot(
                     Path(example_dir) / ".nlp2dsl",
@@ -908,7 +930,7 @@ class ConversationFlow:
         import os
 
         from .reflection import format_reflection_summary, reflect_from_doql_path
-        from .doql_context import resolve_doql_context_path
+        from env2llm.doql_context import resolve_doql_context_path
 
         path = resolve_doql_context_path()
         if path is None:
@@ -922,7 +944,7 @@ class ConversationFlow:
             print(format_reflection_summary(payload) + "\n")
             example_dir = os.environ.get("NLP2DSL_EXAMPLE_DIR", "").strip()
             if example_dir:
-                from .artifact_layout import write_reflection_snapshot
+                from env2llm.layout import write_reflection_snapshot
 
                 write_reflection_snapshot(
                     Path(example_dir) / ".nlp2dsl",

@@ -20,7 +20,7 @@ def _nlp_catalog() -> dict:
         if str(NLP_SERVICE) not in sys.path:
             sys.path.insert(0, str(NLP_SERVICE))
         from app.registry import ACTIONS_REGISTRY
-        from nlp2dsl_sdk.contracts import action_catalog_payload, contract_from_registry_entry
+        from dsl_contracts import action_catalog_payload, contract_from_registry_entry
 
         contracts = {
             name: contract_from_registry_entry(name, meta)
@@ -44,7 +44,7 @@ def _worker_handlers() -> list[str]:
 
 
 def _backend_fallback_catalog() -> dict:
-    from nlp2dsl_sdk.contracts import action_catalog_payload, contract_from_registry_entry
+    from dsl_contracts import action_catalog_payload, contract_from_registry_entry
 
     saved = sys.path[:]
     try:
@@ -74,7 +74,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    from nlp2dsl_sdk.validation.contract_drift import build_catalog_drift_report
+    from dsl_validate.contract_drift import build_catalog_drift_report
 
     backend_catalog = _backend_fallback_catalog() if args.check_backend_fallback else None
     report = build_catalog_drift_report(

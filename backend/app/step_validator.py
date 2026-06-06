@@ -10,9 +10,9 @@ from app.action_catalog import (
     required_fields_for_action,
 )
 from app.path_resolve import resolve_attachment_path
-from nlp2dsl_sdk.validation.context import ValidationContext
-from nlp2dsl_sdk.validation.issue import Phase, ValidationIssue, issues_to_messages
-from nlp2dsl_sdk.validation.rules.step_config import validate_step
+from dsl_validate.context import ValidationContext
+from dsl_validate.issue import Phase, ValidationIssue, issues_to_messages
+from dsl_validate.rules.step_config import validate_step
 
 
 def _validation_context(

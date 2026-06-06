@@ -64,18 +64,14 @@ def write_environment_doql(
     return write_registry(artifact_root, render_doql_context(ctx))
 
 
-def build_process_trace(
+def _nlp_trace_layer(
     query: str,
     result: Mapping[str, Any],
     *,
-    mode: str = "auto",
-    layer_ir: Mapping[str, Any] | None = None,
+    mode: str,
+    layer_ir: Mapping[str, Any] | None,
 ) -> dict[str, Any]:
-    """NLP → DSL → CMD → process service layers from a workflow_from_text result."""
-    dsl = result.get("dsl") or result.get("partial_workflow")
-    steps_out: list[dict[str, Any]] = []
-
-    nlp_layer: dict[str, Any] = {
+    layer: dict[str, Any] = {
         "layer": "nlp",
         "action": "parse_intent",
         "input": {"query": query, "mode": mode},
@@ -86,11 +82,13 @@ def build_process_trace(
         },
     }
     if layer_ir:
-        nlp_layer["output"]["intent_ir"] = layer_ir.get("intent_ir")
-        nlp_layer["output"]["execution_plan_ir"] = layer_ir.get("execution_plan_ir")
-    steps_out.append(nlp_layer)
+        layer["output"]["intent_ir"] = layer_ir.get("intent_ir")
+        layer["output"]["execution_plan_ir"] = layer_ir.get("execution_plan_ir")
+    return layer
 
-    dsl_layer: dict[str, Any] = {
+
+def _dsl_trace_layer(dsl: Mapping[str, Any] | None) -> dict[str, Any]:
+    return {
         "layer": "dsl",
         "action": "map_to_workflow",
         "output": {
@@ -100,8 +98,9 @@ def build_process_trace(
             "steps": (dsl or {}).get("steps", []),
         },
     }
-    steps_out.append(dsl_layer)
 
+
+def _cmd_trace_layer(dsl: Mapping[str, Any] | None) -> dict[str, Any]:
     cmd_steps = []
     for step in (dsl or {}).get("steps", []):
         action = step.get("action", "")
@@ -112,15 +111,16 @@ def build_process_trace(
             "endpoint": _action_endpoint(action),
             "transport": _action_transport(action),
         })
-
-    steps_out.append({
+    return {
         "layer": "cmd",
         "action": "build_service_requests",
         "output": {"commands": cmd_steps},
-    })
+    }
 
+
+def _process_trace_layer(result: Mapping[str, Any]) -> dict[str, Any]:
     execution = result.get("result") or result.get("execution")
-    process_layer: dict[str, Any] = {
+    layer: dict[str, Any] = {
         "layer": "process",
         "action": "execute_workflow",
         "output": {
@@ -130,16 +130,31 @@ def build_process_trace(
         },
     }
     if result.get("status") == "incomplete":
-        process_layer["output"]["blocked"] = True
-        process_layer["output"]["reason"] = "missing_fields"
-    steps_out.append(process_layer)
+        layer["output"]["blocked"] = True
+        layer["output"]["reason"] = "missing_fields"
+    return layer
 
+
+def build_process_trace(
+    query: str,
+    result: Mapping[str, Any],
+    *,
+    mode: str = "auto",
+    layer_ir: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """NLP → DSL → CMD → process service layers from a workflow_from_text result."""
+    dsl = result.get("dsl") or result.get("partial_workflow")
     return {
         "format": _PROCESS_FORMAT,
         "query": query,
         "mode": mode,
         "status": result.get("status"),
-        "pipeline": steps_out,
+        "pipeline": [
+            _nlp_trace_layer(query, result, mode=mode, layer_ir=layer_ir),
+            _dsl_trace_layer(dsl),
+            _cmd_trace_layer(dsl),
+            _process_trace_layer(result),
+        ],
     }
 
 

@@ -27,7 +27,7 @@ from app.conversation.system_map import set_doql_context
 from app.dsl.pipeline import map_to_dsl_with_enrichment
 from app.schemas import ConversationResponse, ConversationState, DialogResponse
 from app.validation.step_validator import validate_step_config, validate_step_config_issues, validate_workflow_steps
-from nlp2dsl_sdk.validation.resolutions import (
+from dsl_validate.resolutions import (
     ResolutionEnvironment,
     apply_resolution_plans,
     filter_plans_by_reflection_tokens,
@@ -126,6 +126,53 @@ def _resolve_artifact_file(raw: str, ctx: DoqlTaskContext) -> str | None:
     return resolved if Path(resolved).is_file() else None
 
 
+def _try_attachment_candidate(
+    state: ConversationState,
+    ctx: DoqlTaskContext,
+    path: str,
+    *,
+    label: str,
+) -> str | None:
+    state.entities["attachment_path"] = path
+    if _attachment_valid_ok(path, ctx, state):
+        return label
+    state.entities.pop("attachment_path", None)
+    return None
+
+
+def _try_artifact_fixtures(state: ConversationState, ctx: DoqlTaskContext) -> str | None:
+    for art in ctx.artifacts:
+        if not art.path:
+            continue
+        if not (art.path.lower().endswith((".pdf", ".txt")) or art.kind == "file"):
+            continue
+        if resolved := _resolve_artifact_file(art.path, ctx):
+            if hit := _try_attachment_candidate(
+                state, ctx, resolved, label=f"attachment_path ← artifact:{art.path}"
+            ):
+                return hit
+    return None
+
+
+def _try_example_dir_fixtures(state: ConversationState, ctx: DoqlTaskContext) -> str | None:
+    ex = _example_dir()
+    if not ex:
+        return None
+    fixtures = ex / "fixtures"
+    if not fixtures.is_dir():
+        return None
+    for pattern in ("*.pdf", "*.PDF"):
+        for path in sorted(fixtures.glob(pattern)):
+            if hit := _try_attachment_candidate(
+                state,
+                ctx,
+                str(path.resolve()),
+                label=f"attachment_path ← fixtures/{path.name}",
+            ):
+                return hit
+    return None
+
+
 def _try_fixture_attachment(state: ConversationState, ctx: DoqlTaskContext) -> str | None:
     if not invoice_attachment_policy_active(ctx, state):
         return None
@@ -135,29 +182,9 @@ def _try_fixture_attachment(state: ConversationState, ctx: DoqlTaskContext) -> s
     if current:
         state.entities.pop("attachment_path", None)
 
-    for art in ctx.artifacts:
-        if not art.path:
-            continue
-        if art.path.lower().endswith((".pdf", ".txt")) or art.kind == "file":
-            resolved = _resolve_artifact_file(art.path, ctx)
-            if resolved:
-                state.entities["attachment_path"] = resolved
-                if _attachment_valid_ok(resolved, ctx, state):
-                    return f"attachment_path ← artifact:{art.path}"
-                state.entities.pop("attachment_path", None)
-
-    ex = _example_dir()
-    if ex:
-        fixtures = ex / "fixtures"
-        if fixtures.is_dir():
-            for pattern in ("*.pdf", "*.PDF"):
-                for path in sorted(fixtures.glob(pattern)):
-                    state.entities["attachment_path"] = str(path.resolve())
-                    if _attachment_valid_ok(str(path), ctx, state):
-                        return f"attachment_path ← fixtures/{path.name}"
-                    state.entities.pop("attachment_path", None)
-
-    return None
+    if hit := _try_artifact_fixtures(state, ctx):
+        return hit
+    return _try_example_dir_fixtures(state, ctx)
 
 
 def _try_generate_attachment(state: ConversationState, ctx: DoqlTaskContext) -> str | None:
@@ -240,6 +267,61 @@ async def _try_validation_fixes(state: ConversationState, ctx: DoqlTaskContext) 
     return apply_resolution_plans(plans, env)
 
 
+def _ready_autonomous_response(
+    ready_resp: ConversationResponse,
+    steps: list[str],
+    *,
+    round_idx: int,
+) -> AutonomousResolveResult:
+    steps = list(dict.fromkeys(steps))
+    msg = ready_resp.message or ""
+    if steps:
+        msg += f"\n(Autonomicznie: {', '.join(steps)})"
+        ready_resp.message = msg
+    ready_resp.autonomous_steps = steps
+    log.info("Autonomous ready after %d rounds: %s", round_idx + 1, steps)
+    return AutonomousResolveResult(response=ready_resp, steps=steps)
+
+
+async def _autonomous_acquire_data(
+    state: ConversationState,
+    ctx: DoqlTaskContext,
+    steps: list[str],
+) -> bool:
+    progress = False
+
+    if applied := await sync_autofill_from_doql(state):
+        steps.extend(applied)
+        progress = True
+
+    if fixture := _try_fixture_attachment(state, ctx):
+        steps.append(fixture)
+        progress = True
+
+    if generated := _try_generate_attachment(state, ctx):
+        steps.append(generated)
+        progress = True
+
+    if missing := await _dialog_missing(state):
+        state.missing = missing
+        updated, filled = autofill_entities(state.entities, missing, ctx, intent=state.intent)
+        if filled:
+            state.entities.update(updated)
+            steps.extend(filled)
+            progress = True
+
+    return progress
+
+
+def _refresh_autonomous_context(state: ConversationState, round_idx: int) -> DoqlTaskContext | None:
+    refresh_registry_for_state(state, phase=f"autonomous_{round_idx + 1}")
+    reload_context_after_refresh(state)
+    ctx = load_context_for_state(state)
+    if ctx:
+        set_doql_context(ctx)
+    return ctx
+
+
 async def autonomous_resolve_turn(state: ConversationState) -> AutonomousResolveResult:
     """
     Loop: autofill → fixtures → generate → DSL → validate until ready or stuck.
@@ -254,66 +336,23 @@ async def autonomous_resolve_turn(state: ConversationState) -> AutonomousResolve
     max_rounds = _max_autonomous_rounds(ctx)
 
     for round_idx in range(max_rounds):
-        progress = False
         log.info("Autonomous round %d/%d intent=%s", round_idx + 1, max_rounds, state.intent)
-
-        applied = await sync_autofill_from_doql(state)
-        if applied:
-            steps.extend(applied)
-            progress = True
-
-        fixture = _try_fixture_attachment(state, ctx)
-        if fixture:
-            steps.append(fixture)
-            progress = True
-
-        generated = _try_generate_attachment(state, ctx)
-        if generated:
-            steps.append(generated)
-            progress = True
-
-        missing = await _dialog_missing(state)
-        if missing:
-            state.missing = missing
-            updated, filled = autofill_entities(
-                state.entities, missing, ctx, intent=state.intent
-            )
-            if filled:
-                state.entities.update(updated)
-                steps.extend(filled)
-                progress = True
-
-        refresh_registry_for_state(state, phase=f"autonomous_{round_idx + 1}")
-        reload_context_after_refresh(state)
-        ctx = load_context_for_state(state)
-        if ctx:
-            set_doql_context(ctx)
+        progress = await _autonomous_acquire_data(state, ctx, steps)
+        ctx = _refresh_autonomous_context(state, round_idx + 1) or ctx
 
         ready_resp = await build_and_check_dsl(state)
         if ready_resp and ready_resp.status == "ready":
             validation = validate_workflow_steps(state.dsl.steps) if state.dsl else []
             if not validation:
-                steps = list(dict.fromkeys(steps))
-                state.autonomous_steps = steps
+                state.autonomous_steps = list(dict.fromkeys(steps))
                 state.autofill_applied = list(dict.fromkeys(state.autofill_applied + steps))
-                msg = ready_resp.message or ""
-                if steps:
-                    msg += f"\n(Autonomicznie: {', '.join(steps)})"
-                    ready_resp.message = msg
-                ready_resp.autonomous_steps = steps
-                log.info("Autonomous ready after %d rounds: %s", round_idx + 1, steps)
-                return AutonomousResolveResult(response=ready_resp, steps=steps)
+                return _ready_autonomous_response(ready_resp, steps, round_idx=round_idx)
 
-        fixes = await _try_validation_fixes(state, ctx)
-        if fixes:
+        if fixes := await _try_validation_fixes(state, ctx):
             steps.extend(fixes)
-            progress = True
             continue
 
-        if ready_resp and ready_resp.status == "in_progress":
-            # validation still failing — one more generate/fix cycle
-            if not progress:
-                break
+        if ready_resp and ready_resp.status == "in_progress" and progress:
             continue
 
         if not progress:

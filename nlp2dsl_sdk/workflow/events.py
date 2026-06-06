@@ -103,6 +103,28 @@ def lifecycle_event_from_payload(
     )
 
 
+def _normalize_lifecycle_events(
+    events: Sequence[WorkflowLifecycleEvent | Mapping[str, Any]],
+) -> list[WorkflowLifecycleEvent]:
+    return [
+        event if isinstance(event, WorkflowLifecycleEvent) else lifecycle_event_from_payload(event)
+        for event in events
+    ]
+
+
+def _snapshot_status(
+    normalized: Sequence[WorkflowLifecycleEvent],
+    *,
+    terminal: WorkflowLifecycleEvent | None,
+    last: WorkflowLifecycleEvent,
+) -> str:
+    if terminal:
+        return "completed" if terminal.event_type == "WorkflowCompleted" else "failed"
+    if any(e.event_type == "StepExecutionRequested" for e in normalized):
+        return "running"
+    return last.status or "unknown"
+
+
 def workflow_snapshot_from_events(
     events: Sequence[WorkflowLifecycleEvent | Mapping[str, Any]],
 ) -> dict[str, Any]:
@@ -112,30 +134,17 @@ def workflow_snapshot_from_events(
     Uses the latest terminal event when present; otherwise derives running state
     from the most recent step-level events.
     """
-    normalized = [
-        event if isinstance(event, WorkflowLifecycleEvent) else lifecycle_event_from_payload(event)
-        for event in events
-    ]
+    normalized = _normalize_lifecycle_events(events)
     if not normalized:
         return {"status": "unknown", "steps_completed": 0, "last_event": None}
 
     last = normalized[-1]
     terminal = next((e for e in reversed(normalized) if e.terminal), None)
-    steps_executed = sum(1 for e in normalized if e.event_type == "StepExecuted")
-    steps_failed = sum(1 for e in normalized if e.event_type == "ExecutionFailed" and e.step_id)
-
-    if terminal:
-        status = "completed" if terminal.event_type == "WorkflowCompleted" else "failed"
-    elif any(e.event_type == "StepExecutionRequested" for e in normalized):
-        status = "running"
-    else:
-        status = last.status or "unknown"
-
     return {
         "workflow_id": last.workflow_id,
-        "status": status,
-        "steps_completed": steps_executed,
-        "steps_failed": steps_failed,
+        "status": _snapshot_status(normalized, terminal=terminal, last=last),
+        "steps_completed": sum(1 for e in normalized if e.event_type == "StepExecuted"),
+        "steps_failed": sum(1 for e in normalized if e.event_type == "ExecutionFailed" and e.step_id),
         "last_event_type": last.event_type,
         "last_event_id": last.event_id,
         "terminal_event_type": terminal.event_type if terminal else None,

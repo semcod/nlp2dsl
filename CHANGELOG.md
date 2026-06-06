@@ -12,6 +12,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mapa środowiska DOQL (`env2llm`) — zewnętrzne repo `semcod/env2llm`; `nlp2dsl_sdk` zachowuje shimy dla kompatybilności wstecznej
 - Zaktualizowano dokumentację: `README.md`, `packages/README.md`, `docs/artifacts.md`, `docs/validation.md`, `docs/autonomous-stack.md`
 - Dodano `scripts/install-local-deps.sh` — instalacja `env2llm` + `packages/` przed `pip install -e .` (`project.sh`, CI, `run-all.sh`)
+- Usunięto shimy `nlp2dsl_sdk` (contracts, validation, export, doql, env-map); importy w backend/worker/nlp-service/examples/koru → bezpośrednie pakiety
+- `env2llm.bootstrap.ensure_doql_registry` — alias kompatybilności z nlp2dsl
+
+## [0.0.39] - 2026-06-06
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update docs/artifacts.md
+- Update docs/system-status-examples-01-14.md
+- Update docs/validation.md
+- Update packages/README.md
+
+### Test
+- Update testql-scenarios/generated-examples.testql.toon.yaml
+- Update tests/test_action_contracts.py
+- Update tests/test_artifact_layout.py
+- Update tests/test_capability_policy.py
+- Update tests/test_compose_generator.py
+- Update tests/test_contract_draft.py
+- Update tests/test_contract_drift.py
+- Update tests/test_conversation_testql.py
+- Update tests/test_doql_context.py
+- Update tests/test_doql_registry.py
+- ... and 10 more files
+
+### Other
+- Update .env.example
+- Update backend/app/action_catalog.py
+- Update backend/app/attachment_validation.py
+- Update backend/app/audit.py
+- Update backend/app/dsl_validation.py
+- Update backend/app/execution_policy.py
+- Update backend/app/idempotency.py
+- Update backend/app/routers/workflow.py
+- Update backend/app/step_validator.py
+- Update backend/app/workflow_execute.py
+- ... and 162 more files
 
 ## [0.0.38] - 2026-06-06
 

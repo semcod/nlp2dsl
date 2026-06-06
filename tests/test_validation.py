@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 from nlp2dsl_sdk.invoice_pdf import write_invoice_pdf
-from nlp2dsl_sdk.system_map_ir import CommandSchemaIR, FieldSpec, SystemMapIR
-from nlp2dsl_sdk.validation import (
+from env2llm.ir import CommandSchemaIR, FieldSpec, SystemMapIR
+from dsl_validate import (
     Phase,
     legacy_message_to_issue,
     validate_dsl_contract_issues,
     validate_step_config_from_map,
     validate_step_config_from_map_issues,
 )
-from nlp2dsl_sdk.validation.issue import issues_to_messages
+from dsl_validate.issue import issues_to_messages
 
 
 def test_legacy_message_to_issue_pdf() -> None:
@@ -77,8 +77,8 @@ def test_issues_to_messages_roundtrip() -> None:
 
 
 def test_plan_resolutions_invalid_pdf() -> None:
-    from nlp2dsl_sdk.validation import plan_resolutions
-    from nlp2dsl_sdk.validation.issue import ValidationIssue
+    from dsl_validate import plan_resolutions
+    from dsl_validate.issue import ValidationIssue
 
     issue = ValidationIssue(
         code="attachment.invalid_pdf",
@@ -93,8 +93,8 @@ def test_plan_resolutions_invalid_pdf() -> None:
 
 
 def test_plan_resolutions_deduplicates_attachment_repairs() -> None:
-    from nlp2dsl_sdk.validation import plan_resolutions
-    from nlp2dsl_sdk.validation.issue import ValidationIssue
+    from dsl_validate import plan_resolutions
+    from dsl_validate.issue import ValidationIssue
 
     issues = [
         ValidationIssue(
@@ -121,8 +121,8 @@ def test_plan_resolutions_deduplicates_attachment_repairs() -> None:
 
 
 def test_plan_resolutions_autofill_issue() -> None:
-    from nlp2dsl_sdk.validation import plan_resolutions
-    from nlp2dsl_sdk.validation.issue import ValidationIssue
+    from dsl_validate import plan_resolutions
+    from dsl_validate.issue import ValidationIssue
 
     issue = ValidationIssue(
         code="field.autofill_available",
@@ -139,8 +139,8 @@ def test_plan_resolutions_autofill_issue() -> None:
 
 
 def test_apply_resolution_plans_stops_after_fixture() -> None:
-    from nlp2dsl_sdk.validation import ResolutionEnvironment, apply_resolution_plans, plan_resolutions
-    from nlp2dsl_sdk.validation.issue import ValidationIssue
+    from dsl_validate import ResolutionEnvironment, apply_resolution_plans, plan_resolutions
+    from dsl_validate.issue import ValidationIssue
 
     issue = ValidationIssue(
         code="attachment.missing_file",
@@ -164,8 +164,8 @@ def test_apply_resolution_plans_stops_after_fixture() -> None:
 
 
 def test_filter_plans_by_reflection_tokens() -> None:
-    from nlp2dsl_sdk.validation import filter_plans_by_reflection_tokens, plan_resolutions
-    from nlp2dsl_sdk.validation.issue import ValidationIssue
+    from dsl_validate import filter_plans_by_reflection_tokens, plan_resolutions
+    from dsl_validate.issue import ValidationIssue
 
     issue = ValidationIssue(
         code="attachment.invalid_pdf",
@@ -190,8 +190,8 @@ def test_filter_plans_by_reflection_tokens() -> None:
 
 
 def test_runtime_health_unavailable() -> None:
-    from nlp2dsl_sdk.doql.models import DoqlRuntime
-    from nlp2dsl_sdk.validation.rules.runtime_health import validate_runtime_health_for_intent
+    from env2llm.doql.models import DoqlRuntime
+    from dsl_validate.rules.runtime_health import validate_runtime_health_for_intent
 
     issues = validate_runtime_health_for_intent(
         [DoqlRuntime(id="executor:worker", status="unavailable")],
@@ -203,7 +203,7 @@ def test_runtime_health_unavailable() -> None:
 
 
 def test_runtime_id_for_intent() -> None:
-    from nlp2dsl_sdk.validation.rules.runtime_health import runtime_id_for_intent
+    from dsl_validate.rules.runtime_health import runtime_id_for_intent
 
     assert runtime_id_for_intent("send_invoice") == "executor:worker"
     assert runtime_id_for_intent("mullm_shell_task") == "delegate:mullm"
@@ -268,8 +268,8 @@ def test_validate_dsl_contract_allows_dynamic_actions_by_default() -> None:
 
 
 def test_validate_post_health_from_map() -> None:
-    from nlp2dsl_sdk.system_map_ir import RuntimeSpecIR, SystemMapIR
-    from nlp2dsl_sdk.validation.pipeline import validate_post_health_from_map
+    from env2llm.ir import RuntimeSpecIR, SystemMapIR
+    from dsl_validate.pipeline import validate_post_health_from_map
 
     ir = SystemMapIR(
         runtimes=[RuntimeSpecIR(id="executor:worker", status="unavailable")],
@@ -281,9 +281,9 @@ def test_validate_post_health_from_map() -> None:
 
 
 def test_validate_post_health_preflight_phase() -> None:
-    from nlp2dsl_sdk.doql.models import DoqlRuntime
-    from nlp2dsl_sdk.validation.pipeline import validate_post_health_for_intent
-    from nlp2dsl_sdk.validation.issue import Phase
+    from env2llm.doql.models import DoqlRuntime
+    from dsl_validate.pipeline import validate_post_health_for_intent
+    from dsl_validate.issue import Phase
 
     issues = validate_post_health_for_intent(
         [DoqlRuntime(id="executor:worker", status="unavailable")],
@@ -295,7 +295,7 @@ def test_validate_post_health_preflight_phase() -> None:
 
 
 def test_validate_post_execute_execution_failed_step() -> None:
-    from nlp2dsl_sdk.validation.pipeline import validate_post_execute_execution
+    from dsl_validate.pipeline import validate_post_execute_execution
 
     issues = validate_post_execute_execution(
         {"steps": [{"action": "send_invoice", "status": "failed", "error": "timeout"}]}
@@ -306,8 +306,8 @@ def test_validate_post_execute_execution_failed_step() -> None:
 
 
 def test_validate_post_execute_from_map_skips_required_fields() -> None:
-    from nlp2dsl_sdk.system_map_ir import CommandSchemaIR, FieldSpec, SystemMapIR
-    from nlp2dsl_sdk.validation.pipeline import validate_post_execute_from_map
+    from env2llm.ir import CommandSchemaIR, FieldSpec, SystemMapIR
+    from dsl_validate.pipeline import validate_post_execute_from_map
 
     ir = SystemMapIR(
         commands=[

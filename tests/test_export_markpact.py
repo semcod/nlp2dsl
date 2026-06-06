@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nlp2dsl_sdk.contracts import contract_from_registry_entry
-from nlp2dsl_sdk.export.markpact import (
+from dsl_contracts import contract_from_registry_entry
+from workflow_export.markpact import (
     export_markpact_bundle,
     workflow_dsl_to_markpact_readme,
 )
-from nlp2dsl_sdk.export.pactown import export_pactown_bundle, nlp2dsl_platform_ecosystem
+from workflow_export.pactown import export_pactown_bundle, nlp2dsl_platform_ecosystem
 
 
 def _sample_catalog() -> dict:
@@ -55,7 +55,7 @@ def _sample_dsl() -> dict:
 
 
 def test_workflow_dsl_to_markpact_readme_contains_blocks() -> None:
-    from nlp2dsl_sdk.contracts import action_contracts_from_catalog
+    from dsl_contracts import action_contracts_from_catalog
 
     catalog = _sample_catalog()
     contracts = action_contracts_from_catalog(catalog)
@@ -105,8 +105,8 @@ def test_export_pactown_bundle(tmp_path: Path) -> None:
 
 
 def test_publish_layer_bundle(tmp_path) -> None:
-    from nlp2dsl_sdk.contracts import action_catalog_payload, contract_from_registry_entry
-    from nlp2dsl_sdk.export.publish import export_workflow_publish_layer
+    from dsl_contracts import action_catalog_payload, contract_from_registry_entry
+    from workflow_export.publish import export_workflow_publish_layer
 
     catalog = action_catalog_payload(
         {

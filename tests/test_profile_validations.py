@@ -4,16 +4,16 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nlp2dsl_sdk.system_map_ir import ProfileValidationIR, SystemMapIR
-from nlp2dsl_sdk.validation.profile_checks import (
+from env2llm.ir import ProfileValidationIR, SystemMapIR
+from dsl_validate.profile_checks import (
     parse_profile_validation,
     parse_profile_validations,
     run_profile_validation_checks,
     validate_profile_expectations,
 )
-from nlp2dsl_sdk.validation.profile_checks import ProfileCheckContext
-from nlp2dsl_sdk.system_map_render import render_system_map_doql
-from nlp2dsl_sdk.process_policy import apply_process_policies
+from dsl_validate.profile_checks import ProfileCheckContext
+from env2llm.render.doql import render_system_map_doql
+from env2llm.policy.process import apply_process_policies
 
 
 def test_parse_shorthand_validations() -> None:

@@ -15,18 +15,15 @@ Monorepo `packages/` — wydzielone biblioteki SDK platformy MVP oraz pakiety in
 
 Zewnętrzna zależność mapy środowiska: **[`env2llm`](../../../semcod/env2llm)** (`environment.doql.less`, `SystemMapIR`).
 
-`nlp2dsl_sdk` zachowuje **shimy** (`nlp2dsl_sdk.contracts` → `dsl_contracts`, itd.) — istniejący kod i testy działają bez zmian importów.
+Importuj **bezpośrednio z pakietów** — shimy w `nlp2dsl_sdk` zostały usunięte (backend, worker, nlp-service, examples, koru zmigrowane).
 
 ```python
-# Bezpośrednio z pakietu (zalecane w nowym kodzie)
 from dsl_contracts import ActionContract, contract_from_registry_entry
 from dsl_validate import ValidationIssue, validate_step_issues
 from nlp2dsl_artifacts import ExampleArtifactWriter, build_process_trace
 from testql_conversations import validate_conversation_scenario
-
-# Legacy — nadal działa
-from nlp2dsl_sdk.contracts import ActionContract
-from nlp2dsl_sdk.validation import ValidationIssue
+from env2llm.ir import SystemMapIR
+from env2llm.bootstrap import ensure_doql_registry  # alias ensure_environment_map
 ```
 
 ## Pakiety IR (nlp2cmd ↔ Propact)

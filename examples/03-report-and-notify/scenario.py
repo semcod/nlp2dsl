@@ -42,13 +42,13 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
 
     dsl = result.get("dsl") if isinstance(result.get("dsl"), dict) else None
     if dsl and dsl.get("steps"):
-        from nlp2dsl_sdk.export.publish import (
+        from workflow_export.publish import (
             catalog_from_nlp_client,
             export_workflow_publish_layer,
             print_publish_summary,
             validate_publish_layer,
         )
-        from nlp2dsl_sdk.artifacts import example_artifact_root
+        from nlp2dsl_artifacts import example_artifact_root
 
         import os
 
@@ -72,7 +72,7 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
     else:
         print(f"\n❌ Status: {result.get('status')} — {result.get('missing_fields', [])}")
 
-    from nlp2dsl_sdk.artifacts import get_example_writer
+    from nlp2dsl_artifacts import get_example_writer
 
     writer = get_example_writer()
     if writer:

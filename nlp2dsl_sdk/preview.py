@@ -7,11 +7,11 @@ import os
 from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
 if TYPE_CHECKING:
-    from .artifacts import ExampleArtifactWriter
+    from nlp2dsl_artifacts import ExampleArtifactWriter
 
 import requests
 
-from .artifacts import get_example_writer
+from nlp2dsl_artifacts import get_example_writer
 from .client import NLP2DSLClient
 
 

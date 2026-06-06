@@ -637,7 +637,7 @@ provides-extras = ["dev"]
 
 [[package]]
 name = "env2llm"
-version = "0.1.1"
+version = "0.1.3"
 source = { editable = "../../semcod/env2llm" }
 dependencies = [
     { name = "pydantic" },
@@ -1613,7 +1613,7 @@ wheels = [
 
 [[package]]
 name = "nlp2dsl"
-version = "0.0.38"
+version = "0.0.39"
 source = { editable = "." }
 dependencies = [
     { name = "dsl-contracts" },

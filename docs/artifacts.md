@@ -1,7 +1,6 @@
 # Artefakty przykładów (`.nlp2dsl/`)
 
-Implementacja: pakiet **[`nlp2dsl-artifacts`](../packages/nlp2dsl-artifacts/)** (mapa DOQL: **[`env2llm`](../../../semcod/env2llm)**).  
-`nlp2dsl_sdk.artifacts` to cienki shim — w nowym kodzie importuj `nlp2dsl_artifacts`.
+Implementacja: pakiet **[`nlp2dsl-artifacts`](../packages/nlp2dsl-artifacts/)** (mapa DOQL: **[`env2llm`](../../../semcod/env2llm)**).
 
 Każdy `examples/NN-name/` po uruchomieniu `main.py` zapisuje transparentny ślad pipeline:
 

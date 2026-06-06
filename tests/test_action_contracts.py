@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from nlp2dsl_sdk.contracts import (
+from dsl_contracts import (
     action_catalog_payload,
     action_contracts_from_catalog,
     action_info_config_schema,

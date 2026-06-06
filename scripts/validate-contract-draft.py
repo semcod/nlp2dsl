@@ -12,7 +12,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 try:
-    from nlp2dsl_sdk.contracts.draft import (  # noqa: E402
+    from dsl_contracts.draft import (  # noqa: E402
         list_draft_files,
         load_draft,
         validate_draft,

@@ -9,7 +9,7 @@ from typing import Any, Optional
 
 from benchmark_queries import BENCHMARK_QUERIES, BenchmarkQuery
 from nlp2dsl_sdk.client import NLP2DSLClient
-from nlp2dsl_sdk.artifacts import get_example_writer
+from nlp2dsl_artifacts import get_example_writer
 from nlp2dsl_sdk.preview import ensure_services, print_workflow_preview
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"

@@ -66,8 +66,8 @@ class AutonomousFlow(ConversationFlow):
         import json
         from pathlib import Path
 
-        from .artifact_layout import current_run_id, ensure_layout
-        from .doql_context import load_doql_inline_from_env, resolve_doql_context_path
+        from env2llm.layout import current_run_id, ensure_layout
+        from env2llm.doql_context import load_doql_inline_from_env, resolve_doql_context_path
 
         example_dir = os.environ.get("NLP2DSL_EXAMPLE_DIR", "").strip()
         if example_dir:

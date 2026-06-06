@@ -62,7 +62,7 @@ def bootstrap(example_dir: Path | str, *, title: str = "") -> Path:
     repo_root = root.parent.parent
     _ensure_sdk_installed(repo_root)
 
-    from nlp2dsl_sdk.artifact_layout import clean_artifact_root
+    from env2llm.layout import clean_artifact_root
     from nlp2dsl_sdk.encoding import configure_utf8
 
     configure_utf8(force=True)
@@ -89,7 +89,7 @@ def bootstrap(example_dir: Path | str, *, title: str = "") -> Path:
     elif "NLP2DSL_EXAMPLE_TITLE" not in os.environ:
         os.environ["NLP2DSL_EXAMPLE_TITLE"] = root.name
 
-    from nlp2dsl_sdk.artifact_layout import resolve_registry_path
+    from env2llm.layout import resolve_registry_path
 
     root = Path(example_dir).resolve()
     for candidate in (

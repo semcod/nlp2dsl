@@ -7,10 +7,11 @@ PY="${PYTHON:-python3}"
 export PYTHONIOENCODING="${PYTHONIOENCODING:-utf-8}"
 export LANG="${LANG:-C.UTF-8}"
 export LC_CTYPE="${LC_CTYPE:-$LANG}"
+export PIP_NO_COMPILE="${PIP_NO_COMPILE:-1}"
 
 install_one() {
   echo "==> pip install -e $1"
-  "$PY" -m pip install -e "$1" --upgrade
+  "$PY" -m pip install -e "$1" --upgrade --no-compile
 }
 
 # env2llm is installed by scripts/install-local-deps.sh (sibling repo semcod/env2llm).

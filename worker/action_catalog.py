@@ -7,7 +7,7 @@ from typing import Any
 
 import httpx
 
-from nlp2dsl_sdk.contracts import (
+from dsl_contracts import (
     known_action_names,
     quality_fields_for_action as contract_quality_fields_for_action,
     required_fields_for_action as contract_required_fields_for_action,

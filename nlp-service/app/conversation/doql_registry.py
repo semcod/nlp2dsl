@@ -95,7 +95,7 @@ def _try_sdk_refresh(
         repo_root = Path(__file__).resolve().parents[2]
         if str(repo_root) not in sys.path:
             sys.path.insert(0, str(repo_root))
-        from nlp2dsl_sdk.doql_registry import refresh_doql_registry
+        from env2llm.registry import refresh_doql_registry
 
         refresh_doql_registry(
             path,
@@ -108,6 +108,40 @@ def _try_sdk_refresh(
     except Exception:
         log.debug("SDK doql_registry refresh unavailable", exc_info=True)
         return False
+
+
+def _history_patch_from_state(
+    state: ConversationState,
+    *,
+    phase: str,
+    execution: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    history: dict[str, Any] = {
+        "last_phase": phase,
+        "last_observed_at": datetime.now(UTC).isoformat(),
+    }
+    if state.intent:
+        history["last_intent"] = state.intent
+    if state.id:
+        history["conversation_id"] = state.id
+    if execution:
+        history["last_status"] = str(execution.get("status", execution.get("state", "")))
+    return history
+
+
+def _merge_invoice_ids_from_execution(
+    execution: Mapping[str, Any],
+    *,
+    data_patch: dict[str, Any],
+    history_patch: dict[str, Any],
+) -> None:
+    for step in execution.get("results") or execution.get("steps") or []:
+        if not isinstance(step, dict):
+            continue
+        output = step.get("output") or step.get("result") or {}
+        if isinstance(output, dict) and output.get("invoice_id"):
+            data_patch["send_invoice.last_invoice_id"] = output["invoice_id"]
+            history_patch["last_invoice_id"] = str(output["invoice_id"])
 
 
 def refresh_registry_for_state(
@@ -137,25 +171,9 @@ def refresh_registry_for_state(
         return path
 
     data_patch = _entities_to_data(state.intent, entities)
-    history_patch: dict[str, Any] = {
-        "last_phase": phase,
-        "last_observed_at": datetime.now(UTC).isoformat(),
-    }
-    if state.intent:
-        history_patch["last_intent"] = state.intent
-    if state.id:
-        history_patch["conversation_id"] = state.id
+    history_patch = _history_patch_from_state(state, phase=phase, execution=execution)
     if execution:
-        history_patch["last_status"] = str(
-            execution.get("status", execution.get("state", ""))
-        )
-        for step in execution.get("results") or execution.get("steps") or []:
-            if not isinstance(step, dict):
-                continue
-            output = step.get("output") or step.get("result") or {}
-            if isinstance(output, dict) and output.get("invoice_id"):
-                data_patch["send_invoice.last_invoice_id"] = output["invoice_id"]
-                history_patch["last_invoice_id"] = str(output["invoice_id"])
+        _merge_invoice_ids_from_execution(execution, data_patch=data_patch, history_patch=history_patch)
 
     try:
         _patch_doql_file(path, data_patch=data_patch, history_patch=history_patch)

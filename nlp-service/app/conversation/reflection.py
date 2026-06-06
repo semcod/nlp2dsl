@@ -94,7 +94,7 @@ def reflection_from_state(state: ConversationState, phase: str) -> dict[str, Any
     if path is not None:
         try:
             from nlp2dsl_sdk.reflection import reflect_from_chat_turn
-            from nlp2dsl_sdk.system_map_bridge import doql_file_to_system_map
+            from env2llm.bridge import doql_file_to_system_map
 
             ir = doql_file_to_system_map(path)
             return reflect_from_chat_turn(

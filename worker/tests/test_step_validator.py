@@ -24,7 +24,7 @@ def test_send_invoice_ok() -> None:
 
 
 def test_missing_attachment_file() -> None:
-    from nlp2dsl_sdk.validation.issue import Phase
+    from dsl_validate.issue import Phase
 
     issues = validate_step_config(
         "send_invoice",
@@ -37,7 +37,7 @@ def test_missing_attachment_file() -> None:
 def test_pdf_invoice_ok(tmp_path: Path) -> None:
     path = tmp_path / "x.pdf"
     _write_test_pdf(path, amount=1500)
-    from nlp2dsl_sdk.validation.issue import Phase
+    from dsl_validate.issue import Phase
 
     assert (
         validate_step_config(
@@ -52,7 +52,7 @@ def test_pdf_invoice_ok(tmp_path: Path) -> None:
 def test_text_pdf_rejected(tmp_path: Path) -> None:
     path = tmp_path / "x.pdf"
     path.write_text("FAKTURA\nKwota: 1500.0 PLN\n", encoding="utf-8")
-    from nlp2dsl_sdk.validation.issue import Phase
+    from dsl_validate.issue import Phase
 
     issues = validate_step_config(
         "send_invoice",

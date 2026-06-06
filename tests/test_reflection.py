@@ -12,7 +12,7 @@ from nlp2dsl_sdk.reflection import (
     reflect_from_chat_turn,
 )
 from nlp2dsl_sdk.invoice_pdf import write_invoice_pdf
-from nlp2dsl_sdk.system_map_ir import (
+from env2llm.ir import (
     CommandSchemaIR,
     ConversationPolicyIR,
     FieldSpec,

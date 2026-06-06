@@ -15,7 +15,7 @@ from typing import Any, Literal, Mapping, Sequence
 
 from pydantic import BaseModel, Field
 
-from .system_map_ir import CommandSchemaIR, SystemMapIR
+from env2llm.ir import CommandSchemaIR, SystemMapIR
 
 IssueKind = Literal["missing", "mismatch", "invalid_format", "blocked", "unknown_action"]
 Resolution = Literal["autofill", "generate", "ask_user", "fix_format", "blocked", "none"]
@@ -147,7 +147,7 @@ def build_target_plan(
 
 
 def _parse_validation_issue(raw: str) -> ReflectionIssue | None:
-    from .validation.messages import legacy_message_to_issue
+    from dsl_validate.messages import legacy_message_to_issue
 
     vi = legacy_message_to_issue(raw, phase_str="validate")
     return ReflectionIssue(
@@ -348,7 +348,7 @@ def reflect_from_doql_path(
     validation_issues: Sequence[str] | None = None,
 ) -> ReflectionReport | None:
     """Load SystemMapIR from DOQL and reflect (client helper)."""
-    from .system_map_bridge import doql_file_to_system_map
+    from env2llm.bridge import doql_file_to_system_map
 
     path = Path(doql_path)
     if not path.is_file():

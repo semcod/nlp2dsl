@@ -79,8 +79,8 @@ def _check_expect(result: dict[str, Any], expect: dict[str, Any]) -> tuple[bool,
 
 
 def _run_validation(v: dict[str, Any], last: dict[str, Any]) -> dict[str, Any]:
-    from nlp2dsl_sdk.validation.profile_checks import parse_profile_validation, run_profile_validation_checks
-    from nlp2dsl_sdk.validation.profile_checks import ProfileCheckContext
+    from dsl_validate.profile_checks import parse_profile_validation, run_profile_validation_checks
+    from dsl_validate.profile_checks import ProfileCheckContext
 
     spec = parse_profile_validation(v)
     if spec is None:

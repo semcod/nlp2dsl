@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+
 import pytest
 
 from app.idempotency import (
@@ -67,3 +69,21 @@ def test_workflow_fingerprint_ignores_empty_optional_fields() -> None:
         "amount": 500,
         "to": "a@b.pl",
     }
+
+
+@pytest.mark.asyncio
+async def test_memory_idempotency_purge_expired() -> None:
+    store = MemoryIdempotencyStore()
+    fingerprint = workflow_fingerprint({"name": "wf", "steps": []})
+
+    await store.start("old-key", fingerprint)
+    await store.finish("old-key", {"status": "executed"})
+    store._records["old-key"].updated_at = datetime.now(UTC) - timedelta(days=10)
+
+    await store.start("fresh-key", fingerprint)
+    await store.finish("fresh-key", {"status": "executed"})
+
+    deleted = await store.purge_expired(7 * 24 * 3600)
+    assert deleted == 1
+    assert "old-key" not in store._records
+    assert "fresh-key" in store._records

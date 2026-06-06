@@ -99,6 +99,15 @@ def nlp2dsl_platform_ecosystem(
                 "health_check": "/health",
                 "timeout": 30,
             },
+            "trigger-service": {
+                "readme": "services/trigger-service/README.md",
+                "port": 8070,
+                "health_check": "/health",
+                "timeout": 30,
+                "depends_on": [
+                    {"name": "backend", "env_var": "NLP2DSL_BACKEND_URL"},
+                ],
+            },
             "report-and-email": {
                 "readme": workflow_readme,
                 "port": None,
@@ -162,6 +171,12 @@ def export_pactown_bundle(
             "worker — imperative action executors",
             ["fastapi", "uvicorn", "httpx"],
             "uvicorn worker:app --host 0.0.0.0 --port ${MARKPACT_PORT:-8004}",
+        ),
+        (
+            "trigger-service",
+            "trigger-service — webhook and event ingress",
+            ["fastapi", "uvicorn", "httpx"],
+            "uvicorn app.main:app --host 0.0.0.0 --port ${MARKPACT_PORT:-8020}",
         ),
     ]
 

@@ -17,12 +17,12 @@ from typing import Any, Optional
 
 from .autonomous_flow import AutonomousFlow
 from .client import ConversationFlow, NLP2DSLClient
-from .compose_generator import ComposeGenerationResult, enrich_ir_for_stack, generate_stack_compose
-from .doql_context import load_doql_context
-from .example_bootstrap import ensure_doql_registry
+from nlp2dsl_stack import ComposeGenerationResult, enrich_ir_for_stack, generate_stack_compose
+from env2llm.doql_context import load_doql_context
+from env2llm.bootstrap import ensure_doql_registry
 from .preview import execute_from_text
-from .system_map_bridge import doql_file_to_system_map
-from .system_map_generator import generate_system_map
+from env2llm.bridge import doql_file_to_system_map
+from env2llm.generate import generate_system_map
 
 
 @dataclass
@@ -109,12 +109,12 @@ class AutonomousStackFlow:
         ir.conversation.sync_auto_execute = True
         ir.conversation.attachment_required = self.attachment
         ir.conversation.generate_invoice_if_missing = True
-        from .system_map_runtimes import load_example_profile
+        from env2llm.runtimes import load_example_profile
 
         profile = load_example_profile(self.example_dir.name, self.example_dir.parent.parent)
         ir = enrich_ir_for_stack(ir, example_id=self.example_dir.name, profile=profile)
-        from .artifact_layout import write_registry
-        from .system_map_render import render_system_map_doql
+        from env2llm.layout import write_registry
+        from env2llm.render.doql import render_system_map_doql
 
         write_registry(self.example_dir / ".nlp2dsl", render_system_map_doql(ir))
         self._registry_path = path
@@ -217,15 +217,15 @@ class AutonomousStackFlow:
             ir = doql_file_to_system_map(reg)
         else:
             ir = generate_system_map(self.example_dir, example_id=self.example_dir.name)
-        from .system_map_runtimes import load_example_profile
+        from env2llm.runtimes import load_example_profile
 
         profile = load_example_profile(self.example_dir.name, self.example_dir.parent.parent)
         ir = enrich_ir_for_stack(ir, example_id=self.example_dir.name, profile=profile)
         result = generate_stack_compose(
             ir, example_dir=self.example_dir, profile=profile
         )
-        from .artifact_layout import write_registry
-        from .system_map_render import render_system_map_doql
+        from env2llm.layout import write_registry
+        from env2llm.render.doql import render_system_map_doql
 
         write_registry(self.example_dir / ".nlp2dsl", render_system_map_doql(ir))
         return result

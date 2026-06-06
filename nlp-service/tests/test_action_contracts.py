@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from app.registry import get_action_contract, get_action_contracts
-from nlp2dsl_sdk.contracts import action_catalog_payload
+from dsl_contracts import action_catalog_payload
 
 
 def test_registry_exposes_action_contracts() -> None:

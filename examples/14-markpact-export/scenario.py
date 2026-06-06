@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from nlp2dsl_sdk.client import NLP2DSLClient
-from nlp2dsl_sdk.export.publish import (
+from workflow_export.publish import (
     catalog_from_nlp_client,
     export_workflow_publish_layer,
     print_publish_summary,
@@ -79,7 +79,7 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
     print(f"   markpact --test {bundle.markpact.readme}  # gdy backend działa")
     print()
 
-    from nlp2dsl_sdk.artifacts import get_example_writer
+    from nlp2dsl_artifacts import get_example_writer
 
     writer = get_example_writer()
     if writer:

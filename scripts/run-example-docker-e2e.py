@@ -96,17 +96,7 @@ def run_example_main(example_dir: Path) -> bool:
     return proc.returncode == 0
 
 
-def run_execution(example_dir: Path, rel: str, base_url: str) -> dict[str, Any]:
-    scenario = example_dir / rel
-    if not scenario.is_file():
-        return {"skipped": True, "reason": f"missing {rel}"}
-    proc = subprocess.run(
-        [_py(), str(EXEC_SCRIPT), str(scenario), "--base-url", base_url, "--no-wait"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-    )
-    trace_path = example_dir / ".nlp2dsl" / "execution.trace.json"
+def _load_trace(trace_path: Path, proc: subprocess.CompletedProcess[str]) -> dict[str, Any]:
     trace: dict[str, Any] = {}
     if trace_path.is_file():
         try:
@@ -118,31 +108,104 @@ def run_execution(example_dir: Path, rel: str, base_url: str) -> dict[str, Any]:
         trace["passed"] = False
         trace["stderr"] = proc.stderr[-2000:]
     return trace
+
+
+def _run_scenario(
+    example_dir: Path,
+    rel: str,
+    base_url: str,
+    *,
+    script: Path,
+    trace_name: str,
+) -> dict[str, Any]:
+    scenario = example_dir / rel
+    if not scenario.is_file():
+        return {"skipped": True, "reason": f"missing {rel}"}
+    proc = subprocess.run(
+        [_py(), str(script), str(scenario), "--base-url", base_url, "--no-wait"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    return _load_trace(example_dir / ".nlp2dsl" / trace_name, proc)
+
+
+def run_execution(example_dir: Path, rel: str, base_url: str) -> dict[str, Any]:
+    return _run_scenario(
+        example_dir,
+        rel,
+        base_url,
+        script=EXEC_SCRIPT,
+        trace_name="execution.trace.json",
+    )
 
 
 def run_conversation(example_dir: Path, rel: str, base_url: str) -> dict[str, Any]:
-    scenario = example_dir / rel
-    if not scenario.is_file():
-        return {"skipped": True, "reason": f"missing {rel}"}
-
-    proc = subprocess.run(
-        [_py(), str(CONV_SCRIPT), str(scenario), "--base-url", base_url, "--no-wait"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
+    return _run_scenario(
+        example_dir,
+        rel,
+        base_url,
+        script=CONV_SCRIPT,
+        trace_name="conversation.trace.json",
     )
-    trace_path = example_dir / ".nlp2dsl" / "conversation.trace.json"
-    trace: dict[str, Any] = {}
-    if trace_path.is_file():
+
+
+def _trace_passed(trace: dict[str, Any]) -> bool:
+    return bool(trace.get("passed")) and trace.get("exit_code", 1) == 0
+
+
+def _append_trace_check(
+    report: dict[str, Any],
+    *,
+    check_id: str,
+    trace: dict[str, Any],
+    summary: str,
+    extra: dict[str, Any] | None = None,
+) -> None:
+    if trace.get("skipped"):
+        report["checks"].append({"id": check_id, "status": "skipped", "summary": trace.get("reason", "")})
+        return
+    passed = _trace_passed(trace)
+    check = {"id": check_id, "status": "passed" if passed else "failed", "summary": summary}
+    if extra:
+        check.update(extra)
+    report["checks"].append(check)
+    if not passed:
+        report["passed"] = False
+
+
+def _load_e2e_response(example_dir: Path) -> dict[str, Any]:
+    from dsl_validate.profile_checks import response_from_e2e_trace
+
+    for trace_name in ("conversation.trace.json", "execution.trace.json"):
+        trace_path = example_dir / ".nlp2dsl" / trace_name
+        if not trace_path.is_file():
+            continue
         try:
-            trace = json.loads(trace_path.read_text(encoding="utf-8"))
+            return response_from_e2e_trace(json.loads(trace_path.read_text(encoding="utf-8")))
         except json.JSONDecodeError:
-            pass
-    trace["exit_code"] = proc.returncode
-    if proc.returncode != 0 and not trace:
-        trace["passed"] = False
-        trace["stderr"] = proc.stderr[-2000:]
-    return trace
+            continue
+    return {}
+
+
+def _check_profile_validations(
+    report: dict[str, Any],
+    example_dir: Path,
+    validations: list[Any],
+) -> None:
+    from dsl_validate.profile_checks import run_validations_from_raw
+
+    pv_results = run_validations_from_raw(validations, _load_e2e_response(example_dir), example_dir=example_dir)
+    pv_passed = all(r.get("passed") for r in pv_results)
+    report["checks"].append({
+        "id": "profile.validations",
+        "status": "passed" if pv_passed else "failed",
+        "summary": f"{sum(1 for r in pv_results if r.get('passed'))}/{len(pv_results)} profile checks",
+        "validations": pv_results,
+    })
+    report["profile_validations"] = pv_results
+    if not pv_passed:
+        report["passed"] = False
 
 
 def process_example(
@@ -179,93 +242,45 @@ def process_example(
         if not ok:
             report["passed"] = False
 
-    exec_rel = entry.get("execution_scenario")
-    if exec_rel:
+    if exec_rel := entry.get("execution_scenario"):
         exec_trace = run_execution(example_dir, str(exec_rel), base_url)
-        if exec_trace.get("skipped"):
-            report["checks"].append({"id": "execution.e2e", "status": "skipped", "summary": exec_trace.get("reason", "")})
-        else:
-            passed = bool(exec_trace.get("passed")) and exec_trace.get("exit_code", 1) == 0
-            report["checks"].append({
-                "id": "execution.e2e",
-                "status": "passed" if passed else "failed",
-                "summary": f"status={exec_trace.get('status')} queries={len(exec_trace.get('queries') or [])}",
-            })
-            if not passed:
-                report["passed"] = False
+        _append_trace_check(
+            report,
+            check_id="execution.e2e",
+            trace=exec_trace,
+            summary=f"status={exec_trace.get('status')} queries={len(exec_trace.get('queries') or [])}",
+        )
 
     if entry.get("conversation"):
         conv_rel = str(entry.get("conversation_scenario") or "")
         conv = run_conversation(example_dir, conv_rel, base_url)
-        if conv.get("skipped"):
-            report["checks"].append({"id": "conversation", "status": "skipped", "summary": conv.get("reason", "no scenario")})
-        else:
-            passed = bool(conv.get("passed")) and conv.get("exit_code", 1) == 0
-            report["checks"].append({
-                "id": "conversation.e2e",
-                "status": "passed" if passed else "failed",
-                "summary": f"conversation_id={conv.get('conversation_id')} status={conv.get('status')}",
-                "transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md"),
-            })
+        _append_trace_check(
+            report,
+            check_id="conversation.e2e",
+            trace=conv,
+            summary=f"conversation_id={conv.get('conversation_id')} status={conv.get('status')}",
+            extra={"transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md")},
+        )
+        if not conv.get("skipped"):
             report["conversation"] = {
                 "conversation_id": conv.get("conversation_id"),
                 "status": conv.get("status"),
                 "errors": conv.get("errors"),
                 "validations": conv.get("validations"),
             }
-            if not passed:
-                report["passed"] = False
 
         if run_llm and entry.get("conversation_scenario_llm") and os.environ.get("OPENROUTER_API_KEY"):
-            llm_rel = str(entry["conversation_scenario_llm"])
-            llm_conv = run_conversation(example_dir, llm_rel, base_url)
-            passed = bool(llm_conv.get("passed")) and llm_conv.get("exit_code", 1) == 0
-            report["checks"].append({
-                "id": "conversation.llm",
-                "status": "passed" if passed else "failed",
-                "summary": f"LLM dialog status={llm_conv.get('status')}",
-                "transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md"),
-            })
-            if not passed:
-                report["passed"] = False
+            llm_conv = run_conversation(example_dir, str(entry["conversation_scenario_llm"]), base_url)
+            _append_trace_check(
+                report,
+                check_id="conversation.llm",
+                trace=llm_conv,
+                summary=f"LLM dialog status={llm_conv.get('status')}",
+                extra={"transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md")},
+            )
 
-    profile_validations = entry.get("validations") or []
-    if profile_validations:
-        from nlp2dsl_sdk.validation.profile_checks import response_from_e2e_trace, run_validations_from_raw
-
-        last_response: dict[str, Any] = {}
-        conv_trace_path = example_dir / ".nlp2dsl" / "conversation.trace.json"
-        exec_trace_path = example_dir / ".nlp2dsl" / "execution.trace.json"
-        if conv_trace_path.is_file():
-            try:
-                last_response = response_from_e2e_trace(
-                    json.loads(conv_trace_path.read_text(encoding="utf-8"))
-                )
-            except json.JSONDecodeError:
-                pass
-        if not last_response and exec_trace_path.is_file():
-            try:
-                last_response = response_from_e2e_trace(
-                    json.loads(exec_trace_path.read_text(encoding="utf-8"))
-                )
-            except json.JSONDecodeError:
-                pass
-
-        pv_results = run_validations_from_raw(
-            profile_validations,
-            last_response,
-            example_dir=example_dir,
-        )
-        pv_passed = all(r.get("passed") for r in pv_results)
-        report["checks"].append({
-            "id": "profile.validations",
-            "status": "passed" if pv_passed else "failed",
-            "summary": f"{sum(1 for r in pv_results if r.get('passed'))}/{len(pv_results)} profile checks",
-            "validations": pv_results,
-        })
-        report["profile_validations"] = pv_results
-        if not pv_passed:
-            report["passed"] = False
+    if profile_validations := entry.get("validations") or []:
+        _check_profile_validations(report, example_dir, profile_validations)
 
     report["status"] = "passed" if report["passed"] else "failed"
     return report

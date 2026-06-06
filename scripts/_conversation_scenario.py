@@ -115,7 +115,7 @@ def check_expect(response: dict[str, Any], expect: dict[str, Any]) -> tuple[bool
 
 
 def run_validation(v: dict[str, Any], last_response: dict[str, Any]) -> dict[str, Any]:
-    from nlp2dsl_sdk.validation.profile_checks import (
+    from dsl_validate.profile_checks import (
         ProfileCheckContext,
         parse_profile_validation,
         run_profile_validation_checks,
@@ -133,8 +133,8 @@ def prepare_doql_context(scenario_path: Path, scenario: dict[str, Any]) -> None:
     doql_rel = scenario.get("doql_context")
     if not doql_rel:
         return
-    from nlp2dsl_sdk.artifacts import collect_environment
-    from nlp2dsl_sdk.doql_context import collect_task_context, write_doql_context
+    from nlp2dsl_artifacts import collect_environment
+    from env2llm.doql_context import collect_task_context, write_doql_context
 
     example_dir = scenario_path.parent.parent
     doql_path = (scenario_path.parent / str(doql_rel)).resolve()

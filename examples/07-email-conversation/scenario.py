@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from nlp2dsl_sdk.client import ConversationFlow, NLP2DSLClient
-from nlp2dsl_sdk.conversation_artifacts import write_conversation_artifacts
+from testql_conversations.artifacts import write_conversation_artifacts
 from nlp2dsl_sdk.preview import ensure_services, preview_text_examples
 
 

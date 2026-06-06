@@ -1,13 +1,11 @@
-"""Worker attachment validation — SDK validation adapter (B1)."""
+"""Worker attachment validation (lightweight — no dsl_validate in slim Docker image)."""
 
 from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
 
-from nlp2dsl_sdk.validation.issue import Phase
 from path_resolve import resolve_worker_attachment_path
-from step_validator import validate_step_config_issues
 
 
 def build_attachment_validation(
@@ -16,32 +14,26 @@ def build_attachment_validation(
     action: str = "send_invoice",
     config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Resolve + validate attachment via SDK step validation (POST_EXECUTE phase)."""
     raw = str(raw_path or "").strip()
     if not raw:
         return {"path": "", "resolved": "", "status": "skipped", "issues": []}
 
     resolved = resolve_worker_attachment_path(raw)
-    cfg = dict(config or {})
-    cfg.setdefault("attachment_path", raw)
-    step_issues = validate_step_config_issues(action, cfg, phase=Phase.POST_EXECUTE)
-    attachment_issues = [
-        i.to_legacy_message()
-        for i in step_issues
-        if i.field_name == "attachment_path" or i.code.startswith("attachment.")
-    ]
-
+    issues: list[str] = []
     status = "ok"
-    if not Path(resolved).is_file():
-        status = "missing"
-        if not any("nie istnieje" in i for i in attachment_issues):
-            attachment_issues.append(f"attachment_path: plik nie istnieje: {raw}")
-    elif attachment_issues:
-        status = "invalid"
+    resolved_path = Path(resolved)
 
-    return {"path": raw, "resolved": resolved, "status": status, "issues": attachment_issues}
+    if not resolved_path.is_file():
+        status = "missing"
+        issues.append(f"attachment_path: plik nie istnieje: {raw}")
+    elif action == "send_invoice" and resolved_path.suffix.lower() == ".pdf":
+        header = resolved_path.read_bytes()[:5]
+        if header != b"%PDF-":
+            status = "invalid"
+            issues.append("attachment_path: oczekiwany binarny PDF (%PDF-)")
+
+    return {"path": raw, "resolved": resolved, "status": status, "issues": issues}
 
 
 def validate_invoice_attachment(raw_path: str, config: dict[str, Any]) -> dict[str, Any]:
-    """Backward-compatible wrapper for send_invoice attachment checks."""
     return build_attachment_validation(raw_path, action="send_invoice", config=config)

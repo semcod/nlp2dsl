@@ -107,7 +107,7 @@ def _health() -> int:
 
 def _run_with_doql(client: Any, query: str, *, execute: bool) -> dict[str, Any]:
     """Chat/start with DOQL inline — autofill, reflection, generate_invoice loop."""
-    from .doql_context import load_doql_inline_from_env, resolve_doql_context_path
+    from env2llm.doql_context import load_doql_inline_from_env, resolve_doql_context_path
 
     ex_dir = _detect_example_dir()
     if ex_dir:

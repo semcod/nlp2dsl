@@ -13,6 +13,7 @@ from fastapi import APIRouter, HTTPException, Request
 from httpx import AsyncClient
 from starlette.responses import StreamingResponse
 
+from app.audit import build_audit_entries
 from app.engine import NLP_SERVICE_URL, _repo, run_workflow, start_workflow
 from app.action_catalog import fetch_action_catalog
 from app.dsl_validation import dsl_validation_response, validate_dsl_for_execution
@@ -108,6 +109,23 @@ async def get_history() -> list[dict]:
     return await _repo.list_runs()
 
 
+@router.get("/audit")
+async def get_workflow_audit(
+    limit: int = 50,
+    offset: int = 0,
+    agent_id: str | None = None,
+    action: str | None = None,
+) -> dict[str, Any]:
+    """Audit trail: recent workflow runs with action and event summaries."""
+    return await build_audit_entries(
+        _repo,
+        limit=min(max(limit, 1), 200),
+        offset=max(offset, 0),
+        agent_id=agent_id,
+        action=action,
+    )
+
+
 @router.get("/history/{workflow_id}")
 async def get_workflow(workflow_id: str) -> dict[str, Any]:
     """Zwraca szczegóły konkretnego workflow."""
@@ -188,7 +206,7 @@ async def stream_workflow(workflow_id: str, request: Request) -> StreamingRespon
 @router.get("/catalog/drift")
 async def workflow_catalog_drift() -> dict[str, Any]:
     """Preflight diagnostics: nlp-service catalog vs worker handler registry."""
-    from nlp2dsl_sdk.validation.contract_drift import build_catalog_drift_report
+    from dsl_validate.contract_drift import build_catalog_drift_report
 
     try:
         async with AsyncClient(
@@ -487,3 +505,12 @@ async def clear_idempotency_store() -> dict[str, str]:
     """Dev/CI helper — drop cached idempotency records before example runs."""
     await idempotency_store.clear()
     return {"status": "cleared"}
+
+
+@router.post("/idempotency/purge")
+async def purge_expired_idempotency(body: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Remove idempotency records older than ttl_seconds (default 7 days)."""
+    payload = body or {}
+    ttl_seconds = int(payload.get("ttl_seconds") or os.getenv("NLP2DSL_IDEMPOTENCY_TTL", "604800"))
+    deleted = await idempotency_store.purge_expired(ttl_seconds)
+    return {"status": "purged", "deleted": deleted, "ttl_seconds": ttl_seconds}

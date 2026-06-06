@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from nlp2dsl_sdk.contracts.registry import contract_from_registry_entry
-from nlp2dsl_sdk.system_map_ir import ProcessAccessScopeIR, ProcessPolicyIR
-from nlp2dsl_sdk.validation.capability_policy import (
+from dsl_contracts.registry import contract_from_registry_entry
+from env2llm.ir import ProcessAccessScopeIR, ProcessPolicyIR
+from dsl_validate.capability_policy import (
     ExecutionPolicyContext,
     validate_capability_policy,
 )

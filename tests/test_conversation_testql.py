@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from nlp2dsl_sdk.conversation_testql import (
+from testql_conversations.validate import (
     _endpoints_from_text,
     validate_conversation_scenario,
     validate_conversation_scenario_text,

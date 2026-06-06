@@ -31,7 +31,7 @@ def run_scenario(
     wait_health_flag: bool = True,
 ) -> dict:
     from nlp2dsl_sdk.client import ConversationFlow, NLP2DSLClient
-    from nlp2dsl_sdk.conversation_artifacts import write_conversation_artifacts
+    from testql_conversations.artifacts import write_conversation_artifacts
 
     scenario = load_yaml(scenario_path)
     example_dir = scenario_path.parent.parent

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from nlp2dsl_sdk.validation.contract_drift import (
+from dsl_validate.contract_drift import (
     build_catalog_drift_report,
     validate_catalog_field_drift,
     validate_handler_drift,

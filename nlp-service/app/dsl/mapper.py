@@ -108,6 +108,57 @@ def _resolve_actions(intent: str) -> list[str]:
     return []
 
 
+def _entity_value(field: str, entities_dict: dict, field_mapping: dict[str, str]):
+    value = entities_dict.get(field)
+    if value is None:
+        value = entities_dict.get(field_mapping.get(field, field))
+    return value
+
+
+def _fill_required_config(
+    action: str,
+    entities_dict: dict,
+    *,
+    required: list[str],
+    defaults: dict,
+    field_mapping: dict[str, str],
+) -> tuple[dict, list[str]]:
+    config: dict = {}
+    missing: list[str] = []
+    for field in required:
+        value = _entity_value(field, entities_dict, field_mapping)
+        if value is None:
+            missing.append(field)
+        else:
+            config[field] = value
+    for field, default in defaults.items():
+        value = _entity_value(field, entities_dict, field_mapping)
+        config[field] = value if value is not None else default
+    return config, missing
+
+
+def _enrich_send_email_config(config: dict, entities_dict: dict) -> None:
+    if entities_dict.get("email_to"):
+        config["to"] = entities_dict["email_to"]
+    if str(config.get("body", "")).strip():
+        return
+    report_type = entities_dict.get("report_type")
+    if report_type:
+        config["body"] = f"W załączeniu przesyłamy raport {report_type}."
+    elif entities_dict.get("amount"):
+        config["body"] = (
+            f"Faktura na kwotę {entities_dict['amount']} "
+            f"{entities_dict.get('currency', 'PLN')} została wystawiona."
+        )
+
+
+def _append_quality_missing(action: str, config: dict, missing: list[str]) -> None:
+    for field in get_quality_required_fields(action):
+        value = config.get(field)
+        if value is None or (isinstance(value, str) and not value.strip()):
+            missing.append(field)
+
+
 def _build_config(action: str, entities: NLPEntities) -> tuple[dict, list[str]]:
     """Build config dict for action from entities. Returns (config, missing_fields)."""
     from app.conversation.system_map import required_fields_for_action
@@ -115,57 +166,23 @@ def _build_config(action: str, entities: NLPEntities) -> tuple[dict, list[str]]:
     required = required_fields_for_action(action) or get_required_fields(action)
     defaults = get_defaults(action)
     entities_dict = entities.model_dump(exclude_none=True)
-
-    config = {}
-    missing = []
-
-    # Map entity fields to config
     field_mapping = _get_field_mapping(action)
 
-    for field in required:
-        # Try direct match
-        value = entities_dict.get(field)
-
-        # Try mapped name
-        if value is None:
-            mapped_field = field_mapping.get(field, field)
-            value = entities_dict.get(mapped_field)
-
-        if value is None:
-            missing.append(field)
-        else:
-            config[field] = value
-
-    # Add optional fields with defaults
-    for field, default in defaults.items():
-        mapped_field = field_mapping.get(field, field)
-        value = entities_dict.get(field)
-        if value is None:
-            value = entities_dict.get(mapped_field)
-        config[field] = value if value is not None else default
+    config, missing = _fill_required_config(
+        action,
+        entities_dict,
+        required=required,
+        defaults=defaults,
+        field_mapping=field_mapping,
+    )
 
     if action == "send_email":
-        if entities_dict.get("email_to"):
-            config["to"] = entities_dict["email_to"]
-        if not str(config.get("body", "")).strip():
-            report_type = entities_dict.get("report_type")
-            if report_type:
-                config["body"] = f"W załączeniu przesyłamy raport {report_type}."
-            elif entities_dict.get("amount"):
-                config["body"] = (
-                    f"Faktura na kwotę {entities_dict['amount']} "
-                    f"{entities_dict.get('currency', 'PLN')} została wystawiona."
-                )
-
-    if action.startswith("notify_") and not str(config.get("message", "")).strip():
-        auto_msg = _auto_notify_message(config, entities_dict)
-        if auto_msg:
+        _enrich_send_email_config(config, entities_dict)
+    elif action.startswith("notify_") and not str(config.get("message", "")).strip():
+        if auto_msg := _auto_notify_message(config, entities_dict):
             config["message"] = auto_msg
 
-    for field in get_quality_required_fields(action):
-        value = config.get(field)
-        if value is None or (isinstance(value, str) and not value.strip()):
-            missing.append(field)
+    _append_quality_missing(action, config, missing)
 
     if action == "send_invoice" and entities_dict.get("_doql_attachment_required"):
         if not str(config.get("attachment_path", "")).strip():

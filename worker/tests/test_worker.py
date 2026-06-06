@@ -76,6 +76,7 @@ class TestExecuteActions:
         data = resp.json()
         assert data["status"] == "completed"
         assert data["result"]["sent_to"] == "user@example.com"
+        assert data["result"].get("transport") in {"simulated", "smtp"}
 
     @pytest.mark.asyncio
     async def test_execute_generate_report(self, client: AsyncClient) -> None:

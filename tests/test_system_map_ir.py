@@ -5,19 +5,19 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from nlp2dsl_sdk.doql_context import collect_task_context
-from nlp2dsl_sdk.system_map_bridge import doql_file_to_system_map, task_context_to_system_map
-from nlp2dsl_sdk.system_map_generator import generate_system_map
-from nlp2dsl_sdk.system_map_ir import (
+from env2llm.doql_context import collect_task_context
+from env2llm.bridge import doql_file_to_system_map, task_context_to_system_map
+from env2llm.generate import generate_system_map
+from env2llm.ir import (
     CommandSchemaIR,
     FieldSpec,
     MimeTypeSpec,
     RuntimeSpecIR,
     SystemMapIR,
 )
-from nlp2dsl_sdk.system_map_models import command_input_model, validate_config_against_map
-from nlp2dsl_sdk.system_map_render import render_system_map_doql
-from nlp2dsl_sdk.system_map_runtimes import build_runtimes_for_example, resolve_command_runtime
+from env2llm.system_map_models import command_input_model, validate_config_against_map
+from env2llm.render.doql import render_system_map_doql
+from env2llm.runtimes import build_runtimes_for_example, resolve_command_runtime
 
 
 def test_system_map_validate_step_config() -> None:

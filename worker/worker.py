@@ -131,11 +131,38 @@ async def handle_generate_invoice(config: dict) -> dict:
 
 @action("send_email")
 async def handle_send_email(config: dict) -> dict:
-    log.info("📧 Sending email → %s, subject: '%s'",
-             config.get("to", "?"), config.get("subject", "?"))
+    to_addr = str(config.get("to") or "").strip()
+    subject = str(config.get("subject") or "Automatyczna wiadomość")
+    body = str(config.get("body") or "Wiadomość wygenerowana automatycznie.")
+    attachment = config.get("attachment_path") or config.get("attachment")
+
+    log.info("📧 Sending email → %s, subject: '%s'", to_addr or "?", subject)
+
+    try:
+        from worker.connectors.smtp import SmtpConfig, send_smtp_message
+    except ImportError:
+        from connectors.smtp import SmtpConfig, send_smtp_message
+
+    smtp_cfg = SmtpConfig.from_env()
+    if smtp_cfg is not None and to_addr:
+        result = await asyncio.to_thread(
+            send_smtp_message,
+            to=to_addr,
+            subject=subject,
+            body=body,
+            attachment_path=str(attachment) if attachment else None,
+            config=smtp_cfg,
+        )
+        log.info("✅ Email sent via SMTP (%s:%s)", smtp_cfg.host, smtp_cfg.port)
+        return result
+
     await asyncio.sleep(0.3)
-    log.info("✅ Email sent")
-    return {"sent_to": config.get("to"), "subject": config.get("subject")}
+    log.info("✅ Email sent (simulated — set SMTP_HOST for real delivery)")
+    return {
+        "sent_to": to_addr,
+        "subject": subject,
+        "transport": "simulated",
+    }
 
 
 @action("generate_report")

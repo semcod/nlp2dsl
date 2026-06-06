@@ -7,9 +7,9 @@ from typing import Any
 from app.conversation.system_map import get_doql_context, known_action_names
 from app.registry import get_quality_required_fields, get_required_fields
 from app.validation.path_resolve import resolve_attachment_path
-from nlp2dsl_sdk.validation.context import ValidationContext
-from nlp2dsl_sdk.validation.issue import Phase, ValidationIssue, issues_to_messages
-from nlp2dsl_sdk.validation.rules.step_config import validate_step
+from dsl_validate.context import ValidationContext
+from dsl_validate.issue import Phase, ValidationIssue, issues_to_messages
+from dsl_validate.rules.step_config import validate_step
 
 
 class StepValidationError(Exception):

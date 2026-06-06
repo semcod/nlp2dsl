@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 MULLM_ACTIONS = frozenset(
     {
@@ -15,6 +15,8 @@ MULLM_ACTIONS = frozenset(
     }
 )
 
+_ActionFields = tuple[str, str, str]  # title, description, shell_command
+
 
 def is_mullm_action(action: str) -> bool:
     return str(action or "").startswith("mullm_") or action in MULLM_ACTIONS
@@ -23,6 +25,71 @@ def is_mullm_action(action: str) -> bool:
 def _cfg(step: dict[str, Any]) -> dict[str, Any]:
     raw = step.get("config") or step.get("parameters") or {}
     return dict(raw) if isinstance(raw, dict) else {}
+
+
+def _shell_task_fields(cfg: dict[str, Any], *, title: str, description: str, shell_command: str) -> _ActionFields:
+    shell = shell_command or str(cfg.get("script") or "")
+    desc = str(cfg.get("description") or f"Shell task: {shell[:120]}")
+    return title, desc, shell
+
+
+def _browser_task_fields(cfg: dict[str, Any], *, title: str, description: str, shell_command: str) -> _ActionFields:
+    url = str(cfg.get("url") or "")
+    instructions = str(cfg.get("instructions") or cfg.get("goal") or description)
+    desc = f"Browser task\nURL: {url}\n{instructions}".strip()
+    return title, desc, shell_command
+
+
+def _db_query_fields(cfg: dict[str, Any], *, title: str, description: str, shell_command: str) -> _ActionFields:
+    query = str(cfg.get("query") or cfg.get("sql") or "")
+    engine = str(cfg.get("engine") or cfg.get("dialect") or "sql")
+    desc = f"DB query ({engine}): {query or description}"
+    shell = shell_command or query
+    return title, desc, shell
+
+
+def _select_agent_fields(cfg: dict[str, Any], *, title: str, description: str, shell_command: str) -> _ActionFields:
+    role = str(cfg.get("preferred_role") or cfg.get("role") or "")
+    desc = str(
+        cfg.get("description")
+        or f"Select agent role={role} source={cfg.get('source', 'nlp2dsl')}"
+    )
+    return title, desc, shell_command
+
+
+def _delegate_fields(cfg: dict[str, Any], *, title: str, description: str, shell_command: str) -> _ActionFields:
+    desc = str(cfg.get("description") or cfg.get("objective") or title)
+    return title, desc, shell_command
+
+
+_ACTION_FIELD_BUILDERS: dict[str, Callable[..., _ActionFields]] = {
+    "mullm_shell_task": _shell_task_fields,
+    "mullm_browser_task": _browser_task_fields,
+    "mullm_db_query": _db_query_fields,
+    "mullm_select_agent": _select_agent_fields,
+    "mullm_delegate": _delegate_fields,
+}
+
+
+def _resolve_action_fields(
+    action: str,
+    cfg: dict[str, Any],
+    *,
+    title: str,
+    description: str,
+    shell_command: str,
+) -> _ActionFields:
+    builder = _ACTION_FIELD_BUILDERS.get(action)
+    if builder is None:
+        return title, description, shell_command
+    return builder(cfg, title=title, description=description, shell_command=shell_command)
+
+
+def _parse_auto_assign(cfg: dict[str, Any]) -> bool:
+    auto_assign = cfg.get("auto_assign", True)
+    if isinstance(auto_assign, str):
+        return auto_assign.lower() not in {"false", "0", "no"}
+    return bool(auto_assign)
 
 
 def build_task_payload(
@@ -39,40 +106,22 @@ def build_task_payload(
     description = str(cfg.get("description") or cfg.get("prompt") or title)
     shell_command = str(cfg.get("shell_command") or cfg.get("command") or "").strip()
 
-    if action == "mullm_shell_task":
-        shell_command = shell_command or str(cfg.get("script") or "")
-        description = str(cfg.get("description") or f"Shell task: {shell_command[:120]}")
-    elif action == "mullm_browser_task":
-        url = str(cfg.get("url") or "")
-        instructions = str(cfg.get("instructions") or cfg.get("goal") or description)
-        description = f"Browser task\nURL: {url}\n{instructions}".strip()
-    elif action == "mullm_db_query":
-        query = str(cfg.get("query") or cfg.get("sql") or "")
-        engine = str(cfg.get("engine") or cfg.get("dialect") or "sql")
-        description = f"DB query ({engine}): {query or description}"
-        if not shell_command and query:
-            shell_command = query
-    elif action == "mullm_select_agent":
-        role = str(cfg.get("preferred_role") or cfg.get("role") or "")
-        description = str(
-            cfg.get("description")
-            or f"Select agent role={role} source={cfg.get('source', 'nlp2dsl')}"
-        )
-    elif action == "mullm_delegate":
-        description = str(cfg.get("description") or cfg.get("objective") or title)
-
-    preferred_role = cfg.get("preferred_role") or cfg.get("role")
-    auto_assign = cfg.get("auto_assign", True)
-    if isinstance(auto_assign, str):
-        auto_assign = auto_assign.lower() not in {"false", "0", "no"}
+    title, description, shell_command = _resolve_action_fields(
+        action,
+        cfg,
+        title=title,
+        description=description,
+        shell_command=shell_command,
+    )
 
     payload: dict[str, Any] = {
         "title": title[:500],
         "description": description[:4000],
         "shell_command": shell_command[:8000],
         "source": str(cfg.get("source") or "nlp2dsl"),
-        "auto_assign": bool(auto_assign),
+        "auto_assign": _parse_auto_assign(cfg),
     }
+    preferred_role = cfg.get("preferred_role") or cfg.get("role")
     if preferred_role:
         payload["preferred_role"] = str(preferred_role)
     if workflow_id:

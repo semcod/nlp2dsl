@@ -180,6 +180,47 @@ def _attach_reflection(resp: ConversationResponse, state: ConversationState, pha
     return resp
 
 
+def _finalize_turn(
+    resp: ConversationResponse,
+    state: ConversationState,
+    decision: IntentDecision,
+    *,
+    phase: str,
+) -> ConversationResponse:
+    return _attach_reflection(
+        _attach_autofill(_attach_routing(resp, decision), state),
+        state,
+        phase,
+    )
+
+
+def _deny_unresolved_intent(
+    state: ConversationState,
+    decision: IntentDecision,
+) -> ConversationResponse:
+    msg = deny_message(decision)
+    state.history.append({"role": "assistant", "text": msg})
+    return _attach_routing(
+        ConversationResponse(
+            conversation_id=state.id,
+            status="in_progress",
+            message=msg,
+        ),
+        decision,
+    )
+
+
+def _apply_sync_auto_execute(
+    response: ConversationResponse,
+    ctx,
+) -> None:
+    if not (ctx and ctx.sync_auto_execute and response.status == "ready"):
+        return
+    response.auto_execute = True
+    if "sync_auto_execute" not in (response.message or ""):
+        response.message = (response.message or "") + "\n(sync_auto_execute — backend wykona workflow)"
+
+
 def _slot_fill_decision(state: ConversationState) -> IntentDecision:
     intent = state.intent or "unknown"
     return IntentDecision(
@@ -219,29 +260,17 @@ async def _try_slot_fill_followup(
     if auto.response:
         await observe_turn(state, phase="dsl_ready")
         phase = "dsl_ready" if auto.response.status == "ready" else "validation_failed"
-        return _attach_reflection(
-            _attach_autofill(_attach_routing(auto.response, decision), state),
-            state,
-            phase,
-        )
+        return _finalize_turn(auto.response, state, decision, phase=phase)
 
     dsl_response = await build_and_check_dsl(state)
     if dsl_response:
         await observe_turn(state, phase="dsl_ready")
         phase = "dsl_ready" if dsl_response.status == "ready" else "validation_failed"
-        return _attach_reflection(
-            _attach_autofill(_attach_routing(dsl_response, decision), state),
-            state,
-            phase,
-        )
+        return _finalize_turn(dsl_response, state, decision, phase=phase)
 
     incomplete = await build_incomplete_response(state)
     await observe_turn(state, phase="incomplete")
-    return _attach_reflection(
-        _attach_autofill(_attach_routing(incomplete, decision), state),
-        state,
-        "incomplete",
-    )
+    return _finalize_turn(incomplete, state, decision, phase="incomplete")
 
 
 async def _process_message(state: ConversationState, text: str) -> ConversationResponse:
@@ -266,68 +295,32 @@ async def _process_message(state: ConversationState, text: str) -> ConversationR
     )
 
     if nlp is None:
-        msg = deny_message(decision)
-        state.history.append({"role": "assistant", "text": msg})
-        return _attach_routing(
-            ConversationResponse(
-                conversation_id=state.id,
-                status="in_progress",
-                message=msg,
-            ),
-            decision,
-        )
+        return _deny_unresolved_intent(state, decision)
 
     merge_into_state(state, nlp)
 
     blocked = await preflight_turn(state, decision)
     if blocked:
-        return _attach_reflection(_attach_routing(blocked, decision), state, "preflight_blocked")
+        return _finalize_turn(blocked, state, decision, phase="preflight_blocked")
 
     auto = await autonomous_resolve_turn(state)
     if auto.response:
         await observe_turn(state, phase="dsl_ready")
         phase = "dsl_ready" if auto.response.status == "ready" else "validation_failed"
-        ctx = load_context_for_state(state)
-        if ctx and ctx.sync_auto_execute and auto.response.status == "ready":
-            auto.response.auto_execute = True
-            if "sync_auto_execute" not in (auto.response.message or ""):
-                auto.response.message = (auto.response.message or "") + "\n(sync_auto_execute — backend wykona workflow)"
-        return _attach_reflection(
-            _attach_autofill(_attach_routing(auto.response, decision), state),
-            state,
-            phase,
-        )
+        _apply_sync_auto_execute(auto.response, load_context_for_state(state))
+        return _finalize_turn(auto.response, state, decision, phase=phase)
 
-    unknown_response = handle_unknown_intent(state)
-    if unknown_response:
-        return _attach_reflection(
-            _attach_autofill(_attach_routing(unknown_response, decision), state),
-            state,
-            "unknown_intent",
-        )
+    if unknown_response := handle_unknown_intent(state):
+        return _finalize_turn(unknown_response, state, decision, phase="unknown_intent")
 
-    system_response = handle_system_action(state)
-    if system_response:
-        return _attach_reflection(
-            _attach_autofill(_attach_routing(system_response, decision), state),
-            state,
-            "system_action",
-        )
+    if system_response := handle_system_action(state):
+        return _finalize_turn(system_response, state, decision, phase="system_action")
 
-    dsl_response = await build_and_check_dsl(state)
-    if dsl_response:
+    if dsl_response := await build_and_check_dsl(state):
         await observe_turn(state, phase="dsl_ready")
         phase = "dsl_ready" if dsl_response.status == "ready" else "validation_failed"
-        return _attach_reflection(
-            _attach_autofill(_attach_routing(dsl_response, decision), state),
-            state,
-            phase,
-        )
+        return _finalize_turn(dsl_response, state, decision, phase=phase)
 
     incomplete = await build_incomplete_response(state)
     await observe_turn(state, phase="incomplete")
-    return _attach_reflection(
-        _attach_autofill(_attach_routing(incomplete, decision), state),
-        state,
-        "incomplete",
-    )
+    return _finalize_turn(incomplete, state, decision, phase="incomplete")

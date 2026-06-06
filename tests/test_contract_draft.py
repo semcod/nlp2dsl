@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from nlp2dsl_sdk.contracts.draft import (
+from dsl_contracts.draft import (
     ContractDraft,
     active_draft_contracts,
     draft_ready_for_activation,

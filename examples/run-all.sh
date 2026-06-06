@@ -20,9 +20,13 @@ else
   PY="${PYTHON:-python3}"
 fi
 
-echo "==> Installing env2llm + packages + nlp2dsl SDK (editable)..."
-PYTHON="$PY" bash "$ROOT/scripts/install-local-deps.sh"
-"$PY" -m pip install -e . -q
+if ! "$PY" -c "import env2llm, dsl_contracts, dsl_validate, nlp2dsl_sdk" 2>/dev/null; then
+  echo "==> Installing env2llm + packages + nlp2dsl SDK (editable)..."
+  PYTHON="$PY" bash "$ROOT/scripts/install-local-deps.sh"
+  "$PY" -m pip install -e . -q
+else
+  echo "==> SDK deps OK (skip reinstall)"
+fi
 
 failed=0
 for dir in "$ROOT"/examples/*/; do

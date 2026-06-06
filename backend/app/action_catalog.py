@@ -8,7 +8,7 @@ from typing import Any
 from httpx import AsyncClient, Client
 
 from app.schemas import ActionInfo
-from nlp2dsl_sdk.contracts import (
+from dsl_contracts import (
     action_contracts_from_catalog,
     action_info_config_schema,
     known_action_names,

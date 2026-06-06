@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nlp2dsl_sdk.doql_context import load_doql_context
-from nlp2dsl_sdk.doql_registry import merge_execution_observation, merge_registry_observations, refresh_doql_registry
-from nlp2dsl_sdk.system_map_generator import generate_system_map
-from nlp2dsl_sdk.system_map_render import render_system_map_doql
+from env2llm.doql_context import load_doql_context
+from env2llm.registry import merge_execution_observation, merge_registry_observations, refresh_doql_registry
+from env2llm.generate import generate_system_map
+from env2llm.render.doql import render_system_map_doql
 
 
 def test_refresh_merges_entities(tmp_path: Path) -> None:

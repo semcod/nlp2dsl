@@ -98,33 +98,49 @@ def _has_attachment_signal(result: dict[str, Any], missing: list[str]) -> bool:
     return any("attachment" in item.lower() for item in missing)
 
 
+def _classify_success(case: GoldenCase, status: str, actions: list[str], missing: list[str]) -> OutcomeClass | None:
+    if status != case.expected_status or not _actions_match(case.expected_actions, actions):
+        return None
+    if case.expected_status == "incomplete" and not _missing_match(case.expected_missing, missing):
+        return "entity_extraction"
+    return "success"
+
+
+def _classify_safety(case: GoldenCase, status: str) -> OutcomeClass | None:
+    if case.expected_status in {"validation_failed", "incomplete"} and status == "executed":
+        return "unsafe_execution_block"
+    if case.expected_status == "complete" and status == "validation_failed":
+        return "unsafe_execution_block"
+    return None
+
+
+def _classify_clarification(case: GoldenCase, status: str) -> OutcomeClass | None:
+    if case.expected_status == "complete" and status == "incomplete":
+        if case.focus == "unnecessary_clarification":
+            return "unnecessary_clarification"
+        return "entity_extraction"
+    if case.expected_status == "incomplete" and status == "complete":
+        return "unnecessary_clarification"
+    return None
+
+
 def classify_outcome(case: GoldenCase, result: dict[str, Any]) -> OutcomeClass:
     """Map a failed case to a regression error class."""
     status = str(result.get("status") or "error")
     actions = extract_actions(result)
     missing = extract_missing(result)
 
-    if status == case.expected_status and _actions_match(case.expected_actions, actions):
-        if case.expected_status == "incomplete" and not _missing_match(case.expected_missing, missing):
-            return "entity_extraction"
-        return "success"
+    if outcome := _classify_success(case, status, actions, missing):
+        return outcome
 
     if case.focus == "attachment_validation" or _has_attachment_signal(result, missing):
         return "attachment_validation"
 
-    if case.expected_status in {"validation_failed", "incomplete"} and status == "executed":
-        return "unsafe_execution_block"
+    if outcome := _classify_safety(case, status):
+        return outcome
 
-    if case.expected_status == "complete" and status == "validation_failed":
-        return "unsafe_execution_block"
-
-    if case.expected_status == "complete" and status == "incomplete":
-        if case.focus == "unnecessary_clarification":
-            return "unnecessary_clarification"
-        return "entity_extraction"
-
-    if case.expected_status == "incomplete" and status == "complete":
-        return "unnecessary_clarification"
+    if outcome := _classify_clarification(case, status):
+        return outcome
 
     if not _actions_match(case.expected_actions, actions):
         return "dsl_mapping"

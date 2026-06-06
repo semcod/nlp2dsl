@@ -5,12 +5,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Mapping
 
-from .doql_context import resolve_doql_context_path
-from .path_resolve import resolve_attachment_path
-from .validation.context import ValidationContext
-from .validation.helpers import parse_amount
-from .validation.issue import Phase, issues_to_messages
-from .validation.rules.attachment import validate_attachment_path
+from env2llm.doql_context import resolve_doql_context_path
+from dsl_validate.path_resolve import resolve_attachment_path
+from dsl_validate.context import ValidationContext
+from dsl_validate.helpers import parse_amount
+from dsl_validate.issue import Phase, issues_to_messages
+from dsl_validate.rules.attachment import validate_attachment_path
 
 
 def format_attachment_validation(payload: Mapping[str, Any] | None) -> str | None:

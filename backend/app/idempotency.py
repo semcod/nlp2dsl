@@ -7,7 +7,7 @@ import hashlib
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from collections.abc import Mapping
 from typing import Any, Literal
 
@@ -45,6 +45,10 @@ class IdempotencyStore:
         raise NotImplementedError
 
     async def clear(self) -> None:
+        raise NotImplementedError
+
+    async def purge_expired(self, ttl_seconds: int) -> int:
+        """Remove records older than ttl_seconds. Returns deleted count."""
         raise NotImplementedError
 
 
@@ -87,6 +91,20 @@ class MemoryIdempotencyStore(IdempotencyStore):
     async def clear(self) -> None:
         async with self._lock:
             self._records.clear()
+
+    async def purge_expired(self, ttl_seconds: int) -> int:
+        cutoff = datetime.now(UTC) - timedelta(seconds=max(0, int(ttl_seconds)))
+        async with self._lock:
+            expired: list[str] = []
+            for key, record in self._records.items():
+                updated = record.updated_at
+                if updated.tzinfo is None:
+                    updated = updated.replace(tzinfo=UTC)
+                if updated < cutoff:
+                    expired.append(key)
+            for key in expired:
+                del self._records[key]
+            return len(expired)
 
 
 class Base(DeclarativeBase):
@@ -206,6 +224,16 @@ class PostgresIdempotencyStore(IdempotencyStore):
         async with self._get_session_factory()() as session:
             await session.execute(delete(IdempotencyRecordModel))
             await session.commit()
+
+    async def purge_expired(self, ttl_seconds: int) -> int:
+        await self._ensure_tables()
+        cutoff = (datetime.now(UTC) - timedelta(seconds=max(0, int(ttl_seconds)))).replace(tzinfo=None)
+        async with self._get_session_factory()() as session:
+            result = await session.execute(
+                delete(IdempotencyRecordModel).where(IdempotencyRecordModel.updated_at < cutoff)
+            )
+            await session.commit()
+            return int(result.rowcount or 0)
 
     async def close(self) -> None:
         if self._engine is not None:

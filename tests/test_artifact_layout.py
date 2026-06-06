@@ -4,14 +4,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nlp2dsl_sdk.artifact_layout import (
+from env2llm.layout import (
     clean_artifact_root,
     ensure_layout,
     resolve_registry_path,
     write_registry,
     write_turn_snapshot,
 )
-from nlp2dsl_sdk.doql_registry import refresh_doql_registry
+from env2llm.registry import refresh_doql_registry
 
 
 def test_clean_artifact_root_preserves_fixtures_and_scenarios(tmp_path: Path) -> None:
@@ -57,7 +57,7 @@ def test_resolve_registry_path_prefers_registry(tmp_path: Path, monkeypatch) -> 
 
 
 def test_write_environment_doql_uses_registry(tmp_path: Path) -> None:
-    from nlp2dsl_sdk.artifacts import write_environment_doql
+    from nlp2dsl_artifacts import write_environment_doql
 
     ex = tmp_path / "01-invoice"
     root = ex / ".nlp2dsl"

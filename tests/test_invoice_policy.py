@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from nlp2dsl_sdk.invoice_policy import apply_invoice_context, apply_invoice_policies, is_invoice_example
-from nlp2dsl_sdk.doql_context import DoqlTaskContext, collect_task_context
-from nlp2dsl_sdk.system_map_ir import SystemMapIR
+from env2llm.policy.invoice import apply_invoice_context, apply_invoice_policies, is_invoice_example
+from env2llm.doql_context import DoqlTaskContext, collect_task_context
+from env2llm.ir import SystemMapIR
 
 
 def test_is_invoice_example() -> None:

@@ -92,8 +92,26 @@ services:
       - "${NLP2DSL_WORKER_HOST_PORT:-8004}:8000"
     environment:
       - NLP2DSL_EXAMPLES_MOUNT=/examples
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_TLS=${SMTP_TLS:-1}
+      - SMTP_FROM=${SMTP_FROM:-nlp2dsl@localhost}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+      - TEAMS_WEBHOOK_URL=${TEAMS_WEBHOOK_URL:-}
     volumes:
       - ./examples:/examples:ro
+    restart: unless-stopped
+
+  # ── SMTP capture (dev) ───────────────────────────────────────
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+      - "${MAILHOG_UI_PORT:-18025}:8025"
+    profiles:
+      - smtp
     restart: unless-stopped
 
   # ── Database ─────────────────────────────────────────────────
@@ -110,6 +128,19 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    restart: unless-stopped
+
+  # ── Trigger ingress (webhooks / events) ─────────────────────
+  trigger-service:
+    build:
+      context: .
+      dockerfile: trigger-service/Dockerfile
+    ports:
+      - "${NLP2DSL_TRIGGER_HOST_PORT:-8070}:8020"
+    environment:
+      - NLP2DSL_BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
     restart: unless-stopped
 
   # ── Cache / Queue ────────────────────────────────────────────

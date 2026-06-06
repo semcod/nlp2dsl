@@ -98,58 +98,64 @@ def _testql_ir_parse(commands_path: Path) -> Check:
         return Check("check.testql.ir_parse", "failed", f"IR parse error: {exc}")
 
 
-def _nlp2dsl_run_query(query_entry: dict[str, Any], artifact_root: Path, *, timeout_s: int = 45) -> Check:
-    query = str(query_entry.get("query", "")).strip()
-    safe_id = query[:40].replace(" ", "-").replace('"', "").replace("@", "")
-    check_id = f"check.nlp2dsl.query.{safe_id}"
-    mode = str(query_entry.get("mode") or "auto")
-    manifest_status = str(query_entry.get("status") or "")
-    pipeline_rel = query_entry.get("pipeline_json")
-    pipeline_path = artifact_root / pipeline_rel if pipeline_rel else None
+def _nlp_env() -> dict[str, str]:
+    return {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
 
-    if pipeline_path and pipeline_path.is_file():
-        try:
-            cached = json.loads(pipeline_path.read_text(encoding="utf-8"))
-            cached_status = str(cached.get("status") or manifest_status or "cached")
-            result_status = str((cached.get("result") or {}).get("status") or cached_status)
-            # Re-verify stale incomplete caches when manifest expects executed
-            if manifest_status == "executed" and result_status in {"incomplete", "ir"}:
-                pass  # fall through to live run below
-            else:
-                return Check(
-                    check_id,
-                    "passed",
-                    f"offline artifact ok (status={result_status}): {query[:70]}",
-                    {"source": str(pipeline_rel), "mode": mode},
-                )
-        except (json.JSONDecodeError, OSError) as exc:
-            return Check(check_id, "failed", f"invalid cached pipeline: {exc}")
 
-    if mode == "show" or manifest_status == "ir":
-        proc = subprocess.run(
-            ["nlp2dsl", "show", query],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            timeout=timeout_s,
-            env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"},
-        )
-        if proc.returncode == 0:
-            return Check(check_id, "passed", f"show/ir ok: {query[:70]}", {"mode": "show"})
-        return Check(
-            check_id,
-            "failed",
-            f"show exit {proc.returncode}: {query[:80]}",
-            {"stderr": proc.stderr[-1500:]},
-        )
+def _check_cached_pipeline(
+    check_id: str,
+    query: str,
+    *,
+    pipeline_path: Path,
+    pipeline_rel: str,
+    mode: str,
+    manifest_status: str,
+) -> Check | None:
+    if not pipeline_path.is_file():
+        return None
+    try:
+        cached = json.loads(pipeline_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        return Check(check_id, "failed", f"invalid cached pipeline: {exc}")
+    cached_status = str(cached.get("status") or manifest_status or "cached")
+    result_status = str((cached.get("result") or {}).get("status") or cached_status)
+    if manifest_status == "executed" and result_status in {"incomplete", "ir"}:
+        return None
+    return Check(
+        check_id,
+        "passed",
+        f"offline artifact ok (status={result_status}): {query[:70]}",
+        {"source": str(pipeline_rel), "mode": mode},
+    )
 
+
+def _run_nlp2dsl_show(check_id: str, query: str, *, timeout_s: int) -> Check:
+    proc = subprocess.run(
+        ["nlp2dsl", "show", query],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=timeout_s,
+        env=_nlp_env(),
+    )
+    if proc.returncode == 0:
+        return Check(check_id, "passed", f"show/ir ok: {query[:70]}", {"mode": "show"})
+    return Check(
+        check_id,
+        "failed",
+        f"show exit {proc.returncode}: {query[:80]}",
+        {"stderr": proc.stderr[-1500:]},
+    )
+
+
+def _run_nlp2dsl_run(check_id: str, query: str, *, mode: str, timeout_s: int) -> Check:
     proc = subprocess.run(
         ["nlp2dsl", "run", query, "--json"],
         cwd=ROOT,
         capture_output=True,
         text=True,
         timeout=timeout_s,
-        env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"},
+        env=_nlp_env(),
     )
     if proc.returncode != 0:
         backend_err = "422" in proc.stderr or "Unprocessable Entity" in proc.stderr
@@ -179,6 +185,31 @@ def _nlp2dsl_run_query(query_entry: dict[str, Any], artifact_root: Path, *, time
             {"status": status, "actions": body.get("actions") or body.get("dsl", {}).get("steps")},
         )
     return Check(check_id, "warning", f"unexpected status={status!r}", {"body_keys": list(body.keys())})
+
+
+def _nlp2dsl_run_query(query_entry: dict[str, Any], artifact_root: Path, *, timeout_s: int = 45) -> Check:
+    query = str(query_entry.get("query", "")).strip()
+    safe_id = query[:40].replace(" ", "-").replace('"', "").replace("@", "")
+    check_id = f"check.nlp2dsl.query.{safe_id}"
+    mode = str(query_entry.get("mode") or "auto")
+    manifest_status = str(query_entry.get("status") or "")
+    pipeline_rel = query_entry.get("pipeline_json")
+    pipeline_path = artifact_root / pipeline_rel if pipeline_rel else None
+
+    if pipeline_path:
+        if cached := _check_cached_pipeline(
+            check_id,
+            query,
+            pipeline_path=pipeline_path,
+            pipeline_rel=str(pipeline_rel),
+            mode=mode,
+            manifest_status=manifest_status,
+        ):
+            return cached
+
+    if mode == "show" or manifest_status == "ir":
+        return _run_nlp2dsl_show(check_id, query, timeout_s=timeout_s)
+    return _run_nlp2dsl_run(check_id, query, mode=mode, timeout_s=timeout_s)
 
 
 def _is_hand_authored_conversation(path: Path) -> bool:
@@ -289,7 +320,7 @@ def _conversation_dry_run(conversation_path: Path) -> Check:
         from testql.adapters.nlp2dsl import Nlp2DslAdapter
         from testql.conversation import ConversationRunner
     except ImportError:
-        from nlp2dsl_sdk.conversation_testql import dry_run_conversation_scenario
+        from testql_conversations.validate import dry_run_conversation_scenario
 
         result = dry_run_conversation_scenario(conversation_path)
         if result.passed:
@@ -444,7 +475,7 @@ def process_example(example_dir: Path) -> ExampleReport:
     result_toon.write_text(_write_toon_report(report), encoding="utf-8")
     result_yaml.write_text(yaml.safe_dump(payload, allow_unicode=True, sort_keys=False), encoding="utf-8")
     try:
-        from nlp2dsl_sdk.artifact_layout import ensure_layout, write_last_run_report
+        from env2llm.layout import ensure_layout, write_last_run_report
 
         ensure_layout(artifact_root)
         write_last_run_report(artifact_root, payload)

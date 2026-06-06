@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nlp2dsl-plugin"
+version = "0.1.0"
+description = "Plugin SDK schema for extending NLP2DSL actions"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6.0",
+    "pydantic>=2.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

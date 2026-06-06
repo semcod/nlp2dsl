@@ -58,13 +58,13 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
         dsl = plan.get("dsl") if isinstance(plan.get("dsl"), dict) else None
 
     if dsl and dsl.get("steps"):
-        from nlp2dsl_sdk.export.publish import (
+        from workflow_export.publish import (
             catalog_from_nlp_client,
             export_workflow_publish_layer,
             print_publish_summary,
             validate_publish_layer,
         )
-        from nlp2dsl_sdk.artifacts import example_artifact_root
+        from nlp2dsl_artifacts import example_artifact_root
 
         import os
 
@@ -79,7 +79,7 @@ def run(client: Optional[NLP2DSLClient] = None) -> dict[str, Any]:
         )
         print_publish_summary(bundle, validation=validate_publish_layer(bundle))
 
-    from nlp2dsl_sdk.artifacts import get_example_writer
+    from nlp2dsl_artifacts import get_example_writer
 
     writer = get_example_writer()
     if writer:

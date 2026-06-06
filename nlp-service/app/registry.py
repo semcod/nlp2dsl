@@ -458,7 +458,7 @@ def get_quality_required_fields(action: str) -> list[str]:
 def get_action_contract(action: str):
     """Return canonical ActionContract for a visible action."""
     from app.conversation.system_map import command_meta, known_action_names
-    from nlp2dsl_sdk.contracts import contract_from_registry_entry
+    from dsl_contracts import contract_from_registry_entry
 
     if action not in known_action_names():
         return None

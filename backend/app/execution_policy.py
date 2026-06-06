@@ -16,13 +16,13 @@ from app.dsl_validation import (
 )
 from app.engine import NLP_SERVICE_URL
 from app.logging_setup import get_request_id
-from nlp2dsl_sdk.system_map_ir import ProcessAccessScopeIR, ProcessPolicyIR
-from nlp2dsl_sdk.validation.capability_policy import (
+from dsl_validate.capability_policy import (
     ExecutionPolicyContext,
     build_access_decision_params,
     validate_capability_policy,
 )
-from nlp2dsl_sdk.validation.issue import ValidationIssue
+from dsl_validate.issue import ValidationIssue
+from env2llm.ir import ProcessAccessScopeIR, ProcessPolicyIR
 
 
 def resolve_agent_id(body: Mapping[str, Any], *, header_agent: str | None = None) -> str:
@@ -37,6 +37,55 @@ def resolve_agent_id(body: Mapping[str, Any], *, header_agent: str | None = None
     return "user"
 
 
+def _as_str_list(raw: Any) -> list[str]:
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        return [p.strip() for p in raw.split(",") if p.strip()]
+    try:
+        return [str(x).strip() for x in raw if str(x).strip()]
+    except TypeError:
+        return []
+
+
+def _policy_blocks(body: Mapping[str, Any]) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
+    policy_block = body.get("policy") if isinstance(body.get("policy"), Mapping) else {}
+    process_block = body.get("process") if isinstance(body.get("process"), Mapping) else {}
+    return policy_block, process_block
+
+
+def _approval_grants(body: Mapping[str, Any], policy_block: Mapping[str, Any]) -> frozenset[str]:
+    raw = body.get("approval_grants") or policy_block.get("approval_grants") or []
+    if isinstance(raw, str):
+        raw = [raw]
+    return frozenset(str(x).strip() for x in raw if str(x).strip())
+
+
+def _process_policy_from_block(process_block: Mapping[str, Any]) -> ProcessPolicyIR | None:
+    access_raw = process_block.get("access") if isinstance(process_block.get("access"), Mapping) else None
+    if not access_raw:
+        return None
+    return ProcessPolicyIR(
+        access=ProcessAccessScopeIR(
+            agent=str(access_raw.get("agent") or ""),
+            allow_resource_areas=_as_str_list(
+                access_raw.get("allow_resource_areas") or access_raw.get("allow_areas")
+            ),
+            deny_resource_areas=_as_str_list(
+                access_raw.get("deny_resource_areas") or access_raw.get("deny_areas")
+            ),
+        )
+    )
+
+
+def _dry_run_only(body: Mapping[str, Any], policy_block: Mapping[str, Any]) -> bool:
+    return bool(
+        body.get("dry_run_only")
+        or policy_block.get("dry_run_only")
+        or os.getenv("NLP2DSL_DRY_RUN_ONLY", "").lower() in {"1", "true", "yes"}
+    )
+
+
 def build_policy_context(
     body: Mapping[str, Any],
     *,
@@ -44,47 +93,20 @@ def build_policy_context(
     executing: bool = True,
     access_decisions: dict[str, Mapping[str, Any]] | None = None,
 ) -> ExecutionPolicyContext:
-    policy_block = body.get("policy") if isinstance(body.get("policy"), Mapping) else {}
-    process_block = body.get("process") if isinstance(body.get("process"), Mapping) else {}
-
-    approval_grants = body.get("approval_grants") or policy_block.get("approval_grants") or []
-    if isinstance(approval_grants, str):
-        approval_grants = [approval_grants]
-
+    policy_block, process_block = _policy_blocks(body)
     email_domains = policy_block.get("allowed_email_domains") or []
     notify_channels = policy_block.get("allowed_notify_channels") or []
-
-    process: ProcessPolicyIR | None = None
-    access_raw = process_block.get("access") if isinstance(process_block.get("access"), Mapping) else None
-    if access_raw:
-        process = ProcessPolicyIR(
-            access=ProcessAccessScopeIR(
-                agent=str(access_raw.get("agent") or ""),
-                allow_resource_areas=_as_str_list(
-                    access_raw.get("allow_resource_areas") or access_raw.get("allow_areas")
-                ),
-                deny_resource_areas=_as_str_list(
-                    access_raw.get("deny_resource_areas") or access_raw.get("deny_areas")
-                ),
-            )
-        )
-
-    dry_run_only = bool(
-        body.get("dry_run_only")
-        or policy_block.get("dry_run_only")
-        or os.getenv("NLP2DSL_DRY_RUN_ONLY", "").lower() in {"1", "true", "yes"}
-    )
 
     return ExecutionPolicyContext(
         agent_id=agent_id or resolve_agent_id(body),
         executing=executing,
-        dry_run_only=dry_run_only,
-        approval_grants=frozenset(str(x).strip() for x in approval_grants if str(x).strip()),
+        dry_run_only=_dry_run_only(body, policy_block),
+        approval_grants=_approval_grants(body, policy_block),
         approval_token=str(body.get("approval_token") or policy_block.get("approval_token") or "").strip()
         or None,
         allowed_email_domains=frozenset(str(x).lower().strip() for x in email_domains if str(x).strip()),
         allowed_notify_channels=frozenset(str(x).strip() for x in notify_channels if str(x).strip()),
-        process=process,
+        process=_process_policy_from_block(process_block),
         access_decisions=dict(access_decisions or {}),
     )
 
@@ -160,14 +182,3 @@ def policy_blocked_response(dsl: Any, issues: list[ValidationIssue]) -> dict[str
     payload["missing_fields"] = missing
     payload["can_execute"] = False
     return payload
-
-
-def _as_str_list(raw: Any) -> list[str]:
-    if raw is None:
-        return []
-    if isinstance(raw, str):
-        return [p.strip() for p in raw.split(",") if p.strip()]
-    try:
-        return [str(x).strip() for x in raw if str(x).strip()]
-    except TypeError:
-        return []

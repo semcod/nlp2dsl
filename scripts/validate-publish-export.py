@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from nlp2dsl_sdk.contracts import action_catalog_payload, contract_from_registry_entry
-from nlp2dsl_sdk.export.publish import (
+from dsl_contracts import action_catalog_payload, contract_from_registry_entry
+from workflow_export.publish import (
     assert_publish_layer_valid,
     export_workflow_publish_layer,
     validate_publish_layer_result,

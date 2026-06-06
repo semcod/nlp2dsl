@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from nlp2dsl_sdk.contracts.registry import SIDE_EFFECT_ACTIONS
+from dsl_contracts.registry import SIDE_EFFECT_ACTIONS
 
 
 def _preview_result(action: str, config: Mapping[str, Any]) -> dict[str, Any]:

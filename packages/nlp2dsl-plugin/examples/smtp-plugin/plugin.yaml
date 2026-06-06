@@ -1,0 +1,10 @@
+name: smtp-plugin
+version: 0.1.0
+description: Example plugin extending send_email with custom SMTP profiles
+contracts_dir: contracts
+executors_dir: executors
+tests_dir: tests
+actions:
+  - send_email
+requires_backend:
+  - worker

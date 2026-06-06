@@ -112,7 +112,6 @@ SDK (`ensure_services`, `wait_for_health`) czeka na wszystkie trzy endpointy `/h
 |---------|----------------|
 | **Canonical** | [`dsl-validate`](../packages/dsl-validate/) — `issue`, `context`, `pipeline`, `rules/`, `profile_checks` |
 | **Kontrakty** | [`dsl-contracts`](../packages/dsl-contracts/) — `ActionContract`, drafty LLM |
-| **Shim SDK** | `nlp2dsl_sdk/validation/` → re-export z `dsl_validate` |
 | **Mapa DOQL** | `env2llm` — `SystemMapIR`, profile validations |
 | nlp-service | `app/validation/step_validator.py` → adapter + `path_policy` |
 | backend | `app/step_validator.py` → adapter (`Phase.PRE_EXECUTE`) |

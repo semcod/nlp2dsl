@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from nlp2dsl_sdk.example_bootstrap import ensure_doql_registry
-from nlp2dsl_sdk.process_policy import (
+from env2llm.bootstrap import ensure_doql_registry
+from env2llm.policy.process import (
     apply_process_policies,
     effective_nlp_parser_mode,
     load_platform_process_defaults,
@@ -11,10 +11,10 @@ from nlp2dsl_sdk.process_policy import (
     process_policy_from_profile_block,
     process_scope_denied,
 )
-from nlp2dsl_sdk.system_map_bridge import doql_file_to_system_map
-from nlp2dsl_sdk.system_map_generator import generate_system_map
-from nlp2dsl_sdk.system_map_ir import ProcessPolicyIR, SystemMapIR
-from nlp2dsl_sdk.system_map_render import render_system_map_doql
+from env2llm.bridge import doql_file_to_system_map
+from env2llm.generate import generate_system_map
+from env2llm.ir import ProcessPolicyIR, SystemMapIR
+from env2llm.render.doql import render_system_map_doql
 
 
 def test_process_policy_from_profile_deterministic() -> None:

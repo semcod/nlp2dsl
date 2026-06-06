@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nlp2dsl_sdk.doql_context import (
+from env2llm.doql_context import (
     DoqlArtifact,
     DoqlTaskContext,
     autofill_entities,
@@ -147,7 +147,7 @@ runtimes[0] {
 
 
 def test_doql_roundtrip_preserves_core_fields(tmp_path: Path) -> None:
-    from nlp2dsl_sdk.doql import load_doql_context, render_doql_context, write_doql_context
+    from env2llm.doql import load_doql_context, render_doql_context, write_doql_context
 
     src = tmp_path / "environment.doql.less"
     src.write_text(
@@ -290,9 +290,9 @@ validations[1] {
 
 
 def test_validations_doql_roundtrip_via_system_map(tmp_path: Path) -> None:
-    from nlp2dsl_sdk.system_map_bridge import doql_file_to_system_map
-    from nlp2dsl_sdk.system_map_ir import ProfileValidationIR, SystemMapIR
-    from nlp2dsl_sdk.system_map_render import render_system_map_doql
+    from env2llm.bridge import doql_file_to_system_map
+    from env2llm.ir import ProfileValidationIR, SystemMapIR
+    from env2llm.render.doql import render_system_map_doql
 
     ir = SystemMapIR(
         example_id="roundtrip-validations",

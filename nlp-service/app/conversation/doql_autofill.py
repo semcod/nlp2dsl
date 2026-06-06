@@ -73,6 +73,48 @@ def _nested_generate_invoice(state: ConversationState, ctx: DoqlTaskContext) -> 
     return stored
 
 
+async def _dialog_for_autofill(state: ConversationState, ctx: DoqlTaskContext) -> DialogResponse:
+    dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
+    if dialog.status == "complete" and workflow_needs_attachment(state, dialog, ctx):
+        return DialogResponse(
+            status="incomplete",
+            workflow=dialog.workflow,
+            missing_fields=["send_invoice.attachment_path"],
+            prompt_user="Podaj nazwę pliku faktury (PDF).",
+        )
+    return dialog
+
+
+def _needs_generated_attachment(
+    missing: list[str],
+    ctx: DoqlTaskContext,
+    state: ConversationState,
+) -> bool:
+    if any("attachment" in m for m in missing):
+        return True
+    return invoice_attachment_policy_active(ctx, state) and not str(
+        state.entities.get("attachment_path", "")
+    ).strip()
+
+
+def _try_nested_invoice_attachment(
+    state: ConversationState,
+    ctx: DoqlTaskContext,
+    missing: list[str],
+) -> str | None:
+    if not _needs_generated_attachment(missing, ctx, state):
+        return None
+    if not ctx.generate_invoice_if_missing:
+        return None
+    if "generate_invoice" not in ctx.capabilities and ctx.capabilities:
+        return None
+    generated = _nested_generate_invoice(state, ctx)
+    if not generated:
+        return None
+    state.entities["attachment_path"] = _resolve_attachment_path(generated, ctx)
+    return "send_invoice.attachment_path (nested generate_invoice)"
+
+
 async def sync_autofill_from_doql(state: ConversationState) -> list[str]:
     """
     Fill missing slots from DOQL data block (same turn, synchronous loop).
@@ -87,16 +129,9 @@ async def sync_autofill_from_doql(state: ConversationState) -> list[str]:
 
     applied: list[str] = []
     for _ in range(_MAX_AUTOFILL_ROUNDS):
-        dialog = await map_to_dsl_with_enrichment(_nlp_from_state(state))
-        if dialog.status == "complete" and not workflow_needs_attachment(state, dialog, ctx):
+        dialog = await _dialog_for_autofill(state, ctx)
+        if dialog.status == "complete":
             break
-        if dialog.status == "complete" and workflow_needs_attachment(state, dialog, ctx):
-            dialog = DialogResponse(
-                status="incomplete",
-                workflow=dialog.workflow,
-                missing_fields=["send_invoice.attachment_path"],
-                prompt_user="Podaj nazwę pliku faktury (PDF).",
-            )
 
         missing = dialog.missing_fields or []
         if not missing:
@@ -114,21 +149,9 @@ async def sync_autofill_from_doql(state: ConversationState) -> list[str]:
             log.info("DOQL autofill applied: %s", filled)
             continue
 
-        attachment_missing = any("attachment" in m for m in missing)
-        need_attachment = attachment_missing or (
-            invoice_attachment_policy_active(ctx, state)
-            and not str(state.entities.get("attachment_path", "")).strip()
-        )
-        if (
-            need_attachment
-            and ctx.generate_invoice_if_missing
-            and ("generate_invoice" in ctx.capabilities or not ctx.capabilities)
-        ):
-            generated = _nested_generate_invoice(state, ctx)
-            if generated:
-                state.entities["attachment_path"] = _resolve_attachment_path(generated, ctx)
-                applied.append("send_invoice.attachment_path (nested generate_invoice)")
-                continue
+        if generated := _try_nested_invoice_attachment(state, ctx, missing):
+            applied.append(generated)
+            continue
         break
 
     state.autofill_applied = list(dict.fromkeys(state.autofill_applied + applied))

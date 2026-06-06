@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from nlp2dsl_sdk.validation.issue import ValidationIssue
+from dsl_validate.issue import ValidationIssue
 from nlp2dsl_sdk.workflow import (
     execution_request_from_workflow,
     parse_result_from_nlp,

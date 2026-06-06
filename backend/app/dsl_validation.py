@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from nlp2dsl_sdk.validation.issue import Phase, ValidationIssue
-from nlp2dsl_sdk.validation.rules.dsl_contract import validate_dsl_contract
+from dsl_validate.issue import Phase, ValidationIssue
+from dsl_validate.rules.dsl_contract import validate_dsl_contract
 
 
 def validate_dsl_for_execution(dsl: Any) -> list[ValidationIssue]:

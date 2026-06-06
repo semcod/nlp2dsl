@@ -280,6 +280,55 @@ def _resolve_file_list_host_command(text: str) -> tuple[str, list[str]]:
     return f"ls -la {root}", ["orientation_path_default"]
 
 
+def _orient_file_list(raw: str, *, conn: str) -> OrientationResult:
+    scope = _file_list_scope(raw)
+    if _has_registry_hint(raw):
+        return OrientationResult(
+            category="file_list_registry",
+            suggested_action="mullm_list_files",
+            confidence=0.93,
+            reason_codes=["orientation_file_list_registry", f"scope_{scope}"],
+            list_scope=scope,
+            connector=conn,
+        )
+    if conn == "mullm" or _has_host_hint(raw):
+        shell_cmd, path_codes = _resolve_file_list_host_command(raw)
+        conf = 0.91 if _has_host_hint(raw) else 0.88
+        if any(c.startswith("orientation_path_hint_") for c in path_codes):
+            conf = max(conf, 0.9)
+        return OrientationResult(
+            category="file_list_host",
+            suggested_action="mullm_shell_task",
+            confidence=conf,
+            reason_codes=["orientation_file_list_host", f"scope_{scope}", *path_codes],
+            shell_command=shell_cmd,
+            list_scope=scope,
+            connector=conn,
+        )
+    return OrientationResult(
+        category="system_local",
+        suggested_action="system_file_list",
+        confidence=0.84,
+        reason_codes=["orientation_system_file_list", f"scope_{scope}"],
+        list_scope=scope,
+        connector=conn,
+    )
+
+
+def _orient_shell_prefix(raw: str, *, conn: str) -> OrientationResult | None:
+    if not _SHELL_PREFIX_RE.match(raw):
+        return None
+    cmd = _SHELL_PREFIX_RE.sub("", raw).strip()
+    return OrientationResult(
+        category="shell",
+        suggested_action="mullm_shell_task",
+        confidence=0.92,
+        reason_codes=["shell_prefix", "orientation_shell"],
+        shell_command=cmd or None,
+        connector=conn,
+    )
+
+
 def orient_query(text: str, *, connector: str = "mullm") -> OrientationResult:
     """
     Klasyfikuje zapytanie bez LLM — Mullm BFF woła to przed regułami / OpenRouter.
@@ -298,50 +347,11 @@ def orient_query(text: str, *, connector: str = "mullm") -> OrientationResult:
             connector=conn,
         )
 
-    if _SHELL_PREFIX_RE.match(raw):
-        cmd = _SHELL_PREFIX_RE.sub("", raw).strip()
-        return OrientationResult(
-            category="shell",
-            suggested_action="mullm_shell_task",
-            confidence=0.92,
-            reason_codes=["shell_prefix", "orientation_shell"],
-            shell_command=cmd or None,
-            connector=conn,
-        )
+    if hit := _orient_shell_prefix(raw, conn=conn):
+        return hit
 
     if _is_file_list_query(raw):
-        scope = _file_list_scope(raw)
-        if _has_registry_hint(raw):
-            return OrientationResult(
-                category="file_list_registry",
-                suggested_action="mullm_list_files",
-                confidence=0.93,
-                reason_codes=["orientation_file_list_registry", f"scope_{scope}"],
-                list_scope=scope,
-                connector=conn,
-            )
-        if conn == "mullm" or _has_host_hint(raw):
-            shell_cmd, path_codes = _resolve_file_list_host_command(raw)
-            conf = 0.91 if _has_host_hint(raw) else 0.88
-            if any(c.startswith("orientation_path_hint_") for c in path_codes):
-                conf = max(conf, 0.9)
-            return OrientationResult(
-                category="file_list_host",
-                suggested_action="mullm_shell_task",
-                confidence=conf,
-                reason_codes=["orientation_file_list_host", f"scope_{scope}", *path_codes],
-                shell_command=shell_cmd,
-                list_scope=scope,
-                connector=conn,
-            )
-        return OrientationResult(
-            category="system_local",
-            suggested_action="system_file_list",
-            confidence=0.84,
-            reason_codes=["orientation_system_file_list", f"scope_{scope}"],
-            list_scope=scope,
-            connector=conn,
-        )
+        return _orient_file_list(raw, conn=conn)
 
     if _SHELL_NL_RE.search(raw):
         return OrientationResult(
