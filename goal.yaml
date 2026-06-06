@@ -222,7 +222,7 @@ git:
     format: '{prefix}{version}'
 strategies:
   python:
-    test: pytest tests/ -v
+    test: ./.venv/bin/python -m pytest tests/ -v
     build: make build-all
     publish: twine upload dist/nlp2dsl-{version}*
     publish_enabled: true

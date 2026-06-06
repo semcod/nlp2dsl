@@ -1556,7 +1556,7 @@ wheels = [
 
 [[package]]
 name = "nlp2dsl"
-version = "0.0.33"
+version = "0.0.34"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
@@ -1575,6 +1575,12 @@ goal = [
     { name = "pfix" },
 ]
 
+[package.dev-dependencies]
+test = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "costs", marker = "extra == 'goal'", specifier = ">=0.1.20" },
@@ -1587,6 +1593,12 @@ requires-dist = [
     { name = "requests", specifier = ">=2.31.0" },
 ]
 provides-extras = ["dev", "goal"]
+
+[package.metadata.requires-dev]
+test = [
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.24" },
+]
 
 [[package]]
 name = "numpy"

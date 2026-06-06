@@ -41,6 +41,8 @@ update: ## Reinstall all packages + SDK + nlp2cmd integration (editable, --upgra
 test: ## Run tests
 	$(PYTHON) -m pytest tests/ -v
 
+test-parallel: test ## Alias for goal/Makefile compatibility
+
 check-pypi-deps: ## Verify build/twine are installed (auto-install if missing)
 	@$(PYTHON) -c "import build, twine" 2>/dev/null || $(PYTHON) -m pip install build twine -q
 
