@@ -248,16 +248,23 @@ strategies:
   nodejs:
     test: npm test
     build: npm run build
-    publish: twine upload dist/nlp2dsl-{version}*
-    publish_enabled: true
+    # tauri-wrapper is a private desktop wrapper ("private": true in package.json)
+    # and is NOT published. Leaving this enabled caused goal to re-run
+    # `twine upload dist/nlp2dsl-{version}*` after the python strategy already
+    # uploaded the wheel/sdist, producing an HTTP 400 "File already exists"
+    # and the overall "Publish failed". Only the python package is published.
+    publish: ''
+    publish_enabled: false
     dependencies:
       file: package-lock.json
       lock: npm install
   rust:
     test: cargo test
     build: cargo build --release
-    publish: twine upload dist/nlp2dsl-{version}*
-    publish_enabled: true
+    # No crate is published from this repo; keep disabled so it does not
+    # re-trigger a duplicate `twine upload` of the python artifacts.
+    publish: ''
+    publish_enabled: false
     dependencies:
       file: Cargo.lock
       lock: cargo update
