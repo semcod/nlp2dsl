@@ -73,8 +73,10 @@ _NLP2CMD_RUN_RE = re.compile(
     r"canvas|\.app\b|https?://|www\.)",
 )
 
+_STRIP_PUNCT = """.,;:"'"""
+
 _PATH_TOKEN_RE = re.compile(
-    r"lista\s+plik[oó]w?\s+(?:w\s+|z\s+|folderze\s+|katalogu\s+)?(\S+)",
+    r"lista\s+plik[oó]w?\s+(?:[wz]\s+|folderze\s+|katalogu\s+)?(\S+)",
     re.IGNORECASE,
 )
 
@@ -111,6 +113,8 @@ _PATH_HINT_SKIP = frozenset(
         "project",
     }
 )
+
+_LS_ROOT = "ls -la /"
 
 _ROOT_LIST_RE = re.compile(r"lista\s+plik[oó]w?\s+/\s*$", re.IGNORECASE)
 _SYSTEM_LIST_RE = re.compile(r"\b(systemu|systemow|system\b)", re.IGNORECASE)
@@ -181,10 +185,10 @@ def _file_list_scope(text: str) -> str:
         return "rag"
     m = _PROJECT_LIST_RE.search(lowered)
     if m:
-        return m.group(1).strip(".,;:\"'").lower()
+        return m.group(1).strip(_STRIP_PUNCT).lower()
     m = _PATH_TOKEN_RE.search(lowered)
     if m:
-        token = m.group(1).strip(".,;:\"'").lower()
+        token = m.group(1).strip(_STRIP_PUNCT).lower()
         if token in ("linux", "linuxie"):
             return "host"
         if token not in _PATH_HINT_SKIP and not _has_registry_hint(token):
@@ -206,7 +210,7 @@ def _normalize_orient_path(path: str, root: str) -> str:
 
 
 def _resolve_project_host_path(project_name: str, root: str) -> tuple[str, list[str]]:
-    name = project_name.strip().strip(".,;:\"'")
+    name = project_name.strip().strip(_STRIP_PUNCT)
     slug = re.sub(r"[^\w.-]+", "_", name.lower()) or "project"
     org = (os.getenv("MULLM_SHELL_PROJECT_ORG") or "wronai").strip() or "wronai"
     path = f"{root}/github/{org}/{name}"
@@ -214,7 +218,7 @@ def _resolve_project_host_path(project_name: str, root: str) -> tuple[str, list[
 
 
 def _resolve_list_path_remainder(remainder: str, root: str) -> tuple[str, list[str]]:
-    raw = remainder.strip().strip(".,;:\"'")
+    raw = remainder.strip().strip(_STRIP_PUNCT)
     parts = [p for p in re.split(r"[\s/]+", raw) if p]
     if not parts:
         return root, ["orientation_path_default"]
@@ -228,33 +232,23 @@ def _resolve_list_path_remainder(remainder: str, root: str) -> tuple[str, list[s
     return path, [f"orientation_path_hint_{'_'.join(parts).lower()}"]
 
 
-def _resolve_file_list_host_command(text: str) -> tuple[str, list[str]]:
-    root = _host_list_root()
-    raw = text.strip()
-    lowered = raw.lower()
-
-    if _ROOT_LIST_RE.search(lowered):
-        return "ls -la /", ["orientation_path_root"]
-
-    if re.search(r"\b(usera|użytkownika|user\s+files|systemowego\s+usera)\b", lowered):
-        return f"ls -la {root}", ["orientation_path_host_home"]
-
-    if _SYSTEM_LIST_RE.search(lowered):
-        return "ls -la /", ["orientation_path_system_root"]
-
-    if _PROJECT_LIST_ONLY_RE.search(lowered):
-        return f"ls -la {root}/github", ["orientation_path_projects"]
-
+def _try_resolve_project_path(lowered: str, root: str) -> tuple[str, list[str]] | None:
     m = _PROJECT_LIST_RE.search(lowered)
     if m:
         path, codes = _resolve_project_host_path(m.group(1), root)
         return f"ls -la {path}", codes
+    return None
 
+
+def _try_resolve_list_remainder(raw: str, root: str) -> tuple[str, list[str]] | None:
     m = _LIST_PATH_REMAINDER_RE.search(raw)
     if m:
         path, codes = _resolve_list_path_remainder(m.group(1), root)
         return f"ls -la {path}", codes
+    return None
 
+
+def _try_resolve_explicit_path(raw: str, root: str) -> tuple[str, list[str]] | None:
     for pat in (r"(~[/\w.-]*)", r"(\$HOME[/\w.-]*)"):
         m = re.search(pat, raw)
         if m:
@@ -265,17 +259,51 @@ def _resolve_file_list_host_command(text: str) -> tuple[str, list[str]]:
     if m:
         path = m.group(1).strip()
         if path == "/":
-            return "ls -la /", ["orientation_path_root"]
+            return _LS_ROOT, ["orientation_path_root"]
         return f"ls -la {path}", ["orientation_path_explicit"]
+    return None
 
+
+def _try_resolve_path_token(lowered: str, root: str) -> tuple[str, list[str]] | None:
     m = _PATH_TOKEN_RE.search(lowered)
     if m:
-        token = m.group(1).strip(".,;:\"'")
+        token = m.group(1).strip(_STRIP_PUNCT)
         tl = token.lower()
         if tl in ("linux", "linuxie"):
             return f"ls -la {root}", ["orientation_path_host_home"]
         if tl not in _PATH_HINT_SKIP and not _has_registry_hint(token):
             return f"ls -la {root}/{token}", [f"orientation_path_hint_{tl}"]
+    return None
+
+
+def _resolve_file_list_host_command(text: str) -> tuple[str, list[str]]:
+    root = _host_list_root()
+    raw = text.strip()
+    lowered = raw.lower()
+
+    if _ROOT_LIST_RE.search(lowered):
+        return _LS_ROOT, ["orientation_path_root"]
+
+    if re.search(r"\b(usera|użytkownika|user\s+files|systemowego\s+usera)\b", lowered):
+        return f"ls -la {root}", ["orientation_path_host_home"]
+
+    if _SYSTEM_LIST_RE.search(lowered):
+        return _LS_ROOT, ["orientation_path_system_root"]
+
+    if _PROJECT_LIST_ONLY_RE.search(lowered):
+        return f"ls -la {root}/github", ["orientation_path_projects"]
+
+    if result := _try_resolve_project_path(lowered, root):
+        return result
+
+    if result := _try_resolve_list_remainder(raw, root):
+        return result
+
+    if result := _try_resolve_explicit_path(raw, root):
+        return result
+
+    if result := _try_resolve_path_token(lowered, root):
+        return result
 
     return f"ls -la {root}", ["orientation_path_default"]
 

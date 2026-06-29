@@ -41,6 +41,34 @@ def _evaluate(query: BenchmarkQuery, result: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _run_single_query(
+    client: NLP2DSLClient,
+    query: BenchmarkQuery,
+    *,
+    mode: str,
+    execute: bool,
+) -> dict[str, Any]:
+    try:
+        result = client.workflow_from_text(query.text, execute=execute, mode=mode)
+    except Exception as exc:
+        result = {"status": "error", "error": str(exc)}
+    return _evaluate(query, result)
+
+
+def _print_row(row: dict[str, Any], result: dict[str, Any]) -> None:
+    if row["pass"]:
+        icon = "✅"
+    elif row["status"] == "incomplete":
+        icon = "⚠️"
+    else:
+        icon = "❌"
+    print(f"    {icon} status={row['status']} actions={row['actions']}")
+    if row.get("missing"):
+        print(f"       missing: {row['missing']}")
+    if row["status"] not in ("complete", "executed", "incomplete"):
+        print(f"       error: {result.get('error', result)}")
+
+
 def run_benchmark(
     client: NLP2DSLClient,
     *,
@@ -58,12 +86,7 @@ def run_benchmark(
             print(f"[{query.id}] {query.category}: {query.text[:70]}…")
             print(f"    mode={mode}  expected={query.expected_actions}")
 
-        try:
-            result = client.workflow_from_text(query.text, execute=execute, mode=mode)
-        except Exception as exc:
-            result = {"status": "error", "error": str(exc)}
-
-        eval_row = _evaluate(query, result)
+        eval_row = _run_single_query(client, query, mode=mode, execute=execute)
         row = {
             "id": query.id,
             "text": query.text,
@@ -73,15 +96,11 @@ def run_benchmark(
         }
         rows.append(row)
         if artifact_writer:
+            result = {"status": eval_row["status"], "actions": eval_row["actions"]} if eval_row["status"] != "error" else {"status": "error", "error": eval_row.get("missing", "")}
             artifact_writer.record(query.text, result, mode=mode)
 
         if verbose:
-            icon = "✅" if row["pass"] else ("⚠️" if row["status"] == "incomplete" else "❌")
-            print(f"    {icon} status={row['status']} actions={row['actions']}")
-            if row.get("missing"):
-                print(f"       missing: {row['missing']}")
-            if row["status"] not in ("complete", "executed", "incomplete"):
-                print(f"       error: {result.get('error', result)}")
+            _print_row(row, {"status": eval_row["status"], "error": eval_row.get("missing", "")})
 
     elapsed = time.perf_counter() - t0
     passed = sum(1 for r in rows if r["pass"])

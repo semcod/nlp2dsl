@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsl2nlp2dsl"
+version = "0.1.0"
+description = "NLP2DSL control DSL — CQRS bus, schema validation, lifecycle commands"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = [
+    "jsonschema>=4.0",
+    "protobuf>=5.0",
+    "requests>=2.31.0",
+    "pyyaml>=6.0",
+    "dsl-contracts>=0.1.0",
+    "nlp2dsl-stack>=0.1.0",
+]
+
+[project.optional-dependencies]
+codegen = ["grpcio-tools>=1.60"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+dsl2nlp2dsl = "dsl2nlp2dsl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"dsl2nlp2dsl" = ["schema/commands/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

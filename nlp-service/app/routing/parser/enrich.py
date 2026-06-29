@@ -64,11 +64,10 @@ def can_enrich_missing(missing_fields: list[str]) -> bool:
     return len(enrichable) == len(missing_fields)
 
 
-async def enrich_entities(nlp: NLPResult, missing_fields: list[str]) -> NLPResult | None:
-    """Use LLM to compose missing quality fields. Returns updated NLPResult or None."""
-    if not can_enrich_missing(missing_fields):
-        return None
-
+def _build_enrich_prompts(
+    nlp: NLPResult,
+    missing_fields: list[str],
+) -> tuple[str, str]:
     fields_needed = sorted({ref.split(".", 1)[1] for ref in missing_fields})
     actions = {ref.split(".", 1)[0] for ref in missing_fields}
     entities = nlp.entities.model_dump(exclude_none=True)
@@ -105,6 +104,38 @@ Kontekst:
 
 Uzupełnij brakujące pola zgodnie z intencją użytkownika."""
 
+    return system_prompt, user_prompt
+
+
+def _apply_enrich_updates(
+    entities: dict[str, Any],
+    missing_fields: list[str],
+    parsed: dict[str, Any],
+) -> dict[str, Any] | None:
+    updates: dict = {}
+    for ref in missing_fields:
+        field = ref.split(".", 1)[1]
+        entity_key = _FIELD_TO_ENTITY.get(field)
+        if not entity_key:
+            continue
+        value = parsed.get(entity_key) or parsed.get(field)
+        if isinstance(value, str) and value.strip():
+            updates[entity_key] = value.strip()
+    if not updates:
+        log.warning("LLM enrich returned no usable fields")
+        return None
+    log.info("LLM enriched fields: %s", list(updates.keys()))
+    return {**entities, **updates}
+
+
+async def enrich_entities(nlp: NLPResult, missing_fields: list[str]) -> NLPResult | None:
+    """Use LLM to compose missing quality fields. Returns updated NLPResult or None."""
+    if not can_enrich_missing(missing_fields):
+        return None
+
+    entities = nlp.entities.model_dump(exclude_none=True)
+    system_prompt, user_prompt = _build_enrich_prompts(nlp, missing_fields)
+
     try:
         from app.routing.parser.llm import (
             LLM_API_BASE,
@@ -134,22 +165,10 @@ Uzupełnij brakujące pola zgodnie z intencją użytkownika."""
         raw = response.choices[0].message.content
         parsed = _parse_json_response(raw)
 
-        updates: dict = {}
-        for ref in missing_fields:
-            field = ref.split(".", 1)[1]
-            entity_key = _FIELD_TO_ENTITY.get(field)
-            if not entity_key:
-                continue
-            value = parsed.get(entity_key) or parsed.get(field)
-            if isinstance(value, str) and value.strip():
-                updates[entity_key] = value.strip()
-
-        if not updates:
-            log.warning("LLM enrich returned no usable fields")
+        merged = _apply_enrich_updates(entities, missing_fields, parsed)
+        if merged is None:
             return None
 
-        merged = {**entities, **updates}
-        log.info("LLM enriched fields: %s", list(updates.keys()))
         return nlp.model_copy(
             update={"entities": NLPEntities(**merged)},
         )

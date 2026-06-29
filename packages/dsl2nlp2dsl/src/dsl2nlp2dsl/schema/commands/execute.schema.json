@@ -1,0 +1,14 @@
+{
+  "$id": "dsl2nlp2dsl/commands/execute",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "EXECUTE" },
+    "text": { "type": "string" },
+    "workflow_file": { "type": "string" },
+    "workflow": { "type": "object" },
+    "dry_run": { "type": "boolean", "default": false },
+    "mode": { "enum": ["auto", "rules", "llm"], "default": "auto" }
+  },
+  "additionalProperties": false
+}

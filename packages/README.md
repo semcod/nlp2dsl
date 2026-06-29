@@ -2,6 +2,30 @@
 
 Monorepo `packages/` — wydzielone biblioteki SDK platformy MVP oraz pakiety integracji **nlp2cmd** ↔ **Propact**.
 
+## Warstwa kontroli (`*2nlp2dsl`)
+
+Sterowanie platformą wyłącznie przez DSL + bus CQRS/ES (`dsl2nlp2dsl.dispatch()`).
+
+| Pakiet | Rola | README |
+|--------|------|--------|
+| **dsl2nlp2dsl** | Grammar DSL + JSON Schema + CQRS bus + EventStore | [dsl2nlp2dsl/README.md](dsl2nlp2dsl/README.md) |
+| **uri2nlp2dsl** | `nlp2dsl://cmd/VERB?...` → linia DSL → dispatch | [uri2nlp2dsl/README.md](uri2nlp2dsl/README.md) |
+| **nlp2nlp2dsl** | NL → DSL (`to-dsl` bez side-effect; `apply` → dispatch) | [nlp2nlp2dsl/README.md](nlp2nlp2dsl/README.md) |
+| **cli2nlp2dsl** | Shell REPL / exec / run script | [cli2nlp2dsl/README.md](cli2nlp2dsl/README.md) |
+| **mcp2nlp2dsl** | Serwer MCP (stdio) — cienkie wrappery DSL | [mcp2nlp2dsl/README.md](mcp2nlp2dsl/README.md) |
+| **rest2nlp2dsl** | REST API (FastAPI) — POST `/v1/dsl` | [rest2nlp2dsl/README.md](rest2nlp2dsl/README.md) |
+
+```text
+NL ──► nlp2nlp2dsl to-dsl ──► linia DSL ──► dsl2nlp2dsl.dispatch()
+URI ──► uri2nlp2dsl decode ──► linia DSL ──► dsl2nlp2dsl.dispatch()
+CLI ──► cli2nlp2dsl shell ──► dsl2nlp2dsl
+MCP ──► mcp2nlp2dsl serve ──► dsl2nlp2dsl (+ legacy HTTP w nlp2dsl-mcp)
+REST ──► rest2nlp2dsl serve ──► dsl2nlp2dsl
+```
+
+Paczki LLM/env2llm delegują mutacje przez warstwę kontroli (`control.py`):
+`dsl-contracts` (DRAFT), `dsl-validate` (VALIDATE), `nlp2dsl-artifacts` (OBSERVE), `nlp2dsl-stack` (COMPOSE).
+
 ## Pakiety SDK (artefakty + walidacja)
 
 | Pakiet | Import | Artefakty / rola |
@@ -127,7 +151,7 @@ flowchart TB
     DC --> DV
 ```
 
-Kolejność `install-dev.sh`: `dsl-contracts` → `workflow-export` → `nlp2dsl-stack` → `testql-conversations` → `nlp2dsl-artifacts` → `dsl-validate` → pakiety IR.
+Kolejność `install-dev.sh`: `dsl-contracts` → `workflow-export` → `nlp2dsl-stack` → `testql-conversations` → `nlp2dsl-artifacts` → `dsl-validate` → **`dsl2nlp2dsl` → `uri2nlp2dsl` → `nlp2nlp2dsl` → `cli2nlp2dsl` → `mcp2nlp2dsl` → `rest2nlp2dsl`** → pakiety IR → `nlp2dsl-mcp`.
 
 ### IR (nlp2cmd)
 

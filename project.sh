@@ -21,8 +21,8 @@ $PIP install redup --upgrade --quiet
 $PIP install glon --upgrade --quiet
 $PIP install code2logic --upgrade --quiet
 $PIP install code2llm --upgrade --quiet
-#$VENV/bin/code2llm ./ -f toon,evolution,code2logic,project-yaml -o ./project --no-chunk
-$VENV/bin/code2llm ./ -f all -o ./project --no-chunk --exclude '*.md'
+# Skip mermaid (-f all) — stale coupling graphs break mmdc layout after package split.
+$VENV/bin/code2llm ./ -f toon,evolution,code2logic,project-yaml -o ./project --no-chunk --exclude '*.md'
 #$VENV/bin/code2llm report --format all       # → all views
 
 #$PIP install code2docs --upgrade --quiet

@@ -109,7 +109,39 @@ interface[type="cli"] {
   framework: argparse;
 }
 interface[type="cli"] page[name="nlp2dsl"] {
+  entry: nlp2dsl_sdk.cli:main;
+}
 
+interface[type="cli"] page[name="cli2nlp2dsl"] {
+  entry: cli2nlp2dsl.cli:main;
+}
+
+interface[type="cli"] page[name="dsl2nlp2dsl"] {
+  entry: dsl2nlp2dsl.cli:main;
+}
+
+interface[type="cli"] page[name="nlp2nlp2dsl"] {
+  entry: nlp2nlp2dsl.cli:main;
+}
+
+interface[type="cli"] page[name="uri2nlp2dsl"] {
+  entry: uri2nlp2dsl.cli:main;
+}
+
+interface[type="mcp"] {
+  name: nlp2dsl;
+  framework: stdio;
+  page[name="mcp2nlp2dsl"] {
+    entry: mcp2nlp2dsl.server:run_server;
+  }
+  page[name="nlp2dsl-mcp"] {
+    entry: nlp2dsl_mcp.server:main;
+  }
+}
+
+interface[type="api"] page[name="rest2nlp2dsl"] {
+  entry: rest2nlp2dsl.cli:main;
+  port: 8212;
 }
 
 integration[name="nlp"] {

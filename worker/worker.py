@@ -291,7 +291,28 @@ async def execute_step(step: dict) -> dict[str, Any]:
         )
 
     log.info("── Step [%s] action=%s ──", step_id, action_name)
-    result = await handler(config)
+    try:
+        result = await handler(config)
+    except Exception as exc:
+        import smtplib
+
+        if isinstance(exc, smtplib.SMTPAuthenticationError):
+            raise HTTPException(
+                status_code=HTTPStatus.UNAUTHORIZED,
+                detail={
+                    "error": "SMTP authentication failed",
+                    "hint": "Sprawdź SMTP_USER i SMTP_PASSWORD (port 465 + SMTP_TLS=ssl dla sapletta).",
+                },
+            ) from exc
+        if isinstance(exc, (ConnectionRefusedError, OSError, TimeoutError)):
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_GATEWAY,
+                detail={
+                    "error": str(exc),
+                    "hint": "Sprawdź SMTP_HOST/SMTP_PORT (587 refused → użyj 465 + ssl).",
+                },
+            ) from exc
+        raise
     return {"step_id": step_id, "status": "completed", "result": result}
 
 

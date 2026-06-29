@@ -208,6 +208,92 @@ def _check_profile_validations(
         report["passed"] = False
 
 
+# ---------------------------------------------------------------------------
+# process_example helpers (extracted to reduce CC)
+# ---------------------------------------------------------------------------
+
+def _check_llm_key(entry: dict[str, Any], report: dict[str, Any]) -> bool:
+    """Return True if the example should be skipped due to missing LLM key."""
+    if entry.get("requires_llm_key") and not os.environ.get("OPENROUTER_API_KEY"):
+        report["checks"].append({
+            "id": "llm.key",
+            "status": "skipped",
+            "summary": "no OPENROUTER_API_KEY (set in .env or export)",
+        })
+        report["status"] = "skipped"
+        return True
+    return False
+
+
+def _run_main_check(example_dir: Path, report: dict[str, Any], *, skip_main: bool) -> None:
+    if skip_main:
+        return
+    ok = run_example_main(example_dir)
+    report["checks"].append({
+        "id": "example.main",
+        "status": "passed" if ok else "failed",
+        "summary": "main.py" if ok else "main.py failed",
+    })
+    if not ok:
+        report["passed"] = False
+
+
+def _run_execution_check(
+    example_dir: Path,
+    entry: dict[str, Any],
+    base_url: str,
+    report: dict[str, Any],
+) -> None:
+    exec_rel = entry.get("execution_scenario")
+    if not exec_rel:
+        return
+    exec_trace = run_execution(example_dir, str(exec_rel), base_url)
+    _append_trace_check(
+        report,
+        check_id="execution.e2e",
+        trace=exec_trace,
+        summary=f"status={exec_trace.get('status')} queries={len(exec_trace.get('queries') or [])}",
+    )
+
+
+def _run_conversation_checks(
+    example_dir: Path,
+    entry: dict[str, Any],
+    base_url: str,
+    report: dict[str, Any],
+    *,
+    run_llm: bool,
+) -> None:
+    if not entry.get("conversation"):
+        return
+    conv_rel = str(entry.get("conversation_scenario") or "")
+    conv = run_conversation(example_dir, conv_rel, base_url)
+    _append_trace_check(
+        report,
+        check_id="conversation.e2e",
+        trace=conv,
+        summary=f"conversation_id={conv.get('conversation_id')} status={conv.get('status')}",
+        extra={"transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md")},
+    )
+    if not conv.get("skipped"):
+        report["conversation"] = {
+            "conversation_id": conv.get("conversation_id"),
+            "status": conv.get("status"),
+            "errors": conv.get("errors"),
+            "validations": conv.get("validations"),
+        }
+
+    if run_llm and entry.get("conversation_scenario_llm") and os.environ.get("OPENROUTER_API_KEY"):
+        llm_conv = run_conversation(example_dir, str(entry["conversation_scenario_llm"]), base_url)
+        _append_trace_check(
+            report,
+            check_id="conversation.llm",
+            trace=llm_conv,
+            summary=f"LLM dialog status={llm_conv.get('status')}",
+            extra={"transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md")},
+        )
+
+
 def process_example(
     example_id: str,
     entry: dict[str, Any],
@@ -226,64 +312,67 @@ def process_example(
         "checks": [],
     }
 
-    if entry.get("requires_llm_key") and not os.environ.get("OPENROUTER_API_KEY"):
-        report["checks"].append({"id": "llm.key", "status": "skipped", "summary": "no OPENROUTER_API_KEY (set in .env or export)"})
-        report["status"] = "skipped"
+    if _check_llm_key(entry, report):
         report["passed"] = True
         return report
 
-    if not skip_main:
-        ok = run_example_main(example_dir)
-        report["checks"].append({
-            "id": "example.main",
-            "status": "passed" if ok else "failed",
-            "summary": "main.py" if ok else "main.py failed",
-        })
-        if not ok:
-            report["passed"] = False
-
-    if exec_rel := entry.get("execution_scenario"):
-        exec_trace = run_execution(example_dir, str(exec_rel), base_url)
-        _append_trace_check(
-            report,
-            check_id="execution.e2e",
-            trace=exec_trace,
-            summary=f"status={exec_trace.get('status')} queries={len(exec_trace.get('queries') or [])}",
-        )
-
-    if entry.get("conversation"):
-        conv_rel = str(entry.get("conversation_scenario") or "")
-        conv = run_conversation(example_dir, conv_rel, base_url)
-        _append_trace_check(
-            report,
-            check_id="conversation.e2e",
-            trace=conv,
-            summary=f"conversation_id={conv.get('conversation_id')} status={conv.get('status')}",
-            extra={"transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md")},
-        )
-        if not conv.get("skipped"):
-            report["conversation"] = {
-                "conversation_id": conv.get("conversation_id"),
-                "status": conv.get("status"),
-                "errors": conv.get("errors"),
-                "validations": conv.get("validations"),
-            }
-
-        if run_llm and entry.get("conversation_scenario_llm") and os.environ.get("OPENROUTER_API_KEY"):
-            llm_conv = run_conversation(example_dir, str(entry["conversation_scenario_llm"]), base_url)
-            _append_trace_check(
-                report,
-                check_id="conversation.llm",
-                trace=llm_conv,
-                summary=f"LLM dialog status={llm_conv.get('status')}",
-                extra={"transcript": str(example_dir / ".nlp2dsl" / "conversation.transcript.md")},
-            )
+    _run_main_check(example_dir, report, skip_main=skip_main)
+    _run_execution_check(example_dir, entry, base_url, report)
+    _run_conversation_checks(example_dir, entry, base_url, report, run_llm=run_llm)
 
     if profile_validations := entry.get("validations") or []:
         _check_profile_validations(report, example_dir, profile_validations)
 
     report["status"] = "passed" if report["passed"] else "failed"
     return report
+
+
+# ---------------------------------------------------------------------------
+# main() helpers (extracted to reduce CC)
+# ---------------------------------------------------------------------------
+
+def _resolve_example_ids(args: argparse.Namespace, cfg: dict[str, Any]) -> list[str]:
+    examples_cfg = cfg.get("examples") or {}
+    if args.all:
+        return sorted(examples_cfg.keys())
+    if args.examples:
+        return list(args.examples)
+    return [
+        eid for eid, e in examples_cfg.items()
+        if e.get("conversation") or e.get("execution_scenario")
+    ]
+
+
+def _resolve_base_url(args: argparse.Namespace, cfg: dict[str, Any]) -> tuple[str, float]:
+    defaults = cfg.get("defaults") or {}
+    base_url = args.base_url or os.environ.get("NLP2DSL_URL") or defaults.get("nlp2dsl_url", "http://localhost:8010")
+    timeout_s = float(defaults.get("health_timeout_s", 120))
+    return base_url, timeout_s
+
+
+def _write_aggregate_report(
+    reports: list[dict[str, Any]],
+    profiles: set[str],
+    base_url: str,
+) -> Path:
+    aggregate = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "base_url": base_url,
+        "docker_profiles": sorted(profiles),
+        "examples": len(reports),
+        "passed": sum(1 for r in reports if r.get("status") == "passed"),
+        "failed": sum(1 for r in reports if r.get("status") == "failed"),
+        "skipped": sum(1 for r in reports if r.get("status") == "skipped"),
+        "results": reports,
+    }
+    out = ROOT / "examples" / "docker-e2e-results.json"
+    out.write_text(json.dumps(aggregate, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(
+        f"\nWrote {out} — {aggregate['passed']} passed, "
+        f"{aggregate['failed']} failed, {aggregate['skipped']} skipped "
+        f"(of {aggregate['examples']} examples)"
+    )
+    return out
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -305,20 +394,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     cfg = _load_profiles()
-    defaults = cfg.get("defaults") or {}
-    base_url = args.base_url or os.environ.get("NLP2DSL_URL") or defaults.get("nlp2dsl_url", "http://localhost:8010")
-    timeout_s = float(defaults.get("health_timeout_s", 120))
-
-    examples_cfg = cfg.get("examples") or {}
-    if args.all:
-        example_ids = sorted(examples_cfg.keys())
-    elif args.examples:
-        example_ids = list(args.examples)
-    else:
-        example_ids = [
-            eid for eid, e in examples_cfg.items()
-            if e.get("conversation") or e.get("execution_scenario")
-        ]
+    base_url, timeout_s = _resolve_base_url(args, cfg)
+    example_ids = _resolve_example_ids(args, cfg)
 
     profiles = _collect_profiles(example_ids, cfg)
     if args.llm:
@@ -333,6 +410,7 @@ def main(argv: list[str] | None = None) -> int:
             return 1
 
     reports: list[dict[str, Any]] = []
+    examples_cfg = cfg.get("examples") or {}
     for eid in example_ids:
         entry = examples_cfg.get(eid)
         if not entry:
@@ -345,28 +423,12 @@ def main(argv: list[str] | None = None) -> int:
         env = {**os.environ, "NLP2DSL_URL": base_url, "NLP2DSL_EXECUTE": "1"}
         subprocess.run([_py(), str(RESULTS_SCRIPT), *example_ids], cwd=ROOT, env=env, check=False)
 
-    aggregate = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "base_url": base_url,
-        "docker_profiles": sorted(profiles),
-        "examples": len(reports),
-        "passed": sum(1 for r in reports if r.get("status") == "passed"),
-        "failed": sum(1 for r in reports if r.get("status") == "failed"),
-        "skipped": sum(1 for r in reports if r.get("status") == "skipped"),
-        "results": reports,
-    }
-    out = ROOT / "examples" / "docker-e2e-results.json"
-    out.write_text(json.dumps(aggregate, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(
-        f"\nWrote {out} — {aggregate['passed']} passed, "
-        f"{aggregate['failed']} failed, {aggregate['skipped']} skipped "
-        f"(of {aggregate['examples']} examples)"
-    )
+    _write_aggregate_report(reports, profiles, base_url)
 
     if args.down:
         docker_down()
 
-    return 1 if aggregate["failed"] else 0
+    return 1 if any(r.get("status") == "failed" for r in reports) else 0
 
 
 if __name__ == "__main__":

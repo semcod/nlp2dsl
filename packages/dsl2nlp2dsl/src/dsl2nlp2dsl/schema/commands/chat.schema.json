@@ -1,0 +1,10 @@
+{
+  "$id": "dsl2nlp2dsl/commands/chat",
+  "type": "object",
+  "required": ["verb", "text"],
+  "properties": {
+    "verb": { "const": "CHAT" },
+    "text": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

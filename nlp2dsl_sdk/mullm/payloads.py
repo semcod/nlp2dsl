@@ -92,16 +92,11 @@ def _parse_auto_assign(cfg: dict[str, Any]) -> bool:
     return bool(auto_assign)
 
 
-def build_task_payload(
-    step: dict[str, Any],
-    *,
-    workflow_id: str | None = None,
-    session_id: str | None = None,
+def _build_payload_core(
+    action: str,
+    cfg: dict[str, Any],
+    step_id: str,
 ) -> dict[str, Any]:
-    """Build POST /api/commands/tasks body for one workflow step."""
-    action = str(step.get("action") or "")
-    cfg = _cfg(step)
-    step_id = str(step.get("id") or step.get("step_id") or "step")
     title = str(cfg.get("title") or cfg.get("name") or f"{action}:{step_id}")
     description = str(cfg.get("description") or cfg.get("prompt") or title)
     shell_command = str(cfg.get("shell_command") or cfg.get("command") or "").strip()
@@ -114,13 +109,28 @@ def build_task_payload(
         shell_command=shell_command,
     )
 
-    payload: dict[str, Any] = {
+    return {
         "title": title[:500],
         "description": description[:4000],
         "shell_command": shell_command[:8000],
         "source": str(cfg.get("source") or "nlp2dsl"),
         "auto_assign": _parse_auto_assign(cfg),
     }
+
+
+def build_task_payload(
+    step: dict[str, Any],
+    *,
+    workflow_id: str | None = None,
+    session_id: str | None = None,
+) -> dict[str, Any]:
+    """Build POST /api/commands/tasks body for one workflow step."""
+    action = str(step.get("action") or "")
+    cfg = _cfg(step)
+    step_id = str(step.get("id") or step.get("step_id") or "step")
+
+    payload = _build_payload_core(action, cfg, step_id)
+
     preferred_role = cfg.get("preferred_role") or cfg.get("role")
     if preferred_role:
         payload["preferred_role"] = str(preferred_role)

@@ -23,6 +23,64 @@ from _conversation_scenario import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _setup_scenario(
+    scenario_path: Path,
+    base_url: str,
+    wait_health_flag: bool,
+) -> dict[str, Any]:
+    scenario = load_yaml(scenario_path)
+    example_dir = scenario_path.parent.parent
+    os.environ.setdefault("NLP2DSL_EXAMPLE_DIR", str(example_dir))
+    prepare_doql_context(scenario_path, scenario)
+    if wait_health_flag and not wait_health(base_url):
+        raise RuntimeError(f"nlp2dsl not healthy at {base_url}")
+    return scenario
+
+
+def _run_turns(
+    flow: Any,
+    scenario: dict[str, Any],
+) -> list[str]:
+    turn_errors: list[str] = []
+
+    def _process_single_turn(idx: int, turn: dict[str, Any]) -> str | None:
+        action = turn_loop_action(flow, turn, idx=idx)
+        if action in ("continue", "break"):
+            return action
+        text = str(turn.get("text", "")).strip()
+        if not text:
+            turn_errors.append(f"turn {idx}: empty text")
+            return None
+        response = run_turn(flow, turn, idx=idx)
+        expect = turn.get("expect") or {}
+        if expect:
+            ok, msg = check_expect(response, expect)
+            if not ok:
+                turn_errors.append(f"turn {idx}: {msg}")
+        return None
+
+    for idx, turn in enumerate(scenario.get("turns") or [], start=1):
+        action = _process_single_turn(idx, turn)
+        if action == "break":
+            break
+    return turn_errors
+
+
+def _write_artifacts(
+    trace: dict[str, Any],
+    out_root: Path,
+    scenario: dict[str, Any],
+) -> None:
+    from testql_conversations.artifacts import write_conversation_artifacts
+
+    write_conversation_artifacts(out_root, trace, scenario_name=scenario.get("name", "scenario"))
+    if scenario.get("record_llm_routing"):
+        src = out_root / "conversation.trace.json"
+        dst = out_root / "conversation.llm.trace.json"
+        if src.is_file():
+            dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+
+
 def run_scenario(
     scenario_path: Path,
     *,
@@ -31,35 +89,10 @@ def run_scenario(
     wait_health_flag: bool = True,
 ) -> dict:
     from nlp2dsl_sdk.client import ConversationFlow, NLP2DSLClient
-    from testql_conversations.artifacts import write_conversation_artifacts
 
-    scenario = load_yaml(scenario_path)
-    example_dir = scenario_path.parent.parent
-    os.environ.setdefault("NLP2DSL_EXAMPLE_DIR", str(example_dir))
-    prepare_doql_context(scenario_path, scenario)
-
-    if wait_health_flag and not wait_health(base_url):
-        raise RuntimeError(f"nlp2dsl not healthy at {base_url}")
-
+    scenario = _setup_scenario(scenario_path, base_url, wait_health_flag)
     flow = ConversationFlow(NLP2DSLClient(backend_url=base_url))
-    turn_errors: list[str] = []
-
-    for idx, turn in enumerate(scenario.get("turns") or [], start=1):
-        action = turn_loop_action(flow, turn, idx=idx)
-        if action == "continue":
-            continue
-        if action == "break":
-            break
-        text = str(turn.get("text", "")).strip()
-        if not text:
-            turn_errors.append(f"turn {idx}: empty text")
-            continue
-        response = run_turn(flow, turn, idx=idx)
-        expect = turn.get("expect") or {}
-        if expect:
-            ok, msg = check_expect(response, expect)
-            if not ok:
-                turn_errors.append(f"turn {idx}: {msg}")
+    turn_errors = _run_turns(flow, scenario)
 
     validations = [
         run_validation(v, flow._last_response)
@@ -75,14 +108,21 @@ def run_scenario(
     )
 
     out_root = artifact_root or scenario_path.parent
-    write_conversation_artifacts(out_root, trace, scenario_name=scenario_path.name)
-    if scenario.get("record_llm_routing"):
-        src = out_root / "conversation.trace.json"
-        dst = out_root / "conversation.llm.trace.json"
-        if src.is_file():
-            dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
-
+    _write_artifacts(trace, out_root, scenario)
     return trace
+
+
+def _print_trace(trace: dict[str, Any], scenario_path: Path, *, json_mode: bool) -> None:
+    if json_mode:
+        print(json.dumps(trace, indent=2, ensure_ascii=False))
+        return
+    status = "PASSED" if trace.get("passed") else "FAILED"
+    print(f"{status}: {scenario_path} — conversation_id={trace.get('conversation_id')}")
+    for err in trace.get("errors") or []:
+        print(f"  - {err}", file=sys.stderr)
+    for v in trace.get("validations") or []:
+        mark = "ok" if v.get("passed") else "FAIL"
+        print(f"  [{mark}] {v.get('id')}: {v.get('summary')}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -108,17 +148,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
-    if args.json:
-        print(json.dumps(trace, indent=2, ensure_ascii=False))
-    else:
-        status = "PASSED" if trace.get("passed") else "FAILED"
-        print(f"{status}: {scenario_path} — conversation_id={trace.get('conversation_id')}")
-        for err in trace.get("errors") or []:
-            print(f"  - {err}", file=sys.stderr)
-        for v in trace.get("validations") or []:
-            mark = "ok" if v.get("passed") else "FAIL"
-            print(f"  [{mark}] {v.get('id')}: {v.get('summary')}")
-
+    _print_trace(trace, scenario_path, json_mode=args.json)
     return 0 if trace.get("passed") else 1
 
 

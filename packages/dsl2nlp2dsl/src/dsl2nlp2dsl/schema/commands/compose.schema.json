@@ -1,0 +1,12 @@
+{
+  "$id": "dsl2nlp2dsl/commands/compose",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "COMPOSE" },
+    "profile": { "type": "string", "default": "default" },
+    "out": { "type": "string" },
+    "target": { "type": "string", "default": "." }
+  },
+  "additionalProperties": false
+}

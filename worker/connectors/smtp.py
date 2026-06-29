@@ -25,15 +25,27 @@ class SmtpConfig:
         host = os.getenv("SMTP_HOST", "").strip()
         if not host:
             return None
+        port = int(os.getenv("SMTP_PORT", "587"))
+        tls_raw = os.getenv("SMTP_TLS", "1").strip().lower()
+        use_tls = tls_raw not in {"0", "false", "no", "ssl", "smtps"}
         return cls(
             host=host,
-            port=int(os.getenv("SMTP_PORT", "587")),
+            port=port,
             user=os.getenv("SMTP_USER", "").strip(),
             password=os.getenv("SMTP_PASSWORD", "").strip(),
-            use_tls=os.getenv("SMTP_TLS", "1").strip().lower() not in {"0", "false", "no"},
+            use_tls=use_tls,
             from_addr=os.getenv("SMTP_FROM", os.getenv("SMTP_USER", "nlp2dsl@localhost")).strip(),
             timeout=float(os.getenv("SMTP_TIMEOUT", "30")),
         )
+
+
+def _use_smtp_ssl(cfg: SmtpConfig) -> bool:
+    tls_raw = os.getenv("SMTP_TLS", "1").strip().lower()
+    if tls_raw in {"ssl", "smtps"}:
+        return True
+    if os.getenv("SMTP_SSL", "").strip().lower() in {"1", "true", "yes"}:
+        return True
+    return cfg.port == 465
 
 
 def send_smtp_message(
@@ -66,8 +78,13 @@ def send_smtp_message(
                 filename=path.name,
             )
 
-    with smtplib.SMTP(cfg.host, cfg.port, timeout=cfg.timeout) as smtp:
-        if cfg.use_tls:
+    if _use_smtp_ssl(cfg):
+        smtp_ctx = smtplib.SMTP_SSL(cfg.host, cfg.port, timeout=cfg.timeout)
+    else:
+        smtp_ctx = smtplib.SMTP(cfg.host, cfg.port, timeout=cfg.timeout)
+
+    with smtp_ctx as smtp:
+        if not _use_smtp_ssl(cfg) and cfg.use_tls:
             smtp.starttls()
         if cfg.user:
             smtp.login(cfg.user, cfg.password)

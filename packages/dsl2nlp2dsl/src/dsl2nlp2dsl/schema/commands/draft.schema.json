@@ -1,0 +1,12 @@
+{
+  "$id": "dsl2nlp2dsl/commands/draft",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "DRAFT" },
+    "name": { "type": "string" },
+    "draft_file": { "type": "string" },
+    "status": { "enum": ["draft", "validated", "approved", "active", "rejected"] }
+  },
+  "additionalProperties": false
+}

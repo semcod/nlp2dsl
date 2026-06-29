@@ -1,0 +1,12 @@
+{
+  "$id": "dsl2nlp2dsl/commands/generate",
+  "type": "object",
+  "required": ["verb", "text"],
+  "properties": {
+    "verb": { "const": "GENERATE" },
+    "text": { "type": "string", "minLength": 1 },
+    "out": { "type": "string" },
+    "mode": { "enum": ["auto", "rules", "llm"], "default": "auto" }
+  },
+  "additionalProperties": false
+}

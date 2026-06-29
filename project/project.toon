@@ -1,0 +1,2751 @@
+# nlp2dsl | 445f 42022L | python:440/javascript:3/rust:2
+# Keys: M=modules, D=details, i=imports, c=classes, f=functions, m=methods
+M[445]:
+  nlp2dsl_sdk/artifact_layout.py,2
+  nlp2dsl_sdk/artifacts.py,2
+  nlp2dsl_sdk/compose_generator.py,2
+  nlp2dsl_sdk/contracts/__init__.py,2
+  nlp2dsl_sdk/contracts/action.py,2
+  nlp2dsl_sdk/contracts/draft.py,2
+  nlp2dsl_sdk/contracts/registry.py,2
+  nlp2dsl_sdk/conversation_artifacts.py,2
+  nlp2dsl_sdk/conversation_testql.py,2
+  nlp2dsl_sdk/doql/__init__.py,2
+  nlp2dsl_sdk/doql/context_blocks.py,2
+  nlp2dsl_sdk/doql/models.py,2
+  nlp2dsl_sdk/doql/parse.py,2
+  nlp2dsl_sdk/doql/render.py,2
+  nlp2dsl_sdk/doql/runtime.py,2
+  nlp2dsl_sdk/doql_context.py,2
+  nlp2dsl_sdk/doql_registry.py,2
+  nlp2dsl_sdk/example_bootstrap.py,2
+  nlp2dsl_sdk/export/__init__.py,2
+  nlp2dsl_sdk/export/markpact.py,2
+  nlp2dsl_sdk/export/pactown.py,2
+  nlp2dsl_sdk/export/publish.py,2
+  nlp2dsl_sdk/invoice_policy.py,2
+  nlp2dsl_sdk/path_resolve.py,2
+  nlp2dsl_sdk/process_policy.py,2
+  nlp2dsl_sdk/system_map_bridge.py,2
+  nlp2dsl_sdk/system_map_generator.py,2
+  nlp2dsl_sdk/system_map_ir.py,2
+  nlp2dsl_sdk/system_map_models.py,2
+  nlp2dsl_sdk/system_map_render/__init__.py,2
+  nlp2dsl_sdk/system_map_render/blocks.py,2
+  nlp2dsl_sdk/system_map_render/helpers.py,2
+  nlp2dsl_sdk/system_map_render/render.py,2
+  nlp2dsl_sdk/system_map_runtimes.py,2
+  nlp2dsl_sdk/validation/__init__.py,2
+  nlp2dsl_sdk/validation/capability_policy.py,2
+  nlp2dsl_sdk/validation/context.py,2
+  nlp2dsl_sdk/validation/contract_drift.py,2
+  nlp2dsl_sdk/validation/helpers.py,2
+  nlp2dsl_sdk/validation/issue.py,2
+  nlp2dsl_sdk/validation/messages.py,2
+  nlp2dsl_sdk/validation/pipeline.py,2
+  nlp2dsl_sdk/validation/profile_checks.py,2
+  nlp2dsl_sdk/validation/resolutions.py,2
+  nlp2dsl_sdk/validation/rules/__init__.py,1
+  nlp2dsl_sdk/validation/rules/attachment.py,2
+  nlp2dsl_sdk/validation/rules/dsl_contract.py,2
+  nlp2dsl_sdk/validation/rules/post_execute.py,2
+  nlp2dsl_sdk/validation/rules/runtime_health.py,2
+  nlp2dsl_sdk/validation/rules/step_config.py,2
+  scripts/generate-compat-shims.py,72
+  backend/app/__init__.py,0
+  backend/app/action_catalog.py,86
+  backend/app/attachment_validation.py,104
+  backend/app/audit.py,59
+  backend/app/config.py,34
+  backend/app/db/__init__.py,47
+  backend/app/db/memory.py,37
+  backend/app/db/postgres.py,193
+  backend/app/dsl_validation.py,34
+  backend/app/engine.py,274
+  backend/app/execution_policy.py,176
+  backend/app/idempotency.py,245
+  backend/app/logging_setup.py,79
+  backend/app/main.py,39
+  backend/app/mullm_execute.py,16
+  backend/app/path_resolve.py,51
+  backend/app/routers/__init__.py,0
+  backend/app/routers/chat.py,220
+  backend/app/routers/settings.py,62
+  backend/app/routers/system.py,21
+  backend/app/routers/testql_compat.py,121
+  backend/app/routers/workflow.py,430
+  backend/app/schemas.py,44
+  backend/app/step_validator.py,42
+  backend/app/workflow.py,19
+  backend/app/workflow_events.py,73
+  backend/app/workflow_execute.py,100
+  backend/app/workflow_lifecycle.py,48
+  backend/tests/__init__.py,0
+  backend/tests/conftest.py,26
+  backend/tests/test_action_catalog.py,45
+  backend/tests/test_attachment_validation.py,73
+  backend/tests/test_audit.py,41
+  backend/tests/test_chat_execute_keywords.py,14
+  backend/tests/test_chat_router.py,138
+  backend/tests/test_config.py,64
+  backend/tests/test_execution_policy.py,99
+  backend/tests/test_idempotency.py,66
+  backend/tests/test_logging.py,98
+  backend/tests/test_persistence.py,136
+  backend/tests/test_step_validator.py,37
+  backend/tests/test_workflow_api.py,696
+  backend/tests/test_workflow_events.py,85
+  backend/tests/test_workflow_execute.py,90
+  examples/01-invoice/main.py,26
+  examples/01-invoice/scenario.py,70
+  examples/02-email/main.py,26
+  examples/02-email/scenario.py,42
+  examples/03-report-and-notify/main.py,26
+  examples/03-report-and-notify/scenario.py,64
+  examples/04-scheduled-report/main.py,26
+  examples/04-scheduled-report/scenario.py,68
+  examples/05-conversation-flow/main.py,26
+  examples/05-conversation-flow/scenario.py,35
+  examples/06-interactive-chat/main.py,26
+  examples/06-interactive-chat/scenario.py,41
+  examples/07-email-conversation/main.py,26
+  examples/07-email-conversation/scenario.py,33
+  examples/08-multi-object-benchmark/benchmark_queries.py,152
+  examples/08-multi-object-benchmark/main.py,26
+  examples/08-multi-object-benchmark/scenario.py,130
+  examples/09-execution-smoke/main.py,26
+  examples/09-execution-smoke/scenario.py,35
+  examples/10-llm-benchmark/main.py,26
+  examples/10-llm-benchmark/scenario.py,26
+  examples/11-notify-quality/main.py,26
+  examples/11-notify-quality/scenario.py,37
+  examples/12-ir-show/main.py,26
+  examples/12-ir-show/scenario.py,73
+  examples/13-autonomous-invoice-stack/main.py,26
+  examples/13-autonomous-invoice-stack/scenario.py,52
+  examples/14-markpact-export/main.py,26
+  examples/14-markpact-export/scenario.py,86
+  examples/15-idempotency-replay/main.py,26
+  examples/15-idempotency-replay/scenario.py,63
+  examples/16-golden-eval/main.py,26
+  examples/16-golden-eval/scenario.py,53
+  examples/17-execution-policy/main.py,26
+  examples/17-execution-policy/scenario.py,115
+  examples/18-trigger-webhook/main.py,26
+  examples/18-trigger-webhook/scenario.py,47
+  examples/19-real-smtp/main.py,26
+  examples/19-real-smtp/scenario.py,67
+  examples/20-pactown-deploy/main.py,26
+  examples/20-pactown-deploy/scenario.py,79
+  examples/bootstrap.py,85
+  examples/code_generation_examples.py,15
+  nlp-service/app/__init__.py,0
+  nlp-service/app/access/__init__.py,13
+  nlp-service/app/access/bootstrap.py,2
+  nlp-service/app/access/config.py,2
+  nlp-service/app/access/native.py,2
+  nlp-service/app/access/policy.py,2
+  nlp-service/app/access/uri_match.py,2
+  nlp-service/app/audio_parser.py,103
+  nlp-service/app/code_generator.py,217
+  nlp-service/app/config.py,50
+  nlp-service/app/conversation/__init__.py,1
+  nlp-service/app/conversation/attachment_gate.py,21
+  nlp-service/app/conversation/autonomous_loop.py,296
+  nlp-service/app/conversation/doql_autofill.py,129
+  nlp-service/app/conversation/doql_context.py,45
+  nlp-service/app/conversation/doql_registry.py,161
+  nlp-service/app/conversation/invoice_paths.py,57
+  nlp-service/app/conversation/invoice_policy.py,21
+  nlp-service/app/conversation/merge.py,26
+  nlp-service/app/conversation/orchestrator.py,265
+  nlp-service/app/conversation/process_agent.py,99
+  nlp-service/app/conversation/reflection.py,110
+  nlp-service/app/conversation/responses.py,344
+  nlp-service/app/conversation/runtime_gate.py,78
+  nlp-service/app/conversation/system_map.py,107
+  nlp-service/app/dsl/__init__.py,3
+  nlp-service/app/dsl/forms.py,79
+  nlp-service/app/dsl/mapper.py,209
+  nlp-service/app/dsl/pipeline.py,47
+  nlp-service/app/execution/__init__.py,17
+  nlp-service/app/execution/delegate.py,19
+  nlp-service/app/execution/system.py,246
+  nlp-service/app/executors/__init__.py,17
+  nlp-service/app/executors/router.py,77
+  nlp-service/app/governance/__init__.py,12
+  nlp-service/app/governance/bootstrap.py,65
+  nlp-service/app/governance/config.py,133
+  nlp-service/app/governance/policy.py,259
+  nlp-service/app/governance/uri_match.py,34
+  nlp-service/app/logging_setup.py,79
+  nlp-service/app/main.py,42
+  nlp-service/app/mapper.py,3
+  nlp-service/app/orchestrator.py,19
+  nlp-service/app/parser_enrich.py,13
+  nlp-service/app/parser_llm.py,22
+  nlp-service/app/parser_rules.py,3
+  nlp-service/app/parsing/__init__.py,2
+  nlp-service/app/parsing/facade.py,3
+  nlp-service/app/registry.py,425
+  nlp-service/app/request_context.py,16
+  nlp-service/app/routers/__init__.py,1
+  nlp-service/app/routers/chat.py,124
+  nlp-service/app/routers/code.py,32
+  nlp-service/app/routers/nlp.py,134
+  nlp-service/app/routers/schema.py,24
+  nlp-service/app/routers/settings.py,44
+  nlp-service/app/routers/system.py,17
+  nlp-service/app/routers/ws.py,69
+  nlp-service/app/routing/__init__.py,15
+  nlp-service/app/routing/intent.py,47
+  nlp-service/app/routing/native.py,110
+  nlp-service/app/routing/observability.py,44
+  nlp-service/app/routing/orientation.py,350
+  nlp-service/app/routing/parser/__init__.py,2
+  nlp-service/app/routing/parser/enrich.py,141
+  nlp-service/app/routing/parser/facade.py,15
+  nlp-service/app/routing/parser/intent_normalize.py,71
+  nlp-service/app/routing/parser/llm.py,105
+  nlp-service/app/routing/parser/prompt_catalog.py,74
+  nlp-service/app/routing/parser/resolve_mode.py,48
+  nlp-service/app/routing/parser/rules.py,485
+  nlp-service/app/routing/resolve.py,206
+  nlp-service/app/schemas.py,110
+  nlp-service/app/settings.py,186
+  nlp-service/app/store/__init__.py,22
+  nlp-service/app/store/factory.py,34
+  nlp-service/app/store/memory.py,15
+  nlp-service/app/store/redis_store.py,44
+  nlp-service/app/system_executor.py,33
+  nlp-service/app/validation/__init__.py,13
+  nlp-service/app/validation/attachment_validation.py,78
+  nlp-service/app/validation/invoice_pdf.py,61
+  nlp-service/app/validation/path_policy.py,67
+  nlp-service/app/validation/path_resolve.py,67
+  nlp-service/app/validation/step_validator.py,86
+  nlp-service/integrations/__init__.py,3
+  nlp-service/integrations/loader.py,52
+  nlp-service/integrations/mullm/__init__.py,0
+  nlp-service/integrations/mullm/client.py,3
+  nlp-service/integrations/mullm/registry.py,63
+  nlp-service/tests/__init__.py,0
+  nlp-service/tests/conftest.py,87
+  nlp-service/tests/test_access.py,50
+  nlp-service/tests/test_action_contracts.py,19
+  nlp-service/tests/test_attachment_validation.py,48
+  nlp-service/tests/test_autonomous_loop.py,87
+  nlp-service/tests/test_doql_attachment.py,59
+  nlp-service/tests/test_doql_autofill.py,45
+  nlp-service/tests/test_doql_context.py,121
+  nlp-service/tests/test_doql_registry.py,49
+  nlp-service/tests/test_enrich.py,109
+  nlp-service/tests/test_execution_delegate.py,60
+  nlp-service/tests/test_executors_router.py,34
+  nlp-service/tests/test_intent_normalize.py,36
+  nlp-service/tests/test_lifecycle_plan.py,28
+  nlp-service/tests/test_mapper.py,223
+  nlp-service/tests/test_orchestrator.py,252
+  nlp-service/tests/test_orientation.py,86
+  nlp-service/tests/test_parser_rules.py,263
+  nlp-service/tests/test_path_policy.py,41
+  nlp-service/tests/test_path_resolve.py,20
+  nlp-service/tests/test_process_agent.py,129
+  nlp-service/tests/test_registry.py,114
+  nlp-service/tests/test_registry_observe.py,88
+  nlp-service/tests/test_routing_observability.py,32
+  nlp-service/tests/test_routing_resolve.py,49
+  nlp-service/tests/test_step_validator.py,66
+  nlp-service/tests/test_store.py,135
+  nlp-service/tests/test_system_executor.py,298
+  nlp-service/tests/test_system_map_scope.py,44
+  nlp2dsl_sdk/__init__.py,45
+  nlp2dsl_sdk/__main__.py,32
+  nlp2dsl_sdk/attachment_validation.py,108
+  nlp2dsl_sdk/autonomous_flow.py,84
+  nlp2dsl_sdk/cli.py,211
+  nlp2dsl_sdk/client.py,879
+  nlp2dsl_sdk/demos.py,282
+  nlp2dsl_sdk/deploy/__init__.py,3
+  nlp2dsl_sdk/deploy/pactown_deploy.py,81
+  nlp2dsl_sdk/encoding.py,68
+  nlp2dsl_sdk/evaluation/__init__.py,11
+  nlp2dsl_sdk/evaluation/golden.py,82
+  nlp2dsl_sdk/evaluation/metrics.py,184
+  nlp2dsl_sdk/example_loader.py,29
+  nlp2dsl_sdk/invoice_pdf.py,63
+  nlp2dsl_sdk/mullm/__init__.py,14
+  nlp2dsl_sdk/mullm/client.py,66
+  nlp2dsl_sdk/mullm/executor.py,112
+  nlp2dsl_sdk/mullm/payloads.py,109
+  nlp2dsl_sdk/preview.py,290
+  nlp2dsl_sdk/reflection.py,302
+  nlp2dsl_sdk/stack_flow.py,197
+  nlp2dsl_sdk/step_validation.py,35
+  nlp2dsl_sdk/workflow/__init__.py,43
+  nlp2dsl_sdk/workflow/events.py,130
+  nlp2dsl_sdk/workflow/lifecycle.py,236
+  nlp2dsl_sdk/workflow/simulate.py,77
+  packages/dsl-contracts/src/dsl_contracts/__init__.py,62
+  packages/dsl-contracts/src/dsl_contracts/action.py,77
+  packages/dsl-contracts/src/dsl_contracts/draft.py,129
+  packages/dsl-contracts/src/dsl_contracts/issue.py,50
+  packages/dsl-contracts/src/dsl_contracts/registry.py,180
+  packages/dsl-validate/src/dsl_validate/__init__.py,77
+  packages/dsl-validate/src/dsl_validate/capability_policy.py,351
+  packages/dsl-validate/src/dsl_validate/context.py,40
+  packages/dsl-validate/src/dsl_validate/contract_drift.py,131
+  packages/dsl-validate/src/dsl_validate/helpers.py,26
+  packages/dsl-validate/src/dsl_validate/issue.py,2
+  packages/dsl-validate/src/dsl_validate/messages.py,135
+  packages/dsl-validate/src/dsl_validate/path_resolve.py,44
+  packages/dsl-validate/src/dsl_validate/pipeline.py,240
+  packages/dsl-validate/src/dsl_validate/profile_checks.py,253
+  packages/dsl-validate/src/dsl_validate/resolutions.py,177
+  packages/dsl-validate/src/dsl_validate/rules/__init__.py,0
+  packages/dsl-validate/src/dsl_validate/rules/attachment.py,99
+  packages/dsl-validate/src/dsl_validate/rules/dsl_contract.py,146
+  packages/dsl-validate/src/dsl_validate/rules/post_execute.py,78
+  packages/dsl-validate/src/dsl_validate/rules/runtime_health.py,118
+  packages/dsl-validate/src/dsl_validate/rules/step_config.py,142
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/__init__.py,28
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/clarification.py,27
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/data_files.py,55
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/domain_mapping.py,35
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/facade.py,38
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/input.py,28
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/__init__.py,10
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/fast_path_detection.py,293
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/fast_path_terms.py,327
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_detector.py,483
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_patterns.py,161
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/pattern_loaders.py,115
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/nlp2cmd_convert.py,39
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/normalize.py,10
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/protocols.py,8
+  packages/nlp2cmd-intent/tests/test_analyze_query.py,10
+  packages/nlp2cmd-intent/tests/test_clarification.py,20
+  packages/nlp2cmd-intent/tests/test_intent_pipeline.py,6
+  packages/nlp2cmd-intent/tests/test_nlp2cmd_convert.py,35
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/__init__.py,12
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/pipeline.py,18
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/router.py,26
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/strategies/__init__.py,0
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/strategies/rest_workflow.py,71
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/strategies/rule_shell.py,59
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/strategy.py,8
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/workflow_backend.py,39
+  packages/nlp2cmd-planner/tests/test_planning_pipeline.py,41
+  packages/nlp2cmd-planner/tests/test_rest_workflow.py,71
+  packages/nlp2cmd-planner/tests/test_rest_workflow_propact.py,29
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/__init__.py,13
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/adapter.py,113
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/cli.py,16
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/executor.py,134
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/runner.py,157
+  packages/nlp2cmd-propact/tests/test_adapter.py,121
+  packages/nlp2cmd-propact/tests/test_executor.py,61
+  packages/nlp2cmd-propact/tests/test_runner.py,99
+  packages/nlp2dsl-artifacts/src/nlp2dsl_artifacts/__init__.py,25
+  packages/nlp2dsl-artifacts/src/nlp2dsl_artifacts/encoding.py,68
+  packages/nlp2dsl-artifacts/src/nlp2dsl_artifacts/writer.py,358
+  packages/nlp2dsl-mcp/src/nlp2dsl_mcp/__init__.py,1
+  packages/nlp2dsl-mcp/src/nlp2dsl_mcp/server.py,71
+  packages/nlp2dsl-plugin/src/nlp2dsl_plugin/__init__.py,3
+  packages/nlp2dsl-plugin/src/nlp2dsl_plugin/schema.py,37
+  packages/nlp2dsl-show/src/nlp2dsl_show/__init__.py,2
+  packages/nlp2dsl-show/src/nlp2dsl_show/cli.py,69
+  packages/nlp2dsl-show/src/nlp2dsl_show/encoding.py,40
+  packages/nlp2dsl-show/tests/test_cli.py,36
+  packages/nlp2dsl-stack/src/nlp2dsl_stack/__init__.py,11
+  packages/nlp2dsl-stack/src/nlp2dsl_stack/compose.py,436
+  packages/pact-ir/src/pact_ir/__init__.py,14
+  packages/pact-ir/src/pact_ir/execution_plan.py,47
+  packages/pact-ir/src/pact_ir/intent.py,30
+  packages/pact-ir/src/pact_ir/target_kind.py,27
+  packages/pact-ir/tests/test_ir_roundtrip.py,31
+  packages/testql-conversations/src/testql_conversations/__init__.py,16
+  packages/testql-conversations/src/testql_conversations/artifacts.py,104
+  packages/testql-conversations/src/testql_conversations/validate.py,133
+  packages/workflow-export/src/workflow_export/__init__.py,43
+  packages/workflow-export/src/workflow_export/markpact.py,202
+  packages/workflow-export/src/workflow_export/pactown.py,193
+  packages/workflow-export/src/workflow_export/publish.py,163
+  scripts/_conversation_scenario.py,201
+  scripts/_dotenv.py,19
+  scripts/aggregate-example-testql.py,38
+  scripts/migrate-direct-imports.py,87
+  scripts/run-conversation-scenario.py,128
+  scripts/run-example-docker-e2e.py,353
+  scripts/run-example-testql-results.py,480
+  scripts/run-execution-scenario.py,108
+  scripts/validate-contract-draft.py,64
+  scripts/validate-contract-drift.py,79
+  scripts/validate-publish-export.py,89
+  tauri-wrapper/scripts/dev.js,43
+  tauri-wrapper/scripts/serve-dist.js,119
+  tauri-wrapper/src-tauri/build.rs,3
+  tauri-wrapper/src-tauri/src/main.rs,6
+  tauri-wrapper/test/mvp-voice-chat-wrapper.test.js,5
+  test_code_generation.py,111
+  tests/conftest.py,7
+  tests/e2e/__init__.py,0
+  tests/e2e/conftest.py,98
+  tests/e2e/test_backend.py,105
+  tests/e2e/test_chat_ui.py,187
+  tests/e2e/test_nlp_service.py,153
+  tests/e2e/test_websocket.py,72
+  tests/test_action_contracts.py,61
+  tests/test_artifact_layout.py,79
+  tests/test_attachment_validation.py,67
+  tests/test_capability_policy.py,111
+  tests/test_cli_run_output.py,61
+  tests/test_compose_generator.py,50
+  tests/test_contract_draft.py,72
+  tests/test_contract_drift.py,29
+  tests/test_conversation_testql.py,42
+  tests/test_doql_context.py,255
+  tests/test_doql_registry.py,92
+  tests/test_encoding.py,28
+  tests/test_export_markpact.py,119
+  tests/test_golden_eval.py,84
+  tests/test_invoice_pdf.py,18
+  tests/test_invoice_policy.py,28
+  tests/test_mullm_client.py,90
+  tests/test_nlp2dsl_sdk.py,244
+  tests/test_pactown_deploy.py,23
+  tests/test_path_resolve.py,61
+  tests/test_placeholder.py,7
+  tests/test_process_policy.py,120
+  tests/test_profile_validations.py,86
+  tests/test_reflection.py,90
+  tests/test_system_map_ir.py,122
+  tests/test_tests.py,7
+  tests/test_validation.py,260
+  tests/test_workflow_events.py,96
+  tests/test_workflow_lifecycle.py,53
+  tests/test_workflow_simulate.py,25
+  trigger-service/app/__init__.py,1
+  trigger-service/app/main.py,55
+  trigger-service/tests/test_triggers.py,27
+  worker/__init__.py,3
+  worker/action_catalog.py,55
+  worker/attachment_validation.py,29
+  worker/config.py,20
+  worker/connectors/__init__.py,6
+  worker/connectors/smtp.py,71
+  worker/invoice_pdf.py,61
+  worker/logging_setup.py,79
+  worker/path_resolve.py,59
+  worker/registry.py,40
+  worker/step_validator.py,42
+  worker/tests/__init__.py,0
+  worker/tests/conftest.py,33
+  worker/tests/test_registry.py,17
+  worker/tests/test_smtp_connector.py,49
+  worker/tests/test_step_validator.py,51
+  worker/tests/test_worker.py,142
+  worker/worker.py,247
+D:
+  scripts/generate-compat-shims.py:
+    i: pathlib.Path
+    e: ROOT,SDK,SHIMS,shim_body,main
+    shim_body(target:str)->str
+    main()->None
+  backend/app/action_catalog.py:
+    i: os,app.schemas.ActionInfo,dsl_contracts.{action_contracts_from_catalog,action_info_config_schema,contract_quality_fields_for_action,contract_required_fields_for_action,known_action_names},httpx.{AsyncClient,Client},typing.Any
+    e: _FALLBACK_ACTION_FIELDS,_CATALOG_CACHE,nlp_actions_to_action_info,fetch_action_catalog,load_action_field_catalog,required_fields_for_action,quality_fields_for_action,known_action_names_from_catalog
+    _default_nlp_service_url()->str
+    nlp_actions_to_action_info(payload:dict[str;Any])->list[ActionInfo]
+    fetch_action_catalog(nlp_service_url:str)->list[ActionInfo]
+    load_action_field_catalog()->dict[str, dict[str, Any]]
+    required_fields_for_action(action:str)->list[str]
+    quality_fields_for_action(action:str)->list[str]
+    known_action_names_from_catalog()->frozenset[str]
+  backend/app/attachment_validation.py:
+    i: app.path_resolve.resolve_attachment_path,app.step_validator.validate_step_config_issues,dsl_validate.issue.Phase,dsl_validate.pipeline.validate_post_execute_execution,pathlib.Path,typing.{Any,Literal}
+    e: build_attachment_validation,validation_from_chat_result,ensure_attachment_validation
+    build_attachment_validation(raw_path:str)->dict[str, Any]
+    _top_level_attachment_validation(result:dict[str;Any])->dict[str, Any] | None
+    _execution_attachment_validation(execution:dict[str;Any])->dict[str, Any] | None
+    _attachment_from_dsl(dsl:dict[str;Any])->dict[str, Any] | None
+    validation_from_chat_result(result:dict[str;Any])->dict[str, Any] | None
+    _append_post_execute_issues(result:dict[str;Any])->None
+    _propagate_attachment_validation(result:dict[str;Any];av:dict[str;Any])->None
+    ensure_attachment_validation(result:dict[str;Any])->None
+  backend/app/audit.py:
+    i: typing.Any
+    e: build_audit_entries
+    _extract_actions(steps:list[Any])->list[str]
+    _build_entry(run:dict[str;Any];events:list[dict[str;Any]])->dict[str, Any]
+    _matches_filters(entry:dict[str;Any])->bool
+    build_audit_entries(repo:Any)->dict[str, Any]
+  backend/app/config.py:
+    i: pydantic.Field,pydantic_settings.{BaseSettings,SettingsConfigDict}
+    e: BackendSettings
+    BackendSettings: 
+  backend/app/db/__init__.py:
+    i: abc.{ABC,abstractmethod}
+    e: DEFAULT_LIST_LIMIT,WorkflowRepo,create_workflow_repo
+    WorkflowRepo: save_run(4),update_run_status(2),get_run(1),list_runs(2),count_runs(0)  # Abstrakcja persystencji workflow.
+    create_workflow_repo()->WorkflowRepo
+  backend/app/db/memory.py:
+    i: app.db.{DEFAULT_LIST_LIMIT,WorkflowRepo},collections.OrderedDict
+    e: DEFAULT_MAX_SIZE,MemoryWorkflowRepo
+    MemoryWorkflowRepo: __init__(1),save_run(4),update_run_status(2),get_run(1),list_runs(2)
+  backend/app/db/postgres.py:
+    i: logging,datetime,collections.abc.Mapping,datetime.UTC,sqlalchemy.{Column,DateTime,String,text},sqlalchemy.dialects.postgresql.{JSONB,pg_insert}
+    e: MAX_NAME_LENGTH,Base,WorkflowRunModel,WorkflowEventModel,PostgresWorkflowRepo
+    Base: 
+    WorkflowRunModel: to_dict(0)
+    WorkflowEventModel: 
+    PostgresWorkflowRepo: __init__(1),_ensure_engine(0),_get_session_factory(0),_ensure_tables(0),save_run(4)
+  backend/app/dsl_validation.py:
+    i: dsl_validate.issue.{Phase,ValidationIssue},dsl_validate.rules.dsl_contract.validate_dsl_contract,typing.Any
+    e: validate_dsl_for_execution,validation_issue_payloads,missing_fields_from_issues,format_dsl_validation_message,dsl_validation_response
+    validate_dsl_for_execution(dsl:Any)->list[ValidationIssue]
+    validation_issue_payloads(issues:list[ValidationIssue])->list[dict[str, Any]]
+    missing_fields_from_issues(issues:list[ValidationIssue])->list[str]
+    format_dsl_validation_message(issues:list[ValidationIssue])->str
+    dsl_validation_response(dsl:Any;issues:list[ValidationIssue])->dict[str, Any]
+  backend/app/engine.py:
+    i: asyncio,logging,datetime,app.config.settings,app.db.create_workflow_repo,datetime.UTC,fastapi.HTTPException,http.HTTPStatus,httpx.AsyncClient,uuid.uuid4
+    e: WORKER_URL,NLP_SERVICE_URL,WORKFLOW_ID_LENGTH,WORKFLOW_TIMEOUT_SECONDS,run_workflow,start_workflow
+    _workflow_steps_payload(result:WorkflowResult)->list[dict]
+    _persist_workflow_snapshot(req:RunWorkflowRequest;result:WorkflowResult)->None
+    _publish_workflow_event(workflow_id:str;event_type:str;status:str;message:str)->None
+    _execute_workflow(req:RunWorkflowRequest;workflow_id:str)->WorkflowResult
+    _track_background_task(task:Any)->None
+    run_workflow(req:RunWorkflowRequest)->WorkflowResult
+    start_workflow(req:RunWorkflowRequest)->WorkflowResult
+  backend/app/execution_policy.py:
+    i: os,app.action_catalog.load_action_field_catalog,app.dsl_validation.{dsl_validation_response,missing_fields_from_issues,validation_issue_payloads},app.engine.NLP_SERVICE_URL,app.logging_setup.get_request_id,collections.abc.Mapping,httpx.AsyncClient,typing.Any
+    e: resolve_agent_id,build_policy_context,fetch_access_decisions,validate_workflow_execution_policy,policy_blocked_response
+    resolve_agent_id(body:Mapping[str;Any])->str
+    _as_str_list(raw:Any)->list[str]
+    _policy_blocks(body:Mapping[str;Any])->tuple[Mapping[str, Any], Mapping[str, Any]]
+    _approval_grants(body:Mapping[str;Any];policy_block:Mapping[str;Any])->frozenset[str]
+    _process_policy_from_block(process_block:Mapping[str;Any])->ProcessPolicyIR | None
+    _dry_run_only(body:Mapping[str;Any];policy_block:Mapping[str;Any])->bool
+    build_policy_context(body:Mapping[str;Any])->ExecutionPolicyContext
+    _extract_step_config(step:Mapping[str;Any])->dict[str, Any]
+  backend/app/idempotency.py:
+    i: asyncio,hashlib,json,logging,datetime,collections.abc.Mapping,dataclasses.{dataclass,field},datetime.{UTC,timedelta}
+    e: IdempotencyRecord,IdempotencyStore,MemoryIdempotencyStore,Base,IdempotencyRecordModel,PostgresIdempotencyStore,workflow_fingerprint,normalize_workflow_for_fingerprint
+    IdempotencyRecord: 
+    IdempotencyStore: start(2),finish(2),clear(0),purge_expired(1)  # Async idempotency store interface.
+    MemoryIdempotencyStore: __init__(0),start(2),finish(2),clear(0),purge_expired(1)  # Process-local fallback idempotency st...
+    Base: 
+    IdempotencyRecordModel: 
+    workflow_fingerprint(workflow:Any)->str
+    normalize_workflow_for_fingerprint(workflow:Any)->dict[str, Any]
+    create_idempotency_store(postgres_url:Any=None)->IdempotencyStore
+  backend/app/logging_setup.py:
+    i: json,logging,time,collections.abc.Callable,contextvars.ContextVar,fastapi.{Request,Response},starlette.middleware.base.BaseHTTPMiddleware,starlette.types.ASGIApp,uuid.uuid4
+    e: get_request_id,JSONFormatter,RequestIDMiddleware,setup_logging
+    JSONFormatter: __init__(1),format(1)  # Emit log records as single-line JSON...
+    RequestIDMiddleware: __init__(2),dispatch(2)  # Generate or forward X-Request-ID for...
+    get_request_id()->str
+    setup_logging(service:str='app';level:Any=None)->None
+  backend/app/main.py:
+    i: app.logging_setup.{RequestIDMiddleware,setup_logging},app.routers.chat.chat_router,app.routers.settings.settings_router,app.routers.system.system_router,app.routers.testql_compat.testql_compat_router,app.routers.workflow.workflow_router,fastapi.FastAPI,fastapi.middleware.cors.CORSMiddleware,typing.Any
+    e: health
+    health()->dict[str, Any]
+  backend/app/mullm_execute.py:
+    i: asyncio,nlp2dsl_sdk.mullm.executor.execute_mullm_workflow,typing.Any
+    e: execute_mullm_dsl
+    execute_mullm_dsl(dsl:dict[str;Any])->dict[str, Any]
+  backend/app/path_resolve.py:
+    i: os,pathlib.Path
+    e: resolve_attachment_path
+    _examples_portable_candidates(raw:str)->list[Path]
+    resolve_attachment_path(raw:str)->str
+  backend/app/routers/chat.py:
+    i: logging,re,app.engine.NLP_SERVICE_URL,app.execution_policy.policy_blocked_response,fastapi.{APIRouter,HTTPException,Request},httpx.{AsyncClient,Response},typing.Any
+    e: _PROXY_TIMEOUT_SECONDS,_EXECUTE_KEYWORDS,chat_start,chat_message,chat_get_state
+    _merge_attachment_validation(result:dict[str;Any])->None
+    _proxy_chat_payload(request:Request;endpoint:str)->tuple[Response, dict[str, Any]]
+    _maybe_auto_execute(result:dict[str;Any];body:dict[str;Any])->dict[str, Any]
+    _execution_requested(result:dict[str;Any];body:dict[str;Any])->bool
+    _is_explicit_execute_request(body:dict[str;Any])->bool
+    _execute_keyword_in_text(text_lower:str;keyword:str)->bool
+    _is_auto_execute_requested(result:dict[str;Any];body:dict[str;Any])->bool
+    _dsl_steps(dsl:dict[str;Any])->list[dict[str, Any]]
+  backend/app/routers/settings.py:
+    i: logging,app.engine.NLP_SERVICE_URL,app.logging_setup.get_request_id,fastapi.{APIRouter,HTTPException},httpx.AsyncClient,typing.Any
+    e: actions_schema,action_schema,get_settings,get_settings_section,update_settings_section,set_setting,reset_settings
+    actions_schema()->dict[str, Any]
+    action_schema(action:str)->dict[str, Any]
+    get_settings()->dict[str, Any]
+    get_settings_section(section:str)->dict[str, Any]
+    update_settings_section(section:str;body:dict)->dict[str, Any]
+    set_setting(body:dict)->dict[str, Any]
+    reset_settings(body:dict={})->dict[str, Any]
+  backend/app/routers/system.py:
+    i: logging,app.engine.NLP_SERVICE_URL,app.logging_setup.get_request_id,fastapi.{APIRouter,HTTPException},httpx.AsyncClient,typing.Any
+    e: _PROXY_TIMEOUT_SECONDS,system_execute
+    system_execute(body:dict)->dict[str, Any]
+  backend/app/routers/testql_compat.py:
+    i: httpx,app.engine.{NLP_SERVICE_URL,run_workflow},app.schemas.{RunWorkflowRequest,Step},fastapi.{APIRouter,HTTPException},pydantic.{BaseModel,Field},typing.Any
+    e: _EXECUTE_KEYWORDS,TestqlChatStart,TestqlChatMessage,TestqlRunWorkflow,testql_chatstart,testql_chatmessage,testql_runworkflow,testql_workflow_from_text
+    TestqlChatStart: 
+    TestqlChatMessage: 
+    TestqlRunWorkflow: 
+    _alias_response(data:dict[str;Any])->dict[str, Any]
+    _resolve_text(body:Any)->str
+    _resolve_conv_id(body:Any)->str
+    _maybe_execute_on_message(result:dict[str;Any];text:str)->dict[str, Any]
+    testql_chatstart(body:TestqlChatStart)->dict[str, Any]
+    testql_chatmessage(body:TestqlChatMessage)->dict[str, Any]
+    testql_runworkflow(body:TestqlRunWorkflow)->dict[str, Any]
+    testql_workflow_from_text(body:dict[str;Any])->dict[str, Any]
+  backend/app/routers/workflow.py:
+    i: asyncio,json,logging,os,fastapi.{APIRouter,HTTPException,Request},http.HTTPStatus,httpx.AsyncClient,typing.Any
+    e: _PROXY_TIMEOUT_SECONDS,orient_nlp,list_actions,run_workflow_endpoint,start_workflow_endpoint,get_history,get_workflow_audit,get_workflow
+    _format_sse(event:str;data:dict[str;Any])->str
+    _workflow_snapshot(run:dict[str;Any])->dict[str, Any]
+    orient_nlp(body:dict[str;Any])->dict[str, Any]
+    list_actions()->list[ActionInfo]
+    run_workflow_endpoint(req:RunWorkflowRequest)->WorkflowResult
+    start_workflow_endpoint(req:RunWorkflowRequest)->WorkflowResult
+    get_history()->list[dict]
+    get_workflow_audit(limit:int=50;offset:int=0;agent_id:Any=None;action:Any=None)->dict[str, Any]
+  backend/app/schemas.py:
+    i: datetime,datetime.UTC,enum.Enum,pydantic.{BaseModel,Field},typing.Any,uuid.uuid4
+    e: StepStatus,Step,RunWorkflowRequest,StepResult,WorkflowResult,ActionInfo
+    StepStatus: 
+    Step:   # Pojedynczy krok workflow — deklaratyw...
+    RunWorkflowRequest:   # Żądanie uruchomienia workflow — DSL b...
+    StepResult: 
+    WorkflowResult: 
+  backend/app/step_validator.py:
+    i: app.action_catalog.{known_action_names_from_catalog,quality_fields_for_action,required_fields_for_action},app.path_resolve.resolve_attachment_path,dsl_validate.context.ValidationContext,dsl_validate.issue.{Phase,ValidationIssue,issues_to_messages},dsl_validate.rules.step_config.validate_step,typing.Any
+    e: validate_step_config_issues,validate_step_config
+    _validation_context(action:str;config:dict[str;Any])->ValidationContext
+    validate_step_config_issues(action:str;config:Any)->list[ValidationIssue]
+    validate_step_config(action:str;config:Any)->list[str]
+  backend/app/workflow_events.py:
+    i: asyncio,datetime,collections.defaultdict,dataclasses.{dataclass,field},datetime.UTC,typing.Any,uuid.uuid4
+    e: TERMINAL_EVENT_TYPES,WorkflowEvent,WorkflowEventHub
+    WorkflowEvent: is_terminal(0),to_dict(0)
+    WorkflowEventHub: __init__(0),subscribe(1),unsubscribe(2),publish(1),subscriber_count(1)  # In-memory broadcaster dla workflow li...
+  backend/app/workflow_execute.py:
+    i: hashlib,app.engine.run_workflow,app.idempotency.{idempotency_store,workflow_fingerprint},app.mullm_execute.execute_mullm_dsl,app.workflow_lifecycle.run_request_from_workflow,collections.abc.Mapping,fastapi.HTTPException,http.HTTPStatus,typing.Any
+    e: workflow_has_side_effects,derive_chat_idempotency_key,resolve_idempotency_key,run_idempotent_workflow
+    workflow_has_side_effects(workflow:Mapping[str;Any])->bool
+    derive_chat_idempotency_key(conversation_id:str;workflow:Mapping[str;Any])->str
+    resolve_idempotency_key(explicit_key:str | None;workflow:Mapping[str; Any])->str | None
+    run_idempotent_workflow(workflow:Mapping[str;Any])->dict[str, Any]
+  backend/app/workflow_lifecycle.py:
+    i: app.dsl_validation.validate_dsl_for_execution,app.schemas.{RunWorkflowRequest,Step},collections.abc.Mapping,nlp2dsl_sdk.workflow.{ValidationReport,validation_report_from_issues},typing.Any
+    e: validation_report_for_workflow,workflow_validation_payload,workflow_from_lifecycle_body,run_request_from_workflow,attach_validation_to_plan
+    validation_report_for_workflow(workflow:Any)->ValidationReport
+    workflow_validation_payload(workflow:Any)->dict[str, Any]
+    workflow_from_lifecycle_body(body:Mapping[str;Any])->dict[str, Any] | None
+    run_request_from_workflow(workflow:Mapping[str;Any])->RunWorkflowRequest
+    attach_validation_to_plan(plan:dict[str;Any])->dict[str, Any]
+  backend/tests/conftest.py:
+    i: sys,pytest,app.main.app,httpx.{ASGITransport,AsyncClient},pathlib.Path
+    e: BACKEND_ROOT,REPO_ROOT,client
+    client()
+  backend/tests/test_action_catalog.py:
+    i: app.action_catalog.nlp_actions_to_action_info
+    e: test_nlp_actions_to_action_info_maps_fields,test_required_and_quality_fields_from_catalog,test_load_action_field_catalog_uses_fallback_when_unreachable
+    test_nlp_actions_to_action_info_maps_fields()->None
+    test_required_and_quality_fields_from_catalog()->None
+    test_load_action_field_catalog_uses_fallback_when_unreachable(monkeypatch)->None
+  backend/tests/test_attachment_validation.py:
+    i: app.attachment_validation.{ensure_attachment_validation,validation_from_chat_result},pathlib.Path
+    e: test_validation_from_chat_result_prefers_top_level,test_validation_from_chat_result_reads_execution_step_result,test_validation_from_chat_result_builds_from_dsl,test_ensure_attachment_validation_marks_unused_invalid_attachment
+    _write_pdf(path:Path)->None
+    test_validation_from_chat_result_prefers_top_level()->None
+    test_validation_from_chat_result_reads_execution_step_result()->None
+    test_validation_from_chat_result_builds_from_dsl(tmp_path:Path)->None
+    test_ensure_attachment_validation_marks_unused_invalid_attachment(tmp_path:Path)->None
+  backend/tests/test_audit.py:
+    i: pytest,app.audit.build_audit_entries,app.db.memory.MemoryWorkflowRepo
+    e: test_build_audit_entries_lists_runs_with_actions,test_build_audit_entries_filters_by_action
+    test_build_audit_entries_lists_runs_with_actions()->None
+    test_build_audit_entries_filters_by_action()->None
+  backend/tests/test_chat_execute_keywords.py:
+    i: app.routers.chat._is_explicit_execute_request
+    e: test_go_is_not_matched_inside_polish_words,test_go_matches_as_standalone_execute_keyword
+    test_go_is_not_matched_inside_polish_words()->None
+    test_go_matches_as_standalone_execute_keyword()->None
+  backend/tests/test_chat_router.py:
+    i: pytest,app.routers.chat,typing.Any,unittest.mock.{AsyncMock,patch}
+    e: DummyWorkflowResult,test_ready_chat_auto_executes_worker_workflow,test_ready_chat_delegates_mullm_steps_without_worker_execution,test_ready_chat_replays_uruchom_with_conversation_id,test_ready_chat_rejects_invalid_dsl_contract_before_execution
+    DummyWorkflowResult: __init__(1),model_dump(0)
+    test_ready_chat_auto_executes_worker_workflow()->None
+    test_ready_chat_delegates_mullm_steps_without_worker_execution(monkeypatch:Any)->None
+    test_ready_chat_replays_uruchom_with_conversation_id()->None
+    test_ready_chat_rejects_invalid_dsl_contract_before_execution()->None
+  backend/tests/test_config.py:
+    e: TestBackendSettingsDefaults,TestBackendSettingsEnvOverride,TestBackendSettingsIntegration
+    TestBackendSettingsDefaults: test_worker_url_default(1),test_nlp_service_url_default(1),test_postgres_url_default_none(1),test_log_level_default(1)  # BackendSettings reads sane defaults w...
+    TestBackendSettingsEnvOverride: test_worker_url_from_env(1),test_postgres_url_from_env(1),test_log_level_from_env(1),test_extra_env_vars_ignored(1)  # BackendSettings picks up values from...
+    TestBackendSettingsIntegration: test_settings_singleton_importable(0),test_engine_uses_settings(0)  # BackendSettings singleton is importab...
+  backend/tests/test_execution_policy.py:
+    i: pytest,app.execution_policy.{build_policy_context,policy_blocked_response,validate_workflow_execution_policy},unittest.mock.{AsyncMock,patch}
+    e: test_build_policy_context_reads_nested_policy_block,test_validate_workflow_execution_policy_blocks_without_access,test_validate_workflow_execution_policy_uses_access_check,test_policy_blocked_response_shape
+    test_build_policy_context_reads_nested_policy_block()->None
+    test_validate_workflow_execution_policy_blocks_without_access()->None
+    test_validate_workflow_execution_policy_uses_access_check()->None
+    test_policy_blocked_response_shape()->None
+  backend/tests/test_idempotency.py:
+    i: datetime,pytest,app.idempotency.{MemoryIdempotencyStore,PostgresIdempotencyStore,create_idempotency_store,workflow_fingerprint},datetime.{UTC,timedelta}
+    e: test_memory_idempotency_replays_finished_response,test_memory_idempotency_detects_conflict_and_in_progress,test_idempotency_factory_uses_memory_without_postgres,test_idempotency_factory_uses_postgres_with_url,test_workflow_fingerprint_ignores_empty_optional_fields,test_memory_idempotency_purge_expired
+    test_memory_idempotency_replays_finished_response()->None
+    test_memory_idempotency_detects_conflict_and_in_progress()->None
+    test_idempotency_factory_uses_memory_without_postgres()->None
+    test_idempotency_factory_uses_postgres_with_url()->None
+    test_workflow_fingerprint_ignores_empty_optional_fields()->None
+    test_memory_idempotency_purge_expired()->None
+  backend/tests/test_logging.py:
+    i: json,logging,pytest,httpx.{ASGITransport,AsyncClient}
+    e: TestJSONFormatter,TestRequestIDMiddleware,TestSetupLogging
+    TestJSONFormatter: test_format_produces_json(0),test_format_includes_exception(0),test_format_service_name(0)  # JSONFormatter emits valid JSON with e...
+    TestRequestIDMiddleware: test_app(0),test_response_has_request_id_header(1),test_client_request_id_is_forwarded(1),test_new_id_generated_without_header(1)  # RequestIDMiddleware adds X-Request-ID...
+    TestSetupLogging: test_setup_logging_installs_json_handler(0),test_setup_logging_respects_log_level(0)  # setup_logging() installs JSONFormatte...
+  backend/tests/test_persistence.py:
+    i: pytest,app.db.memory.MemoryWorkflowRepo
+    e: TestMemoryRepoCRUD,TestMemoryRepoListOrdering,TestMemoryRepoEviction,TestSerializationRoundtrip,TestWorkflowRepoFactory
+    TestMemoryRepoCRUD: repo(0),test_save_and_get(1),test_get_nonexistent(1),test_update_status(1),test_update_nonexistent(1)  # Basic CRUD on MemoryWorkflowRepo.
+    TestMemoryRepoListOrdering: populated_repo(0),test_list_default(1),test_list_with_limit(1),test_list_with_offset(1)  # list_runs returns items in reverse in...
+    TestMemoryRepoEviction: test_eviction_oldest(0)  # MemoryWorkflowRepo enforces max_size.
+    TestSerializationRoundtrip: test_steps_json_roundtrip(0)  # Data saved to repo preserves all fiel...
+    TestWorkflowRepoFactory: test_factory_returns_memory_without_postgres(1),test_factory_returns_postgres_with_url(1)  # create_workflow_repo() factory behavior.
+  backend/tests/test_step_validator.py:
+    i: app.step_validator.validate_step_config,pathlib.Path
+    e: test_send_invoice_ok,test_missing_attachment_file,test_pdf_invoice_ok,test_text_pdf_rejected
+    _write_test_pdf(path:Path)->None
+    test_send_invoice_ok()->None
+    test_missing_attachment_file()->None
+    test_pdf_invoice_ok(tmp_path:Path)->None
+    test_text_pdf_rejected(tmp_path:Path)->None
+  backend/tests/test_workflow_api.py:
+    i: asyncio,pytest,app.idempotency.idempotency_store,httpx.{AsyncClient,Response},unittest.mock.{AsyncMock,MagicMock,patch}
+    e: TestHealthEndpoint,TestWorkflowActions,TestRunWorkflow,TestWorkflowHistory,TestFromText,TestWorkflowPlan,TestWorkflowValidate,TestWorkflowExecute
+    TestHealthEndpoint: test_health_endpoint(1)  # Backend health check.
+    TestWorkflowActions: _sample_nlp_actions(0),test_workflow_actions(1),test_workflow_actions_contains_invoice(1)  # GET /workflow/actions endpoint.
+    TestRunWorkflow: test_run_workflow(1),test_run_workflow_step_failure(1),test_start_workflow(1),test_stream_workflow(1)  # POST /workflow/run endpoint.
+    TestWorkflowHistory: test_workflow_history(1)  # GET /workflow/history endpoint.
+    TestFromText: test_from_text_complete(1),test_from_text_incomplete(1),test_from_text_empty(1),test_from_text_rejects_invalid_workflow_contract(1),test_from_text_replays_with_idempotency_key(1)  # POST /workflow/from-text endpoint.
+    _mock_worker_response(status_code=200;json_data=None)
+  backend/tests/test_workflow_events.py:
+    i: pytest,app.db.memory.MemoryWorkflowRepo,app.engine._publish_workflow_event,app.main.app,httpx.{ASGITransport,AsyncClient},unittest.mock.patch
+    e: test_memory_repo_append_and_list_events,test_publish_workflow_event_persists_canonical_payload,test_get_workflow_events_endpoint,test_get_workflow_events_not_found
+    test_memory_repo_append_and_list_events()->None
+    test_publish_workflow_event_persists_canonical_payload()->None
+    test_get_workflow_events_endpoint()->None
+    test_get_workflow_events_not_found()->None
+  backend/tests/test_workflow_execute.py:
+    i: pytest,app.idempotency.MemoryIdempotencyStore,app.workflow_execute.{derive_chat_idempotency_key,resolve_idempotency_key,run_idempotent_workflow,workflow_has_side_effects},unittest.mock.{AsyncMock,MagicMock,patch}
+    e: test_workflow_has_side_effects_detects_send_email,test_workflow_has_side_effects_ignores_generate_report,test_resolve_idempotency_key_prefers_explicit_value,test_resolve_idempotency_key_derives_from_chat_conversation,test_run_idempotent_workflow_replays_cached_result,test_run_idempotent_workflow_routes_mullm_only,test_run_idempotent_workflow_executes_without_key
+    test_workflow_has_side_effects_detects_send_email()->None
+    test_workflow_has_side_effects_ignores_generate_report()->None
+    test_resolve_idempotency_key_prefers_explicit_value()->None
+    test_resolve_idempotency_key_derives_from_chat_conversation()->None
+    test_run_idempotent_workflow_replays_cached_result()->None
+    test_run_idempotent_workflow_routes_mullm_only(monkeypatch:Any)->None
+    test_run_idempotent_workflow_executes_without_key()->None
+  examples/01-invoice/scenario.py:
+    i: os,env2llm.bootstrap.ensure_doql_registry,nlp2dsl_sdk.autonomous_flow.AutonomousFlow,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,execute_from_text,preview_text_examples},pathlib.Path,typing.{Any,Optional}
+    e: INVOICE_PROMPT,INVOICE_TASK,run
+    _example_dir()->Path
+    _run_autonomous(client:NLP2DSLClient)->dict[str, Any]
+    _attachment_validation(result:dict[str;Any])->dict[str, Any] | None
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/02-email/scenario.py:
+    i: nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,execute_from_text,preview_text_examples},typing.{Any,Optional}
+    e: EMAIL_TEXT_EXAMPLES,EMAIL_EXECUTION_QUERY,run
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/03-report-and-notify/scenario.py:
+    i: nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,execute_from_text,preview_text_examples},typing.{Any,Optional}
+    e: REPORT_TEXT_EXAMPLES,REPORT_EXECUTION_QUERY,run
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/04-scheduled-report/scenario.py:
+    i: nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,execute_from_text,preview_text_examples,print_workflow_preview},typing.{Any,Optional}
+    e: SCHEDULED_REPORT_QUERIES,run
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/05-conversation-flow/scenario.py:
+    i: nlp2dsl_sdk.client.{ConversationFlow,NLP2DSLClient},nlp2dsl_sdk.preview.ensure_services,pathlib.Path,testql_conversations.artifacts.write_conversation_artifacts,typing.{Any,Optional}
+    e: run_demo,run_interactive,run
+    _save_conversation_artifacts(flow:ConversationFlow;example_dir:Path)->None
+    run_demo(client:Optional[NLP2DSLClient]=None)->None
+    run_interactive(client:Optional[NLP2DSLClient]=None)->None
+    run(client:Optional[NLP2DSLClient]=None)->Any
+  examples/06-interactive-chat/scenario.py:
+    i: nlp2dsl_sdk.client.{ConversationFlow,NLP2DSLClient},nlp2dsl_sdk.preview.ensure_services,pathlib.Path,testql_conversations.artifacts.write_conversation_artifacts,typing.{Any,Optional}
+    e: HELP,run_demo,run_interactive,run
+    run_demo(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+    run_interactive(client:Optional[NLP2DSLClient]=None)->None
+    run(client:Optional[NLP2DSLClient]=None)->Any
+  examples/07-email-conversation/scenario.py:
+    i: nlp2dsl_sdk.client.{ConversationFlow,NLP2DSLClient},nlp2dsl_sdk.preview.{ensure_services,preview_text_examples},pathlib.Path,testql_conversations.artifacts.write_conversation_artifacts,typing.{Any,Optional}
+    e: EMAIL_PROMPT,run
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/08-multi-object-benchmark/benchmark_queries.py:
+    i: dataclasses.dataclass
+    e: BenchmarkQuery,BENCHMARK_QUERIES
+    BenchmarkQuery: 
+  examples/08-multi-object-benchmark/scenario.py:
+    i: json,time,benchmark_queries.{BENCHMARK_QUERIES,BenchmarkQuery},nlp2dsl_artifacts.get_example_writer,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.ensure_services,pathlib.Path,typing.{Any,Optional}
+    e: RESULTS_DIR,run_benchmark,run
+    _extract_actions(result:dict[str;Any])->list[str]
+    _evaluate(query:BenchmarkQuery;result:dict[str;Any])->dict[str, Any]
+    _run_single_query(client:NLP2DSLClient;query:BenchmarkQuery)->dict[str, Any]
+    _print_row(row:dict[str;Any];result:dict[str;Any])->None
+    run_benchmark(client:NLP2DSLClient)->dict[str, Any]
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/09-execution-smoke/scenario.py:
+    i: nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,print_execution_result},typing.{Any,Optional}
+    e: EXECUTION_CASES,run
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/10-llm-benchmark/scenario.py:
+    i: sys,importlib.util,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.ensure_services,pathlib.Path,typing.{Any,Optional}
+    e: BENCH_DIR,run
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/11-notify-quality/scenario.py:
+    i: os,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,execute_text_examples,preview_text_examples},typing.{Any,Optional}
+    e: NOTIFY_EXAMPLES,run
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/12-ir-show/scenario.py:
+    i: json,shutil,subprocess,nlp2dsl_artifacts.get_example_writer,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,print_json,print_workflow_preview},typing.{Any,Optional}
+    e: IR_QUERIES,MVP_QUERIES,run
+    _run_show(query:str)->dict[str, Any] | None
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/13-autonomous-invoice-stack/scenario.py:
+    i: os,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.ensure_services,nlp2dsl_sdk.stack_flow.{AutonomousStackFlow,DEFAULT_STACK_TURNS},pathlib.Path,typing.{Any,Optional}
+    e: run
+    _example_dir()->Path
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/14-markpact-export/scenario.py:
+    i: json,os,nlp2dsl_sdk.client.NLP2DSLClient,pathlib.Path,typing.{Any,Optional},workflow_export.publish.{catalog_from_nlp_client,export_workflow_publish_layer,print_publish_summary,validate_publish_layer}
+    e: SOURCE_QUERY,run
+    _dsl_from_client(client:NLP2DSLClient)->dict[str, Any]
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/15-idempotency-replay/scenario.py:
+    i: os,requests,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.preview.{ensure_services,print_execution_result},typing.{Any,Optional}
+    e: IDEMPOTENCY_KEY_BASE,run
+    _idempotency_key()->str
+    _try_clear_idempotency(client:NLP2DSLClient)->None
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/16-golden-eval/scenario.py:
+    i: json,time,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.evaluation.{default_golden_cases,evaluate_golden_case,run_golden_evaluation},nlp2dsl_sdk.preview.ensure_services,pathlib.Path,typing.{Any,Optional}
+    e: RESULTS_DIR,run
+    _print_report(report:Any)->None
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/17-execution-policy/scenario.py:
+    i: nlp2dsl_sdk.client.{NLP2DSLClient,workflow_step},nlp2dsl_sdk.preview.ensure_services,typing.{Any,Optional}
+    e: ALLOWED_DOMAIN,RECIPIENT_OK,RECIPIENT_BAD,run
+    _invoice_workflow(recipient:str)->dict[str, Any]
+    _mullm_workflow()->dict[str, Any]
+    _policy_layer_active(client:NLP2DSLClient)->bool
+    _print_policy_result(label:str;payload:dict[str;Any])->None
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/18-trigger-webhook/scenario.py:
+    i: os,sys,httpx,pathlib.Path
+    e: REPO_ROOT,TRIGGER_URL,BACKEND_URL,run
+    run()->None
+  examples/19-real-smtp/scenario.py:
+    i: os,sys,time,httpx,nlp2dsl_sdk.client.NLP2DSLClient,pathlib.Path
+    e: REPO_ROOT,BACKEND_URL,MAILHOG_API,run
+    _mailhog_available()->bool
+    run()->None
+  examples/20-pactown-deploy/scenario.py:
+    i: json,os,sys,nlp2dsl_sdk.client.NLP2DSLClient,nlp2dsl_sdk.deploy.pactown_deploy.{deploy_instructions,validate_pactown_bundle},pathlib.Path,typing.{Any,Optional},workflow_export.publish.catalog_from_nlp_client
+    e: REPO_ROOT,SOURCE_QUERY,run
+    _dsl_from_client(client:NLP2DSLClient)->dict[str, Any]
+    run(client:Optional[NLP2DSLClient]=None)->dict[str, Any]
+  examples/bootstrap.py:
+    i: os,subprocess,sys,uuid,pathlib.Path
+    e: bootstrap
+    _ensure_sdk_installed(repo_root:Path)->None
+    _should_clean_artifacts()->bool
+    _should_clear_idempotency()->bool
+    _try_clear_backend_idempotency(backend_url:str)->None
+    bootstrap(example_dir:Any)->Path
+  examples/code_generation_examples.py:
+    i: sys,nlp2dsl_sdk.run_code_generation_demo,pathlib.Path
+    e: REPO_ROOT,main
+    main()->None
+  nlp-service/app/audio_parser.py:
+    i: logging,httpx,app.config.settings
+    e: DEEPGRAM_TIMEOUT_SECONDS,DEEPGRAM_API_KEY,DEEPGRAM_MODEL,DEEPGRAM_LANGUAGE,DEEPGRAM_API_URL,stt_audio,stt_file,is_stt_available
+    StreamingSTT: __init__(1),start(0),send_audio(1),get_transcript(0),stop(0)  # Real-time streaming STT via Deepgram...
+    stt_audio(audio_bytes:bytes;language:str=None)->str | None
+    stt_file(file_path:str;language:str=None)->str | None
+    is_stt_available()->bool
+  nlp-service/app/code_generator.py:
+    i: logging,os,litellm,typing.Any
+    e: SUPPORTED_LANGUAGES,CodeGenerator
+    CodeGenerator: __init__(0),_get_api_key(0),_build_prompt(3),generate_code(4),_extract_class_name(1)  # Generates code in multiple programmin...
+  nlp-service/app/config.py:
+    i: pydantic.Field,pydantic_settings.{BaseSettings,SettingsConfigDict}
+    e: NLPServiceSettings
+    NLPServiceSettings: 
+  nlp-service/app/conversation/attachment_gate.py:
+    i: app.conversation.doql_context.DoqlTaskContext,app.conversation.invoice_policy.invoice_attachment_policy_active,app.schemas.{ConversationState,DialogResponse}
+    e: workflow_needs_attachment
+    workflow_needs_attachment(state:ConversationState;dialog:DialogResponse;ctx:Any=None)->bool
+  nlp-service/app/conversation/autonomous_loop.py:
+    i: logging,os,app.conversation.doql_autofill.{_nested_generate_invoice,load_context_for_state,sync_autofill_from_doql},app.conversation.invoice_policy.invoice_attachment_policy_active,dataclasses.{dataclass,field},pathlib.Path,typing.Any
+    e: _MAX_AUTONOMOUS_ROUNDS,AutonomousResolveResult,autonomous_resolve_turn
+    AutonomousResolveResult: 
+    _max_autonomous_rounds(ctx:Any)->int
+    _autonomous_enabled(ctx:Any)->bool
+    _example_dir()->Path | None
+    _step_config_for_validation(state:ConversationState)->tuple[str, dict[str, Any]]
+    _attachment_valid_ok(raw:str;ctx:DoqlTaskContext;state:ConversationState)->bool
+    _maybe_delete_generated_attachment(raw:str;ctx:DoqlTaskContext)->None
+    _resolve_artifact_file(raw:str;ctx:DoqlTaskContext)->str | None
+    _try_attachment_candidate(state:ConversationState;ctx:DoqlTaskContext;path:str)->str | None
+  nlp-service/app/conversation/doql_autofill.py:
+    i: logging,os,datetime,app.conversation.attachment_gate.workflow_needs_attachment,app.conversation.doql_context.{DoqlTaskContext,autofill_entities,load_doql_context},app.conversation.invoice_policy.invoice_attachment_policy_active,datetime.UTC,pathlib.Path
+    e: _MAX_AUTOFILL_ROUNDS,load_context_for_state,sync_autofill_from_doql
+    load_context_for_state(state:ConversationState)->DoqlTaskContext | None
+    _resolve_attachment_path(raw:str;ctx:DoqlTaskContext)->str
+    _nested_generate_invoice(state:ConversationState;ctx:DoqlTaskContext)->str | None
+    _dialog_for_autofill(state:ConversationState;ctx:DoqlTaskContext)->DialogResponse
+    _needs_generated_attachment(missing:list[str];ctx:DoqlTaskContext;state:ConversationState)->bool
+    _try_nested_invoice_attachment(state:ConversationState;ctx:DoqlTaskContext;missing:list[str])->str | None
+    sync_autofill_from_doql(state:ConversationState)->list[str]
+  nlp-service/app/conversation/doql_context.py:
+    i: os,env2llm.doql.models.{DoqlArtifact,DoqlCommand,DoqlProcessPolicy,DoqlRuntime,DoqlTaskContext},env2llm.doql.parse.load_doql_context,env2llm.doql.runtime.{autofill_entities,merge_inline_context},pathlib.Path
+    e: resolve_doql_context_path
+    resolve_doql_context_path(explicit:Any=None)->Path | None
+  nlp-service/app/conversation/doql_registry.py:
+    i: logging,re,datetime,app.conversation.doql_context.{DoqlTaskContext,load_doql_context,resolve_doql_context_path},datetime.UTC,pathlib.Path,typing.{Any,Mapping}
+    e: _DATA_RE,_WFH_RE,refresh_registry_for_state,reload_context_after_refresh
+    _format_value(val:Any)->str
+    _render_block(name:str;data:dict[str;Any])->str
+    _entities_to_data(intent:Any;entities:Mapping[str;Any])->dict[str, Any]
+    _patch_doql_file(path:Path)->None
+    _try_sdk_refresh(path:Path)->bool
+    _history_patch_from_state(state:ConversationState)->dict[str, Any]
+    _merge_invoice_ids_from_execution(execution:Mapping[str;Any])->None
+    refresh_registry_for_state(state:ConversationState)->Path | None
+  nlp-service/app/conversation/invoice_paths.py:
+    i: os,app.request_context.get_example_dir,pathlib.Path
+    e: example_root_from_doql,resolve_example_root,invoice_output_dir,store_attachment_path
+    example_root_from_doql(doql_path:Any)->Path | None
+    resolve_example_root()->Path | None
+    invoice_output_dir()->tuple[Path, Path | None]
+    store_attachment_path(out_path:Path;example_root:Any)->str
+  nlp-service/app/conversation/invoice_policy.py:
+    i: app.conversation.doql_context.DoqlTaskContext,app.schemas.ConversationState
+    e: is_invoice_example,invoice_attachment_policy_active
+    is_invoice_example(name:str)->bool
+    invoice_attachment_policy_active(ctx:DoqlTaskContext;state:Any=None)->bool
+  nlp-service/app/conversation/merge.py:
+    i: app.registry.get_trigger,app.schemas.{ConversationState,NLPResult}
+    e: _MIN_INTENT_CONFIDENCE,merge_into_state
+    merge_into_state(state:ConversationState;nlp:NLPResult)->None
+  nlp-service/app/conversation/orchestrator.py:
+    i: logging,app.conversation.autonomous_loop.autonomous_resolve_turn,app.conversation.doql_autofill.load_context_for_state,app.conversation.merge.merge_into_state,app.conversation.process_agent.{observe_turn,preflight_turn,reflect_turn},app.conversation.responses.build_and_check_dsl,app.conversation.system_map.set_doql_context,uuid.uuid4
+    e: _CONVERSATION_ID_LENGTH,start_conversation,continue_conversation,get_conversation,mark_conversation_executed
+    _conversation_store()->ConversationStore
+    _apply_request_context(inline:Any)->None
+    start_conversation(text:str)->ConversationResponse
+    continue_conversation(conversation_id:str;text:str)->ConversationResponse
+    get_conversation(conversation_id:str)->ConversationState | None
+    mark_conversation_executed(conversation_id:str;execution:dict)->ConversationState | None
+    _attach_routing(resp:ConversationResponse;decision:IntentDecision)->ConversationResponse
+    _entity_field_from_inline_key(key:str)->str | None
+  nlp-service/app/conversation/process_agent.py:
+    i: logging,app.conversation.doql_autofill.{load_context_for_state,sync_autofill_from_doql},app.conversation.doql_registry.{refresh_registry_for_state,reload_context_after_refresh},app.conversation.reflection.reflection_from_state,app.conversation.runtime_gate.{intract_clarification_blocked,process_scope_blocked,runtime_unavailable_message},app.conversation.system_map.command_meta
+    e: preflight_turn,reflect_turn,observe_turn
+    preflight_turn(state:ConversationState;decision:IntentDecision)->ConversationResponse | None
+    reflect_turn(state:ConversationState;phase:str)->dict
+    observe_turn(state:ConversationState)->None
+  nlp-service/app/conversation/reflection.py:
+    i: app.conversation.doql_autofill.{load_context_for_state,resolve_doql_context_path},app.schemas.ConversationState,app.validation.step_validator.{validate_step_config,validate_workflow_steps},pathlib.Path,typing.Any
+    e: reflection_from_state
+    _intent_from_state(state:ConversationState)->str
+    _current_config(state:ConversationState)->dict[str, Any]
+    _target_config(state:ConversationState)->dict[str, Any]
+    _empty(val:Any)->bool
+    _validation_issues(state:ConversationState)->list[str]
+    _policies(state:ConversationState)->dict[str, Any]
+    _pseudo_response(state:ConversationState)->dict[str, Any]
+    _resolve_doql_path(state:ConversationState)->Path | None
+  nlp-service/app/conversation/responses.py:
+    i: json,logging,re,app.conversation.attachment_gate.workflow_needs_attachment,app.dsl.forms.get_action_form,app.dsl.pipeline.map_to_dsl_with_enrichment,app.execution.delegate.execution_backend_for_intent,app.registry.SYSTEM_ACTIONS,app.routing.IntentDecision,typing.Callable
+    e: _SYSTEM_RESULT_PREVIEW_LENGTH,_SYSTEM_FILE_LIST_LIMIT,deny_message,_EXECUTE_KEYWORDS,check_execute_keyword,handle_unknown_intent,handle_system_action,build_and_check_dsl
+    deny_message(decision:IntentDecision)->str
+    _execute_keyword_in_text(text_lower:str;keyword:str)->bool
+    _is_execute_or_continue(text:str)->bool
+    check_execute_keyword(state:ConversationState;text:str)->ConversationResponse | None
+    handle_unknown_intent(state:ConversationState)->ConversationResponse | None
+    handle_system_action(state:ConversationState)->ConversationResponse | None
+    _missing_from_validation_failures(validation_failures:list)->list[str]
+    _resolve_workflow_attachment_paths(workflow)->None
+  nlp-service/app/conversation/runtime_gate.py:
+    i: app.conversation.doql_context.DoqlTaskContext,dsl_validate.issue.Phase,dsl_validate.pipeline.validate_post_health_for_intent
+    e: runtime_unavailable_message,process_scope_blocked,intract_clarification_blocked
+    runtime_unavailable_message(ctx:DoqlTaskContext;intent:Any)->str | None
+    process_scope_blocked(ctx:DoqlTaskContext)->str | None
+    intract_clarification_blocked(ctx:DoqlTaskContext)->str | None
+  nlp-service/app/conversation/system_map.py:
+    i: app.conversation.doql_context.{DoqlTaskContext,load_doql_context,resolve_doql_context_path},app.schemas.ConversationState,contextvars.ContextVar,typing.Any
+    e: set_doql_context,get_doql_context,load_system_map_for_state,known_action_names,command_meta,optional_defaults_for_action,scoped_action_registry,action_is_known
+    set_doql_context(ctx:Any)->None
+    get_doql_context()->DoqlTaskContext | None
+    load_system_map_for_state(state:ConversationState)->DoqlTaskContext | None
+    known_action_names()->set[str]
+    command_meta(action:str)->dict[str, Any]
+    optional_defaults_for_action(action:str)->dict[str, Any] | None
+    scoped_action_registry()->dict[str, dict[str, Any]]
+    action_is_known(action:str)->bool
+  nlp-service/app/dsl/forms.py:
+    i: app.conversation.system_map.{command_meta,known_action_names},app.schemas.{ActionFormSchema,FieldSchema}
+    e: FIELD_TYPES,get_action_form
+    _field_schema(field_name:str)->FieldSchema
+    get_action_form(action:str)->ActionFormSchema | None
+  nlp-service/app/dsl/mapper.py:
+    i: logging,app.conversation.system_map.known_action_names,app.registry.{COMPOSITE_INTENTS,get_defaults,get_quality_required_fields,get_required_fields,get_trigger},app.schemas.{DSLStep,DialogResponse,NLPEntities}
+    e: map_to_dsl
+    _unknown_intent_response(intent:str)->DialogResponse
+    _collect_workflow_steps(actions:list[str];entities:NLPEntities)->tuple[list[DSLStep], list[str]]
+    map_to_dsl(nlp:NLPResult)->DialogResponse
+    _resolve_actions(intent:str)->list[str]
+    _entity_value(field:str;entities_dict:dict;field_mapping:dict[str;str])
+    _fill_required_config(action:str;entities_dict:dict)->tuple[dict, list[str]]
+    _enrich_send_email_config(config:dict;entities_dict:dict)->None
+    _append_quality_missing(action:str;config:dict;missing:list[str])->None
+  nlp-service/app/dsl/pipeline.py:
+    i: logging,app.dsl.mapper.map_to_dsl,app.routing.parser.enrich.enrich_entities,app.schemas.{DialogResponse,NLPResult},nlp2dsl_sdk.workflow.{PlanResult,parse_result_from_nlp,plan_result_from_dialog}
+    e: map_to_dsl_with_enrichment,plan_lifecycle_from_nlp
+    map_to_dsl_with_enrichment(nlp:NLPResult)->DialogResponse
+    plan_lifecycle_from_nlp(nlp:NLPResult)->PlanResult
+  nlp-service/app/execution/__init__.py:
+    i: app.execution.delegate.{delegate_payload,execution_backend_for_intent,is_delegated_to_mullm}
+    __getattr__(name:str)
+  nlp-service/app/execution/system.py:
+    i: logging,os,app.conversation.system_map.scoped_action_registry,app.registry.{ACTIONS_REGISTRY,BUSINESS_ACTIONS,SYSTEM_ACTIONS},app.settings.settings_manager,pathlib.Path
+    e: CONSTANT_5,CONSTANT_1024,execute_system_action,SYSTEM_EXECUTORS
+    _validate_file_path(file_path:str)->str
+    _is_read_only(file_path:str)->bool
+    execute_system_action(action:str;config:dict)->dict
+    _exec_settings_get(config:dict)->dict
+    _exec_settings_set(config:dict)->dict
+    _exec_settings_reset(config:dict)->dict
+    _exec_file_read(config:dict)->dict
+    _exec_file_write(config:dict)->dict
+  nlp-service/app/executors/router.py:
+    i: app.registry.{DELEGATED_ACTIONS,MULLM_ACTIONS},dataclasses.dataclass,typing.{Any,Literal}
+    e: ExecutionRoute,is_delegated_to_mullm,execution_backend_for_runtime,execution_backend_for_intent,route_action,route_workflow_steps,mullm_action_names,delegate_payload
+    ExecutionRoute: to_dict(0)  # Resolved execution target for a singl...
+    is_delegated_to_mullm(intent:Any)->bool
+    execution_backend_for_runtime(runtime_id:Any)->ExecutionBackend
+    execution_backend_for_intent(intent:Any)->ExecutionBackend
+    route_action(action:str)->ExecutionRoute
+    route_workflow_steps(steps:list[dict[str;Any]])->list[ExecutionRoute]
+    mullm_action_names()->frozenset[str]
+    delegate_payload(action:str;config:dict[str;Any])->dict[str, Any]
+    _default_runtime_for_backend(backend:ExecutionBackend)->str | None
+  nlp-service/app/governance/bootstrap.py:
+    i: logging,app.governance.config.get_access_config,typing.Any
+    e: apply_yaml_actions,bootstrap_registry
+    _actions_from_yaml_areas()->dict[str, dict[str, Any]]
+    apply_yaml_actions(registry:dict[str;dict[str;Any]])->set[str]
+    bootstrap_registry(registry:dict[str;dict[str;Any]])->tuple[set[str], set[str]]
+  nlp-service/app/governance/config.py:
+    i: logging,os,yaml,dataclasses.{dataclass,field},pathlib.Path,typing.Any
+    e: _CONFIG,AccessConfig,load_access_config,get_access_config,reload_access_config
+    AccessConfig: action_to_area(0),area_by_id(1)
+    _search_paths()->list[Path]
+    _load_yaml_file(path:Path)->dict[str, Any]
+    _merge_dict(base:dict[str;Any];overlay:dict[str;Any])->dict[str, Any]
+    load_access_config()->AccessConfig
+    _load_merged_config()->tuple[dict[str, Any], str | None]
+    _build_access_config(merged:dict[str;Any];loaded_path:Any)->AccessConfig
+    _enabled_integrations(merged:dict[str;Any])->list[str]
+    _default_agent(settings:dict[str;Any];access_control:dict[str;Any])->str
+  nlp-service/app/governance/policy.py:
+    i: os,app.governance.config.get_access_config,app.governance.uri_match.{scheme_allowed,uri_matches},dataclasses.dataclass,typing.Any
+    e: AccessDecision,get_agent_id,authorize_action
+    AccessDecision: to_dict(0)
+    _ActionContext: 
+    get_agent_id(header_agent:Any=None)->str
+    _grant_matches(grant:dict[str;Any])->bool
+    _grant_action_matches(grant:dict[str;Any];permission_action:str)->bool
+    _grant_target_matches(grant:dict[str;Any])->bool
+    _area_selector_match(area_key:Any;resource_area:Any)->bool | None
+    _uri_selector_match(uri_pattern:Any;uri:Any)->bool | None
+    authorize_action(agent_id:str;action_name:str)->AccessDecision
+    _action_context(meta:dict[str;Any])->_ActionContext
+  nlp-service/app/governance/uri_match.py:
+    i: fnmatch,urllib.parse.urlparse
+    e: normalize_uri,uri_matches,scheme_allowed
+    normalize_uri(uri:str)->str
+    uri_matches(pattern:str;uri:str)->bool
+    scheme_allowed(uri:str;allowed_schemes:list[str])->bool
+  nlp-service/app/logging_setup.py:
+    i: json,logging,time,collections.abc.Callable,contextvars.ContextVar,fastapi.{Request,Response},starlette.middleware.base.BaseHTTPMiddleware,starlette.types.ASGIApp,uuid.uuid4
+    e: get_request_id,JSONFormatter,RequestIDMiddleware,setup_logging
+    JSONFormatter: __init__(1),format(1)  # Emit log records as single-line JSON...
+    RequestIDMiddleware: __init__(2),dispatch(2)  # Generate or forward X-Request-ID for...
+    get_request_id()->str
+    setup_logging(service:str='app';level:Any=None)->None
+  nlp-service/app/parser_llm.py:
+    i: typing.{Any,TYPE_CHECKING}
+    e: _LLM_EXPORTS
+    _llm_module()
+    __getattr__(name:str)->Any
+  nlp-service/app/registry.py:
+    i: app.governance.bootstrap.bootstrap_registry
+    e: ACTIONS_REGISTRY,COMPOSITE_INTENTS,SYSTEM_ACTIONS,BUSINESS_ACTIONS,TRIGGER_ALIASES,get_action_by_alias,get_trigger,get_required_fields
+    get_action_by_alias(text:str)->str | None
+    get_trigger(text:str)->str
+    get_required_fields(action:str)->list[str]
+    get_defaults(action:str)->dict
+    get_quality_required_fields(action:str)->list[str]
+    get_action_contract(action:str)
+    get_action_contracts()->dict
+  nlp-service/app/request_context.py:
+    i: contextvars.ContextVar,pathlib.Path
+    e: set_example_dir,get_example_dir
+    set_example_dir(path:Any)->None
+    get_example_dir()->Path | None
+  nlp-service/app/routers/chat.py:
+    i: json,logging,fastapi,http.HTTPStatus,typing.Any
+    e: chat_start,chat_message,chat_state,chat_registry_observe
+    _parse_context_json(raw:str)->dict[str, Any]
+    _resolve_chat_text(text:str;audio:Any)->str
+    chat_start(text:str=Form(default='');audio:UploadFile=File(default=None);doql_context_path:str=Form(default='');context_json:str=Form(default=''))->ConversationResponse
+    chat_message(conversation_id:str=Form(...);text:str=Form(default='');audio:UploadFile=File(default=None);context_json:str=Form(default=''))->ConversationResponse
+    chat_state(conversation_id:str)->dict[str, Any]
+    chat_registry_observe(request:Request)->dict[str, Any]
+  nlp-service/app/routers/code.py:
+    i: app.code_generator,fastapi.{APIRouter,HTTPException},http.HTTPStatus
+    e: generate_code,get_supported_languages
+    generate_code(body:dict)->dict
+    get_supported_languages()->dict
+  nlp-service/app/routers/nlp.py:
+    i: logging,app.conversation.system_map.{command_meta,known_action_names},app.dsl.pipeline.{map_to_dsl_with_enrichment,plan_lifecycle_from_nlp},app.parser_llm.LLM_MODEL,fastapi.{APIRouter,HTTPException},http.HTTPStatus,typing.Any
+    e: orient_text,parse_text,text_to_dsl,plan_text,access_config,access_check,access_reload,list_actions
+    orient_text(req:OrientRequest)->dict[str, Any]
+    parse_text(req:NLPRequest)->NLPResult
+    text_to_dsl(req:NLPRequest)->DialogResponse
+    plan_text(req:NLPRequest)->PlanResult
+    access_config()->dict[str, Any]
+    access_check(agent_id:str;action:str;resource_area:Any=None;uri:Any=None;permission_action:str='execute')->dict[str, Any]
+    access_reload()->dict[str, str]
+    list_actions()->dict[str, Any]
+  nlp-service/app/routers/schema.py:
+    i: app.conversation.system_map.known_action_names,app.orchestrator.get_action_form,app.schemas.ActionFormSchema,fastapi.{APIRouter,HTTPException},http.HTTPStatus
+    e: actions_schema,action_schema
+    actions_schema()->dict
+    action_schema(action:str)->ActionFormSchema
+  nlp-service/app/routers/settings.py:
+    i: app.settings.settings_manager,fastapi.{APIRouter,HTTPException},http.HTTPStatus
+    e: get_settings,get_settings_section,update_settings_section,set_setting,reset_settings
+    get_settings()->dict
+    get_settings_section(section:str)->dict
+    update_settings_section(section:str;body:dict)->dict
+    set_setting(body:dict)->dict
+    reset_settings(body:Any=None)->dict
+  nlp-service/app/routers/system.py:
+    i: app.system_executor.{SYSTEM_EXECUTORS,execute_system_action},fastapi.{APIRouter,HTTPException},http.HTTPStatus
+    e: system_execute
+    system_execute(body:dict)->dict
+  nlp-service/app/routers/ws.py:
+    i: logging,pathlib,app.audio_parser.{StreamingSTT,is_stt_available,stt_audio},fastapi.{APIRouter,WebSocket,WebSocketDisconnect},fastapi.responses.HTMLResponse,http.HTTPStatus
+    e: websocket_chat,chat_ui
+    websocket_chat(websocket:WebSocket;conversation_id:str)->None
+    chat_ui()->HTMLResponse
+  nlp-service/app/routing/intent.py:
+    i: app.schemas.{NLPEntities,NLPIntent,NLPResult},dataclasses.{dataclass,field},typing.Any
+    e: IntentDecision
+    IntentDecision: to_dict(0),to_nlp_result(1)  # Wynik `resolve_intent` — spójny kontr...
+  nlp-service/app/routing/native.py:
+    i: re,app.governance.config.get_access_config,typing.Any
+    e: resolve_native_intent
+    _match_route(text:str;route:dict[str;Any])->bool
+    _patterns_match(text_lower:str;patterns:list[Any])->bool
+    _pattern_matches(text_lower:str;pattern:dict[str;Any])->bool
+    _regex_pattern_matches(text_lower:str;pattern:dict[str;Any])->bool
+    _keywords_pattern_matches(text_lower:str;pattern:dict[str;Any])->bool
+    _substring_pattern_matches(text_lower:str;pattern:dict[str;Any])->bool
+    _aliases_match(text_lower:str;aliases:list[Any])->bool
+    resolve_native_intent(text:str)->dict[str, Any] | None
+  nlp-service/app/routing/observability.py:
+    i: logging,app.routing.intent.IntentDecision,collections.Counter,threading.Lock
+    e: _COUNTERS,_LOCK,_COUNTER_BY_SOURCE,record_intent_decision,routing_metrics_snapshot,reset_routing_metrics
+    record_intent_decision(decision:IntentDecision)->None
+    routing_metrics_snapshot()->dict[str, int]
+    reset_routing_metrics()->None
+  nlp-service/app/routing/orientation.py:
+    i: os,re,dataclasses.{dataclass,field},typing.{Any,Literal}
+    e: _FILE_LIST_RE,_REGISTRY_HINTS,_HOST_HINTS,_SHELL_PREFIX_RE,_SHELL_NL_RE,_WORKFLOW_RE,_NLP2CMD_RUN_RE,_STRIP_PUNCT
+    OrientationResult: to_dict(0)
+    _has_registry_hint(text:str)->bool
+    _has_host_hint(text:str)->bool
+    _is_file_list_query(text:str)->bool
+    _file_list_scope(text:str)->str
+    _host_list_root()->str
+    _normalize_orient_path(path:str;root:str)->str
+    _resolve_project_host_path(project_name:str;root:str)->tuple[str, list[str]]
+    _resolve_list_path_remainder(remainder:str;root:str)->tuple[str, list[str]]
+  nlp-service/app/routing/parser/enrich.py:
+    i: logging,os,app.registry.get_quality_required_fields,app.routing.parser.llm._detect_provider,app.schemas.{NLPEntities,NLPResult},litellm.acompletion
+    e: _FIELD_TO_ENTITY,is_enrich_enabled,get_enrichable_missing,can_enrich_missing,enrich_entities
+    is_enrich_enabled()->bool
+    get_enrichable_missing(missing_fields:list[str])->list[str]
+    can_enrich_missing(missing_fields:list[str])->bool
+    _build_enrich_prompts(nlp:NLPResult;missing_fields:list[str])->tuple[str, str]
+    _apply_enrich_updates(entities:dict[str;Any];missing_fields:list[str];parsed:dict[str;Any])->dict[str, Any] | None
+    enrich_entities(nlp:NLPResult;missing_fields:list[str])->NLPResult | None
+  nlp-service/app/routing/parser/facade.py:
+    i: os,app.conversation.system_map.{effective_nlp_confidence_min,effective_nlp_parser_mode},app.routing.parser.resolve_mode.parse_with_mode,app.schemas.NLPResult
+    e: parse_text
+    parse_text(text:str;mode:Any=None)->NLPResult
+  nlp-service/app/routing/parser/intent_normalize.py:
+    i: re,app.schemas.{NLPIntent,NLPResult}
+    e: _INVOICE_SEND_PATTERNS,_REPORT_DELIVERY_EMAIL_PATTERNS,_INVOICE_GENERATE_ONLY_PATTERNS,normalize_parsed_intent
+    normalize_parsed_intent(result:NLPResult)->NLPResult
+    _coerce_invoice_send(result:NLPResult;text:str)->str
+    _looks_like_report_email_delivery(text:str;result:NLPResult)->bool
+    _looks_like_invoice_send(text:str;result:NLPResult)->bool
+    _has_amount_signal(text:str;result:NLPResult)->bool
+    _matches_any(text:str;patterns:tuple[str;Ellipsis])->bool
+  nlp-service/app/routing/parser/llm.py:
+    i: json,logging,os,litellm,app.routing.parser.prompt_catalog.build_llm_system_prompt,app.schemas.{NLPEntities,NLPIntent,NLPResult},litellm.acompletion
+    e: LLM_RESPONSE_PREVIEW_LEN,LLM_MODEL,LLM_TEMPERATURE,LLM_MAX_TOKENS,LLM_API_BASE,SYSTEM_PROMPT,USER_PROMPT_TEMPLATE,parse_llm
+    parse_llm(text:str)->NLPResult
+    _detect_provider()->str
+    _parse_json_response(raw:str)->dict
+  nlp-service/app/routing/parser/prompt_catalog.py:
+    i: json,app.conversation.system_map.known_action_names,app.registry.{ACTIONS_REGISTRY,COMPOSITE_INTENTS}
+    e: build_llm_system_prompt
+    build_llm_system_prompt()->str
+  nlp-service/app/routing/parser/resolve_mode.py:
+    i: logging,os,app.routing.parser.intent_normalize.normalize_parsed_intent,app.routing.parser.rules.parse_rules,app.schemas.NLPResult
+    e: _FALLBACK_THRESHOLD,parse_with_mode
+    _detect_provider()->str
+    _parse_llm(text:str)
+    parse_with_mode(text:str;mode:str)->NLPResult
+  nlp-service/app/routing/parser/rules.py:
+    i: logging,re,app.conversation.system_map.{command_meta,known_action_names},app.registry.{ACTIONS_REGISTRY,COMPOSITE_INTENTS,get_trigger},app.schemas.{NLPEntities,NLPIntent,NLPResult}
+    e: _MIN_ACTIONS_FOR_DOMINANCE,AMOUNT_PATTERN,EMAIL_PATTERN,REMINDER_SUBJECT_PATTERN,EMAIL_SUBJECT_PATTERN,EMAIL_COLON_BODY_PATTERN,BODY_CONTENT_PATTERN,EMAIL_OFFER_PATTERN
+    parse_rules(text:str)->NLPResult
+    _apply_intent_defaults(intent_name:str;entities:NLPEntities;text:str;text_lower:str)->None
+    _detect_actions(text_lower:str)->list[str]
+    _filter_crm_context(text_lower:str;filtered:dict[str;int])->None
+    _filter_notify_context(text_lower:str;filtered:dict[str;int])->None
+    _filter_code_context(text_lower:str;filtered:dict[str;int])->None
+    _filter_email_context(text_lower:str;filtered:dict[str;int])->None
+    _suppress_system_when_business(filtered:dict[str;int])->None
+  nlp-service/app/routing/resolve.py:
+    i: os,app.governance.policy.{AccessDecision,authorize_action,get_agent_id},app.routing.native.resolve_native_intent,app.routing.orientation.{OrientationResult,orient_query},app.routing.parser.parse_text,app.routing.parser.rules.parse_rules,typing.Any
+    e: _FALLBACK_THRESHOLD,resolve_intent
+    _parser_source(text:str)->str
+    _intent_from_native(native:dict[str;Any])->IntentDecision
+    _intent_from_nlp(nlp:NLPResult;source:str)->IntentDecision
+    _apply_auth(decision:IntentDecision;auth:AccessDecision)->IntentDecision
+    _intent_from_orientation(text:str;orientation:OrientationResult)->IntentDecision | None
+    _empty_intent_decision(agent_id:str)->IntentDecision
+    _record_and_return(decision:IntentDecision;nlp:Any)->tuple[IntentDecision, NLPResult | None]
+    _authorize_decision(decision:IntentDecision)->tuple[IntentDecision, NLPResult | None]
+  nlp-service/app/schemas.py:
+    i: pydantic.{BaseModel,Field}
+    e: NLPIntent,NLPEntities,NLPResult,DSLStep,WorkflowDSL,DialogResponse,NLPRequest,OrientRequest
+    NLPIntent: 
+    NLPEntities: 
+    NLPResult: 
+    DSLStep: 
+    WorkflowDSL: 
+  nlp-service/app/settings.py:
+    i: json,logging,datetime,app.config._svc_config,datetime.UTC,pathlib.Path,pydantic.{BaseModel,Field},typing.Any
+    e: SETTINGS_FILE,LLMSettings,NLPSettings,WorkerSettings,FileAccessSettings,SystemSettings,SettingsManager
+    LLMSettings: 
+    NLPSettings: 
+    WorkerSettings: 
+    FileAccessSettings: 
+    SystemSettings:   # Pełny model ustawień systemu.
+    _coerce_type(value:Any;target_type:type)->Any
+  nlp-service/app/store/__init__.py:
+    i: abc.{ABC,abstractmethod}
+    e: ConversationStore
+    ConversationStore: get(1),save(2),delete(1),count(0)  # Abstrakcja persystencji stanu konwers...
+  nlp-service/app/store/factory.py:
+    i: logging,app.store.ConversationStore,app.store.memory.MemoryConversationStore
+    e: get_conversation_store
+    get_conversation_store()->ConversationStore
+  nlp-service/app/store/memory.py:
+    i: app.store.ConversationStore
+    e: MemoryConversationStore
+    MemoryConversationStore: __init__(0),get(1),save(2),delete(1),count(0)
+  nlp-service/app/store/redis_store.py:
+    i: json,logging,time,app.store.ConversationStore,redis.asyncio
+    e: RedisConversationStore
+    RedisConversationStore: __init__(2),_key(1),get(1),save(2),delete(1)
+  nlp-service/app/validation/attachment_validation.py:
+    i: app.conversation.doql_context.resolve_doql_context_path,app.conversation.system_map.get_doql_context,app.validation.path_policy.validate_process_path,app.validation.path_resolve.resolve_attachment_path,app.validation.step_validator.validate_step_config,pathlib.Path,typing.{Any,Literal}
+    e: build_attachment_validation
+    _check_process_scope(resolved:str)->tuple[AttachmentStatus, list[str]]
+    _check_step_issues(raw:str;action:str;config:Any)->list[str]
+    _check_path_exists(raw:str;resolved:str;current_status:AttachmentStatus;step_issues:list[str])->tuple[AttachmentStatus, list[str]]
+    build_attachment_validation(raw_path:str)->dict[str, Any]
+  nlp-service/app/validation/invoice_pdf.py:
+    i: pathlib.Path
+    e: build_invoice_pdf_bytes,write_invoice_pdf
+    _pdf_escape(text:str)->str
+    build_invoice_pdf_bytes(to:str;amount:str | float;currency:str)->bytes
+    write_invoice_pdf(path:Any)->Path
+  nlp-service/app/validation/path_policy.py:
+    i: re,app.conversation.doql_context.DoqlTaskContext,app.request_context.get_example_dir,pathlib.Path
+    e: path_matches_glob,example_relative_path,path_allowed_by_patterns,validate_process_path
+    _glob_to_regex(pattern:str)->re.Pattern[str]
+    path_matches_glob(rel_path:str;pattern:str)->bool
+    example_relative_path(resolved:Any;example_dir:Any=None)->str | None
+    path_allowed_by_patterns(rel_path:str;patterns:list[str])->bool
+    validate_process_path(ctx:Any;resolved_path:str)->str | None
+  nlp-service/app/validation/path_resolve.py:
+    i: os,app.request_context.get_example_dir,pathlib.Path
+    e: resolve_attachment_path
+    _examples_portable_candidates(raw:str)->list[Path]
+    resolve_attachment_path(raw:str)->str
+  nlp-service/app/validation/step_validator.py:
+    i: app.conversation.system_map.{get_doql_context,known_action_names},app.registry.{get_quality_required_fields,get_required_fields},app.validation.path_resolve.resolve_attachment_path,dsl_validate.context.ValidationContext,dsl_validate.issue.{Phase,ValidationIssue,issues_to_messages},typing.Any
+    e: StepValidationError,validate_step_config_issues,validate_step_config,validate_workflow_steps,format_validation_message
+    StepValidationError: __init__(2)
+    _required_fields(action:str)->list[str]
+    _path_scope_check(resolved:str)->str | None
+    _path_resolver(raw:str)->str
+    _validation_context(action:str;config:dict[str;Any])->ValidationContext
+    validate_step_config_issues(action:str;config:Any)->list[ValidationIssue]
+    validate_step_config(action:str;config:Any)->list[str]
+    validate_workflow_steps(steps:list[Any])->list[tuple[int, str, list[str]]]
+    format_validation_message(failures:list[tuple[int;str;list[str]]])->str
+  nlp-service/integrations/loader.py:
+    i: importlib,logging,os,typing.Any
+    e: load_integration_registries,apply_integrations
+    _integration_names()->list[str]
+    load_integration_registries()->dict[str, dict[str, Any]]
+    apply_integrations(registry:dict[str;dict[str;Any]])->set[str]
+  nlp-service/tests/conftest.py:
+    i: sys,pytest,app.store.memory.MemoryConversationStore,pathlib.Path
+    e: NLP_SERVICE_ROOT,REPO_ROOT,sample_texts,expected_intents,sample_entities,mock_conversation_store
+    sample_texts()->dict[str, str]
+    expected_intents()->dict[str, str]
+    sample_entities()->dict[str, dict]
+    mock_conversation_store()->MemoryConversationStore
+    _rules_parser_mode(monkeypatch:Any)->None
+  nlp-service/tests/test_access.py:
+    i: os,pytest,pathlib.Path
+    e: ROOT,CONFIG,test_config_loads_areas,test_uri_match_mullm,test_files_agent_can_list,test_mail_agent_denied_mullm_execute,test_native_lista_plikow_registry,test_registry_has_yaml_action
+    _point_config(monkeypatch)
+    test_config_loads_areas()
+    test_uri_match_mullm()
+    test_files_agent_can_list()
+    test_mail_agent_denied_mullm_execute()
+    test_native_lista_plikow_registry()
+    test_registry_has_yaml_action()
+  nlp-service/tests/test_action_contracts.py:
+    i: app.registry.{get_action_contract,get_action_contracts},dsl_contracts.action_catalog_payload
+    e: test_registry_exposes_action_contracts,test_action_contract_payload_preserves_nlp_actions_shape
+    test_registry_exposes_action_contracts()->None
+    test_action_contract_payload_preserves_nlp_actions_shape()->None
+  nlp-service/tests/test_attachment_validation.py:
+    i: app.validation.attachment_validation.build_attachment_validation,app.validation.invoice_pdf.write_invoice_pdf,app.validation.path_resolve.resolve_attachment_path,pathlib.Path
+    e: test_resolve_examples_mount_path_on_host,test_build_attachment_validation_ok,test_build_attachment_validation_rejects_text_pdf
+    test_resolve_examples_mount_path_on_host(tmp_path:Path;monkeypatch)->None
+    test_build_attachment_validation_ok(tmp_path:Path;monkeypatch)->None
+    test_build_attachment_validation_rejects_text_pdf(tmp_path:Path;monkeypatch)->None
+  nlp-service/tests/test_autonomous_loop.py:
+    i: pytest,app.conversation.autonomous_loop.autonomous_resolve_turn,app.conversation.orchestrator.start_conversation,app.store.memory.MemoryConversationStore,app.validation.path_resolve.resolve_attachment_path,pathlib.Path
+    e: SAMPLE_DOQL,test_autonomous_resolves_invoice_to_ready,test_start_conversation_autonomous_ready,test_autonomous_rejects_text_pdf_artifact_and_generates
+    _patch_store(monkeypatch;tmp_path:Path)->None
+    test_autonomous_resolves_invoice_to_ready()->None
+    test_start_conversation_autonomous_ready()->None
+    test_autonomous_rejects_text_pdf_artifact_and_generates(tmp_path:Path;monkeypatch:Any)->None
+  nlp-service/tests/test_doql_attachment.py:
+    i: pytest,app.orchestrator.{continue_conversation,start_conversation},app.store.memory.MemoryConversationStore,app.validation.invoice_pdf.write_invoice_pdf,pathlib.Path
+    e: ATTACHMENT_DOQL,TestAttachmentConversation
+    TestAttachmentConversation: test_incomplete_then_attachment_inline(1)
+    _patch_store(monkeypatch;tmp_path:Path)->None
+  nlp-service/tests/test_doql_autofill.py:
+    i: pytest,app.orchestrator.start_conversation,app.store.memory.MemoryConversationStore,pathlib.Path
+    e: SAMPLE_DOQL,TestDoqlAutofillConversation
+    TestDoqlAutofillConversation: test_start_incomplete_autofilled_to_ready(0)
+    _patch_store(monkeypatch;tmp_path:Path)->Path
+  nlp-service/tests/test_doql_context.py:
+    i: pytest,app.conversation.doql_context.{autofill_entities,load_doql_context,merge_inline_context},pathlib.Path
+    e: SAMPLE_DOQL,test_load_doql_context,test_autofill_entities_from_data,test_merge_inline_attachment_path,test_merge_inline_dotted_action_fields,test_merge_inline_entities_dotted_keys,test_load_doql_runtimes,test_runtime_unavailable_message
+    test_load_doql_context(tmp_path:Path)->None
+    test_autofill_entities_from_data()->None
+    test_merge_inline_attachment_path()->None
+    test_merge_inline_dotted_action_fields()->None
+    test_merge_inline_entities_dotted_keys()->None
+    test_load_doql_runtimes(tmp_path:Path)->None
+    test_runtime_unavailable_message()->None
+  nlp-service/tests/test_doql_registry.py:
+    i: app.conversation.doql_context.load_doql_context,app.conversation.doql_registry.{_patch_doql_file,refresh_registry_for_state},app.schemas.ConversationState,pathlib.Path
+    e: SAMPLE,test_patch_doql_data_and_history,test_refresh_registry_for_state
+    test_patch_doql_data_and_history(tmp_path:Path)->None
+    test_refresh_registry_for_state(tmp_path:Path;monkeypatch)->None
+  nlp-service/tests/test_enrich.py:
+    i: pytest,app.dsl.pipeline.map_to_dsl_with_enrichment,app.routing.parser.enrich.{can_enrich_missing,enrich_entities,get_enrichable_missing,is_enrich_enabled},app.schemas.{NLPEntities,NLPIntent,NLPResult}
+    e: TestEnrichHelpers,TestEnrichEntities,TestEnrichPipeline
+    _FakeMessage: __init__(1)
+    _FakeChoice: __init__(1)
+    _FakeResponse: __init__(1)
+    TestEnrichHelpers: test_is_enrich_enabled(1),test_get_enrichable_missing_body_only(0),test_get_enrichable_missing_ignores_required(0),test_can_enrich_only_quality_fields(1)
+    TestEnrichEntities: test_enrich_fills_email_body(2),test_enrich_disabled_returns_none(1),test_enrich_fills_notify_message(2)
+    _enable_enrich(monkeypatch:Any)->None
+  nlp-service/tests/test_execution_delegate.py:
+    i: os,subprocess,sys,textwrap,app.execution.delegate.{delegate_payload,execution_backend_for_intent,is_delegated_to_mullm},pathlib.Path
+    e: test_delegate_import_does_not_require_system_settings_dependency,test_mullm_shell_delegated,test_invoice_worker_backend,test_system_runtime_backend,test_delegate_payload_shape
+    test_delegate_import_does_not_require_system_settings_dependency()->None
+    test_mullm_shell_delegated()->None
+    test_invoice_worker_backend()->None
+    test_system_runtime_backend()->None
+    test_delegate_payload_shape()->None
+  nlp-service/tests/test_executors_router.py:
+    i: app.executors.router.{ExecutionRoute,execution_backend_for_intent,execution_backend_for_runtime,route_action,route_workflow_steps}
+    e: test_execution_backend_for_runtime,test_route_action_worker,test_route_action_mullm,test_route_workflow_steps,test_execution_backend_for_intent_fallback
+    test_execution_backend_for_runtime()->None
+    test_route_action_worker()->None
+    test_route_action_mullm()->None
+    test_route_workflow_steps()->None
+    test_execution_backend_for_intent_fallback()->None
+  nlp-service/tests/test_intent_normalize.py:
+    i: app.routing.parser.intent_normalize.normalize_parsed_intent,app.schemas.{NLPEntities,NLPIntent,NLPResult}
+    e: test_coerce_invoice_for_to_send,test_keep_generate_when_explicit_file_only,test_unknown_amount_email_to_send_invoice,test_coerce_report_delivery_to_report_and_email
+    test_coerce_invoice_for_to_send()->None
+    test_keep_generate_when_explicit_file_only()->None
+    test_unknown_amount_email_to_send_invoice()->None
+    test_coerce_report_delivery_to_report_and_email()->None
+  nlp-service/tests/test_lifecycle_plan.py:
+    i: pytest,app.dsl.pipeline.plan_lifecycle_from_nlp,app.schemas.{NLPEntities,NLPIntent,NLPResult}
+    e: test_plan_lifecycle_from_nlp_wraps_complete_dsl,test_plan_lifecycle_from_nlp_exposes_missing_fields
+    test_plan_lifecycle_from_nlp_wraps_complete_dsl()->None
+    test_plan_lifecycle_from_nlp_exposes_missing_fields()->None
+  nlp-service/tests/test_mapper.py:
+    i: pytest,app.mapper.{_resolve_actions,map_to_dsl},app.registry.{ACTIONS_REGISTRY,BUSINESS_ACTIONS,get_quality_required_fields},app.schemas.{NLPEntities,NLPIntent,NLPResult}
+    e: TestMapCompleteDSL,TestMapIncomplete,TestMapComposite,TestMapUnknown,TestMapDefaults,TestMapTrigger,TestMapSystemAction,TestMapAllBusinessActions
+    TestMapCompleteDSL: test_map_complete_invoice(0),test_map_complete_email(0),test_map_incomplete_email_missing_body(0)  # Cases where all required fields are p...
+    TestMapIncomplete: test_map_incomplete_invoice(0),test_map_composite_invoice_email_separate_recipients(0)  # Cases where required fields are missi...
+    TestMapComposite: test_map_composite_report_email(0)  # Composite intent mapping (multi-step...
+    TestMapUnknown: test_map_unknown_intent(0),test_map_nonexistent_intent(0)  # Unknown intent → error response.
+    TestMapDefaults: test_map_with_defaults(0)  # Optional fields receive default value...
+  nlp-service/tests/test_orchestrator.py:
+    i: pytest,app.orchestrator,app.schemas.{ConversationResponse,ConversationState,NLPEntities}
+    e: TestStartConversation,TestExecuteKeywordMatching,TestContinueConversation,TestSystemCommands,TestGetConversation,TestGetActionForm,TestMergeIntoState
+    TestStartConversation: test_start_conversation_complete(0),test_start_conversation_incomplete(0),test_start_conversation_unknown(0)  # Starting a new conversation from init...
+    TestExecuteKeywordMatching: test_go_not_matched_inside_zgodnie(0)
+    TestContinueConversation: test_continue_conversation(0),test_continue_conversation_lazy_create(0),test_continue_conversation_email_body(0),test_continue_conversation_slot_fill_skips_resolve_intent(1),test_execute_keyword_idempotent_after_executed(0)  # Multi-turn dialog: providing missing...
+    TestSystemCommands: test_system_command_status(0),test_system_command_settings(0),test_format_system_file_list(0),test_format_system_failed_result(0)  # System actions executed directly (no...
+    TestGetConversation: test_get_conversation_exists(0),test_get_conversation_not_found(0)  # Retrieving stored conversation state.
+    _patch_store(monkeypatch)->None
+  nlp-service/tests/test_orientation.py:
+    i: pytest,app.routing.orientation.orient_query,app.routing.resolve.resolve_intent
+    e: TestOrientQuery,TestResolveIntentOrientation
+    TestOrientQuery: test_lista_plikow_usera_host_default_mullm(0),test_lista_plikow_github_path_hint(0),test_lista_plikow_systemu_root_fs(0),test_lista_plikow_linux_host_home(0),test_lista_plikow_root_slash(0)
+    TestResolveIntentOrientation: test_lista_plikow_usera_short_circuit_shell(0),test_registry_list_short_circuit_mullm_files(0)
+  nlp-service/tests/test_parser_rules.py:
+    i: pytest,app.parser_rules.parse_rules,app.schemas.NLPResult
+    e: TestParseInvoice,TestParseEmail,TestParseNotifyQuality,TestParseReport,TestParseComposite,TestParseSystem,TestParseUnknown,TestAmountExtraction
+    TestParseInvoice: test_parse_invoice_simple(0),test_parse_invoice_missing_data(0),test_parse_invoice_eur(0),test_parse_invoice_usd(0)  # Invoice intent detection and entity e...
+    TestParseEmail: test_parse_email(0),test_parse_email_english(0),test_parse_email_reminder(0),test_parse_email_with_subject(0),test_parse_email_subject_and_body_same_line(0)  # Email intent detection.
+    TestParseNotifyQuality: test_notify_channel_only_maps_incomplete_without_message(0)
+    TestParseReport: test_parse_report_weekly(0),test_parse_report_hr_xlsx_no_false_system(0),test_parse_report_finance_csv(0)  # Report intent and entity extraction.
+    TestParseComposite: test_parse_composite_invoice_notify(0),test_parse_composite_full_flow(0),test_parse_report_and_email_wyslij_do(0),test_parse_report_and_email_do_recipient(0),test_parse_report_and_email_csv_wyslij_do(0)  # Multi-action (composite) intent detec...
+  nlp-service/tests/test_path_policy.py:
+    i: pytest,app.conversation.doql_context.{DoqlProcessPolicy,DoqlTaskContext},app.validation.path_policy.{example_relative_path,path_allowed_by_patterns,path_matches_glob,validate_process_path},pathlib.Path
+    e: test_path_matches_glob_fixtures,test_path_allowed_by_patterns_empty_means_allow,test_validate_process_path_denies_outside_scope,test_example_relative_path
+    test_path_matches_glob_fixtures()->None
+    test_path_allowed_by_patterns_empty_means_allow()->None
+    test_validate_process_path_denies_outside_scope(tmp_path:Path;monkeypatch)->None
+    test_example_relative_path(tmp_path:Path)->None
+  nlp-service/tests/test_path_resolve.py:
+    i: app.validation.invoice_pdf.write_invoice_pdf,app.validation.path_resolve.resolve_attachment_path,app.validation.step_validator.validate_step_config,pathlib.Path
+    e: test_validate_resolves_relative_fixture
+    test_validate_resolves_relative_fixture(tmp_path:Path;monkeypatch)->None
+  nlp-service/tests/test_process_agent.py:
+    i: pytest,app.conversation.doql_context.{DoqlCommand,DoqlProcessPolicy,DoqlRuntime,DoqlTaskContext,load_doql_context},app.conversation.process_agent.preflight_turn,pathlib.Path,unittest.mock.{AsyncMock,patch}
+    e: test_load_doql_commands,test_mapper_uses_doql_required_fields,test_execution_backend_for_runtime,test_execution_backend_from_doql_map,test_preflight_blocks_unavailable_runtime,test_preflight_blocks_process_scope_deny,test_preflight_blocks_intract_clarification,test_required_fields_for_action_helper
+    test_load_doql_commands(tmp_path:Path)->None
+    test_mapper_uses_doql_required_fields()->None
+    test_execution_backend_for_runtime()->None
+    test_execution_backend_from_doql_map()->None
+    test_preflight_blocks_unavailable_runtime()->None
+    test_preflight_blocks_process_scope_deny()->None
+    test_preflight_blocks_intract_clarification()->None
+    test_required_fields_for_action_helper()->None
+  nlp-service/tests/test_registry.py:
+    i: pytest,app.registry
+    e: TestRegistryStructure,TestAliasResolution,TestTriggerDetection,TestHelperFunctions,TestCategories,TestCompositeIntents
+    TestRegistryStructure: test_registry_entry_has_required_keys(1)  # Validate registry entries have requir...
+    TestAliasResolution: test_alias_invoice_pl(0),test_alias_email_en(0),test_alias_report(0),test_alias_slack(0),test_alias_unknown(0)  # get_action_by_alias finds best match.
+    TestTriggerDetection: test_trigger_daily(0),test_trigger_weekly(0),test_trigger_monthly(0),test_trigger_manual_default(0)  # get_trigger extracts schedule from text.
+    TestHelperFunctions: test_get_required_fields_invoice(0),test_get_required_fields_unknown(0),test_get_defaults_invoice(0),test_get_defaults_unknown(0)  # get_required_fields, get_defaults.
+    TestCategories: test_system_actions_nonempty(0),test_business_actions_nonempty(0),test_no_overlap(0),test_union_is_complete(0),test_mullm_actions_loaded(0)  # System vs business action sets.
+  nlp-service/tests/test_registry_observe.py:
+    i: pytest,app.conversation.doql_context.load_doql_context,app.main.app,app.orchestrator.{continue_conversation,get_conversation,start_conversation},app.store.memory.MemoryConversationStore,httpx.{ASGITransport,AsyncClient},pathlib.Path
+    e: SAMPLE,client,test_registry_observe_requires_path,test_registry_observe_merges_entities,test_registry_observe_marks_conversation_executed
+    client()
+    test_registry_observe_requires_path(client:AsyncClient)->None
+    test_registry_observe_merges_entities(client:AsyncClient;tmp_path:Path)->None
+    _patch_store(monkeypatch)->None
+    test_registry_observe_marks_conversation_executed(client:AsyncClient;tmp_path:Path)->None
+  nlp-service/tests/test_routing_observability.py:
+    i: pytest,app.routing.intent.IntentDecision,app.routing.observability.{record_intent_decision,reset_routing_metrics,routing_metrics_snapshot},app.routing.resolve.resolve_intent
+    e: test_record_increments_rules_hit,test_resolve_intent_updates_metrics
+    _reset_metrics()->None
+    test_record_increments_rules_hit()->None
+    test_resolve_intent_updates_metrics()->None
+  nlp-service/tests/test_routing_resolve.py:
+    i: pytest,app.routing.{IntentDecision,resolve_intent},app.routing.resolve._parser_source
+    e: TestParserSource,TestResolveIntent,TestOrchestratorRoutingField
+    TestParserSource: test_rules_mode(1)
+    TestResolveIntent: test_invoice_rules_path(0),test_unknown_intent(1),test_native_file_list_route(0),test_decision_serializable(0)
+    TestOrchestratorRoutingField: test_start_conversation_includes_routing(1)
+  nlp-service/tests/test_step_validator.py:
+    i: pytest,app.conversation.doql_context.{DoqlCommand,DoqlTaskContext},app.conversation.system_map.set_doql_context,app.validation.invoice_pdf.write_invoice_pdf,app.validation.step_validator.{validate_step_config,validate_workflow_steps},pathlib.Path
+    e: test_send_invoice_valid_without_attachment,test_send_invoice_missing_to,test_send_invoice_invalid_email,test_attachment_required_blocks_empty_path,test_pdf_invoice_file_valid,test_pdf_invoice_amount_mismatch,test_invalid_attachment_content,test_validate_workflow_steps_index
+    _clear_doql()->None
+    test_send_invoice_valid_without_attachment()->None
+    test_send_invoice_missing_to()->None
+    test_send_invoice_invalid_email()->None
+    test_attachment_required_blocks_empty_path()->None
+    test_pdf_invoice_file_valid(tmp_path:Path)->None
+    test_pdf_invoice_amount_mismatch(tmp_path:Path)->None
+    test_invalid_attachment_content(tmp_path:Path)->None
+  nlp-service/tests/test_store.py:
+    i: pytest,app.schemas.ConversationState,app.store.memory.MemoryConversationStore
+    e: TestMemoryStoreCRUD,TestSerializationRoundtrip,TestStoreFactory,TestStoreIsolation
+    TestMemoryStoreCRUD: store(0),test_save_and_get(1),test_get_nonexistent(1),test_save_overwrites(1),test_delete(1)  # Basic CRUD operations on MemoryConver...
+    TestSerializationRoundtrip: store(0),test_conversation_state_roundtrip(1),test_complex_entities_roundtrip(1)  # Store must preserve data through save...
+    TestStoreFactory: test_factory_returns_memory_without_redis(1),test_factory_singleton(1),test_factory_falls_back_on_bad_redis(1)  # get_conversation_store() factory beha...
+    TestStoreIsolation: test_separate_instances_isolated(0)  # Multiple store instances are isolated.
+  nlp-service/tests/test_system_executor.py:
+    i: pytest,app.registry.ACTIONS_REGISTRY,app.settings.{SystemSettings,settings_manager},app.system_executor
+    e: TestSettingsGet,TestSettingsSet,TestSettingsReset,TestFileList,TestRegistryList,TestRegistryAdd,TestStatus,TestRegistryEdit
+    TestSettingsGet: test_settings_get_all(0),test_settings_get_section(0),test_settings_get_default_is_all(0)  # _exec_settings_get handler.
+    TestSettingsSet: test_settings_set_and_verify(0),test_settings_set_missing_path(0),test_settings_set_missing_value(0)  # _exec_settings_set handler.
+    TestSettingsReset: test_settings_reset(0),test_settings_reset_section(0)  # _exec_settings_reset handler.
+    TestFileList: test_file_list(2),test_file_list_nonexistent(0)  # _exec_file_list handler.
+    TestRegistryList: test_registry_list(0),test_registry_list_business(0),test_registry_list_system(0)  # _exec_registry_list handler.
+    _reset_settings(monkeypatch)
+  nlp-service/tests/test_system_map_scope.py:
+    i: pytest,app.conversation.doql_context.{DoqlCommand,DoqlTaskContext},app.conversation.system_map.{command_meta,known_action_names,scoped_action_registry,set_doql_context},app.registry.{ACTIONS_REGISTRY,get_required_fields}
+    e: test_known_action_names_without_doql,test_known_action_names_doql_subset,test_scoped_action_registry
+    _reset_doql_context()->None
+    test_known_action_names_without_doql()->None
+    test_known_action_names_doql_subset()->None
+    test_scoped_action_registry()->None
+  nlp2dsl_sdk/__init__.py:
+    i: encoding.configure_utf8
+    e: _CLIENT_EXPORTS,_DEMO_EXPORTS
+    __getattr__(name:str)
+  nlp2dsl_sdk/__main__.py:
+    i: argparse,demos.list_available_demos
+    e: main
+    main()->None
+  nlp2dsl_sdk/attachment_validation.py:
+    i: dsl_validate.context.ValidationContext,dsl_validate.helpers.parse_amount,dsl_validate.issue.{Phase,issues_to_messages},dsl_validate.path_resolve.resolve_attachment_path,dsl_validate.rules.attachment.validate_attachment_path,env2llm.doql_context.resolve_doql_context_path,pathlib.Path,typing.{Any,Mapping}
+    e: format_attachment_validation,build_attachment_validation,enrich_chat_response
+    format_attachment_validation(payload:Any)->str | None
+    build_attachment_validation(raw_path:str)->dict[str, Any]
+    _attachment_from_dsl(dsl:Mapping[str;Any])->dict[str, Any] | None
+    _prefer_local_validation(remote:dict[str;Any];local:Any)->dict[str, Any]
+    _apply_attachment_to_execution(execution:dict[str;Any];av:dict[str;Any])->None
+    enrich_chat_response(data:dict[str;Any])->dict[str, Any]
+  nlp2dsl_sdk/autonomous_flow.py:
+    i: os,client.{ConversationFlow,NLP2DSLClient},typing.{Any,Optional}
+    e: AutonomousFlow
+    AutonomousFlow: __init__(1),run_task(1),_should_auto_execute(0),_default_example_dir(0),_start_with_extra(1)  # Single-shot task runner with server-s...
+  nlp2dsl_sdk/cli.py:
+    i: argparse,json,os,sys,pathlib.Path,typing.Any
+    e: show,main
+    _detect_example_dir()->Path | None
+    _doql_context_label(example_dir:Path)->str
+    _analyze(query:str)->dict[str, Any] | None
+    _display(result:dict[str;Any])->None
+    show(query:str)->int
+    _client()
+    _health()->int
+    _run_with_doql(client:Any;query:str)->dict[str, Any]
+  nlp2dsl_sdk/client.py:
+    i: json,os,time,requests,pathlib.Path,typing.{Any,Mapping,Optional,Sequence}
+    e: DEFAULT_BACKEND_URL,DEFAULT_NLP_SERVICE_URL,DEFAULT_WORKER_URL,DEFAULT_TIMEOUT_SECONDS,DEFAULT_HEALTH_WAIT_SECONDS,_RETRYABLE_STATUS_CODES,_DEFAULT_HTTP_RETRIES,workflow_step
+    NLP2DSLClient: __init__(5),from_env(1),close(0),__enter__(0),__exit__(3)  # Small reusable SDK for the NLP2DSL se...
+    ConversationFlow: __init__(1),start(2),send_message(2),_record_turn(4),save_artifacts(1)  # Convenience helper for the conversati...
+    workflow_step(action:str)->dict[str, Any]
+  nlp2dsl_sdk/demos.py:
+    i: json,requests,client.NLP2DSLClient,dataclasses.dataclass,typing
+    e: CONSTANT_50,CONSTANT_300,CODE_PREVIEW_LEN,SECTION_SEPARATOR,DemoSpec,run_crm_update_demo,run_action_catalog_demo,run_automation_gallery_demo
+    DemoSpec:   # Metadata for a runnable demo exposed...
+    _print_code_generation_preview(result:Mapping[str;Any])->None
+    run_crm_update_demo(client:Optional[NLP2DSLClient]=None)->Dict[str, Any]
+    run_action_catalog_demo(client:Optional[NLP2DSLClient]=None)->Dict[str, Any]
+    run_automation_gallery_demo(client:Optional[NLP2DSLClient]=None)->list[dict[str, Any]]
+    run_code_generation_demo(client:Optional[NLP2DSLClient]=None)->Dict[str, Any]
+    _run_direct_code_generation(client:NLP2DSLClient)->list[dict[str, Any]]
+    _get_supported_languages(client:NLP2DSLClient)->dict[str, Any]
+    _run_workflow_code_examples(client:NLP2DSLClient)->list[dict[str, Any]]
+  nlp2dsl_sdk/deploy/pactown_deploy.py:
+    i: json,shutil,subprocess,pathlib.Path,typing.Any
+    e: validate_pactown_bundle,deploy_instructions,deploy_instructions_json
+    validate_pactown_bundle(pactown_dir:Any)->dict[str, Any]
+    deploy_instructions()->dict[str, Any]
+    deploy_instructions_json()->str
+  nlp2dsl_sdk/encoding.py:
+    i: locale,os,sys
+    e: _UTF8_LOCALES,_DISABLE_VALUES,_AUTO_CONFIGURED,utf8_auto_enabled,configure_utf8,utf8_open
+    utf8_auto_enabled()->bool
+    _explicit_utf8_locale()->bool
+    _apply_utf8_locale_env()->None
+    _reconfigure_stdio()->None
+    _set_utf8_locale()->None
+    configure_utf8()->None
+    _auto_configure_once()->None
+    utf8_open(path;mode='r')
+  nlp2dsl_sdk/evaluation/golden.py:
+    i: yaml,dataclasses.{dataclass,field},pathlib.Path,typing.{Any,Literal}
+    e: GoldenCase,load_golden_cases,default_golden_cases,extract_actions,extract_missing,primary_action
+    GoldenCase: from_mapping(1)  # Single golden regression case with ex...
+    _data_path()->Path
+    load_golden_cases(path:Any=None)->tuple[GoldenCase, ...]
+    default_golden_cases()->tuple[GoldenCase, ...]
+    extract_actions(result:dict[str;Any])->list[str]
+    extract_missing(result:dict[str;Any])->list[str]
+    primary_action(case:GoldenCase)->str
+  nlp2dsl_sdk/evaluation/metrics.py:
+    i: collections.defaultdict,dataclasses.{dataclass,field},golden.{ErrorClassFocus,GoldenCase,extract_actions,extract_missing},typing.{Any,Callable,Literal}
+    e: GoldenRow,GoldenReport,classify_outcome,evaluate_golden_case,build_golden_report,primary_action_from_row,run_golden_evaluation
+    GoldenRow: 
+    GoldenReport: to_dict(0)
+    _actions_match(expected:tuple[str;Ellipsis];actual:list[str])->bool
+    _missing_match(expected:tuple[str;Ellipsis];actual:list[str])->bool
+    _has_attachment_signal(result:dict[str;Any];missing:list[str])->bool
+    _classify_success(case:GoldenCase;status:str;actions:list[str];missing:list[str])->OutcomeClass | None
+    _classify_safety(case:GoldenCase;status:str)->OutcomeClass | None
+    _classify_clarification(case:GoldenCase;status:str)->OutcomeClass | None
+    classify_outcome(case:GoldenCase;result:dict[str;Any])->OutcomeClass
+    evaluate_golden_case(case:GoldenCase;result:dict[str;Any])->GoldenRow
+  nlp2dsl_sdk/example_loader.py:
+    i: sys,_encoding,client.NLP2DSLClient,importlib.util,pathlib.Path,typing.{Any,Callable,Optional}
+    e: _REPO_ROOT,load_example_runner
+    load_example_runner(example_dir:str)->Callable[[Optional[NLP2DSLClient]], Any]
+  nlp2dsl_sdk/invoice_pdf.py:
+    i: pathlib.Path
+    e: build_invoice_pdf_bytes,write_invoice_pdf
+    _pdf_escape(text:str)->str
+    build_invoice_pdf_bytes(to:str;amount:str | float;currency:str)->bytes
+    write_invoice_pdf(path:Any)->Path
+  nlp2dsl_sdk/mullm/client.py:
+    i: os,uuid,requests,typing.Any
+    e: DEFAULT_MULLM_API_URL,DEFAULT_TIMEOUT_S,MullmClientError,MullmClient
+    MullmClientError: __init__(1)  # Mullm API call failed.
+    MullmClient: __init__(1),create_task(1),simulate_task(1),ping(0)  # Minimal Mullm task delegate client.
+  nlp2dsl_sdk/mullm/executor.py:
+    i: os,nlp2dsl_sdk.mullm.client.{MullmClient,MullmClientError},nlp2dsl_sdk.mullm.payloads.{build_task_payload,is_mullm_action},typing.Any
+    e: workflow_has_mullm_steps,is_mullm_only_workflow,execute_mullm_workflow
+    _workflow_steps(workflow:dict[str;Any])->list[dict[str, Any]]
+    workflow_has_mullm_steps(workflow:dict[str;Any])->bool
+    is_mullm_only_workflow(workflow:dict[str;Any])->bool
+    _delegate_mode()->str
+    _should_simulate(client:MullmClient)->bool
+    _require_mullm_only_steps(steps:list[dict[str;Any]])->None
+    _run_mullm_step(step:dict[str;Any])->dict[str, Any]
+    _execution_envelope(workflow:dict[str;Any])->dict[str, Any]
+  nlp2dsl_sdk/mullm/payloads.py:
+    i: typing.{Any,Callable}
+    e: MULLM_ACTIONS,is_mullm_action,_ACTION_FIELD_BUILDERS,build_task_payload
+    is_mullm_action(action:str)->bool
+    _cfg(step:dict[str;Any])->dict[str, Any]
+    _shell_task_fields(cfg:dict[str;Any])->_ActionFields
+    _browser_task_fields(cfg:dict[str;Any])->_ActionFields
+    _db_query_fields(cfg:dict[str;Any])->_ActionFields
+    _select_agent_fields(cfg:dict[str;Any])->_ActionFields
+    _delegate_fields(cfg:dict[str;Any])->_ActionFields
+    _resolve_action_fields(action:str;cfg:dict[str;Any])->_ActionFields
+  nlp2dsl_sdk/preview.py:
+    i: json,os,requests,client.NLP2DSLClient,nlp2dsl_artifacts.get_example_writer,typing.{Any,Mapping,Sequence,TYPE_CHECKING}
+    e: print_json,execution_payload,print_execution_step_detail,print_run_context_hints,print_run_outcome,print_workflow_preview,print_execution_result,workflow_http_error_result
+    print_json(payload:Any)->None
+    execution_payload(result:Mapping[str;Any])->dict[str, Any] | None
+    print_execution_step_detail(step:Mapping[str;Any])->None
+    print_run_context_hints(result:Mapping[str;Any])->None
+    _print_incomplete_run_outcome(result:Mapping[str;Any])->None
+    _print_success_run_outcome(result:Mapping[str;Any])->None
+    print_run_outcome(result:Mapping[str;Any])->None
+    _print_workflow_dsl_summary(result:Mapping[str;Any])->None
+  nlp2dsl_sdk/reflection.py:
+    i: re,env2llm.ir.{CommandSchemaIR,SystemMapIR},pathlib.Path,pydantic.{BaseModel,Field},typing.{Any,Literal,Mapping,Sequence}
+    e: TargetStep,TargetPlan,ReflectionIssue,ReflectionReport,_FIELD_LABELS,build_target_plan,reflect,reflect_from_chat_turn
+    TargetStep: 
+    TargetPlan:   # Docelowy model realizacji requestu.
+    ReflectionIssue: 
+    ReflectionReport: primary_context_query(0)
+    _intent_from_response(response:Mapping[str;Any])->str
+    _entities_from_response(response:Mapping[str;Any])->dict[str, Any]
+    _data_lookup(ir:SystemMapIR;action:str;field:str)->Any
+    _config_from_command(ir:SystemMapIR;intent:str;entities:Mapping[str;Any];cmd:CommandSchemaIR)->dict[str, Any]
+    _apply_invoice_attachment_hint(ir:SystemMapIR;intent:str;config:dict[str;Any])->None
+    build_target_plan(ir:SystemMapIR;intent:str;entities:Any=None)->TargetPlan
+    _parse_validation_issue(raw:str)->ReflectionIssue | None
+    _is_empty_value(value:Any)->bool
+  nlp2dsl_sdk/stack_flow.py:
+    i: os,autonomous_flow.AutonomousFlow,client.{ConversationFlow,NLP2DSLClient},dataclasses.{dataclass,field},nlp2dsl_stack.ComposeGenerationResult,pathlib.Path,typing.{Any,Optional}
+    e: StackPhaseResult,StackRunResult,DEFAULT_STACK_TURNS,AutonomousStackFlow
+    StackPhaseResult: 
+    StackRunResult: 
+    AutonomousStackFlow: __init__(1),bootstrap_registry(0),run_phases(1),_run_phase(2),_emit_compose(0)  # End-to-end: registry → autonomous exe...
+    _reflection_follow_up(reflection:dict[str;Any];prior_text:str)->str | None
+  nlp2dsl_sdk/step_validation.py:
+    i: dsl_validate,env2llm.ir.SystemMapIR,typing.Any
+    e: validate_step_config_from_map,validate_workflow_from_map
+    validate_step_config_from_map(ir:SystemMapIR;action:str;config:Any)->list[str]
+    validate_workflow_from_map(ir:SystemMapIR;steps:list[Any])->list[tuple[int, str, list[str]]]
+  nlp2dsl_sdk/workflow/events.py:
+    i: collections.abc.{Mapping,Sequence},pydantic.{BaseModel,Field},typing.{Any,Literal}
+    e: CANONICAL_EVENT_TYPES,TERMINAL_CANONICAL_TYPES,LEGACY_TO_CANONICAL,WorkflowLifecycleEvent,normalize_event_type,lifecycle_event_from_payload,workflow_snapshot_from_events
+    WorkflowLifecycleEvent:   # Normalized audit event persisted alon...
+    normalize_event_type(event_type:str)->str
+    lifecycle_event_from_payload(payload:Mapping[str;Any])->WorkflowLifecycleEvent
+    _normalize_lifecycle_events(events:Sequence[Any])->list[WorkflowLifecycleEvent]
+    _snapshot_status(normalized:Sequence[WorkflowLifecycleEvent])->str
+    workflow_snapshot_from_events(events:Sequence[Any])->dict[str, Any]
+  nlp2dsl_sdk/workflow/lifecycle.py:
+    i: collections.abc.Mapping,pydantic.{BaseModel,Field},typing.{Any,Literal}
+    e: ParseResult,ClarificationRequest,ValidationReport,PlanResult,ExecutionRequest,parse_result_from_nlp,clarification_from_dialog,plan_result_from_dialog
+    ParseResult:   # Normalized output of text parsing bef...
+    ClarificationRequest:   # Question/form needed before a plan ca...
+    ValidationReport: can_execute(0)  # Structured validation result for DSL,...
+    PlanResult:   # Normalized workflow plan built from p...
+    ExecutionRequest:   # Execution envelope for an already pla...
+    parse_result_from_nlp(text:str;mode:str;nlp_result:Any)->ParseResult
+    clarification_from_dialog(dialog:Any)->ClarificationRequest
+    plan_result_from_dialog(dialog:Any)->PlanResult
+    validation_report_from_issues(issues:list[Any])->ValidationReport
+    execution_request_from_workflow(workflow:Any)->ExecutionRequest
+    _get(obj:Any;key:str;default:Any=None)->Any
+    _to_dict(value:Any)->dict[str, Any]
+    _compact_dict(value:dict[str;Any])->dict[str, Any]
+  nlp2dsl_sdk/workflow/simulate.py:
+    i: collections.abc.Mapping,dsl_contracts.registry.SIDE_EFFECT_ACTIONS,typing.Any
+    e: simulate_workflow_payload
+    _preview_result(action:str;config:Mapping[str;Any])->dict[str, Any]
+    simulate_workflow_payload(workflow:Mapping[str;Any])->dict[str, Any]
+  packages/dsl-contracts/src/dsl_contracts/__init__.py:
+    i: action.{ActionContract,CompatibilityContract,ExecutionContract,FieldContract},registry
+    e: _DRAFT_EXPORTS
+    __getattr__(name:str)
+  packages/dsl-contracts/src/dsl_contracts/action.py:
+    i: pydantic.{BaseModel,Field},typing.{Any,Literal}
+    e: FieldContract,ExecutionContract,CompatibilityContract,ActionContract
+    FieldContract:   # Single input field expected by an act...
+    ExecutionContract:   # How an action is executed once the DS...
+    CompatibilityContract:   # Version matrix for contract, executor...
+    ActionContract: optional_fields(0),all_fields(0),to_catalog_entry(0)  # Source-of-truth description of an act...
+  packages/dsl-contracts/src/dsl_contracts/draft.py:
+    i: re,datetime,yaml,datetime.UTC,dsl_contracts.issue.ValidationIssue,pathlib.Path,pydantic.{BaseModel,Field},typing.{Any,Literal}
+    e: DEFAULT_DRAFTS_DIR,_SECRET_PATTERNS,FORBIDDEN_DRAFT_STATUSES_FOR_RUNTIME,ContractDraft,drafts_dir,draft_path,load_draft,save_draft
+    ContractDraft: to_yaml_dict(0)  # Proposed action contract awaiting hum...
+    drafts_dir(root:Any=None)->Path
+    draft_path(name:str)->Path
+    load_draft(path:Any)->ContractDraft
+    save_draft(draft:ContractDraft;path:Any=None)->Path
+    list_draft_files()->list[Path]
+    load_drafts()->list[ContractDraft]
+    validate_draft(draft:ContractDraft)->list[ValidationIssue]
+    draft_ready_for_activation(draft:ContractDraft)->bool
+  packages/dsl-contracts/src/dsl_contracts/issue.py:
+    i: dataclasses.{dataclass,field},enum.Enum,typing.{Any,Literal}
+    e: Phase,ValidationIssue,issues_to_messages
+    Phase: 
+    ValidationIssue: to_dict(0),to_legacy_message(0)
+    issues_to_messages(issues:list[ValidationIssue])->list[str]
+  packages/dsl-contracts/src/dsl_contracts/registry.py:
+    i: action.{ActionContract,CompatibilityContract,ExecutionContract},collections.abc.Mapping,typing.Any
+    e: FIELD_TYPES,SIDE_EFFECT_ACTIONS,contract_from_registry_entry,contract_from_catalog_entry,action_contracts_from_registry,action_contracts_from_catalog,action_catalog_payload,action_info_config_schema
+    _optional_defaults(raw:Any)->dict[str, Any]
+    _string_list(raw:Any)->list[str]
+    _string_dict(raw:Any)->dict[str, str]
+    _execution_contract(name:str;meta:Mapping[str;Any])->ExecutionContract
+    _compatibility_contract(meta:Mapping[str;Any])->CompatibilityContract
+    contract_from_registry_entry(name:str;meta:Any)->ActionContract
+    contract_from_catalog_entry(name:str;meta:Any)->ActionContract
+    action_contracts_from_registry(registry:Mapping[str;Mapping[str;Any]])->dict[str, ActionContract]
+  packages/dsl-validate/src/dsl_validate/__init__.py:
+    i: context.ValidationContext,issue.{Phase,Resolution,ValidationIssue,issues_to_messages},messages.legacy_message_to_issue,resolutions.{ResolutionEnvironment,ResolutionPlan,apply_resolution_plans,filter_plans_by_reflection_tokens}
+    e: _PIPELINE_EXPORTS
+    __getattr__(name:str)
+  packages/dsl-validate/src/dsl_validate/capability_policy.py:
+    i: re,collections.abc.Mapping,dataclasses.{dataclass,field},dsl_contracts.issue.{Phase,ValidationIssue},dsl_contracts.registry.action_contracts_from_catalog,env2llm.ir.ProcessPolicyIR,env2llm.policy.process.process_scope_denied,typing.Any
+    e: _EMAIL_RE,_EMAIL_ACTIONS,_NOTIFY_ACTIONS,ExecutionPolicyContext,validate_capability_policy,access_decision_requires_approval,build_access_decision_params
+    ExecutionPolicyContext:   # Runtime policy envelope applied at pr...
+    _workflow_steps(workflow:Mapping[str;Any])->list[dict[str, Any]]
+    _step_config(step:Mapping[str;Any])->dict[str, Any]
+    _email_domain(address:str)->str | None
+    _target_uri(action:str;config:Mapping[str;Any])->str | None
+    _approval_granted(action:str;config:Mapping[str;Any];ctx:ExecutionPolicyContext)->bool
+    _blocked_issue(code:str;field_name:str;message:str;phase:Phase;meta:dict[str; Any])->ValidationIssue
+    _scope_issue(step_ref:str;action:str;area:str | None;denied:str;phase:Phase)->ValidationIssue
+    _dry_run_issue(step_ref:str;action:str;phase:Phase)->ValidationIssue
+  packages/dsl-validate/src/dsl_validate/context.py:
+    i: dataclasses.{dataclass,field},issue.Phase,typing.{Any,Callable}
+    e: ValidationContext
+    ValidationContext: from_map(0)
+  packages/dsl-validate/src/dsl_validate/contract_drift.py:
+    i: dataclasses.{dataclass,field},dsl_contracts.registry.{quality_fields_for_action,required_fields_for_action},typing.{Any,Iterable,Mapping}
+    e: CatalogDriftIssue,CatalogDriftReport,worker_eligible_actions,validate_handler_drift,validate_catalog_field_drift,build_catalog_drift_report
+    CatalogDriftIssue: to_dict(0)
+    CatalogDriftReport: to_dict(0)
+    worker_eligible_actions(catalog:Iterable[str])->set[str]
+    validate_handler_drift(handler_names:Iterable[str];catalog_names:Iterable[str])->list[CatalogDriftIssue]
+    _field_sets(catalog:Mapping[str;Any];action:str)->tuple[set[str], set[str]]
+    validate_catalog_field_drift(primary:Mapping[str;Any];secondary:Mapping[str;Any])->list[CatalogDriftIssue]
+    build_catalog_drift_report(nlp_catalog:Mapping[str; Any];worker_handlers:Iterable[str])->CatalogDriftReport
+  packages/dsl-validate/src/dsl_validate/helpers.py:
+    i: re,typing.Any
+    e: is_empty,parse_amount,pdf_structure_issues,pdf_amount_mismatch
+    is_empty(val:Any)->bool
+    parse_amount(val:Any)->float | None
+    pdf_structure_issues(data:bytes)->list[str]
+    pdf_amount_mismatch(data:bytes;expected_amount:float)->str | None
+  packages/dsl-validate/src/dsl_validate/messages.py:
+    i: collections.abc.Callable,issue.{IssueKind,Resolution,ValidationIssue}
+    e: legacy_message_to_issue,_MESSAGE_PARSERS
+    legacy_message_to_issue(raw:str)->ValidationIssue
+    _missing_required_issue(raw:str)->ValidationIssue | None
+    _quality_missing_issue(raw:str)->ValidationIssue | None
+    _attachment_missing_issue(raw:str)->ValidationIssue | None
+    _attachment_issue(raw:str)->ValidationIssue | None
+    _field_format_issue(raw:str)->ValidationIssue | None
+    _unknown_action_issue(raw:str)->ValidationIssue | None
+    _missing_action_issue(raw:str)->ValidationIssue | None
+  packages/dsl-validate/src/dsl_validate/path_resolve.py:
+    i: os,pathlib.Path
+    e: resolve_attachment_path
+    _examples_portable_candidates(raw:str)->list[Path]
+    resolve_attachment_path(raw:str)->str
+  packages/dsl-validate/src/dsl_validate/pipeline.py:
+    i: context.ValidationContext,env2llm.ir.SystemMapIR,issue.{Phase,ValidationIssue,issues_to_messages},rules.dsl_contract.validate_dsl_contract,rules.step_config.{validate_step,validate_workflow_steps},typing.Any
+    e: validate_step_issues,validate_step_messages,validate_dsl_contract_issues,validate_dsl_contract_messages,validate_step_config_from_map,validate_step_config_from_map_issues,validate_workflow_from_map,validate_workflow_from_map_issues
+    validate_step_issues(ctx:ValidationContext)->list[ValidationIssue]
+    validate_step_messages(ctx:ValidationContext)->list[str]
+    validate_dsl_contract_issues(dsl:Any)->list[ValidationIssue]
+    validate_dsl_contract_messages(dsl:Any)->list[str]
+    validate_step_config_from_map(ir:SystemMapIR;action:str;config:Any)->list[str]
+    validate_step_config_from_map_issues(ir:SystemMapIR;action:str;config:Any)->list[ValidationIssue]
+    validate_workflow_from_map(ir:SystemMapIR;steps:list[Any])->list[tuple[int, str, list[str]]]
+    validate_workflow_from_map_issues(ir:SystemMapIR;steps:list[Any])->list[tuple[int, str, list[ValidationIssue]]]
+  packages/dsl-validate/src/dsl_validate/profile_checks.py:
+    i: dataclasses.dataclass,dsl_contracts.issue.{Phase,ValidationIssue},env2llm.ir.{ProfileValidationIR,SystemMapIR},pathlib.Path,typing.Any
+    e: PROFILE_EXECUTION_COMPLETED,PROFILE_DSL_ACTION,PROFILE_CONVERSATION_EXECUTED,PROFILE_ARTIFACT_EXISTS,ProfileCheckContext,parse_profile_validation,parse_profile_validations,load_profile_validations
+    ProfileCheckContext:   # Runtime payload for profile validatio...
+    _parse_profile_validation_by_code(raw:dict[str;Any])->ProfileValidationIR
+    _parse_profile_validation_by_type(raw:dict[str;Any])->ProfileValidationIR | None
+    _parse_profile_validation_shorthand(raw:dict[str;Any])->ProfileValidationIR | None
+    parse_profile_validation(raw:Any)->ProfileValidationIR | None
+    parse_profile_validations(raw_list:Any)->list[ProfileValidationIR]
+    load_profile_validations(example_id:str;repo_root:Any=None)->list[ProfileValidationIR]
+    apply_profile_validations(ir:SystemMapIR;profile:Any)->None
+    dsl_actions_from_response(response:dict[str;Any])->list[str]
+  packages/dsl-validate/src/dsl_validate/resolutions.py:
+    i: dataclasses.dataclass,issue.ValidationIssue,typing.{Callable,Literal}
+    e: _ATTACHMENT_CODES,_INVALID_ATTACHMENT_CODES,ResolutionPlan,ResolutionEnvironment,plan_resolutions,filter_plans_by_reflection_tokens,apply_resolution_plans
+    ResolutionPlan: 
+    ResolutionEnvironment:   # Side-effect handlers injected by orch...
+    plan_resolutions(issues:list[ValidationIssue])->list[ResolutionPlan]
+    _attachment_issues(issues:list[ValidationIssue])->list[ValidationIssue]
+    _is_attachment_issue(issue:ValidationIssue)->bool
+    _append_attachment_plans(plans:list[ResolutionPlan];seen:set[tuple[str;str;str]];attachment:list[ValidationIssue])->None
+    _append_autofill_plans(plans:list[ResolutionPlan];seen:set[tuple[str;str;str]];issues:list[ValidationIssue])->None
+    _has_invalid_attachment(issues:list[ValidationIssue])->bool
+    _should_generate_attachment(issues:list[ValidationIssue])->bool
+    _attachment_source_hint(issues:list[ValidationIssue])->str
+  packages/dsl-validate/src/dsl_validate/rules/attachment.py:
+    i: context.ValidationContext,helpers.{is_empty,parse_amount,pdf_amount_mismatch,pdf_structure_issues},issue.ValidationIssue,pathlib.Path
+    e: validate_attachment_path,attachment_issues_for_config
+    _resolve_path(ctx:ValidationContext;path_str:str)->str
+    validate_attachment_path(ctx:ValidationContext;path_str:str)->list[ValidationIssue]
+    attachment_issues_for_config(ctx:ValidationContext)->list[ValidationIssue]
+  packages/dsl-validate/src/dsl_validate/rules/dsl_contract.py:
+    i: collections.abc.Mapping,issue.{IssueKind,Phase,ValidationIssue},typing.Any
+    e: validate_dsl_contract
+    validate_dsl_contract(dsl:Any)->list[ValidationIssue]
+    _validate_step(index:int;step:Any)->list[ValidationIssue]
+    _validate_optional_text_field(dsl:Mapping[str;Any];field:str;issues:list[ValidationIssue];phase:Phase)->None
+    _issue(code:str;field:str;message:str;phase:Phase)->ValidationIssue
+    _is_non_empty_string(value:Any)->bool
+    _type_name(value:Any)->str
+  packages/dsl-validate/src/dsl_validate/rules/post_execute.py:
+    i: context.ValidationContext,issue.{Phase,ValidationIssue},step_config.validate_step,typing.Any
+    e: validate_execution_outcome
+    _invalid_steps_payload()->list[ValidationIssue]
+    _failed_step_issues(steps:list[Any])->list[ValidationIssue]
+    _dsl_attachment_issues(dsl:dict[str;Any])->list[ValidationIssue]
+    validate_execution_outcome(execution:dict[str;Any])->list[ValidationIssue]
+  packages/dsl-validate/src/dsl_validate/rules/runtime_health.py:
+    i: json,issue.{Phase,ValidationIssue},typing.{Any,Sequence},urllib.{error,request}
+    e: _WORKER_ACTIONS,runtime_id_for_intent,probe_health_endpoint,validate_runtime_health,validate_runtime_health_for_intent
+    runtime_id_for_intent(intent:Any)->str | None
+    probe_health_endpoint(url:str)->bool
+    _runtime_field(rt:Any;name:str;default:str='')->str
+    validate_runtime_health(runtimes:Sequence[Any];runtime_id:Any)->list[ValidationIssue]
+    validate_runtime_health_for_intent(runtimes:Sequence[Any];intent:Any)->list[ValidationIssue]
+  packages/dsl-validate/src/dsl_validate/rules/step_config.py:
+    i: attachment.attachment_issues_for_config,context.ValidationContext,helpers.{is_empty,parse_amount},issue.{Phase,ValidationIssue},typing.Any
+    e: validate_step,validate_workflow_steps
+    validate_step(ctx:ValidationContext)->list[ValidationIssue]
+    _format_issues(ctx:ValidationContext)->list[ValidationIssue]
+    validate_workflow_steps(contexts:list[ValidationContext])->list[tuple[int, str, list[ValidationIssue]]]
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/clarification.py:
+    i: os,pact_ir.IntentIR
+    e: IntentClarificationRequired,clarification_enforced,ensure_intent_clear
+    IntentClarificationRequired: __init__(1)  # Raised when IntentIR needs user clari...
+    clarification_enforced()->bool
+    ensure_intent_clear(intent:IntentIR)->None
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/data_files.py:
+    i: os,importlib.resources,pathlib.Path,typing.Optional
+    e: get_user_config_dir,bundled_data_file,find_data_files
+    get_user_config_dir()->Path
+    _package_data_dir()->Path
+    _nlp2cmd_data_dir()->Path | None
+    bundled_data_file(filename:str)->Path | None
+    find_data_files(explicit_path:Optional[str];default_filename:str)->list[Path]
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/domain_mapping.py:
+    i: pact_ir.{ExecutionRisk,TargetKind}
+    e: _DOMAIN_TO_TARGET,_DESTRUCTIVE_INTENTS,domain_to_target_kind,intent_to_execution_risk
+    domain_to_target_kind(domain:str)->TargetKind
+    intent_to_execution_risk(intent:str)->ExecutionRisk
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/facade.py:
+    i: nlp2cmd_intent.keywords.KeywordIntentDetector,nlp2cmd_intent.nlp2cmd_convert.detection_to_intent_ir,nlp2cmd_intent.normalize.QueryNormalizer,nlp2cmd_intent.protocols.{EntityExtractor,IntentDetector},pact_ir.IntentIR
+    e: PassthroughEntityExtractor,KeywordIntentAdapter,default_intent_detector,IntentPipeline
+    PassthroughEntityExtractor: extract(1)
+    KeywordIntentAdapter: __init__(1),detect(1)  # Wrap KeywordIntentDetector to satisfy...
+    IntentPipeline: __init__(0),run(1)  # normalize → entities → intent.
+    default_intent_detector()->IntentDetector
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/input.py:
+    i: nlp2cmd_intent.clarification.ensure_intent_clear,typing.Any
+    e: analyze_query
+    analyze_query(query:str)->dict[str, Any]
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/fast_path_detection.py:
+    i: re,dataclasses.{dataclass,field},nlp2cmd_intent.keywords.fast_path_terms.{BROWSER_COMPLEX,BROWSER_CONTEXT_SIGNALS,BROWSER_PHRASE_PATTERNS,DOCKER_CONTAINER_ACTIONS},typing.{Any,Optional,Sequence}
+    e: FastPathHit,normalize_url,match_explicit_overrides,match_exact_commands,run_domain_fast_path_after_exact,fast_path_detect
+    FastPathHit: 
+    normalize_url(raw:str)->str
+    match_explicit_overrides(overrides:Sequence[ExplicitOverride];text_normalized:str)->Optional[FastPathHit]
+    match_exact_commands(text_lower:str)->Optional[FastPathHit]
+    _term_hit(text_lower:str;terms:Sequence[tuple[str;str]])->Optional[FastPathHit]
+    _match_sql_exact(text_lower:str)->Optional[FastPathHit]
+    _match_docker(text_lower:str)->Optional[FastPathHit]
+    _k8s_entities(text_lower:str;intent:str)->dict[str, Any]
+    _match_k8s(text_lower:str)->Optional[FastPathHit]
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_detector.py:
+    i: logging,os,re,dataclasses.dataclass,keyword_patterns.KeywordPatterns,typing.Optional
+    e: DetectionResult,_BROWSER_OVERRIDE_PATTERNS,_BROWSER_ANTI_NETWORKING_SIGNALS,KeywordIntentDetector
+    DetectionResult: __post_init__(0)  # Result of intent detection.
+    KeywordIntentDetector: __init__(3),add_pattern(3),_prepare_detect_text(1),_accept_detection(1),detect(1)  # Rule-based intent detection using key...
+    _get_query_normalizer()
+    _get_polish_support()
+    _get_fuzzy_schema_matcher()
+    _get_ml_classifier()
+    _get_semantic_matcher()
+    _get_spacy_model()
+    _normalize_url(raw:str)->str
+    _super_fast_browser_override(text_lower:str)->Optional[DetectionResult]
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_patterns.py:
+    i: logging,os,nlp2cmd_intent.keywords,nlp2cmd_intent.data_files.{_find_data_files_default,bundled_data_file},pathlib.Path,typing.{Dict,List,Optional,Tuple}
+    e: KeywordPatterns
+    KeywordPatterns: __init__(1),_pattern_files(1),_load_patterns_from_json(1),_apply_detector_config(1),_load_detector_config_from_json(0)  # Manages keyword patterns for intent d...
+    _find_data_files()
+    _normalize_polish_text(text:str)->str
+    _dedupe_case_insensitive(items:List[str])->List[str]
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/pattern_loaders.py:
+    i: json,logging,pathlib.Path,typing.{Any,Callable,Dict,List,Tuple}
+    e: read_json_object,clean_string_list,merge_patterns_payload,parse_domain_boosters,parse_priority_intents,parse_fast_path_settings,parse_explicit_overrides
+    read_json_object(path:Path)->dict[str, Any] | None
+    clean_string_list(items:list[Any])->list[str]
+    merge_patterns_payload(base:PatternMap;payload:dict[str;Any])->None
+    parse_domain_boosters(payload:dict[str;Any])->dict[str, list[str]]
+    parse_priority_intents(payload:dict[str;Any])->dict[str, list[str]]
+    parse_fast_path_settings(payload:dict[str;Any])->tuple[list[str], list[str], set[str]]
+    parse_explicit_overrides(payload:dict[str;Any])->list[ExplicitOverride]
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/nlp2cmd_convert.py:
+    i: nlp2cmd_intent.domain_mapping.{domain_to_target_kind,intent_to_execution_risk},pact_ir.{Ambiguity,EntityBag,IntentIR},typing.Any
+    e: detection_to_intent_ir
+    detection_to_intent_ir(result:Any)->IntentIR
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/normalize.py:
+    i: re
+    e: QueryNormalizer
+    QueryNormalizer: normalize(1)  # Lightweight normalizer; full Polish s...
+  packages/nlp2cmd-intent/src/nlp2cmd_intent/protocols.py:
+    i: pact_ir.{EntityBag,IntentIR},typing.Protocol
+    e: IntentDetector,EntityExtractor
+    IntentDetector: detect(1)
+    EntityExtractor: extract(1)
+  packages/nlp2cmd-intent/tests/test_analyze_query.py:
+    i: nlp2cmd_intent.input.analyze_query
+    e: test_analyze_query_find_files
+    test_analyze_query_find_files()
+  packages/nlp2cmd-intent/tests/test_clarification.py:
+    i: os,pytest,nlp2cmd_intent.{IntentClarificationRequired,IntentPipeline,ensure_intent_clear},nlp2cmd_intent.input.analyze_query
+    e: test_ensure_intent_clear_blocks_low_confidence,test_ensure_intent_clear_allows_confident_intent,test_analyze_query_enforces_clarification_with_env,test_analyze_query_allows_ambiguous_without_env
+    test_ensure_intent_clear_blocks_low_confidence()
+    test_ensure_intent_clear_allows_confident_intent()
+    test_analyze_query_enforces_clarification_with_env(monkeypatch)
+    test_analyze_query_allows_ambiguous_without_env(monkeypatch)
+  packages/nlp2cmd-intent/tests/test_intent_pipeline.py:
+    i: nlp2cmd_intent.IntentPipeline
+    e: test_file_search_intent_with_keyword_detector
+    test_file_search_intent_with_keyword_detector()
+  packages/nlp2cmd-intent/tests/test_nlp2cmd_convert.py:
+    i: dataclasses.{dataclass,field},nlp2cmd_intent.detection_to_intent_ir
+    e: FakeDetection,test_detection_to_intent_ir_shell_find,test_detection_to_intent_ir_browser_navigate
+    FakeDetection: 
+    test_detection_to_intent_ir_shell_find()
+    test_detection_to_intent_ir_browser_navigate()
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/pipeline.py:
+    i: nlp2cmd_intent.IntentPipeline,nlp2cmd_planner.router.PlanRouter,pact_ir.ExecutionPlanIR
+    e: PlanningPipeline
+    PlanningPipeline: __init__(0),run(1)
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/router.py:
+    i: nlp2cmd_planner.strategy.PlanStrategy,pact_ir.IntentIR
+    e: UnsupportedIntentError,PlanRouter
+    UnsupportedIntentError: __init__(1)  # No planning strategy supports the giv...
+    PlanRouter: __init__(1),select(1)
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/strategies/rest_workflow.py:
+    i: json,nlp2cmd_planner.router.UnsupportedIntentError,nlp2cmd_planner.workflow_backend.{fetch_workflow_from_text,workflow_backend_enabled,workflow_run_path},pact_ir.{ExecutionPlanIR,IntentIR,PlanStep,TargetKind}
+    e: _WORKFLOW_INTENTS,_WORKFLOW_DOMAINS,RestWorkflowPlanStrategy
+    RestWorkflowPlanStrategy: supports(1),plan(1)
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/strategies/rule_shell.py:
+    i: re,pact_ir.{ExecutionPlanIR,IntentIR,PlanStep,TargetKind}
+    e: _FILE_SEARCH_INTENTS,_LIST_INTENTS,_GLOB_RE,_PATH_SUFFIX_RE,RuleShellPlanStrategy
+    RuleShellPlanStrategy: supports(1),plan(1)
+    _parse_file_search(intent:IntentIR)->tuple[str, str]
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/strategy.py:
+    i: pact_ir.{ExecutionPlanIR,IntentIR},typing.Protocol
+    e: PlanStrategy
+    PlanStrategy: supports(1),plan(1)
+  packages/nlp2cmd-planner/src/nlp2cmd_planner/workflow_backend.py:
+    i: json,os,typing.Any,urllib.{error,request}
+    e: workflow_backend_enabled,workflow_backend_url,workflow_run_path,fetch_workflow_from_text
+    workflow_backend_enabled()->bool
+    workflow_backend_url()->str
+    workflow_run_path()->str
+    fetch_workflow_from_text(query:str)->dict[str, Any] | None
+  packages/nlp2cmd-planner/tests/test_planning_pipeline.py:
+    i: pytest,nlp2cmd_planner.PlanningPipeline,nlp2cmd_planner.router.UnsupportedIntentError,nlp2cmd_planner.strategies.rule_shell.{RuleShellPlanStrategy,_parse_file_search},pact_ir.{EntityBag,IntentIR,TargetKind}
+    e: test_planning_pipeline_shell_find,test_planning_pipeline_shell_find_with_path,test_rule_shell_supports_find_intent,test_parse_file_search_from_entities,test_unsupported_intent_raises
+    test_planning_pipeline_shell_find()
+    test_planning_pipeline_shell_find_with_path()
+    test_rule_shell_supports_find_intent()
+    test_parse_file_search_from_entities()
+    test_unsupported_intent_raises()
+  packages/nlp2cmd-planner/tests/test_rest_workflow.py:
+    i: json,pytest,nlp2cmd_planner.router.{PlanRouter,UnsupportedIntentError},nlp2cmd_planner.strategies.rest_workflow.RestWorkflowPlanStrategy,pact_ir.{IntentIR,TargetKind}
+    e: test_supports_when_workflow_enabled,test_supports_disabled_without_env,test_plan_builds_rest_workflow_step,test_plan_raises_on_incomplete_workflow,test_router_prefers_shell_over_rest
+    _intent()->IntentIR
+    test_supports_when_workflow_enabled(monkeypatch)
+    test_supports_disabled_without_env(monkeypatch)
+    test_plan_builds_rest_workflow_step(monkeypatch)
+    test_plan_raises_on_incomplete_workflow(monkeypatch)
+    test_router_prefers_shell_over_rest(monkeypatch)
+  packages/nlp2cmd-planner/tests/test_rest_workflow_propact.py:
+    i: nlp2cmd_planner.strategies.rest_workflow.RestWorkflowPlanStrategy,nlp2cmd_propact.plan_to_propact_markdown,pact_ir.{IntentIR,TargetKind}
+    e: test_rest_workflow_renders_propact_markdown
+    test_rest_workflow_renders_propact_markdown(monkeypatch)
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/adapter.py:
+    i: json,yaml,pact_ir.{ExecutionPlanIR,PlanStep,TargetKind},typing.Any
+    e: _DELEGATE_KINDS,step_to_propact_block,plan_to_propact_markdown
+    _shell_block(dsl:str)->str
+    _rest_block(method:str;endpoint:str;body:str='')->str
+    _format_json_body(value:Any)->str
+    _mcp_block(step:PlanStep)->str
+    _ws_block(step:PlanStep)->str
+    _delegate_block(step:PlanStep)->str
+    step_to_propact_block(step:PlanStep)->str
+    plan_to_propact_markdown(plan:ExecutionPlanIR)->str
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/cli.py:
+    i: sys
+    e: main
+    main(argv:Any=None)->int
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/executor.py:
+    i: nlp2cmd_propact.adapter.step_to_propact_block,nlp2cmd_propact.runner.{PropactRunner,RunResult},pact_ir.{ExecutionPlanIR,PlanStep,TargetKind},typing.Any
+    e: _PROPACT_KINDS,_NLP2CMD_KINDS,execution_route,HybridPlanExecutor
+    HybridPlanExecutor: __init__(0),run(1),_run_propact_step(2),_run_nlp2cmd_step(2)  # Route plan steps to Propact or nlp2cm...
+    execution_route(step:PlanStep)->str
+    _single_step_plan(plan:ExecutionPlanIR;step:PlanStep)->ExecutionPlanIR
+  packages/nlp2cmd-propact/src/nlp2cmd_propact/runner.py:
+    i: os,shlex,shutil,subprocess,tempfile,dataclasses.{dataclass,field},pact_ir.ExecutionPlanIR,pathlib.Path,typing.Any
+    e: _PROPACT_BIN_ENV,_FALLBACK_ENV,_PROPACT_PROTOCOLS,RunResult,PropactRunner
+    RunResult: 
+    PropactRunner: __init__(0),render(1),run(1),_run_via_propact(2)  # Run ExecutionPlanIR through Propact C...
+    _propact_fallback_mode()->str
+    _resolve_propact_bin(propact_bin:str)->str
+    _propact_available(propact_bin:str)->bool
+    _is_shell_only(plan:ExecutionPlanIR)->bool
+    _requires_propact(plan:ExecutionPlanIR)->bool
+    _shell_command(step_dsl:str;step_params:dict[str;Any])->str
+    _run_shell_steps(plan:ExecutionPlanIR)->RunResult
+  packages/nlp2cmd-propact/tests/test_adapter.py:
+    i: json,nlp2cmd_propact.{plan_to_propact_markdown,step_to_propact_block},pact_ir.{ExecutionPlanIR,PlanStep,TargetKind}
+    e: test_shell_plan_to_markdown,test_rest_block_with_json_body,test_mcp_block_from_tool_params,test_mcp_block_from_dsl,test_ws_block_from_url_and_message,test_delegate_block_for_browser,test_delegate_block_for_sql,test_mixed_plan_renders_all_block_types
+    test_shell_plan_to_markdown()
+    test_rest_block_with_json_body()
+    test_mcp_block_from_tool_params()
+    test_mcp_block_from_dsl()
+    test_ws_block_from_url_and_message()
+    test_delegate_block_for_browser()
+    test_delegate_block_for_sql()
+    test_mixed_plan_renders_all_block_types()
+  packages/nlp2cmd-propact/tests/test_executor.py:
+    i: nlp2cmd_propact.executor.{HybridPlanExecutor,execution_route},pact_ir.{ExecutionPlanIR,PlanStep,TargetKind},unittest.mock.{MagicMock,patch}
+    e: test_execution_route,test_hybrid_dry_run_includes_routes,test_hybrid_routes_shell_to_propact,test_hybrid_routes_browser_to_nlp2cmd,test_hybrid_stops_on_first_failure
+    _shell_plan()->ExecutionPlanIR
+    _browser_plan()->ExecutionPlanIR
+    test_execution_route()
+    test_hybrid_dry_run_includes_routes()
+    test_hybrid_routes_shell_to_propact(mock_propact)
+    test_hybrid_routes_browser_to_nlp2cmd(mock_nlp2cmd)
+    test_hybrid_stops_on_first_failure(mock_propact)
+  packages/nlp2cmd-propact/tests/test_runner.py:
+    i: pytest,nlp2cmd_propact.runner.{PropactRunner,RunResult,_run_shell_steps},pact_ir.{ExecutionPlanIR,PlanStep,TargetKind},unittest.mock.patch
+    e: test_run_dry_run_returns_markdown_only,test_run_executes_propact_without_dry_run,test_shell_fallback_when_propact_missing,test_rest_plan_fails_without_propact,test_shell_fallback_disabled_returns_error,test_shell_fallback_propagates_nonzero_exit,test_empty_plan_fails,test_propact_bin_env_override
+    _shell_plan(dsl:str='find src -name "*.py"')->ExecutionPlanIR
+    test_run_dry_run_returns_markdown_only()
+    test_run_executes_propact_without_dry_run(mock_available;mock_run)
+    test_shell_fallback_when_propact_missing(mock_available;mock_run)
+    test_rest_plan_fails_without_propact(mock_available)
+    test_shell_fallback_disabled_returns_error(mock_available;monkeypatch)
+    test_shell_fallback_propagates_nonzero_exit()
+    test_empty_plan_fails()
+  packages/nlp2dsl-artifacts/src/nlp2dsl_artifacts/encoding.py:
+    i: locale,os,sys
+    e: _UTF8_LOCALES,_DISABLE_VALUES,_AUTO_CONFIGURED,utf8_auto_enabled,configure_utf8,utf8_open
+    utf8_auto_enabled()->bool
+    _explicit_utf8_locale()->bool
+    _apply_utf8_locale_env()->None
+    _reconfigure_stdio()->None
+    _set_utf8_locale()->None
+    configure_utf8()->None
+    _auto_configure_once()->None
+    utf8_open(path;mode='r')
+  packages/nlp2dsl-artifacts/src/nlp2dsl_artifacts/writer.py:
+    i: json,os,re,datetime,yaml,datetime.timezone,pathlib.Path,typing.{Any,Mapping,Sequence}
+    e: _PROCESS_FORMAT,_MANIFEST_FORMAT,example_artifact_root,write_environment_doql,build_process_trace,write_query_artifacts,write_manifest,write_testql_commands
+    ExampleArtifactWriter: __init__(1),record(2),finalize(1)  # Accumulates query results and flushes...
+    example_artifact_root(example_dir:Any)->Path
+    _slugify(text:str)->str
+    write_environment_doql(artifact_root:Path;example_name:str;env:Mapping[str;str])->Path
+    _nlp_trace_layer(query:str;result:Mapping[str;Any])->dict[str, Any]
+    _dsl_trace_layer(dsl:Any)->dict[str, Any]
+    _cmd_trace_layer(dsl:Any)->dict[str, Any]
+    _process_trace_layer(result:Mapping[str;Any])->dict[str, Any]
+    build_process_trace(query:str;result:Mapping[str;Any])->dict[str, Any]
+  packages/nlp2dsl-mcp/src/nlp2dsl_mcp/server.py:
+    i: json,os,mcp.server.fastmcp.FastMCP,typing.Any
+    e: build_mcp,main
+    _client()
+    _plan_workflow(text:str;mode:str='auto')->dict[str, Any]
+    _validate_workflow(workflow:dict[str;Any])->dict[str, Any]
+    _execute_workflow(workflow:dict[str;Any])->dict[str, Any]
+    build_mcp()->Any
+    main()->None
+  packages/nlp2dsl-plugin/src/nlp2dsl_plugin/schema.py:
+    i: yaml,pathlib.Path,pydantic.{BaseModel,Field},typing.Any
+    e: PluginManifest,load_plugin_manifest,plugin_layout_valid
+    PluginManifest: 
+    load_plugin_manifest(path:Any)->PluginManifest
+    plugin_layout_valid(plugin_root:Any)->dict[str, Any]
+  packages/nlp2dsl-show/src/nlp2dsl_show/cli.py:
+    i: argparse,json,sys,yaml,nlp2cmd_intent.input.analyze_query,typing.Any
+    e: main
+    _serialize(data:dict[str;Any];fmt:str)->str
+    main(argv:Any=None)->int
+    _attach_contract_check(payload:dict[str;Any])->dict[str, Any]
+  packages/nlp2dsl-show/tests/test_cli.py:
+    i: json,subprocess,sys
+    e: test_build_query_structure_intent_only,test_build_query_structure_with_plan,test_cli_show_json,test_cli_show_rejects_ambiguous_query_when_enforced
+    test_build_query_structure_intent_only()
+    test_build_query_structure_with_plan()
+    test_cli_show_json()
+    test_cli_show_rejects_ambiguous_query_when_enforced()
+  packages/nlp2dsl-stack/src/nlp2dsl_stack/compose.py:
+    i: textwrap,yaml,dataclasses.{dataclass,field},env2llm.ir.{DeploySpecIR,GeneratedServiceIR,ScheduleSpecIR},pathlib.Path,typing.{Any,Mapping}
+    e: ComposeGenerationResult,enrich_ir_for_stack,generate_stack_compose
+    ComposeGenerationResult: 
+    _default_deploy(example_id:str;profile:Any)->DeploySpecIR
+    _default_schedules(example_id:str)->list[ScheduleSpecIR]
+    _default_generated_services(example_id:str)->list[GeneratedServiceIR]
+    enrich_ir_for_stack(ir:SystemMapIR)->SystemMapIR
+    _wait_for_backend_shell()->str
+    _run_script_content(backend_url:str;task:str)->str
+    _run_process_host_script(backend_url:str;task:str)->str
+    _run_process_docker_script(task:str)->str
+  packages/pact-ir/src/pact_ir/execution_plan.py:
+    i: pact_ir.intent.IntentIR,pact_ir.target_kind.{ExecutionRisk,TargetKind},pydantic.{BaseModel,Field},typing.Any
+    e: PlanStep,ExecutionPlanIR
+    PlanStep: 
+    ExecutionPlanIR: from_intent(1),primary_target_kind(0),step_count(0)  # Standardized execution plan (nlp2cmd....
+  packages/pact-ir/src/pact_ir/intent.py:
+    i: pact_ir.target_kind.{ExecutionRisk,TargetKind},pydantic.{BaseModel,Field},typing.Any
+    e: Ambiguity,EntityBag,IntentIR
+    Ambiguity: 
+    EntityBag: get(2)  # Named entities extracted from NL.
+    IntentIR: needs_clarification(0)  # Standardized intent representation (n...
+  packages/pact-ir/src/pact_ir/target_kind.py:
+    i: enum.Enum
+    e: TargetKind,ExecutionRisk
+    TargetKind: propact_protocol(0)
+    ExecutionRisk: 
+  packages/pact-ir/tests/test_ir_roundtrip.py:
+    i: pact_ir.{ExecutionPlanIR,IntentIR,PlanStep,TargetKind}
+    e: test_intent_ir_roundtrip_json,test_execution_plan_from_intent
+    test_intent_ir_roundtrip_json()
+    test_execution_plan_from_intent()
+  packages/testql-conversations/src/testql_conversations/artifacts.py:
+    i: json,datetime,yaml,datetime.timezone,pathlib.Path,typing.{Any,Mapping}
+    e: format_transcript,write_conversation_artifacts
+    _routing_summary(data:Mapping[str;Any])->str | None
+    _format_transcript_header(trace:Mapping[str;Any])->list[str]
+    _format_execution_steps(execution:Mapping[str;Any])->list[str]
+    _format_turn(idx:int;turn:Mapping[str;Any])->list[str]
+    _format_validations(validations:list[Any])->list[str]
+    format_transcript(trace:Mapping[str;Any])->str
+    write_conversation_artifacts(artifact_root:Any;trace:Mapping[str;Any])->dict[str, Path]
+  packages/testql-conversations/src/testql_conversations/validate.py:
+    i: re,dataclasses.{dataclass,field},pathlib.Path,typing.Any
+    e: _NLP_KINDS,_ALLOWED_ENDPOINTS,_ENDPOINT_RE,_NLP_BLOCK_RE,ConversationValidation,validate_conversation_scenario_text,validate_conversation_scenario,dry_run_conversation_scenario
+    ConversationValidation: 
+    _is_nlp_kind(kind:str)->bool
+    _endpoints_from_text(text:str)->list[str]
+    _missing_type_header(text:str)->str | None
+    _parse_plan(path:Path)->tuple[Any | None, str | None]
+    _endpoints_from_steps(plan:Any;text:str)->tuple[list[str], list[str]]
+    _structural_issues(kinds:list[str];endpoints:list[str];text:str)->list[str]
+    _validation_result(passed:bool;summary:str)->ConversationValidation
+    validate_conversation_scenario_text(text:str)->ConversationValidation
+  packages/workflow-export/src/workflow_export/markpact.py:
+    i: json,yaml,dataclasses.{dataclass,field},dsl_contracts.{ActionContract,action_contracts_from_catalog},pathlib.Path,typing.{Any,Mapping}
+    e: DEFAULT_BACKEND_URL,contract_to_yaml_dict,contract_to_yaml_string,composite_workflow_spec,workflow_dsl_to_markpact_readme,MarkpactExportBundle,export_markpact_bundle
+    MarkpactExportBundle:   # Paths written by export_markpact_bundle.
+    contract_to_yaml_dict(contract:ActionContract)->dict[str, Any]
+    contract_to_yaml_string(contract:ActionContract)->str
+    composite_workflow_spec(dsl:Mapping[str;Any])->dict[str, Any]
+    _yaml_file_block(path:str;body:str)->str
+    _contracts_section(contracts:Mapping[str;ActionContract])->list[str]
+    workflow_dsl_to_markpact_readme(dsl:Mapping[str;Any];contracts:Mapping[str;ActionContract])->str
+    export_markpact_bundle(out_dir:Any;dsl:Mapping[str;Any];catalog:Mapping[str;Any])->MarkpactExportBundle
+  packages/workflow-export/src/workflow_export/pactown.py:
+    i: yaml,dataclasses.{dataclass,field},pathlib.Path,typing.{Any,Mapping}
+    e: DEFAULT_BACKEND_URL,DEFAULT_NLP_URL,DEFAULT_WORKER_URL,platform_service_readme,nlp2dsl_platform_ecosystem,ecosystem_to_yaml,PactownExportBundle,export_pactown_bundle
+    PactownExportBundle: 
+    platform_service_readme(name:str;description:str;python_deps:list[str];run_command:str)->str
+    nlp2dsl_platform_ecosystem()->dict[str, Any]
+    ecosystem_to_yaml(ecosystem:Mapping[str;Any])->str
+    export_pactown_bundle(out_dir:Any)->PactownExportBundle
+  packages/workflow-export/src/workflow_export/publish.py:
+    i: os,dataclasses.dataclass,dsl_contracts.{action_catalog_payload,contract_from_registry_entry},markpact.{MarkpactExportBundle,export_markpact_bundle},pactown.PactownExportBundle,pathlib.Path,typing.{Any,Mapping}
+    e: DEFAULT_BACKEND_URL,_FALLBACK_CONTRACTS,PublishExportBundle,PublishValidationResult,catalog_from_nlp_client,export_workflow_publish_layer,validate_publish_layer_result,validate_publish_layer
+    PublishExportBundle: 
+    PublishValidationResult: to_dict(0)
+    catalog_from_nlp_client(client:Any)->dict[str, Any]
+    export_workflow_publish_layer(artifact_root:Any;dsl:Mapping[str;Any];catalog:Mapping[str;Any])->PublishExportBundle
+    validate_publish_layer_result(bundle:PublishExportBundle)->PublishValidationResult
+    validate_publish_layer(bundle:PublishExportBundle)->dict[str, str]
+    assert_publish_layer_valid(bundle:PublishExportBundle)->PublishValidationResult
+    print_publish_summary(bundle:PublishExportBundle)->None
+  scripts/_conversation_scenario.py:
+    i: os,time,datetime,yaml,datetime.timezone,pathlib.Path,typing.Any,urllib.error.URLError,urllib.request.{Request,urlopen}
+    e: load_yaml,wait_health,dsl_actions,workflow_execution_payload,execution_completed,check_expect,check_execution_expect,run_validation
+    load_yaml(path:Path)->dict[str, Any]
+    wait_health(base_url:str;timeout_s:float=120.0)->bool
+    _dsl_from_payload(payload:dict[str;Any])->dict[str, Any] | None
+    dsl_actions(response:dict[str;Any])->list[str]
+    workflow_execution_payload(response:dict[str;Any])->dict[str, Any] | None
+    execution_completed(response:dict[str;Any])->bool
+    _check_status(response:dict[str;Any];expect:dict[str;Any])->str | None
+    _check_missing(response:dict[str;Any];expect:dict[str;Any])->str | None
+  scripts/_dotenv.py:
+    i: os,pathlib.Path
+    e: load_dotenv
+    load_dotenv(path:Any)->None
+  scripts/aggregate-example-testql.py:
+    i: sys,pathlib.Path
+    e: ROOT,OUT,main
+    main()->int
+  scripts/migrate-direct-imports.py:
+    i: re,pathlib.Path
+    e: ROOT,KORU,TEXT_REPLACEMENTS,RELATIVE_REPLACEMENTS,migrate_file,main
+    migrate_file(path:Path)->bool
+    main()->None
+  scripts/run-conversation-scenario.py:
+    i: argparse,json,os,sys,_conversation_scenario.{check_expect,finalize_trace,load_yaml,prepare_doql_context,run_turn},pathlib.Path
+    e: ROOT,run_scenario,main
+    _setup_scenario(scenario_path:Path;base_url:str;wait_health_flag:bool)->dict[str, Any]
+    _run_turns(flow:Any;scenario:dict[str;Any])->list[str]
+    _write_artifacts(trace:dict[str;Any];out_root:Path;scenario:dict[str;Any])->None
+    run_scenario(scenario_path:Path)->dict
+    _print_trace(trace:dict[str;Any];scenario_path:Path)->None
+    main(argv:Any=None)->int
+  scripts/run-example-docker-e2e.py:
+    i: argparse,json,os,subprocess,sys,time,datetime,datetime.timezone,pathlib.Path,typing.Any
+    e: ROOT,PROFILES_PATH,CONV_SCRIPT,EXEC_SCRIPT,RESULTS_SCRIPT,docker_up,docker_down,wait_platform
+    _py()->str
+    _load_profiles()->dict[str, Any]
+    _health_ok(base_url:str)->bool
+    _collect_profiles(example_ids:list[str];cfg:dict[str;Any])->set[str]
+    docker_up(profiles:set[str])->None
+    docker_down()->None
+    wait_platform(base_url:str;timeout_s:float)->bool
+    run_example_main(example_dir:Path)->bool
+  scripts/run-example-testql-results.py:
+    i: json,os,subprocess,sys,textwrap,datetime,dataclasses.{dataclass,field},datetime.timezone,pathlib.Path
+    e: ROOT,EXAMPLES,Check,ExampleReport,process_example,main
+    Check: 
+    ExampleReport: failures(0),to_dict(0)
+    _load_manifest(path:Path)->dict[str, Any]
+    _testql_dry_run(commands_path:Path)->Check
+    _testql_ir_parse(commands_path:Path)->Check
+    _nlp_env()->dict[str, str]
+    _check_cached_pipeline(check_id:str;query:str)->Check | None
+    _run_nlp2dsl_show(check_id:str;query:str)->Check
+    _run_nlp2dsl_run(check_id:str;query:str)->Check
+    _nlp2dsl_run_query(query_entry:dict[str;Any];artifact_root:Path)->Check
+  scripts/run-execution-scenario.py:
+    i: argparse,json,sys,datetime,_conversation_scenario.{check_execution_expect,load_yaml,run_validation},datetime.timezone,pathlib.Path,typing.Any
+    e: ROOT,run_scenario,main
+    _run_query(client:Any;q:dict[str;Any])->tuple[dict[str, Any], str | None]
+    run_scenario(scenario_path:Path)->dict[str, Any]
+    main(argv:Any=None)->int
+  scripts/validate-contract-draft.py:
+    i: argparse,sys,dsl_contracts.draft.{list_draft_files,load_draft,validate_draft},pathlib.Path
+    e: REPO_ROOT,main
+    main()->int
+  scripts/validate-contract-drift.py:
+    i: argparse,importlib,sys,pathlib.Path
+    e: ROOT,NLP_SERVICE,WORKER,BACKEND,main
+    _nlp_catalog()->dict
+    _worker_handlers()->list[str]
+    _backend_fallback_catalog()->dict
+    main()->int
+  scripts/validate-publish-export.py:
+    i: argparse,sys,tempfile,dsl_contracts.{action_catalog_payload,contract_from_registry_entry},pathlib.Path,workflow_export.publish.{assert_publish_layer_valid,export_workflow_publish_layer,validate_publish_layer_result}
+    e: ROOT,_CANONICAL_DSLS,main
+    _sample_catalog()->dict
+    main()->int
+  tauri-wrapper/scripts/dev.js:
+    i: node:child_process,./serve-dist
+    e: main
+    main()
+  tauri-wrapper/scripts/serve-dist.js:
+    i: node:http,node:fs/promises,node:path
+    e: resolveRequestPath,ROOT_DIR,HOST,handleRequest,PORT,isInsideRoot,startServer,sendFile
+    contentType(filePath)
+    isInsideRoot(candidatePath)
+    resolveRequestPath(requestPath)
+    sendFile(res;filePath)
+    handleRequest(req;res)
+    startServer()
+  tauri-wrapper/src-tauri/build.rs:
+    e: main
+    main()
+  tauri-wrapper/src-tauri/src/main.rs:
+    e: main
+    main()
+  test_code_generation.py:
+    i: sys,code_generator,pathlib.Path
+    e: test_code_generation
+    test_code_generation()
+  tests/e2e/conftest.py:
+    i: os,sys,shutil,pytest,pytest_asyncio,httpx,pathlib.Path,playwright.async_api.{Browser,BrowserContext,async_playwright}
+    e: TESTS_ROOT,NLP_URL,BACKEND_URL,CHAT_URL,PLAYWRIGHT_ARGS,nlp_client,backend_client,browser_instance
+    _resolve_browser_executable()->str | None
+    nlp_client()
+    backend_client()
+    browser_instance()
+    browser_context(browser_instance:Browser)
+    page(browser_context:BrowserContext)
+    chat_page(page:Page)
+  tests/e2e/test_backend.py:
+    i: pytest,httpx
+    e: test_health,test_workflow_actions_list,test_workflow_actions_contains_send_invoice,test_from_text_dsl_only_no_execute,test_from_text_empty_returns_400,test_from_text_unknown_intent_propagates_error,test_workflow_history_returns_list,test_workflow_history_unknown_id_returns_404
+    test_health(backend_client:Any)
+    test_workflow_actions_list(backend_client:Any)
+    test_workflow_actions_contains_send_invoice(backend_client:Any)
+    test_from_text_dsl_only_no_execute(backend_client:Any)
+    test_from_text_empty_returns_400(backend_client:Any)
+    test_from_text_unknown_intent_propagates_error(backend_client:Any)
+    test_workflow_history_returns_list(backend_client:Any)
+    test_workflow_history_unknown_id_returns_404(backend_client:Any)
+  tests/e2e/test_chat_ui.py:
+    i: time,pytest,playwright.async_api.Page
+    e: test_page_title,test_page_has_no_js_errors,test_web_app_manifest,test_tts_button_present,test_tts_button_default_state_active,test_tts_toggle_disables,test_tts_toggle_re_enables,test_speak_function_defined
+    test_page_title(chat_page:Page)
+    test_page_has_no_js_errors(page:Page)
+    test_web_app_manifest(chat_page:Page)
+    test_tts_button_present(chat_page:Page)
+    test_tts_button_default_state_active(chat_page:Page)
+    test_tts_toggle_disables(chat_page:Page)
+    test_tts_toggle_re_enables(chat_page:Page)
+    test_speak_function_defined(chat_page:Page)
+  tests/e2e/test_nlp_service.py:
+    i: pytest,httpx
+    e: test_health,test_nlp_actions_registry,test_parse_known_intent_rules,test_parse_unknown_intent_rules,test_parse_send_email_intent,test_to_dsl_complete_invoice,test_to_dsl_unknown_returns_422,test_chat_start_text
+    test_health(nlp_client:Any)
+    test_nlp_actions_registry(nlp_client:Any)
+    test_parse_known_intent_rules(nlp_client:Any)
+    test_parse_unknown_intent_rules(nlp_client:Any)
+    test_parse_send_email_intent(nlp_client:Any)
+    test_to_dsl_complete_invoice(nlp_client:Any)
+    test_to_dsl_unknown_returns_422(nlp_client:Any)
+    test_chat_start_text(nlp_client:Any)
+  tests/e2e/test_websocket.py:
+    i: asyncio,json,os,pytest,websockets,websockets.connection.State
+    e: NLP_WS_URL,test_websocket_connects_and_accepts,test_websocket_unique_conversation_id,test_websocket_accepts_binary_audio,test_websocket_accepts_multiple_chunks,test_websocket_clean_disconnect,test_websocket_server_survives_abrupt_close,test_websocket_concurrent_connections
+    _uri(conv_id:str)->str
+    _is_open(ws)->bool
+    _is_closed(ws)->bool
+    test_websocket_connects_and_accepts()
+    test_websocket_unique_conversation_id()
+    test_websocket_accepts_binary_audio()
+    test_websocket_accepts_multiple_chunks()
+    test_websocket_clean_disconnect()
+  tests/test_action_contracts.py:
+    i: dsl_contracts.{action_catalog_payload,action_contracts_from_catalog,action_info_config_schema,contract_from_registry_entry}
+    e: test_contract_from_registry_entry_preserves_legacy_action_fields,test_contract_marks_delegate_execution_from_registry,test_action_catalog_payload_roundtrip_is_backward_compatible
+    test_contract_from_registry_entry_preserves_legacy_action_fields()->None
+    test_contract_marks_delegate_execution_from_registry()->None
+    test_action_catalog_payload_roundtrip_is_backward_compatible()->None
+  tests/test_artifact_layout.py:
+    i: env2llm.layout.{clean_artifact_root,ensure_layout,resolve_registry_path,write_registry,write_turn_snapshot},env2llm.registry.refresh_doql_registry,pathlib.Path
+    e: test_clean_artifact_root_preserves_fixtures_and_scenarios,test_write_registry_creates_layout,test_resolve_registry_path_prefers_registry,test_write_environment_doql_uses_registry,test_turn_snapshot_after_refresh
+    test_clean_artifact_root_preserves_fixtures_and_scenarios(tmp_path:Path)->None
+    test_write_registry_creates_layout(tmp_path:Path)->None
+    test_resolve_registry_path_prefers_registry(tmp_path:Path;monkeypatch)->None
+    test_write_environment_doql_uses_registry(tmp_path:Path)->None
+    test_turn_snapshot_after_refresh(tmp_path:Path)->None
+  tests/test_attachment_validation.py:
+    i: nlp2dsl_sdk.attachment_validation.{build_attachment_validation,enrich_chat_response,format_attachment_validation},nlp2dsl_sdk.invoice_pdf.write_invoice_pdf,pathlib.Path
+    e: test_format_attachment_validation_ok,test_enrich_chat_response_from_dsl,test_build_attachment_validation_rejects_text_pdf
+    test_format_attachment_validation_ok()->None
+    test_enrich_chat_response_from_dsl(tmp_path:Path;monkeypatch)->None
+    test_build_attachment_validation_rejects_text_pdf(tmp_path:Path;monkeypatch)->None
+  tests/test_capability_policy.py:
+    i: dsl_contracts.registry.contract_from_registry_entry,dsl_validate.capability_policy.{ExecutionPolicyContext,validate_capability_policy},env2llm.ir.{ProcessAccessScopeIR,ProcessPolicyIR}
+    e: test_dry_run_only_blocks_side_effect_steps,test_approval_required_without_grant_blocks,test_approval_grant_allows_execution,test_email_domain_allowlist,test_process_scope_denied_mullm,test_access_decision_denied_blocks
+    _catalog()->dict
+    test_dry_run_only_blocks_side_effect_steps()->None
+    test_approval_required_without_grant_blocks()->None
+    test_approval_grant_allows_execution()->None
+    test_email_domain_allowlist()->None
+    test_process_scope_denied_mullm()->None
+    test_access_decision_denied_blocks()->None
+  tests/test_cli_run_output.py:
+    i: nlp2dsl_sdk.preview.{execution_payload,print_run_outcome}
+    e: test_execution_payload_prefers_execution_then_result,test_print_run_outcome_shows_invoice_id_and_reflection,test_detect_example_dir_from_cwd
+    test_execution_payload_prefers_execution_then_result()->None
+    test_print_run_outcome_shows_invoice_id_and_reflection(capsys)->None
+    test_detect_example_dir_from_cwd(tmp_path;monkeypatch)->None
+  tests/test_compose_generator.py:
+    i: yaml,env2llm.ir.{DeploySpecIR,ScheduleSpecIR,SystemMapIR},nlp2dsl_stack.generate_stack_compose,pathlib.Path
+    e: test_generate_stack_compose_writes_artifacts,test_enrich_ir_adds_defaults
+    test_generate_stack_compose_writes_artifacts(tmp_path:Path)->None
+    test_enrich_ir_adds_defaults(tmp_path:Path)->None
+  tests/test_contract_draft.py:
+    i: pytest,dsl_contracts.draft,pathlib.Path
+    e: test_validate_draft_accepts_minimal_contract,test_validate_draft_rejects_secrets,test_draft_ready_for_activation_requires_approved_status,test_save_and_load_roundtrip,test_active_draft_contracts_skips_non_approved
+    test_validate_draft_accepts_minimal_contract(tmp_path:Path)->None
+    test_validate_draft_rejects_secrets()->None
+    test_draft_ready_for_activation_requires_approved_status()->None
+    test_save_and_load_roundtrip(tmp_path:Path)->None
+    test_active_draft_contracts_skips_non_approved(tmp_path:Path)->None
+  tests/test_contract_drift.py:
+    i: dsl_validate.contract_drift.{build_catalog_drift_report,validate_catalog_field_drift,validate_handler_drift}
+    e: test_validate_handler_drift_detects_missing_handler,test_validate_catalog_field_drift_detects_required_mismatch,test_build_catalog_drift_report_ok
+    test_validate_handler_drift_detects_missing_handler()->None
+    test_validate_catalog_field_drift_detects_required_mismatch()->None
+    test_build_catalog_drift_report_ok()->None
+  tests/test_conversation_testql.py:
+    i: pytest,pathlib.Path,testql_conversations.validate.{_endpoints_from_text,validate_conversation_scenario,validate_conversation_scenario_text}
+    e: test_endpoints_from_text_scans_nlp_dsl_rows,test_validate_text_only_without_testql_parse,test_validate_hand_authored_conversation
+    test_endpoints_from_text_scans_nlp_dsl_rows()->None
+    test_validate_text_only_without_testql_parse()->None
+    test_validate_hand_authored_conversation()->None
+  tests/test_doql_context.py:
+    i: env2llm.doql_context.{DoqlArtifact,DoqlTaskContext,autofill_entities,load_doql_context,merge_inline_context},pathlib.Path
+    e: test_load_doql_context_all_supported_blocks,test_doql_roundtrip_preserves_core_fields,test_autofill_entities_from_data_and_aliases,test_autofill_entities_from_artifact_values,test_autofill_entities_skips_optional_attachment_path,test_merge_inline_context_promotes_short_aliases,test_autofill_entities_disabled_returns_original_object,test_load_doql_context_parses_validations
+    test_load_doql_context_all_supported_blocks(tmp_path:Path)->None
+    test_doql_roundtrip_preserves_core_fields(tmp_path:Path)->None
+    test_autofill_entities_from_data_and_aliases()->None
+    test_autofill_entities_from_artifact_values()->None
+    test_autofill_entities_skips_optional_attachment_path()->None
+    test_merge_inline_context_promotes_short_aliases()->None
+    test_autofill_entities_disabled_returns_original_object()->None
+    test_load_doql_context_parses_validations(tmp_path:Path)->None
+  tests/test_doql_registry.py:
+    i: env2llm.doql_context.load_doql_context,env2llm.generate.generate_system_map,env2llm.registry.{merge_execution_observation,merge_registry_observations,refresh_doql_registry},env2llm.render.doql.render_system_map_doql,pathlib.Path
+    e: test_refresh_merges_entities,test_merge_execution_observation_invoice_id,test_merge_execution_observation_generated_attachment_and_workflow_id,test_merge_registry_observations_preserves_history
+    test_refresh_merges_entities(tmp_path:Path)->None
+    test_merge_execution_observation_invoice_id()->None
+    test_merge_execution_observation_generated_attachment_and_workflow_id()->None
+    test_merge_registry_observations_preserves_history(tmp_path:Path)->None
+  tests/test_encoding.py:
+    i: io,os,sys,nlp2dsl_sdk.encoding.{configure_utf8,utf8_auto_enabled}
+    e: test_configure_utf8_reconfigures_stdout,test_configure_utf8_respects_disable,test_configure_utf8_upgrades_ascii_locale,test_utf8_auto_enabled_default
+    test_configure_utf8_reconfigures_stdout(monkeypatch)
+    test_configure_utf8_respects_disable(monkeypatch)
+    test_configure_utf8_upgrades_ascii_locale(monkeypatch)
+    test_utf8_auto_enabled_default(monkeypatch)
+  tests/test_export_markpact.py:
+    i: dsl_contracts.contract_from_registry_entry,pathlib.Path,workflow_export.markpact.{export_markpact_bundle,workflow_dsl_to_markpact_readme},workflow_export.pactown.{export_pactown_bundle,nlp2dsl_platform_ecosystem}
+    e: test_workflow_dsl_to_markpact_readme_contains_blocks,test_export_markpact_bundle_writes_files,test_export_pactown_bundle,test_publish_layer_bundle
+    _sample_catalog()->dict
+    _sample_dsl()->dict
+    test_workflow_dsl_to_markpact_readme_contains_blocks()->None
+    test_export_markpact_bundle_writes_files(tmp_path:Path)->None
+    test_export_pactown_bundle(tmp_path:Path)->None
+    test_publish_layer_bundle(tmp_path)->None
+  tests/test_golden_eval.py:
+    i: nlp2dsl_sdk.evaluation.golden.{GoldenCase,default_golden_cases,load_golden_cases},nlp2dsl_sdk.evaluation.metrics.{classify_outcome,evaluate_golden_case,run_golden_evaluation}
+    e: test_load_bundled_golden_cases,test_evaluate_golden_case_success,test_classify_dsl_mapping_failure,test_classify_unnecessary_clarification,test_classify_unsafe_execution_block,test_run_golden_evaluation_report
+    test_load_bundled_golden_cases()->None
+    test_evaluate_golden_case_success()->None
+    test_classify_dsl_mapping_failure()->None
+    test_classify_unnecessary_clarification()->None
+    test_classify_unsafe_execution_block()->None
+    test_run_golden_evaluation_report()->None
+  tests/test_invoice_pdf.py:
+    i: nlp2dsl_sdk.invoice_pdf.{build_invoice_pdf_bytes,write_invoice_pdf},pathlib.Path
+    e: test_build_invoice_pdf_starts_with_pdf_header,test_write_invoice_pdf_creates_valid_file
+    test_build_invoice_pdf_starts_with_pdf_header()->None
+    test_write_invoice_pdf_creates_valid_file(tmp_path:Path)->None
+  tests/test_invoice_policy.py:
+    i: env2llm.doql_context.{DoqlTaskContext,collect_task_context},env2llm.ir.SystemMapIR,env2llm.policy.invoice.{apply_invoice_context,apply_invoice_policies,is_invoice_example}
+    e: test_is_invoice_example,test_apply_invoice_policies_on_ir,test_collect_task_context_sets_invoice_policy,test_apply_invoice_context
+    test_is_invoice_example()->None
+    test_apply_invoice_policies_on_ir()->None
+    test_collect_task_context_sets_invoice_policy(tmp_path)->None
+    test_apply_invoice_context()->None
+  tests/test_mullm_client.py:
+    i: os,pytest,nlp2dsl_sdk.mullm.client.{MullmClient,MullmClientError},nlp2dsl_sdk.mullm.executor.execute_mullm_workflow,nlp2dsl_sdk.mullm.payloads.build_task_payload,unittest.mock.{MagicMock,patch}
+    e: test_build_task_payload_shell_task,test_execute_mullm_workflow_simulate_mode,test_mullm_client_create_task_success,test_mullm_client_create_task_http_error,test_execute_mullm_workflow_live_mode,test_execute_mullm_workflow_rejects_mixed_steps
+    test_build_task_payload_shell_task()->None
+    test_execute_mullm_workflow_simulate_mode(monkeypatch:Any)->None
+    test_mullm_client_create_task_success()->None
+    test_mullm_client_create_task_http_error()->None
+    test_execute_mullm_workflow_live_mode(monkeypatch:Any)->None
+    test_execute_mullm_workflow_rejects_mixed_steps()->None
+  tests/test_nlp2dsl_sdk.py:
+    i: json,pytest,requests,nlp2dsl_sdk.{NLP2DSLClient,workflow_step},typing.Any
+    e: DummyResponse,DummySession,client_factory,test_from_env_prefers_repo_env_names,test_workflow_and_conversation_endpoints,test_request_retries_transient_server_errors,test_report_helpers_use_report_type_and_schedule,test_new_workflow_helpers_are_data_driven
+    DummyResponse: __init__(2),raise_for_status(0),json(0)
+    DummySession: __init__(1),request(2),close(0)
+    client_factory()->Any
+    test_from_env_prefers_repo_env_names(monkeypatch:Any)->None
+    test_workflow_and_conversation_endpoints(client_factory:Any)->None
+    test_request_retries_transient_server_errors(client_factory:Any;monkeypatch:Any)->None
+    test_report_helpers_use_report_type_and_schedule(client_factory:Any)->None
+    test_new_workflow_helpers_are_data_driven(client_factory:Any)->None
+    test_code_generation_methods_hit_expected_services(client_factory:Any)->None
+    test_default_service_urls_match_docker_compose_ports()->None
+  tests/test_pactown_deploy.py:
+    i: nlp2dsl_sdk.deploy.pactown_deploy.{deploy_instructions,validate_pactown_bundle},pathlib.Path
+    e: test_validate_pactown_bundle_missing_dir,test_validate_pactown_bundle_minimal,test_deploy_instructions_includes_compose_steps
+    test_validate_pactown_bundle_missing_dir(tmp_path:Path)->None
+    test_validate_pactown_bundle_minimal(tmp_path:Path)->None
+    test_deploy_instructions_includes_compose_steps()->None
+  tests/test_path_resolve.py:
+    i: os,pytest,dsl_validate.path_resolve.resolve_attachment_path,env2llm.ir.{CommandSchemaIR,FieldSpec,SystemMapIR},nlp2dsl_sdk.invoice_pdf.write_invoice_pdf,nlp2dsl_sdk.step_validation.validate_step_config_from_map,pathlib.Path
+    e: test_resolve_fixture_relative_path,test_resolve_examples_mount_portable_path,test_pdf_attachment_passes_with_valid_pdf,test_pdf_attachment_rejects_text_file
+    test_resolve_fixture_relative_path(tmp_path:Path;monkeypatch)->None
+    test_resolve_examples_mount_portable_path(tmp_path:Path;monkeypatch)->None
+    test_pdf_attachment_passes_with_valid_pdf(tmp_path:Path;monkeypatch)->None
+    test_pdf_attachment_rejects_text_file(tmp_path:Path;monkeypatch)->None
+  tests/test_placeholder.py:
+    e: test_placeholder,test_import
+    test_placeholder()
+    test_import()
+  tests/test_process_policy.py:
+    i: env2llm.bootstrap.ensure_doql_registry,env2llm.bridge.doql_file_to_system_map,env2llm.generate.generate_system_map,env2llm.ir.ProcessPolicyIR,env2llm.policy.process
+    e: test_process_policy_from_profile_deterministic,test_process_policy_from_profile_overrides_all_sections,test_process_policy_unknown_mode_uses_balanced_preset,test_apply_process_policies_merges_conversation,test_render_and_roundtrip_process_block,test_generate_system_map_01_invoice_has_process,test_ensure_doql_registry_writes_process_block,test_platform_defaults_merge_with_example
+    test_process_policy_from_profile_deterministic()->None
+    test_process_policy_from_profile_overrides_all_sections()->None
+    test_process_policy_unknown_mode_uses_balanced_preset()->None
+    test_apply_process_policies_merges_conversation()->None
+    test_render_and_roundtrip_process_block(tmp_path)->None
+    test_generate_system_map_01_invoice_has_process()->None
+    test_ensure_doql_registry_writes_process_block()->None
+    test_platform_defaults_merge_with_example()->None
+  tests/test_profile_validations.py:
+    i: dsl_validate.profile_checks.{ProfileCheckContext,parse_profile_validation,parse_profile_validations,run_profile_validation_checks,validate_profile_expectations},env2llm.ir.{ProfileValidationIR,SystemMapIR},env2llm.policy.process.apply_process_policies,env2llm.render.doql.render_system_map_doql,pathlib.Path
+    e: test_parse_shorthand_validations,test_parse_scenario_typed_validation,test_dsl_action_check_pass_and_fail,test_execution_and_conversation_checks,test_artifact_exists_check,test_apply_profile_validations_to_ir,test_validate_profile_expectations_issues
+    test_parse_shorthand_validations()->None
+    test_parse_scenario_typed_validation()->None
+    test_dsl_action_check_pass_and_fail()->None
+    test_execution_and_conversation_checks()->None
+    test_artifact_exists_check(tmp_path:Path)->None
+    test_apply_profile_validations_to_ir()->None
+    test_validate_profile_expectations_issues()->None
+  tests/test_reflection.py:
+    i: env2llm.ir.{CommandSchemaIR,ConversationPolicyIR,FieldSpec},nlp2dsl_sdk.invoice_pdf.write_invoice_pdf,nlp2dsl_sdk.reflection.{ReflectionReport,build_target_plan,format_reflection_summary,reflect,reflect_from_chat_turn},pathlib.Path
+    e: test_build_target_plan_from_data,test_reflect_ready_when_complete,test_reflect_missing_attachment_when_required,test_validate_attachment_mismatch
+    _invoice_ir()->SystemMapIR
+    test_build_target_plan_from_data()->None
+    test_reflect_ready_when_complete()->None
+    test_reflect_missing_attachment_when_required()->None
+    test_validate_attachment_mismatch(tmp_path:Path)->None
+  tests/test_system_map_ir.py:
+    i: pytest,env2llm.bridge.{doql_file_to_system_map,task_context_to_system_map},env2llm.doql_context.collect_task_context,env2llm.generate.generate_system_map,env2llm.ir.{CommandSchemaIR,FieldSpec,MimeTypeSpec,RuntimeSpecIR},pydantic.ValidationError
+    e: test_system_map_validate_step_config,test_dynamic_command_input_model,test_task_context_to_system_map_and_render,test_build_runtimes_for_01_invoice,test_resolve_command_runtime,test_doql_roundtrip_runtimes,test_generate_system_map_01_invoice
+    test_system_map_validate_step_config()->None
+    test_dynamic_command_input_model()->None
+    test_task_context_to_system_map_and_render()->None
+    test_build_runtimes_for_01_invoice()->None
+    test_resolve_command_runtime()->None
+    test_doql_roundtrip_runtimes(tmp_path)->None
+    test_generate_system_map_01_invoice()->None
+  tests/test_tests.py:
+    e: test_placeholder,test_import
+    test_placeholder()
+    test_import()
+  tests/test_validation.py:
+    i: dsl_validate.{Phase,legacy_message_to_issue,validate_dsl_contract_issues,validate_step_config_from_map,validate_step_config_from_map_issues},dsl_validate.issue.issues_to_messages,env2llm.ir.{CommandSchemaIR,FieldSpec,SystemMapIR},nlp2dsl_sdk.invoice_pdf.write_invoice_pdf
+    e: test_legacy_message_to_issue_pdf,test_legacy_message_to_issue_missing_file,test_legacy_message_to_issue_variants,test_validate_step_config_from_map_issues_structure,test_issues_to_messages_roundtrip,test_plan_resolutions_invalid_pdf,test_plan_resolutions_deduplicates_attachment_repairs,test_plan_resolutions_autofill_issue
+    test_legacy_message_to_issue_pdf()->None
+    test_legacy_message_to_issue_missing_file()->None
+    test_legacy_message_to_issue_variants()->None
+    test_validate_step_config_from_map_issues_structure(tmp_path)->None
+    test_issues_to_messages_roundtrip()->None
+    test_plan_resolutions_invalid_pdf()->None
+    test_plan_resolutions_deduplicates_attachment_repairs()->None
+    test_plan_resolutions_autofill_issue()->None
+  tests/test_workflow_events.py:
+    i: nlp2dsl_sdk.workflow.events.{lifecycle_event_from_payload,normalize_event_type,workflow_snapshot_from_events}
+    e: test_normalize_event_type_maps_legacy_names,test_lifecycle_event_from_payload_adds_correlation_id,test_workflow_snapshot_from_events_completed,test_workflow_snapshot_from_events_failed_step
+    test_normalize_event_type_maps_legacy_names()->None
+    test_lifecycle_event_from_payload_adds_correlation_id()->None
+    test_workflow_snapshot_from_events_completed()->None
+    test_workflow_snapshot_from_events_failed_step()->None
+  tests/test_workflow_lifecycle.py:
+    i: dsl_validate.issue.ValidationIssue,nlp2dsl_sdk.workflow.{execution_request_from_workflow,parse_result_from_nlp,plan_result_from_dialog,validation_report_from_issues}
+    e: test_parse_result_from_nlp_compacts_entities,test_plan_result_from_dialog_exposes_clarification,test_validation_report_and_execution_request_block_invalid_workflow
+    test_parse_result_from_nlp_compacts_entities()->None
+    test_plan_result_from_dialog_exposes_clarification()->None
+    test_validation_report_and_execution_request_block_invalid_workflow()->None
+  tests/test_workflow_simulate.py:
+    i: nlp2dsl_sdk.workflow.simulate.simulate_workflow_payload
+    e: test_simulate_workflow_marks_side_effects,test_simulate_workflow_empty_steps_not_executable
+    test_simulate_workflow_marks_side_effects()->None
+    test_simulate_workflow_empty_steps_not_executable()->None
+  trigger-service/app/main.py:
+    i: os,httpx,fastapi.{FastAPI,HTTPException},typing.Any
+    e: BACKEND_URL,TIMEOUT,health,webhook_trigger,event_trigger
+    health()->dict[str, str]
+    _post_backend(path:str;payload:dict[str;Any])->dict[str, Any]
+    webhook_trigger(trigger_id:str;body:dict[str;Any])->dict[str, Any]
+    event_trigger(body:dict[str;Any])->dict[str, Any]
+  trigger-service/tests/test_triggers.py:
+    i: pytest,app.main.app,httpx.{ASGITransport,AsyncClient},unittest.mock.{AsyncMock,patch}
+    e: test_health,test_webhook_text_plan
+    test_health()->None
+    test_webhook_text_plan()->None
+  worker/action_catalog.py:
+    i: os,httpx,dsl_contracts.{contract_quality_fields_for_action,contract_required_fields_for_action,known_action_names},typing.Any
+    e: _FALLBACK_ACTION_FIELDS,_CATALOG_CACHE,_CATALOG_TIMEOUT_SECONDS,load_action_field_catalog,required_fields_for_action,quality_fields_for_action,known_action_names_from_catalog
+    _default_nlp_service_url()->str
+    load_action_field_catalog()->dict[str, dict[str, Any]]
+    required_fields_for_action(action:str)->list[str]
+    quality_fields_for_action(action:str)->list[str]
+    known_action_names_from_catalog()->frozenset[str]
+  worker/attachment_validation.py:
+    i: path_resolve.resolve_worker_attachment_path,pathlib.Path,typing.Any
+    e: build_attachment_validation,validate_invoice_attachment
+    build_attachment_validation(raw_path:str)->dict[str, Any]
+    validate_invoice_attachment(raw_path:str;config:dict[str;Any])->dict[str, Any]
+  worker/config.py:
+    i: pydantic.Field,pydantic_settings.{BaseSettings,SettingsConfigDict}
+    e: WorkerSettings
+    WorkerSettings: 
+  worker/connectors/smtp.py:
+    i: os,smtplib,dataclasses.dataclass,email.message.EmailMessage,pathlib.Path,typing.Any
+    e: SmtpConfig,send_smtp_message
+    SmtpConfig: from_env(0)
+    send_smtp_message(to:str;subject:str;body:str)->dict[str, Any]
+  worker/invoice_pdf.py:
+    i: pathlib.Path
+    e: build_invoice_pdf_bytes,write_invoice_pdf
+    _pdf_escape(text:str)->str
+    build_invoice_pdf_bytes(to:str;amount:str | float;currency:str)->bytes
+    write_invoice_pdf(path:Any)->Path
+  worker/logging_setup.py:
+    i: json,logging,time,collections.abc.Callable,contextvars.ContextVar,fastapi.{Request,Response},starlette.middleware.base.BaseHTTPMiddleware,starlette.types.ASGIApp,uuid.uuid4
+    e: get_request_id,JSONFormatter,RequestIDMiddleware,setup_logging
+    JSONFormatter: __init__(1),format(1)  # Emit log records as single-line JSON...
+    RequestIDMiddleware: __init__(2),dispatch(2)  # Generate or forward X-Request-ID for...
+    get_request_id()->str
+    setup_logging(service:str='app';level:Any=None)->None
+  worker/path_resolve.py:
+    i: os,pathlib.Path
+    e: resolve_attachment_path,resolve_worker_attachment_path
+    _examples_portable_candidates(raw:str)->list[Path]
+    resolve_attachment_path(raw:str)->str
+    resolve_worker_attachment_path(raw:str)->str
+  worker/registry.py:
+    i: action_catalog.{known_action_names_from_catalog,load_action_field_catalog},typing.Iterable
+    e: _CATALOG_TIMEOUT_SECONDS,worker_eligible_catalog_actions,validate_handlers_against_catalog,fetch_nlp_action_names
+    worker_eligible_catalog_actions(catalog:Iterable[str])->set[str]
+    validate_handlers_against_catalog(handlers:Iterable[str];catalog:Iterable[str])->list[str]
+    fetch_nlp_action_names()->set[str]
+  worker/step_validator.py:
+    i: action_catalog.{known_action_names_from_catalog,quality_fields_for_action,required_fields_for_action},dsl_validate.context.ValidationContext,dsl_validate.issue.{Phase,ValidationIssue,issues_to_messages},dsl_validate.rules.step_config.validate_step,path_resolve.resolve_worker_attachment_path,typing.Any
+    e: validate_step_config_issues,validate_step_config
+    _validation_context(action:str;config:dict[str;Any])->ValidationContext
+    validate_step_config_issues(action:str;config:Any)->list[ValidationIssue]
+    validate_step_config(action:str;config:Any)->list[str]
+  worker/tests/conftest.py:
+    i: sys,pytest,httpx.{ASGITransport,AsyncClient},pathlib.Path,unittest.mock.{MagicMock,patch},worker.{ACTION_HANDLERS,app}
+    e: WORKER_ROOT,mock_asyncio_sleep,client
+    _noop_sleep()
+    mock_asyncio_sleep()
+    client()
+  worker/tests/test_registry.py:
+    i: registry.{validate_handlers_against_catalog,worker_eligible_catalog_actions}
+    e: test_worker_eligible_catalog_excludes_system_and_mullm,test_validate_handlers_reports_missing_handler,test_validate_handlers_reports_unknown_handler
+    test_worker_eligible_catalog_excludes_system_and_mullm()->None
+    test_validate_handlers_reports_missing_handler()->None
+    test_validate_handlers_reports_unknown_handler()->None
+  worker/tests/test_smtp_connector.py:
+    i: pytest,connectors.smtp.{SmtpConfig,send_smtp_message},email.message.EmailMessage,unittest.mock.{MagicMock,patch}
+    e: test_smtp_config_from_env_missing,test_smtp_config_from_env_present,test_send_smtp_message_without_config_raises,test_send_smtp_message_calls_smtp
+    test_smtp_config_from_env_missing(monkeypatch:Any)->None
+    test_smtp_config_from_env_present(monkeypatch:Any)->None
+    test_send_smtp_message_without_config_raises()->None
+    test_send_smtp_message_calls_smtp(monkeypatch:Any)->None
+  worker/tests/test_step_validator.py:
+    i: pytest,path_resolve.resolve_worker_attachment_path,pathlib.Path,step_validator.validate_step_config
+    e: test_send_invoice_ok,test_missing_attachment_file,test_pdf_invoice_ok,test_text_pdf_rejected,test_resolve_worker_attachment_path_prefers_example_dir
+    _write_test_pdf(path:Path)->None
+    test_send_invoice_ok()->None
+    test_missing_attachment_file()->None
+    test_pdf_invoice_ok(tmp_path:Path)->None
+    test_text_pdf_rejected(tmp_path:Path)->None
+    test_resolve_worker_attachment_path_prefers_example_dir(tmp_path:Path;monkeypatch)->None
+  worker/tests/test_worker.py:
+    i: pytest,httpx.{ASGITransport,AsyncClient},worker.{ACTION_HANDLERS,app}
+    e: client,TestWorkerHealth,TestExecuteActions,TestActionRegistry
+    TestWorkerHealth: test_health(1)  # Worker health endpoint.
+    TestExecuteActions: test_execute_send_invoice(1),test_execute_send_email(1),test_execute_generate_report(1),test_execute_notify_slack(1),test_execute_notify_telegram(1)  # POST /execute — action execution.
+    TestActionRegistry: test_handlers_registered(0),test_all_handlers_callable(0)  # ACTION_HANDLERS dict validation.
+    client()
+  worker/worker.py:
+    i: asyncio,logging,os,datetime,collections.abc.Callable,datetime.UTC,fastapi.FastAPI,http.HTTPStatus,pathlib.Path,typing.Any
+    e: WORKER_TIMEOUT_SECONDS,ACTION_HANDLERS,action,handle_send_invoice,handle_generate_invoice,handle_send_email,handle_generate_report,handle_crm_update
+    action(name:str)->Callable[[Callable], Callable]
+    _deliver_notification(provider:str;config:dict;payload:dict;env_var:str)->dict
+    handle_send_invoice(config:dict)->dict
+    _resolve_attachment_path(raw:str)->str
+    handle_generate_invoice(config:dict)->dict
+    handle_send_email(config:dict)->dict
+    handle_generate_report(config:dict)->dict
+    handle_crm_update(config:dict)->dict

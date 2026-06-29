@@ -1,0 +1,12 @@
+{
+  "$id": "dsl2nlp2dsl/commands/simulate",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "SIMULATE" },
+    "text": { "type": "string" },
+    "workflow_file": { "type": "string" },
+    "mode": { "enum": ["auto", "rules", "llm"], "default": "auto" }
+  },
+  "additionalProperties": false
+}

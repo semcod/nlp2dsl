@@ -1,0 +1,10 @@
+{
+  "$id": "dsl2nlp2dsl/commands/observe",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "OBSERVE" },
+    "target": { "type": "string", "default": "." }
+  },
+  "additionalProperties": false
+}

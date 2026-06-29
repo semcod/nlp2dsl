@@ -100,23 +100,40 @@ def _check_dsl_actions(response: dict[str, Any], expect: dict[str, Any]) -> str 
     return None
 
 
-def _check_routing_and_autofill(response: dict[str, Any], expect: dict[str, Any]) -> str | None:
+def _check_execution_completed(response: dict[str, Any], expect: dict[str, Any]) -> str | None:
     if expect.get("execution_completed") and not execution_completed(response):
         return "expected completed execution"
+    return None
+
+
+def _check_routing_source(response: dict[str, Any], expect: dict[str, Any]) -> str | None:
+    if "routing_source" not in expect:
+        return None
     routing = response.get("routing") or {}
-    if "routing_source" in expect:
-        source = str(routing.get("source") or "")
-        wanted = str(expect["routing_source"])
-        if wanted not in source:
-            return f"expected routing source {wanted!r}, got {source!r}"
-    if "autofill_any" in expect:
-        applied = [str(a) for a in response.get("autofill_applied") or []]
-        wanted = [str(w) for w in expect["autofill_any"]]
-        if not any(
-            w in applied or any(a.endswith(f".{w}") or a == w for a in applied)
-            for w in wanted
-        ):
-            return f"expected autofill any of {wanted}, got {applied}"
+    source = str(routing.get("source") or "")
+    wanted = str(expect["routing_source"])
+    if wanted not in source:
+        return f"expected routing source {wanted!r}, got {source!r}"
+    return None
+
+
+def _check_autofill_applied(response: dict[str, Any], expect: dict[str, Any]) -> str | None:
+    if "autofill_any" not in expect:
+        return None
+    applied = [str(a) for a in response.get("autofill_applied") or []]
+    wanted = [str(w) for w in expect["autofill_any"]]
+    if not any(
+        w in applied or any(a.endswith(f".{w}") or a == w for a in applied)
+        for w in wanted
+    ):
+        return f"expected autofill any of {wanted}, got {applied}"
+    return None
+
+
+def _check_routing_and_autofill(response: dict[str, Any], expect: dict[str, Any]) -> str | None:
+    for checker in (_check_execution_completed, _check_routing_source, _check_autofill_applied):
+        if err := checker(response, expect):
+            return err
     return None
 
 

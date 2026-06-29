@@ -1,16 +1,15 @@
 # System Architecture Analysis
-<!-- generated in 0.00s -->
 
 ## Overview
 
 - **Project**: /home/tom/github/wronai/nlp2dsl
 - **Primary Language**: python
-- **Languages**: python: 278, json: 26, toml: 18, shell: 16, yaml: 13
+- **Languages**: python: 315, json: 26, toml: 18, shell: 16, yaml: 13
 - **Analysis Mode**: static
-- **Total Functions**: 1362
+- **Total Functions**: 1396
 - **Total Classes**: 138
-- **Modules**: 376
-- **Entry Points**: 516
+- **Modules**: 413
+- **Entry Points**: 521
 
 ## Architecture by Module
 
@@ -32,6 +31,10 @@
 - **Functions**: 26
 - **File**: `responses.py`
 
+### scripts.run-example-docker-e2e
+- **Functions**: 25
+- **File**: `run-example-docker-e2e.py`
+
 ### packages.dsl-validate.src.dsl_validate.capability_policy
 - **Functions**: 22
 - **Classes**: 1
@@ -51,6 +54,10 @@
 - **Classes**: 6
 - **File**: `idempotency.py`
 
+### scripts._conversation_scenario
+- **Functions**: 21
+- **File**: `_conversation_scenario.py`
+
 ### backend.app.routers.workflow
 - **Functions**: 19
 - **File**: `workflow.py`
@@ -68,6 +75,11 @@
 ### backend.app.routers.chat
 - **Functions**: 18
 - **File**: `chat.py`
+
+### packages.nlp2cmd-intent.src.nlp2cmd_intent.keywords.keyword_patterns
+- **Functions**: 18
+- **Classes**: 1
+- **File**: `keyword_patterns.py`
 
 ### nlp2dsl_sdk.preview
 - **Functions**: 18
@@ -87,19 +99,6 @@
 - **Classes**: 2
 - **File**: `run-example-testql-results.py`
 
-### scripts.run-example-docker-e2e
-- **Functions**: 18
-- **File**: `run-example-docker-e2e.py`
-
-### packages.nlp2cmd-intent.src.nlp2cmd_intent.keywords.keyword_patterns
-- **Functions**: 18
-- **Classes**: 1
-- **File**: `keyword_patterns.py`
-
-### scripts._conversation_scenario
-- **Functions**: 18
-- **File**: `_conversation_scenario.py`
-
 ### nlp2dsl_sdk.reflection
 - **Functions**: 17
 - **Classes**: 4
@@ -109,11 +108,11 @@
 
 Main execution flows into the system:
 
-### scripts.run-example-docker-e2e.main
-- **Calls**: sys.path.insert, scripts._dotenv.load_dotenv, argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
-
 ### examples.04-scheduled-report.scenario.run
 - **Calls**: print, print, nlp2dsl_sdk.preview.preview_text_examples, print, sum, print, print, print
+
+### scripts.run-example-docker-e2e.main
+- **Calls**: sys.path.insert, scripts._dotenv.load_dotenv, argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ### examples.19-real-smtp.scenario.run
 - **Calls**: print, step_result.get, print, print, print, print, print, NLP2DSLClient.from_env
@@ -178,9 +177,6 @@ Body: {"workflow": {...}} or {"dsl": {...}} or {"text": "...", "mode": "auto|rul
 ### examples.13-autonomous-invoice-stack.scenario.run
 - **Calls**: print, None.lower, AutonomousStackFlow, flow.run_phases, packages.nlp2dsl-artifacts.src.nlp2dsl_artifacts.writer.get_example_writer, NLP2DSLClient.from_env, nlp2dsl_sdk.preview.ensure_services, tuple
 
-### scripts.run-conversation-scenario.main
-- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args, args.scenario.resolve, scenario_path.is_file
-
 ### backend.app.routers.workflow.workflow_execute
 > Execute validated workflow DSL.
 
@@ -218,21 +214,25 @@ Body: {"workflow": {...}, "dry_run": false, "idempotency_key": "..."}.
 ### examples.18-trigger-webhook.scenario.run
 - **Calls**: print, print, print, httpx.get, print, httpx.post, resp.raise_for_status, resp.json
 
+### nlp-service.app.routing.parser.prompt_catalog.build_llm_system_prompt
+> Schemat intencji i pól generowany z rejestru (nie hardcoded).
+- **Calls**: nlp2dsl_sdk.contracts.registry.known_action_names, sorted, sorted, ACTIONS_REGISTRY.items, actions_lines.append, None.join, None.join, None.join
+
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: main
-```
-main [scripts.run-example-docker-e2e]
-  └─ →> load_dotenv
-```
-
-### Flow 2: run
+### Flow 1: run
 ```
 run [examples.04-scheduled-report.scenario]
   └─ →> preview_text_examples
       └─ →> get_example_writer
+```
+
+### Flow 2: main
+```
+main [scripts.run-example-docker-e2e]
+  └─ →> load_dotenv
 ```
 
 ### Flow 3: resolve_attachment_path
@@ -275,6 +275,20 @@ workflow_simulate [backend.app.routers.workflow]
 ### Flow 8: _run_phase
 ```
 _run_phase [nlp2dsl_sdk.stack_flow.AutonomousStackFlow]
+```
+
+### Flow 9: workflow_execute
+```
+workflow_execute [backend.app.routers.workflow]
+  └─ →> workflow_from_lifecycle_body
+  └─ →> validation_report_for_workflow
+      └─ →> validation_report_from_issues
+          └─> _missing_fields_from_payloads
+          └─> _issue_to_payload
+  └─ →> resolve_idempotency_key
+      └─> workflow_has_side_effects
+      └─> derive_chat_idempotency_key
+          └─ →> workflow_fingerprint
 ```
 
 ## Key Classes
@@ -410,6 +424,9 @@ Key functions that process and transform data:
 ### backend.app.execution_policy._process_policy_from_block
 - **Output to**: ProcessPolicyIR, isinstance, process_block.get, process_block.get, ProcessAccessScopeIR
 
+### backend.app.execution_policy._parse_decision_response
+- **Output to**: resp.json, isinstance
+
 ### backend.app.execution_policy.validate_workflow_execution_policy
 - **Output to**: backend.app.action_catalog.load_action_field_catalog, backend.app.execution_policy.resolve_agent_id, backend.app.execution_policy.build_policy_context, packages.dsl-validate.src.dsl_validate.capability_policy.validate_capability_policy, backend.app.execution_policy.fetch_access_decisions
 
@@ -470,10 +487,6 @@ Body: {"workflow": {...}} or {"dsl": {...}}, optional `"ch
 ### packages.dsl-validate.src.dsl_validate.pipeline.validate_dsl_contract_messages
 - **Output to**: nlp2dsl_sdk.validation.issue.issues_to_messages, nlp2dsl_sdk.validation.rules.dsl_contract.validate_dsl_contract
 
-### packages.dsl-validate.src.dsl_validate.pipeline.validate_step_config_from_map
-> Legacy API — returns Polish issue strings.
-- **Output to**: packages.dsl-validate.src.dsl_validate.pipeline._context_from_map, packages.dsl-validate.src.dsl_validate.pipeline.validate_step_messages
-
 ## Behavioral Patterns
 
 ### recursion__merge_dict
@@ -491,45 +504,45 @@ Body: {"workflow": {...}} or {"dsl": {...}}, optional `"ch
 Functions exposed as public API (no underscore prefix):
 
 - `packages.nlp2dsl-stack.src.nlp2dsl_stack.compose.generate_stack_compose` - 79 calls
-- `scripts.run-example-docker-e2e.main` - 56 calls
 - `scripts.run-example-testql-results.process_example` - 52 calls
 - `examples.04-scheduled-report.scenario.run` - 38 calls
-- `scripts.run-example-docker-e2e.process_example` - 37 calls
+- `scripts.run-example-docker-e2e.main` - 37 calls
 - `examples.19-real-smtp.scenario.run` - 34 calls
 - `examples.01-invoice.scenario.run` - 34 calls
 - `backend.app.routers.workflow.workflow_from_text` - 33 calls
 - `scripts.run-example-testql-results.main` - 31 calls
 - `examples.20-pactown-deploy.scenario.run` - 30 calls
-- `nlp-service.app.routing.parser.enrich.enrich_entities` - 30 calls
 - `examples.03-report-and-notify.scenario.run` - 29 calls
 - `examples.17-execution-policy.scenario.run` - 29 calls
 - `examples.14-markpact-export.scenario.run` - 28 calls
 - `examples.15-idempotency-replay.scenario.run` - 28 calls
 - `nlp-service.app.validation.path_resolve.resolve_attachment_path` - 28 calls
 - `nlp-service.app.routers.chat.chat_registry_observe` - 28 calls
-- `scripts.run-conversation-scenario.run_scenario` - 28 calls
 - `nlp2dsl_sdk.contracts.registry.contract_from_registry_entry` - 27 calls
 - `nlp2dsl_sdk.stack_flow.AutonomousStackFlow.run_phases` - 27 calls
 - `backend.app.path_resolve.resolve_attachment_path` - 26 calls
 - `nlp2dsl_sdk.cli.main` - 26 calls
 - `examples.bootstrap.bootstrap` - 26 calls
-- `backend.app.audit.build_audit_entries` - 25 calls
 - `backend.app.routers.workflow.workflow_simulate` - 25 calls
 - `packages.workflow-export.src.workflow_export.markpact.export_markpact_bundle` - 25 calls
 - `examples.12-ir-show.scenario.run` - 25 calls
 - `backend.app.execution_policy.build_policy_context` - 24 calls
 - `examples.13-autonomous-invoice-stack.scenario.run` - 24 calls
-- `examples.08-multi-object-benchmark.scenario.run_benchmark` - 24 calls
-- `scripts.run-conversation-scenario.main` - 24 calls
 - `backend.app.routers.workflow.workflow_execute` - 23 calls
 - `packages.workflow-export.src.workflow_export.markpact.workflow_dsl_to_markpact_readme` - 23 calls
 - `nlp2dsl_sdk.invoice_pdf.build_invoice_pdf_bytes` - 23 calls
 - `nlp2dsl_sdk.workflow.events.lifecycle_event_from_payload` - 23 calls
-- `nlp2dsl_sdk.mullm.payloads.build_task_payload` - 23 calls
 - `nlp-service.app.validation.invoice_pdf.build_invoice_pdf_bytes` - 23 calls
 - `nlp-service.app.routers.ws.websocket_chat` - 23 calls
 - `backend.app.routers.workflow.stream_workflow` - 22 calls
 - `packages.nlp2cmd-intent.src.nlp2cmd_intent.nlp2cmd_convert.detection_to_intent_ir` - 22 calls
+- `examples.09-execution-smoke.scenario.run` - 22 calls
+- `examples.16-golden-eval.scenario.run` - 22 calls
+- `nlp-service.app.conversation.autonomous_loop.autonomous_resolve_turn` - 22 calls
+- `scripts.run-execution-scenario.run_scenario` - 22 calls
+- `nlp-service.app.conversation.process_agent.preflight_turn` - 21 calls
+- `packages.nlp2cmd-propact.src.nlp2cmd_propact.executor.HybridPlanExecutor.run` - 20 calls
+- `nlp2dsl_sdk.preview.print_run_context_hints` - 20 calls
 
 ## System Interactions
 
@@ -537,13 +550,13 @@ How components interact:
 
 ```mermaid
 graph TD
+    run --> print
+    run --> preview_text_example
+    run --> sum
     main --> insert
     main --> load_dotenv
     main --> ArgumentParser
     main --> add_argument
-    run --> print
-    run --> preview_text_example
-    run --> sum
     run --> get
     run --> lower
     run --> _attachment_validati

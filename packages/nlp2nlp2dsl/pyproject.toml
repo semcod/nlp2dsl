@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nlp2nlp2dsl"
+version = "0.1.0"
+description = "Natural language → NLP2DSL control DSL (no side-effects in to-dsl)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = ["dsl2nlp2dsl>=0.1.0", "uri2nlp2dsl>=0.1.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+nlp2nlp2dsl = "nlp2nlp2dsl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

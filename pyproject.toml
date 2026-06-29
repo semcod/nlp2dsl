@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nlp2dsl"
-version = "0.0.40"
+version = "0.0.41"
 description = "Reusable Python SDK for the NLP2DSL platform"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -70,6 +70,12 @@ filterwarnings = [
 [tool.setuptools]
 packages = [
     "nlp2dsl_sdk",
+    "nlp2dsl_sdk.contracts",
+    "nlp2dsl_sdk.doql",
+    "nlp2dsl_sdk.export",
+    "nlp2dsl_sdk.system_map_render",
+    "nlp2dsl_sdk.validation",
+    "nlp2dsl_sdk.validation.rules",
     "nlp2dsl_sdk.workflow",
     "nlp2dsl_sdk.evaluation",
     "nlp2dsl_sdk.mullm",
@@ -81,7 +87,7 @@ packages = [
 
 [tool.pfix]
 # Self-healing Python configuration
-model = "openrouter/qwen/qwen3-coder-next"
+model = "openrouter/deep/deep-v4-pro"
 auto_apply = true
 auto_install_deps = true
 auto_restart = false
@@ -100,7 +106,7 @@ deduplicate = true
 badge = true
 update_readme = true
 readme_path = "README.md"
-default_model = "openrouter/qwen/qwen3-coder-next"
+default_model = "openrouter/deep/deep-v4-pro"
 analysis_mode = "byok"
 full_history = true
 max_commits = 500

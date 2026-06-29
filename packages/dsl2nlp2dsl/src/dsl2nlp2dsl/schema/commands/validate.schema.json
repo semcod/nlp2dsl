@@ -1,0 +1,12 @@
+{
+  "$id": "dsl2nlp2dsl/commands/validate",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "VALIDATE" },
+    "workflow_file": { "type": "string" },
+    "workflow": { "type": "object" },
+    "check_policy": { "type": "boolean", "default": false }
+  },
+  "additionalProperties": false
+}

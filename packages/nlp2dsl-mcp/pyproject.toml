@@ -9,6 +9,7 @@ description = "MCP server exposing NLP2DSL workflow tools to AI agents"
 requires-python = ">=3.10"
 dependencies = [
     "nlp2dsl",
+    "mcp2nlp2dsl>=0.1.0",
     "mcp>=1.0",
 ]
 

@@ -1,0 +1,10 @@
+{
+  "$id": "dsl2nlp2dsl/commands/resolve",
+  "type": "object",
+  "required": ["verb", "text"],
+  "properties": {
+    "verb": { "const": "RESOLVE" },
+    "text": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

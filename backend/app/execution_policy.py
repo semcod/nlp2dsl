@@ -111,6 +111,39 @@ def build_policy_context(
     )
 
 
+def _extract_step_config(step: Mapping[str, Any]) -> dict[str, Any]:
+    raw = step.get("config")
+    return dict(raw) if isinstance(raw, Mapping) else {}
+
+
+def _parse_decision_response(resp: Any) -> dict[str, Any] | None:
+    if not resp.is_success:
+        return None
+    payload = resp.json()
+    return payload if isinstance(payload, dict) else None
+
+
+async def _fetch_single_decision(
+    client: AsyncClient,
+    step: Mapping[str, Any],
+    *,
+    base: str,
+    catalog: Mapping[str, Any],
+    agent_id: str,
+) -> dict[str, Any] | None:
+    action = str(step.get("action") or "")
+    if not action:
+        return None
+    config = _extract_step_config(step)
+    params = build_access_decision_params(action, config, catalog=catalog)
+    params["agent_id"] = agent_id
+    try:
+        resp = await client.get(f"{base}/nlp/access/check", params=params)
+        return _parse_decision_response(resp)
+    except Exception:
+        return None
+
+
 async def fetch_access_decisions(
     workflow: Mapping[str, Any],
     *,
@@ -127,19 +160,11 @@ async def fetch_access_decisions(
     async with AsyncClient(timeout=10.0, headers={"X-Request-ID": get_request_id()}) as client:
         for step in steps:
             action = str(step.get("action") or "")
-            if not action or action in decisions:
+            if action in decisions:
                 continue
-            config = dict(step.get("config") or {}) if isinstance(step.get("config"), Mapping) else {}
-            params = build_access_decision_params(action, config, catalog=catalog)
-            params["agent_id"] = agent_id
-            try:
-                resp = await client.get(f"{base}/nlp/access/check", params=params)
-                if resp.is_success:
-                    payload = resp.json()
-                    if isinstance(payload, dict):
-                        decisions[action] = payload
-            except Exception:
-                continue
+            payload = await _fetch_single_decision(client, step, base=base, catalog=catalog, agent_id=agent_id)
+            if payload is not None:
+                decisions[action] = payload
     return decisions
 
 

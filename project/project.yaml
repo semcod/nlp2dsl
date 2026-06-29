@@ -1,0 +1,5121 @@
+version: '1'
+# generated in 0.74s
+project:
+  name: nlp2dsl
+  repo: /home/tom/github/wronai/nlp2dsl
+  language: python
+  analyzed_at: '2026-06-06T21:48:07Z'
+  tool: code2llm
+  stats:
+    files: 212
+    lines: 47832
+    functions: 1396
+    classes: 138
+health:
+  cc_avg: 4.0
+  critical_count: 91
+  critical_limit: 10
+  duplicates: 4
+  cycles: 0
+  alerts:
+  - type: high_fan_out
+    target: generate_stack_compose
+    value: 57
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: process_example
+    value: 37
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: main
+    value: 25
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: _execute_ready_dsl
+    value: 23
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: run
+    value: 23
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: _try_validation_fixes
+    value: 23
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: main
+    value: 23
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: workflow_from_text
+    value: 22
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: export_markpact_bundle
+    value: 22
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: _execute_workflow
+    value: 21
+    limit: 10
+    severity: critical
+  - type: high_fan_out
+    target: run
+    value: 20
+    limit: 10
+    severity: critical
+  - type: cc_exceeded
+    target: run
+    value: 20
+    limit: 15
+    severity: error
+  - type: cc_exceeded
+    target: run
+    value: 20
+    limit: 15
+    severity: error
+  - type: high_fan_out
+    target: AutonomousFlow._start_with_extra
+    value: 19
+    limit: 10
+    severity: error
+  - type: high_fan_out
+    target: run
+    value: 19
+    limit: 10
+    severity: error
+  - type: high_fan_out
+    target: run_scenario
+    value: 19
+    limit: 10
+    severity: error
+  - type: high_fan_out
+    target: run
+    value: 18
+    limit: 10
+    severity: error
+  - type: high_fan_out
+    target: run
+    value: 18
+    limit: 10
+    severity: error
+  - type: high_fan_out
+    target: workflow_simulate
+    value: 17
+    limit: 10
+    severity: error
+  - type: high_fan_out
+    target: _process_message
+    value: 17
+    limit: 10
+    severity: error
+modules:
+- path: examples/01-invoice/scenario.py
+  lines: 92
+  classes: 0
+  methods: 4
+  cc_max: 20
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 20
+    flag: split
+    fan_out: 20
+- path: examples/13-autonomous-invoice-stack/scenario.py
+  lines: 68
+  classes: 0
+  methods: 2
+  cc_max: 20
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 20
+    flag: split
+    fan_out: 19
+- path: examples/04-scheduled-report/scenario.py
+  lines: 88
+  classes: 0
+  methods: 1
+  cc_max: 18
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 18
+    flag: split
+    fan_out: 23
+- path: scripts/run-example-testql-results.py
+  lines: 555
+  classes: 2
+  methods: 18
+  cc_max: 16
+  inbound_deps: 0
+  exports:
+  - name: Check
+    type: class
+    cc_avg: 0.0
+  - name: ExampleReport
+    type: class
+    cc_avg: 6.0
+  - name: process_example
+    type: function
+    cc: 15
+    flag: split
+    fan_out: 37
+  - name: main
+    type: function
+    cc: 16
+    flag: split
+    fan_out: 23
+- path: backend/app/idempotency.py
+  lines: 290
+  classes: 6
+  methods: 21
+  cc_max: 14
+  inbound_deps: 1
+  exports:
+  - name: IdempotencyRecord
+    type: class
+    cc_avg: 0.0
+  - name: IdempotencyStore
+    type: class
+    cc_avg: 1.0
+  - name: MemoryIdempotencyStore
+    type: class
+    cc_avg: 2.8
+  - name: Base
+    type: class
+    cc_avg: 0.0
+  - name: IdempotencyRecordModel
+    type: class
+    cc_avg: 0.0
+  - name: PostgresIdempotencyStore
+    type: class
+    cc_avg: 2.2
+    methods:
+    - name: start
+      cc: 6
+      fan_out: 14
+    - name: purge_expired
+      cc: 2
+      fan_out: 11
+  - name: workflow_fingerprint
+    type: function
+    cc: 1
+  - name: normalize_workflow_for_fingerprint
+    type: function
+    cc: 14
+  - name: create_idempotency_store
+    type: function
+    cc: 3
+- path: backend/app/routers/chat.py
+  lines: 278
+  classes: 0
+  methods: 18
+  cc_max: 14
+  inbound_deps: 0
+  exports:
+  - name: chat_start
+    type: function
+    cc: 2
+  - name: chat_message
+    type: function
+    cc: 2
+  - name: chat_get_state
+    type: function
+    cc: 2
+- path: backend/app/routers/workflow.py
+  lines: 516
+  classes: 0
+  methods: 19
+  cc_max: 14
+  inbound_deps: 1
+  exports:
+  - name: orient_nlp
+    type: function
+    cc: 2
+  - name: list_actions
+    type: function
+    cc: 2
+  - name: run_workflow_endpoint
+    type: function
+    cc: 1
+  - name: start_workflow_endpoint
+    type: function
+    cc: 1
+  - name: get_history
+    type: function
+    cc: 1
+  - name: get_workflow_audit
+    type: function
+    cc: 1
+  - name: get_workflow
+    type: function
+    cc: 2
+  - name: get_workflow_events
+    type: function
+    cc: 2
+  - name: stream_workflow
+    type: function
+    cc: 2
+    fan_out: 14
+  - name: workflow_catalog_drift
+    type: function
+    cc: 5
+    fan_out: 16
+  - name: workflow_from_text
+    type: function
+    cc: 14
+    fan_out: 22
+  - name: workflow_plan
+    type: function
+    cc: 4
+    fan_out: 12
+  - name: workflow_validate
+    type: function
+    cc: 4
+  - name: workflow_simulate
+    type: function
+    cc: 9
+    fan_out: 17
+  - name: workflow_execute
+    type: function
+    cc: 8
+    fan_out: 14
+  - name: clear_idempotency_store
+    type: function
+    cc: 1
+  - name: purge_expired_idempotency
+    type: function
+    cc: 3
+- path: nlp-service/app/code_generator.py
+  lines: 279
+  classes: 1
+  methods: 8
+  cc_max: 14
+  inbound_deps: 0
+  exports:
+  - name: CodeGenerator
+    type: class
+    cc_avg: 3.6
+    methods:
+    - name: generate_code
+      cc: 14
+      fan_out: 12
+- path: nlp-service/app/conversation/autonomous_loop.py
+  lines: 363
+  classes: 1
+  methods: 18
+  cc_max: 14
+  inbound_deps: 1
+  exports:
+  - name: AutonomousResolveResult
+    type: class
+    cc_avg: 0.0
+  - name: autonomous_resolve_turn
+    type: function
+    cc: 14
+    fan_out: 16
+- path: nlp-service/app/governance/bootstrap.py
+  lines: 78
+  classes: 0
+  methods: 3
+  cc_max: 14
+  inbound_deps: 0
+  exports:
+  - name: apply_yaml_actions
+    type: function
+    cc: 4
+  - name: bootstrap_registry
+    type: function
+    cc: 1
+- path: nlp-service/app/routers/chat.py
+  lines: 148
+  classes: 0
+  methods: 6
+  cc_max: 14
+  inbound_deps: 0
+  exports:
+  - name: chat_start
+    type: function
+    cc: 4
+  - name: chat_message
+    type: function
+    cc: 3
+  - name: chat_state
+    type: function
+    cc: 2
+  - name: chat_registry_observe
+    type: function
+    cc: 14
+    fan_out: 11
+- path: nlp-service/app/validation/path_resolve.py
+  lines: 87
+  classes: 0
+  methods: 2
+  cc_max: 14
+  inbound_deps: 0
+  exports:
+  - name: resolve_attachment_path
+    type: function
+    cc: 14
+    fan_out: 15
+- path: nlp2dsl_sdk/client.py
+  lines: 1008
+  classes: 2
+  methods: 66
+  cc_max: 14
+  inbound_deps: 1
+  exports:
+  - name: NLP2DSLClient
+    type: class
+    cc_avg: 2.2
+    methods:
+    - name: _request
+      cc: 9
+      fan_out: 13
+    - name: chat_message
+      cc: 6
+      fan_out: 10
+  - name: ConversationFlow
+    type: class
+    cc_avg: 4.8
+    methods:
+    - name: start
+      cc: 2
+      fan_out: 11
+    - name: _persist_reflection
+      cc: 11
+      fan_out: 13
+    - name: _refresh_doql_registry
+      cc: 13
+      fan_out: 12
+    - name: _handle_completed_response
+      cc: 14
+    - name: _reflect_executed_turn
+      cc: 5
+      fan_out: 10
+  - name: workflow_step
+    type: function
+    cc: 1
+- path: nlp2dsl_sdk/conversation_artifacts.py
+  lines: 2
+  classes: 0
+  methods: 7
+  cc_max: 14
+  inbound_deps: 5
+  exports:
+  - name: format_transcript
+    type: function
+    cc: 6
+  - name: write_conversation_artifacts
+    type: function
+    cc: 1
+    fan_out: 12
+- path: backend/app/engine.py
+  lines: 314
+  classes: 0
+  methods: 7
+  cc_max: 13
+  inbound_deps: 3
+  exports:
+  - name: run_workflow
+    type: function
+    cc: 1
+  - name: start_workflow
+    type: function
+    cc: 1
+- path: backend/app/path_resolve.py
+  lines: 64
+  classes: 0
+  methods: 2
+  cc_max: 13
+  inbound_deps: 7
+  exports:
+  - name: resolve_attachment_path
+    type: function
+    cc: 13
+    fan_out: 14
+- path: examples/12-ir-show/scenario.py
+  lines: 88
+  classes: 0
+  methods: 2
+  cc_max: 13
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 13
+    fan_out: 13
+- path: examples/bootstrap.py
+  lines: 107
+  classes: 0
+  methods: 5
+  cc_max: 13
+  inbound_deps: 0
+  exports:
+  - name: bootstrap
+    type: function
+    cc: 13
+    fan_out: 16
+- path: nlp-service/app/conversation/merge.py
+  lines: 36
+  classes: 0
+  methods: 1
+  cc_max: 13
+  inbound_deps: 1
+  exports:
+  - name: merge_into_state
+    type: function
+    cc: 13
+- path: nlp2dsl_sdk/cli.py
+  lines: 269
+  classes: 0
+  methods: 13
+  cc_max: 13
+  inbound_deps: 0
+  exports:
+  - name: show
+    type: function
+    cc: 2
+  - name: main
+    type: function
+    cc: 7
+    fan_out: 16
+- path: nlp2dsl_sdk/contracts/registry.py
+  lines: 2
+  classes: 0
+  methods: 14
+  cc_max: 13
+  inbound_deps: 16
+  exports:
+  - name: contract_from_registry_entry
+    type: function
+    cc: 8
+    fan_out: 10
+  - name: contract_from_catalog_entry
+    type: function
+    cc: 1
+  - name: action_contracts_from_registry
+    type: function
+    cc: 3
+  - name: action_contracts_from_catalog
+    type: function
+    cc: 3
+  - name: action_catalog_payload
+    type: function
+    cc: 2
+  - name: action_info_config_schema
+    type: function
+    cc: 2
+  - name: required_fields_for_action
+    type: function
+    cc: 2
+  - name: quality_fields_for_action
+    type: function
+    cc: 2
+  - name: known_action_names
+    type: function
+    cc: 2
+- path: nlp2dsl_sdk/deploy/pactown_deploy.py
+  lines: 96
+  classes: 0
+  methods: 3
+  cc_max: 13
+  inbound_deps: 1
+  exports:
+  - name: validate_pactown_bundle
+    type: function
+    cc: 13
+    fan_out: 12
+  - name: deploy_instructions
+    type: function
+    cc: 5
+  - name: deploy_instructions_json
+    type: function
+    cc: 1
+- path: nlp2dsl_sdk/preview.py
+  lines: 347
+  classes: 0
+  methods: 18
+  cc_max: 13
+  inbound_deps: 22
+  exports:
+  - name: print_json
+    type: function
+    cc: 1
+  - name: execution_payload
+    type: function
+    cc: 3
+  - name: print_execution_step_detail
+    type: function
+    cc: 6
+  - name: print_run_context_hints
+    type: function
+    cc: 13
+  - name: print_run_outcome
+    type: function
+    cc: 5
+  - name: print_workflow_preview
+    type: function
+    cc: 4
+  - name: print_execution_result
+    type: function
+    cc: 5
+  - name: workflow_http_error_result
+    type: function
+    cc: 11
+  - name: preview_text_examples
+    type: function
+    cc: 9
+  - name: execute_from_text
+    type: function
+    cc: 8
+  - name: execute_text_examples
+    type: function
+    cc: 8
+  - name: finalize_example_artifacts
+    type: function
+    cc: 2
+  - name: ensure_services
+    type: function
+    cc: 5
+- path: nlp2dsl_sdk/validation/rules/step_config.py
+  lines: 2
+  classes: 0
+  methods: 3
+  cc_max: 13
+  inbound_deps: 8
+  exports:
+  - name: validate_step
+    type: function
+    cc: 13
+  - name: validate_workflow_steps
+    type: function
+    cc: 4
+- path: packages/nlp2dsl-stack/src/nlp2dsl_stack/compose.py
+  lines: 512
+  classes: 1
+  methods: 16
+  cc_max: 13
+  inbound_deps: 1
+  exports:
+  - name: ComposeGenerationResult
+    type: class
+    cc_avg: 0.0
+  - name: enrich_ir_for_stack
+    type: function
+    cc: 5
+  - name: generate_stack_compose
+    type: function
+    cc: 13
+    fan_out: 57
+- path: packages/workflow-export/src/workflow_export/publish.py
+  lines: 192
+  classes: 2
+  methods: 7
+  cc_max: 13
+  inbound_deps: 5
+  exports:
+  - name: PublishExportBundle
+    type: class
+    cc_avg: 0.0
+  - name: PublishValidationResult
+    type: class
+    cc_avg: 1.0
+  - name: catalog_from_nlp_client
+    type: function
+    cc: 5
+  - name: export_workflow_publish_layer
+    type: function
+    cc: 2
+  - name: validate_publish_layer_result
+    type: function
+    cc: 13
+  - name: validate_publish_layer
+    type: function
+    cc: 1
+  - name: assert_publish_layer_valid
+    type: function
+    cc: 4
+  - name: print_publish_summary
+    type: function
+    cc: 5
+- path: scripts/migrate-direct-imports.py
+  lines: 100
+  classes: 0
+  methods: 2
+  cc_max: 13
+  inbound_deps: 0
+  exports:
+  - name: migrate_file
+    type: function
+    cc: 6
+  - name: main
+    type: function
+    cc: 13
+    fan_out: 10
+- path: scripts/run-example-docker-e2e.py
+  lines: 435
+  classes: 0
+  methods: 25
+  cc_max: 13
+  inbound_deps: 0
+  exports:
+  - name: docker_up
+    type: function
+    cc: 3
+  - name: docker_down
+    type: function
+    cc: 1
+  - name: wait_platform
+    type: function
+    cc: 3
+  - name: run_example_main
+    type: function
+    cc: 2
+  - name: run_execution
+    type: function
+    cc: 1
+  - name: run_conversation
+    type: function
+    cc: 1
+  - name: process_example
+    type: function
+    cc: 7
+  - name: main
+    type: function
+    cc: 13
+    fan_out: 25
+- path: backend/app/execution_policy.py
+  lines: 209
+  classes: 0
+  methods: 13
+  cc_max: 12
+  inbound_deps: 2
+  exports:
+  - name: resolve_agent_id
+    type: function
+    cc: 6
+  - name: build_policy_context
+    type: function
+    cc: 12
+    fan_out: 13
+  - name: fetch_access_decisions
+    type: function
+    cc: 10
+  - name: validate_workflow_execution_policy
+    type: function
+    cc: 3
+  - name: policy_blocked_response
+    type: function
+    cc: 2
+- path: examples/08-multi-object-benchmark/scenario.py
+  lines: 156
+  classes: 0
+  methods: 6
+  cc_max: 12
+  inbound_deps: 1
+  exports:
+  - name: run_benchmark
+    type: function
+    cc: 12
+    fan_out: 10
+  - name: run
+    type: function
+    cc: 5
+    fan_out: 11
+- path: nlp-service/app/conversation/runtime_gate.py
+  lines: 90
+  classes: 0
+  methods: 3
+  cc_max: 12
+  inbound_deps: 1
+  exports:
+  - name: runtime_unavailable_message
+    type: function
+    cc: 7
+  - name: process_scope_blocked
+    type: function
+    cc: 12
+  - name: intract_clarification_blocked
+    type: function
+    cc: 5
+- path: nlp-service/app/execution/system.py
+  lines: 343
+  classes: 0
+  methods: 13
+  cc_max: 12
+  inbound_deps: 1
+  exports:
+  - name: execute_system_action
+    type: function
+    cc: 3
+- path: nlp-service/app/routing/parser/rules.py
+  lines: 622
+  classes: 0
+  methods: 37
+  cc_max: 12
+  inbound_deps: 3
+  exports:
+  - name: parse_rules
+    type: function
+    cc: 3
+    fan_out: 11
+- path: nlp2dsl_sdk/reflection.py
+  lines: 371
+  classes: 4
+  methods: 17
+  cc_max: 12
+  inbound_deps: 3
+  exports:
+  - name: TargetStep
+    type: class
+    cc_avg: 0.0
+  - name: TargetPlan
+    type: class
+    cc_avg: 0.0
+  - name: ReflectionIssue
+    type: class
+    cc_avg: 0.0
+  - name: ReflectionReport
+    type: class
+    cc_avg: 0.0
+  - name: build_target_plan
+    type: function
+    cc: 6
+    fan_out: 10
+  - name: reflect
+    type: function
+    cc: 9
+    fan_out: 11
+  - name: reflect_from_chat_turn
+    type: function
+    cc: 10
+    fan_out: 10
+  - name: reflect_from_doql_path
+    type: function
+    cc: 2
+  - name: format_reflection_summary
+    type: function
+    cc: 6
+- path: nlp2dsl_sdk/validation/resolutions.py
+  lines: 2
+  classes: 2
+  methods: 12
+  cc_max: 12
+  inbound_deps: 1
+  exports:
+  - name: ResolutionPlan
+    type: class
+    cc_avg: 0.0
+  - name: ResolutionEnvironment
+    type: class
+    cc_avg: 0.0
+  - name: plan_resolutions
+    type: function
+    cc: 2
+  - name: filter_plans_by_reflection_tokens
+    type: function
+    cc: 12
+  - name: apply_resolution_plans
+    type: function
+    cc: 12
+- path: nlp2dsl_sdk/workflow/events.py
+  lines: 152
+  classes: 1
+  methods: 5
+  cc_max: 12
+  inbound_deps: 2
+  exports:
+  - name: WorkflowLifecycleEvent
+    type: class
+    cc_avg: 0.0
+  - name: normalize_event_type
+    type: function
+    cc: 3
+  - name: lifecycle_event_from_payload
+    type: function
+    cc: 11
+  - name: workflow_snapshot_from_events
+    type: function
+    cc: 12
+- path: packages/nlp2cmd-propact/src/nlp2cmd_propact/adapter.py
+  lines: 134
+  classes: 0
+  methods: 8
+  cc_max: 12
+  inbound_deps: 2
+  exports:
+  - name: step_to_propact_block
+    type: function
+    cc: 12
+  - name: plan_to_propact_markdown
+    type: function
+    cc: 2
+- path: scripts/run-execution-scenario.py
+  lines: 130
+  classes: 0
+  methods: 3
+  cc_max: 12
+  inbound_deps: 0
+  exports:
+  - name: run_scenario
+    type: function
+    cc: 12
+    fan_out: 19
+  - name: main
+    type: function
+    cc: 8
+- path: backend/app/attachment_validation.py
+  lines: 129
+  classes: 0
+  methods: 8
+  cc_max: 11
+  inbound_deps: 2
+  exports:
+  - name: build_attachment_validation
+    type: function
+    cc: 11
+    fan_out: 11
+  - name: validation_from_chat_result
+    type: function
+    cc: 5
+  - name: ensure_attachment_validation
+    type: function
+    cc: 3
+- path: examples/17-execution-policy/scenario.py
+  lines: 140
+  classes: 0
+  methods: 5
+  cc_max: 11
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 11
+    fan_out: 11
+- path: examples/19-real-smtp/scenario.py
+  lines: 87
+  classes: 0
+  methods: 2
+  cc_max: 11
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 11
+    fan_out: 16
+- path: nlp-service/app/conversation/orchestrator.py
+  lines: 326
+  classes: 0
+  methods: 18
+  cc_max: 11
+  inbound_deps: 2
+  exports:
+  - name: start_conversation
+    type: function
+    cc: 4
+    fan_out: 12
+  - name: continue_conversation
+    type: function
+    cc: 4
+    fan_out: 12
+  - name: get_conversation
+    type: function
+    cc: 2
+  - name: mark_conversation_executed
+    type: function
+    cc: 4
+- path: nlp-service/app/conversation/responses.py
+  lines: 418
+  classes: 0
+  methods: 26
+  cc_max: 11
+  inbound_deps: 3
+  exports:
+  - name: deny_message
+    type: function
+    cc: 3
+  - name: check_execute_keyword
+    type: function
+    cc: 11
+  - name: handle_unknown_intent
+    type: function
+    cc: 5
+  - name: handle_system_action
+    type: function
+    cc: 7
+  - name: build_and_check_dsl
+    type: function
+    cc: 7
+  - name: build_incomplete_response
+    type: function
+    cc: 6
+  - name: format_system_result
+    type: function
+    cc: 3
+- path: nlp-service/app/routing/parser/resolve_mode.py
+  lines: 65
+  classes: 0
+  methods: 3
+  cc_max: 11
+  inbound_deps: 2
+  exports:
+  - name: parse_with_mode
+    type: function
+    cc: 11
+- path: nlp2dsl_sdk/attachment_validation.py
+  lines: 130
+  classes: 0
+  methods: 6
+  cc_max: 11
+  inbound_deps: 2
+  exports:
+  - name: format_attachment_validation
+    type: function
+    cc: 10
+  - name: build_attachment_validation
+    type: function
+    cc: 8
+    fan_out: 14
+  - name: enrich_chat_response
+    type: function
+    cc: 11
+- path: packages/dsl-validate/src/dsl_validate/profile_checks.py
+  lines: 306
+  classes: 1
+  methods: 19
+  cc_max: 11
+  inbound_deps: 2
+  exports:
+  - name: ProfileCheckContext
+    type: class
+    cc_avg: 0.0
+  - name: parse_profile_validation
+    type: function
+    cc: 5
+  - name: parse_profile_validations
+    type: function
+    cc: 4
+  - name: load_profile_validations
+    type: function
+    cc: 3
+  - name: apply_profile_validations
+    type: function
+    cc: 3
+  - name: dsl_actions_from_response
+    type: function
+    cc: 7
+  - name: execution_completed
+    type: function
+    cc: 8
+  - name: conversation_executed
+    type: function
+    cc: 2
+  - name: check_profile_validation
+    type: function
+    cc: 11
+  - name: run_profile_validation_checks
+    type: function
+    cc: 4
+  - name: validate_profile_expectations
+    type: function
+    cc: 4
+  - name: response_from_e2e_trace
+    type: function
+    cc: 11
+  - name: run_validations_from_raw
+    type: function
+    cc: 3
+- path: packages/dsl-validate/src/dsl_validate/rules/attachment.py
+  lines: 115
+  classes: 0
+  methods: 3
+  cc_max: 11
+  inbound_deps: 2
+  exports:
+  - name: validate_attachment_path
+    type: function
+    cc: 11
+  - name: attachment_issues_for_config
+    type: function
+    cc: 3
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/fast_path_detection.py
+  lines: 344
+  classes: 1
+  methods: 22
+  cc_max: 11
+  inbound_deps: 1
+  exports:
+  - name: FastPathHit
+    type: class
+    cc_avg: 0.0
+  - name: normalize_url
+    type: function
+    cc: 6
+  - name: match_explicit_overrides
+    type: function
+    cc: 3
+  - name: match_exact_commands
+    type: function
+    cc: 2
+  - name: run_domain_fast_path_after_exact
+    type: function
+    cc: 3
+    fan_out: 11
+  - name: fast_path_detect
+    type: function
+    cc: 4
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_detector.py
+  lines: 602
+  classes: 2
+  methods: 28
+  cc_max: 11
+  inbound_deps: 0
+  exports:
+  - name: DetectionResult
+    type: class
+    cc_avg: 3.0
+  - name: KeywordIntentDetector
+    type: class
+    cc_avg: 4.8
+    methods:
+    - name: detect
+      cc: 7
+      fan_out: 10
+    - name: detect_all
+      cc: 8
+      fan_out: 10
+    - name: _tokenize_text
+      cc: 11
+      fan_out: 12
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/pattern_loaders.py
+  lines: 137
+  classes: 0
+  methods: 7
+  cc_max: 11
+  inbound_deps: 1
+  exports:
+  - name: read_json_object
+    type: function
+    cc: 3
+  - name: clean_string_list
+    type: function
+    cc: 4
+  - name: merge_patterns_payload
+    type: function
+    cc: 11
+  - name: parse_domain_boosters
+    type: function
+    cc: 6
+  - name: parse_priority_intents
+    type: function
+    cc: 6
+  - name: parse_fast_path_settings
+    type: function
+    cc: 8
+  - name: parse_explicit_overrides
+    type: function
+    cc: 7
+- path: packages/workflow-export/src/workflow_export/markpact.py
+  lines: 234
+  classes: 1
+  methods: 7
+  cc_max: 11
+  inbound_deps: 1
+  exports:
+  - name: MarkpactExportBundle
+    type: class
+    cc_avg: 0.0
+  - name: contract_to_yaml_dict
+    type: function
+    cc: 5
+  - name: contract_to_yaml_string
+    type: function
+    cc: 1
+  - name: composite_workflow_spec
+    type: function
+    cc: 9
+  - name: workflow_dsl_to_markpact_readme
+    type: function
+    cc: 11
+    fan_out: 15
+  - name: export_markpact_bundle
+    type: function
+    cc: 8
+    fan_out: 22
+- path: tauri-wrapper/scripts/dev.js
+  lines: 56
+  classes: 0
+  methods: 7
+  cc_max: 11
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 11
+    fan_out: 10
+  - name: server
+    type: function
+    cc: 1
+  - name: npmCommand
+    type: function
+    cc: 1
+  - name: child
+    type: function
+    cc: 1
+  - name: shuttingDown
+    type: function
+    cc: 5
+  - name: shutdown
+    type: function
+    cc: 5
+  - name: exitCode
+    type: function
+    cc: 2
+- path: backend/app/workflow_execute.py
+  lines: 114
+  classes: 0
+  methods: 4
+  cc_max: 10
+  inbound_deps: 2
+  exports:
+  - name: workflow_has_side_effects
+    type: function
+    cc: 6
+  - name: derive_chat_idempotency_key
+    type: function
+    cc: 1
+  - name: resolve_idempotency_key
+    type: function
+    cc: 6
+  - name: run_idempotent_workflow
+    type: function
+    cc: 10
+    fan_out: 13
+- path: nlp-service/app/conversation/doql_autofill.py
+  lines: 158
+  classes: 0
+  methods: 7
+  cc_max: 10
+  inbound_deps: 7
+  exports:
+  - name: load_context_for_state
+    type: function
+    cc: 8
+  - name: sync_autofill_from_doql
+    type: function
+    cc: 10
+    fan_out: 12
+- path: nlp-service/app/conversation/reflection.py
+  lines: 137
+  classes: 0
+  methods: 9
+  cc_max: 10
+  inbound_deps: 2
+  exports:
+  - name: reflection_from_state
+    type: function
+    cc: 8
+    fan_out: 14
+- path: nlp-service/app/dsl/mapper.py
+  lines: 262
+  classes: 0
+  methods: 13
+  cc_max: 10
+  inbound_deps: 1
+  exports:
+  - name: map_to_dsl
+    type: function
+    cc: 5
+    fan_out: 10
+- path: nlp-service/app/routers/ws.py
+  lines: 84
+  classes: 0
+  methods: 2
+  cc_max: 10
+  inbound_deps: 0
+  exports:
+  - name: websocket_chat
+    type: function
+    cc: 10
+    fan_out: 16
+  - name: chat_ui
+    type: function
+    cc: 2
+- path: nlp-service/app/routing/orientation.py
+  lines: 417
+  classes: 1
+  methods: 17
+  cc_max: 10
+  inbound_deps: 2
+  exports:
+  - name: OrientationResult
+    type: class
+    cc_avg: 1.0
+  - name: orient_query
+    type: function
+    cc: 9
+- path: nlp-service/app/routing/parser/llm.py
+  lines: 145
+  classes: 0
+  methods: 3
+  cc_max: 10
+  inbound_deps: 3
+  exports:
+  - name: parse_llm
+    type: function
+    cc: 3
+    fan_out: 11
+- path: nlp2dsl_sdk/stack_flow.py
+  lines: 231
+  classes: 3
+  methods: 6
+  cc_max: 10
+  inbound_deps: 0
+  exports:
+  - name: StackPhaseResult
+    type: class
+    cc_avg: 0.0
+  - name: StackRunResult
+    type: class
+    cc_avg: 0.0
+  - name: AutonomousStackFlow
+    type: class
+    cc_avg: 4.6
+    methods:
+    - name: run_phases
+      cc: 7
+      fan_out: 14
+    - name: _run_phase
+      cc: 10
+      fan_out: 14
+- path: nlp2dsl_sdk/validation/rules/runtime_health.py
+  lines: 2
+  classes: 0
+  methods: 5
+  cc_max: 10
+  inbound_deps: 3
+  exports:
+  - name: runtime_id_for_intent
+    type: function
+    cc: 5
+  - name: probe_health_endpoint
+    type: function
+    cc: 9
+    fan_out: 10
+  - name: validate_runtime_health
+    type: function
+    cc: 10
+  - name: validate_runtime_health_for_intent
+    type: function
+    cc: 1
+- path: packages/dsl-validate/src/dsl_validate/pipeline.py
+  lines: 278
+  classes: 0
+  methods: 16
+  cc_max: 10
+  inbound_deps: 3
+  exports:
+  - name: validate_step_issues
+    type: function
+    cc: 1
+  - name: validate_step_messages
+    type: function
+    cc: 1
+  - name: validate_dsl_contract_issues
+    type: function
+    cc: 1
+  - name: validate_dsl_contract_messages
+    type: function
+    cc: 1
+  - name: validate_step_config_from_map
+    type: function
+    cc: 2
+  - name: validate_step_config_from_map_issues
+    type: function
+    cc: 2
+  - name: validate_workflow_from_map
+    type: function
+    cc: 2
+  - name: validate_workflow_from_map_issues
+    type: function
+    cc: 9
+    fan_out: 10
+  - name: validate_post_execute_issues
+    type: function
+    cc: 1
+  - name: validate_post_execute_from_map
+    type: function
+    cc: 3
+  - name: validate_post_execute_workflow_from_map_issues
+    type: function
+    cc: 10
+  - name: validate_post_health_issues
+    type: function
+    cc: 1
+  - name: validate_post_health_for_intent
+    type: function
+    cc: 1
+  - name: validate_post_health_from_map
+    type: function
+    cc: 1
+  - name: validate_post_execute_execution
+    type: function
+    cc: 1
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/nlp2cmd_convert.py
+  lines: 47
+  classes: 0
+  methods: 1
+  cc_max: 10
+  inbound_deps: 2
+  exports:
+  - name: detection_to_intent_ir
+    type: function
+    cc: 10
+    fan_out: 12
+- path: packages/nlp2cmd-planner/src/nlp2cmd_planner/strategies/rule_shell.py
+  lines: 74
+  classes: 1
+  methods: 3
+  cc_max: 10
+  inbound_deps: 0
+  exports:
+  - name: RuleShellPlanStrategy
+    type: class
+    cc_avg: 2.5
+- path: packages/nlp2cmd-propact/src/nlp2cmd_propact/executor.py
+  lines: 155
+  classes: 1
+  methods: 6
+  cc_max: 10
+  inbound_deps: 0
+  exports:
+  - name: HybridPlanExecutor
+    type: class
+    cc_avg: 4.5
+    methods:
+    - name: run
+      cc: 10
+      fan_out: 11
+  - name: execution_route
+    type: function
+    cc: 3
+- path: scripts/_conversation_scenario.py
+  lines: 249
+  classes: 0
+  methods: 21
+  cc_max: 10
+  inbound_deps: 2
+  exports:
+  - name: load_yaml
+    type: function
+    cc: 2
+  - name: wait_health
+    type: function
+    cc: 4
+  - name: dsl_actions
+    type: function
+    cc: 5
+  - name: workflow_execution_payload
+    type: function
+    cc: 3
+  - name: execution_completed
+    type: function
+    cc: 7
+  - name: check_expect
+    type: function
+    cc: 3
+  - name: check_execution_expect
+    type: function
+    cc: 3
+  - name: run_validation
+    type: function
+    cc: 2
+  - name: prepare_doql_context
+    type: function
+    cc: 4
+  - name: run_turn
+    type: function
+    cc: 4
+  - name: turn_loop_action
+    type: function
+    cc: 6
+  - name: finalize_trace
+    type: function
+    cc: 3
+- path: worker/connectors/smtp.py
+  lines: 82
+  classes: 1
+  methods: 2
+  cc_max: 10
+  inbound_deps: 0
+  exports:
+  - name: SmtpConfig
+    type: class
+    cc_avg: 2.0
+  - name: send_smtp_message
+    type: function
+    cc: 10
+    fan_out: 12
+- path: worker/worker.py
+  lines: 313
+  classes: 0
+  methods: 15
+  cc_max: 10
+  inbound_deps: 0
+  exports:
+  - name: action
+    type: function
+    cc: 1
+  - name: handle_send_invoice
+    type: function
+    cc: 3
+  - name: handle_generate_invoice
+    type: function
+    cc: 3
+    fan_out: 11
+  - name: handle_send_email
+    type: function
+    cc: 10
+  - name: handle_generate_report
+    type: function
+    cc: 1
+  - name: handle_crm_update
+    type: function
+    cc: 1
+  - name: handle_notify_slack
+    type: function
+    cc: 1
+  - name: handle_notify_telegram
+    type: function
+    cc: 1
+  - name: handle_notify_teams
+    type: function
+    cc: 1
+  - name: handle_generate_code
+    type: function
+    cc: 5
+    fan_out: 13
+  - name: execute_step
+    type: function
+    cc: 2
+  - name: health
+    type: function
+    cc: 1
+- path: backend/app/audit.py
+  lines: 71
+  classes: 0
+  methods: 4
+  cc_max: 9
+  inbound_deps: 2
+  exports:
+  - name: build_audit_entries
+    type: function
+    cc: 4
+- path: examples/03-report-and-notify/scenario.py
+  lines: 82
+  classes: 0
+  methods: 1
+  cc_max: 9
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 9
+    fan_out: 18
+- path: examples/09-execution-smoke/scenario.py
+  lines: 44
+  classes: 0
+  methods: 1
+  cc_max: 9
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 9
+    fan_out: 11
+- path: nlp-service/app/audio_parser.py
+  lines: 148
+  classes: 1
+  methods: 8
+  cc_max: 9
+  inbound_deps: 2
+  exports:
+  - name: StreamingSTT
+    type: class
+    cc_avg: 1.4
+  - name: stt_audio
+    type: function
+    cc: 9
+  - name: stt_file
+    type: function
+    cc: 2
+  - name: is_stt_available
+    type: function
+    cc: 2
+- path: nlp-service/app/conversation/doql_registry.py
+  lines: 194
+  classes: 0
+  methods: 9
+  cc_max: 9
+  inbound_deps: 3
+  exports:
+  - name: refresh_registry_for_state
+    type: function
+    cc: 6
+  - name: reload_context_after_refresh
+    type: function
+    cc: 1
+- path: nlp-service/app/conversation/invoice_paths.py
+  lines: 70
+  classes: 0
+  methods: 4
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: example_root_from_doql
+    type: function
+    cc: 9
+  - name: resolve_example_root
+    type: function
+    cc: 4
+  - name: invoice_output_dir
+    type: function
+    cc: 2
+  - name: store_attachment_path
+    type: function
+    cc: 5
+- path: nlp-service/app/conversation/invoice_policy.py
+  lines: 27
+  classes: 0
+  methods: 2
+  cc_max: 9
+  inbound_deps: 3
+  exports:
+  - name: is_invoice_example
+    type: function
+    cc: 2
+  - name: invoice_attachment_policy_active
+    type: function
+    cc: 9
+- path: nlp-service/app/conversation/process_agent.py
+  lines: 116
+  classes: 0
+  methods: 3
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: preflight_turn
+    type: function
+    cc: 9
+    fan_out: 14
+  - name: reflect_turn
+    type: function
+    cc: 4
+  - name: observe_turn
+    type: function
+    cc: 2
+- path: nlp-service/app/routing/parser/prompt_catalog.py
+  lines: 89
+  classes: 0
+  methods: 1
+  cc_max: 9
+  inbound_deps: 0
+  exports:
+  - name: build_llm_system_prompt
+    type: function
+    cc: 9
+    fan_out: 10
+- path: nlp-service/app/validation/step_validator.py
+  lines: 109
+  classes: 1
+  methods: 9
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: StepValidationError
+    type: class
+    cc_avg: 1.0
+  - name: validate_step_config_issues
+    type: function
+    cc: 3
+  - name: validate_step_config
+    type: function
+    cc: 1
+  - name: validate_workflow_steps
+    type: function
+    cc: 9
+  - name: format_validation_message
+    type: function
+    cc: 3
+- path: nlp2dsl_sdk/conversation_testql.py
+  lines: 2
+  classes: 1
+  methods: 10
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: ConversationValidation
+    type: class
+    cc_avg: 0.0
+  - name: validate_conversation_scenario_text
+    type: function
+    cc: 4
+  - name: validate_conversation_scenario
+    type: function
+    cc: 9
+    fan_out: 12
+  - name: dry_run_conversation_scenario
+    type: function
+    cc: 1
+- path: nlp2dsl_sdk/evaluation/golden.py
+  lines: 103
+  classes: 1
+  methods: 7
+  cc_max: 9
+  inbound_deps: 2
+  exports:
+  - name: GoldenCase
+    type: class
+    cc_avg: 8.0
+  - name: load_golden_cases
+    type: function
+    cc: 6
+  - name: default_golden_cases
+    type: function
+    cc: 1
+  - name: extract_actions
+    type: function
+    cc: 9
+  - name: extract_missing
+    type: function
+    cc: 6
+  - name: primary_action
+    type: function
+    cc: 2
+- path: nlp2dsl_sdk/evaluation/metrics.py
+  lines: 226
+  classes: 2
+  methods: 13
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: GoldenRow
+    type: class
+    cc_avg: 0.0
+  - name: GoldenReport
+    type: class
+    cc_avg: 2.0
+  - name: classify_outcome
+    type: function
+    cc: 9
+  - name: evaluate_golden_case
+    type: function
+    cc: 2
+  - name: build_golden_report
+    type: function
+    cc: 5
+  - name: primary_action_from_row
+    type: function
+    cc: 2
+  - name: run_golden_evaluation
+    type: function
+    cc: 2
+- path: nlp2dsl_sdk/workflow/simulate.py
+  lines: 87
+  classes: 0
+  methods: 2
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: simulate_workflow_payload
+    type: function
+    cc: 8
+    fan_out: 10
+- path: packages/dsl-validate/src/dsl_validate/capability_policy.py
+  lines: 405
+  classes: 1
+  methods: 22
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: ExecutionPolicyContext
+    type: class
+    cc_avg: 0.0
+  - name: validate_capability_policy
+    type: function
+    cc: 4
+  - name: access_decision_requires_approval
+    type: function
+    cc: 3
+  - name: build_access_decision_params
+    type: function
+    cc: 5
+- path: packages/dsl-validate/src/dsl_validate/path_resolve.py
+  lines: 56
+  classes: 0
+  methods: 2
+  cc_max: 9
+  inbound_deps: 0
+  exports:
+  - name: resolve_attachment_path
+    type: function
+    cc: 9
+    fan_out: 12
+- path: packages/dsl-validate/src/dsl_validate/rules/post_execute.py
+  lines: 90
+  classes: 0
+  methods: 4
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: validate_execution_outcome
+    type: function
+    cc: 5
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_patterns.py
+  lines: 192
+  classes: 1
+  methods: 18
+  cc_max: 9
+  inbound_deps: 0
+  exports:
+  - name: KeywordPatterns
+    type: class
+    cc_avg: 2.3
+- path: packages/nlp2dsl-artifacts/src/nlp2dsl_artifacts/writer.py
+  lines: 414
+  classes: 1
+  methods: 19
+  cc_max: 9
+  inbound_deps: 9
+  exports:
+  - name: ExampleArtifactWriter
+    type: class
+    cc_avg: 3.0
+    methods:
+    - name: finalize
+      cc: 5
+      fan_out: 13
+  - name: example_artifact_root
+    type: function
+    cc: 1
+  - name: write_environment_doql
+    type: function
+    cc: 3
+  - name: build_process_trace
+    type: function
+    cc: 2
+  - name: write_query_artifacts
+    type: function
+    cc: 1
+    fan_out: 15
+  - name: write_manifest
+    type: function
+    cc: 1
+  - name: write_testql_commands
+    type: function
+    cc: 4
+  - name: write_services_snapshot
+    type: function
+    cc: 3
+  - name: get_example_writer
+    type: function
+    cc: 2
+- path: scripts/_dotenv.py
+  lines: 23
+  classes: 0
+  methods: 1
+  cc_max: 9
+  inbound_deps: 1
+  exports:
+  - name: load_dotenv
+    type: function
+    cc: 9
+    fan_out: 10
+- path: scripts/validate-contract-draft.py
+  lines: 0
+  classes: 0
+  methods: 1
+  cc_max: 9
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 9
+- path: scripts/validate-publish-export.py
+  lines: 104
+  classes: 0
+  methods: 2
+  cc_max: 9
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 9
+    fan_out: 11
+- path: worker/path_resolve.py
+  lines: 75
+  classes: 0
+  methods: 3
+  cc_max: 9
+  inbound_deps: 2
+  exports:
+  - name: resolve_attachment_path
+    type: function
+    cc: 9
+    fan_out: 12
+  - name: resolve_worker_attachment_path
+    type: function
+    cc: 6
+    fan_out: 10
+- path: backend/app/routers/testql_compat.py
+  lines: 153
+  classes: 3
+  methods: 8
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: TestqlChatStart
+    type: class
+    cc_avg: 0.0
+  - name: TestqlChatMessage
+    type: class
+    cc_avg: 0.0
+  - name: TestqlRunWorkflow
+    type: class
+    cc_avg: 0.0
+  - name: testql_chatstart
+    type: function
+    cc: 5
+  - name: testql_chatmessage
+    type: function
+    cc: 4
+    fan_out: 10
+  - name: testql_runworkflow
+    type: function
+    cc: 4
+    fan_out: 14
+  - name: testql_workflow_from_text
+    type: function
+    cc: 1
+- path: examples/11-notify-quality/scenario.py
+  lines: 49
+  classes: 0
+  methods: 1
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 8
+- path: examples/18-trigger-webhook/scenario.py
+  lines: 61
+  classes: 0
+  methods: 1
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 8
+    fan_out: 10
+- path: examples/20-pactown-deploy/scenario.py
+  lines: 98
+  classes: 0
+  methods: 2
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 8
+    fan_out: 18
+- path: nlp-service/app/access/uri_match.py
+  lines: 3
+  classes: 0
+  methods: 3
+  cc_max: 8
+  inbound_deps: 1
+  exports:
+  - name: normalize_uri
+    type: function
+    cc: 2
+  - name: uri_matches
+    type: function
+    cc: 8
+  - name: scheme_allowed
+    type: function
+    cc: 5
+- path: nlp-service/app/conversation/attachment_gate.py
+  lines: 25
+  classes: 0
+  methods: 1
+  cc_max: 8
+  inbound_deps: 2
+  exports:
+  - name: workflow_needs_attachment
+    type: function
+    cc: 8
+- path: nlp-service/app/conversation/doql_context.py
+  lines: 52
+  classes: 0
+  methods: 1
+  cc_max: 8
+  inbound_deps: 10
+  exports:
+  - name: resolve_doql_context_path
+    type: function
+    cc: 8
+- path: nlp-service/app/governance/config.py
+  lines: 165
+  classes: 1
+  methods: 13
+  cc_max: 8
+  inbound_deps: 4
+  exports:
+  - name: AccessConfig
+    type: class
+    cc_avg: 5.0
+  - name: load_access_config
+    type: function
+    cc: 3
+  - name: get_access_config
+    type: function
+    cc: 1
+  - name: reload_access_config
+    type: function
+    cc: 1
+- path: nlp-service/app/routing/parser/intent_normalize.py
+  lines: 93
+  classes: 0
+  methods: 6
+  cc_max: 8
+  inbound_deps: 1
+  exports:
+  - name: normalize_parsed_intent
+    type: function
+    cc: 8
+- path: nlp2dsl_sdk/autonomous_flow.py
+  lines: 105
+  classes: 1
+  methods: 5
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: AutonomousFlow
+    type: class
+    cc_avg: 3.6
+    methods:
+    - name: _start_with_extra
+      cc: 6
+      fan_out: 19
+- path: nlp2dsl_sdk/mullm/executor.py
+  lines: 137
+  classes: 0
+  methods: 9
+  cc_max: 8
+  inbound_deps: 2
+  exports:
+  - name: workflow_has_mullm_steps
+    type: function
+    cc: 3
+  - name: is_mullm_only_workflow
+    type: function
+    cc: 4
+  - name: execute_mullm_workflow
+    type: function
+    cc: 6
+    fan_out: 10
+- path: nlp2dsl_sdk/mullm/payloads.py
+  lines: 141
+  classes: 0
+  methods: 11
+  cc_max: 8
+  inbound_deps: 1
+  exports:
+  - name: is_mullm_action
+    type: function
+    cc: 3
+  - name: build_task_payload
+    type: function
+    cc: 8
+- path: nlp2dsl_sdk/validation/issue.py
+  lines: 2
+  classes: 2
+  methods: 3
+  cc_max: 8
+  inbound_deps: 5
+  exports:
+  - name: Phase
+    type: class
+    cc_avg: 0.0
+  - name: ValidationIssue
+    type: class
+    cc_avg: 4.5
+  - name: issues_to_messages
+    type: function
+    cc: 2
+- path: nlp2dsl_sdk/workflow/lifecycle.py
+  lines: 284
+  classes: 5
+  methods: 12
+  cc_max: 8
+  inbound_deps: 3
+  exports:
+  - name: ParseResult
+    type: class
+    cc_avg: 0.0
+  - name: ClarificationRequest
+    type: class
+    cc_avg: 0.0
+  - name: ValidationReport
+    type: class
+    cc_avg: 0.0
+  - name: PlanResult
+    type: class
+    cc_avg: 0.0
+  - name: ExecutionRequest
+    type: class
+    cc_avg: 0.0
+  - name: parse_result_from_nlp
+    type: function
+    cc: 4
+  - name: clarification_from_dialog
+    type: function
+    cc: 4
+  - name: plan_result_from_dialog
+    type: function
+    cc: 8
+  - name: validation_report_from_issues
+    type: function
+    cc: 3
+  - name: execution_request_from_workflow
+    type: function
+    cc: 3
+- path: packages/dsl-contracts/src/dsl_contracts/draft.py
+  lines: 164
+  classes: 1
+  methods: 10
+  cc_max: 8
+  inbound_deps: 1
+  exports:
+  - name: ContractDraft
+    type: class
+    cc_avg: 1.0
+  - name: drafts_dir
+    type: function
+    cc: 2
+  - name: draft_path
+    type: function
+    cc: 2
+  - name: load_draft
+    type: function
+    cc: 3
+  - name: save_draft
+    type: function
+    cc: 2
+  - name: list_draft_files
+    type: function
+    cc: 2
+  - name: load_drafts
+    type: function
+    cc: 2
+  - name: validate_draft
+    type: function
+    cc: 8
+  - name: draft_ready_for_activation
+    type: function
+    cc: 2
+  - name: active_draft_contracts
+    type: function
+    cc: 4
+- path: packages/nlp2cmd-propact/src/nlp2cmd_propact/runner.py
+  lines: 194
+  classes: 2
+  methods: 11
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: RunResult
+    type: class
+    cc_avg: 0.0
+  - name: PropactRunner
+    type: class
+    cc_avg: 3.0
+- path: scripts/run-conversation-scenario.py
+  lines: 156
+  classes: 0
+  methods: 6
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: run_scenario
+    type: function
+    cc: 5
+  - name: main
+    type: function
+    cc: 4
+- path: tauri-wrapper/scripts/serve-dist.js
+  lines: 139
+  classes: 0
+  methods: 21
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: http
+    type: function
+    cc: 2
+  - name: fs
+    type: function
+    cc: 2
+  - name: path
+    type: function
+    cc: 2
+  - name: HOST
+    type: function
+    cc: 2
+  - name: PORT
+    type: function
+    cc: 2
+  - name: ROOT_DIR
+    type: function
+    cc: 2
+  - name: MIME_TYPES
+    type: function
+    cc: 2
+  - name: contentType
+    type: function
+    cc: 2
+  - name: isInsideRoot
+    type: function
+    cc: 3
+  - name: relativePath
+    type: function
+    cc: 1
+  - name: resolveRequestPath
+    type: function
+    cc: 8
+  - name: safePath
+    type: function
+    cc: 3
+  - name: candidate
+    type: function
+    cc: 1
+  - name: stat
+    type: function
+    cc: 2
+  - name: sendFile
+    type: function
+    cc: 1
+  - name: fileContents
+    type: function
+    cc: 1
+  - name: handleRequest
+    type: function
+    cc: 6
+  - name: pathname
+    type: function
+    cc: 1
+  - name: targetPath
+    type: function
+    cc: 2
+  - name: startServer
+    type: function
+    cc: 4
+    fan_out: 10
+  - name: server
+    type: function
+    cc: 4
+- path: trigger-service/app/main.py
+  lines: 70
+  classes: 0
+  methods: 4
+  cc_max: 8
+  inbound_deps: 0
+  exports:
+  - name: health
+    type: function
+    cc: 1
+  - name: webhook_trigger
+    type: function
+    cc: 7
+  - name: event_trigger
+    type: function
+    cc: 8
+- path: examples/02-email/scenario.py
+  lines: 57
+  classes: 0
+  methods: 1
+  cc_max: 7
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 7
+    fan_out: 10
+- path: examples/16-golden-eval/scenario.py
+  lines: 67
+  classes: 0
+  methods: 2
+  cc_max: 7
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 7
+    fan_out: 16
+- path: nlp-service/app/dsl/forms.py
+  lines: 89
+  classes: 0
+  methods: 2
+  cc_max: 7
+  inbound_deps: 2
+  exports:
+  - name: get_action_form
+    type: function
+    cc: 7
+- path: nlp-service/app/routing/observability.py
+  lines: 57
+  classes: 0
+  methods: 3
+  cc_max: 7
+  inbound_deps: 2
+  exports:
+  - name: record_intent_decision
+    type: function
+    cc: 7
+  - name: routing_metrics_snapshot
+    type: function
+    cc: 1
+  - name: reset_routing_metrics
+    type: function
+    cc: 1
+- path: nlp-service/app/routing/parser/enrich.py
+  lines: 177
+  classes: 0
+  methods: 6
+  cc_max: 7
+  inbound_deps: 1
+  exports:
+  - name: is_enrich_enabled
+    type: function
+    cc: 3
+  - name: get_enrichable_missing
+    type: function
+    cc: 5
+  - name: can_enrich_missing
+    type: function
+    cc: 4
+  - name: enrich_entities
+    type: function
+    cc: 6
+    fan_out: 11
+- path: nlp-service/app/validation/attachment_validation.py
+  lines: 95
+  classes: 0
+  methods: 4
+  cc_max: 7
+  inbound_deps: 0
+  exports:
+  - name: build_attachment_validation
+    type: function
+    cc: 5
+- path: nlp2dsl_sdk/example_loader.py
+  lines: 39
+  classes: 0
+  methods: 1
+  cc_max: 7
+  inbound_deps: 0
+  exports:
+  - name: load_example_runner
+    type: function
+    cc: 7
+    fan_out: 11
+- path: nlp2dsl_sdk/validation/rules/dsl_contract.py
+  lines: 2
+  classes: 0
+  methods: 6
+  cc_max: 7
+  inbound_deps: 2
+  exports:
+  - name: validate_dsl_contract
+    type: function
+    cc: 6
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/domain_mapping.py
+  lines: 43
+  classes: 0
+  methods: 2
+  cc_max: 7
+  inbound_deps: 1
+  exports:
+  - name: domain_to_target_kind
+    type: function
+    cc: 2
+  - name: intent_to_execution_risk
+    type: function
+    cc: 7
+- path: packages/nlp2cmd-planner/src/nlp2cmd_planner/strategies/rest_workflow.py
+  lines: 82
+  classes: 1
+  methods: 2
+  cc_max: 7
+  inbound_deps: 0
+  exports:
+  - name: RestWorkflowPlanStrategy
+    type: class
+    cc_avg: 5.5
+- path: packages/nlp2dsl-show/src/nlp2dsl_show/cli.py
+  lines: 91
+  classes: 0
+  methods: 3
+  cc_max: 7
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 7
+    fan_out: 14
+- path: scripts/aggregate-example-testql.py
+  lines: 49
+  classes: 0
+  methods: 1
+  cc_max: 7
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 7
+    fan_out: 11
+- path: worker/attachment_validation.py
+  lines: 39
+  classes: 0
+  methods: 2
+  cc_max: 7
+  inbound_deps: 1
+  exports:
+  - name: build_attachment_validation
+    type: function
+    cc: 7
+  - name: validate_invoice_attachment
+    type: function
+    cc: 1
+- path: backend/app/action_catalog.py
+  lines: 108
+  classes: 0
+  methods: 7
+  cc_max: 6
+  inbound_deps: 8
+  exports:
+  - name: nlp_actions_to_action_info
+    type: function
+    cc: 3
+  - name: fetch_action_catalog
+    type: function
+    cc: 3
+  - name: load_action_field_catalog
+    type: function
+    cc: 6
+  - name: required_fields_for_action
+    type: function
+    cc: 2
+  - name: quality_fields_for_action
+    type: function
+    cc: 2
+  - name: known_action_names_from_catalog
+    type: function
+    cc: 2
+- path: backend/app/workflow_lifecycle.py
+  lines: 62
+  classes: 0
+  methods: 5
+  cc_max: 6
+  inbound_deps: 2
+  exports:
+  - name: validation_report_for_workflow
+    type: function
+    cc: 1
+  - name: workflow_validation_payload
+    type: function
+    cc: 1
+  - name: workflow_from_lifecycle_body
+    type: function
+    cc: 4
+  - name: run_request_from_workflow
+    type: function
+    cc: 6
+  - name: attach_validation_to_plan
+    type: function
+    cc: 4
+- path: examples/15-idempotency-replay/scenario.py
+  lines: 82
+  classes: 0
+  methods: 3
+  cc_max: 6
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 6
+    fan_out: 13
+- path: nlp-service/app/conversation/system_map.py
+  lines: 147
+  classes: 0
+  methods: 15
+  cc_max: 6
+  inbound_deps: 16
+  exports:
+  - name: set_doql_context
+    type: function
+    cc: 1
+  - name: get_doql_context
+    type: function
+    cc: 1
+  - name: load_system_map_for_state
+    type: function
+    cc: 1
+  - name: known_action_names
+    type: function
+    cc: 5
+  - name: command_meta
+    type: function
+    cc: 5
+  - name: optional_defaults_for_action
+    type: function
+    cc: 6
+  - name: scoped_action_registry
+    type: function
+    cc: 3
+  - name: action_is_known
+    type: function
+    cc: 1
+  - name: required_fields_for_action
+    type: function
+    cc: 2
+  - name: runtime_id_for_action
+    type: function
+    cc: 2
+  - name: effective_nlp_parser_mode
+    type: function
+    cc: 6
+  - name: effective_nlp_confidence_min
+    type: function
+    cc: 2
+  - name: autonomous_max_rounds
+    type: function
+    cc: 2
+  - name: autonomous_enabled
+    type: function
+    cc: 3
+  - name: load_doql_from_path
+    type: function
+    cc: 1
+- path: nlp-service/app/dsl/pipeline.py
+  lines: 58
+  classes: 0
+  methods: 2
+  cc_max: 6
+  inbound_deps: 4
+  exports:
+  - name: map_to_dsl_with_enrichment
+    type: function
+    cc: 6
+  - name: plan_lifecycle_from_nlp
+    type: function
+    cc: 2
+- path: nlp-service/app/registry.py
+  lines: 480
+  classes: 0
+  methods: 7
+  cc_max: 6
+  inbound_deps: 6
+  exports:
+  - name: get_action_by_alias
+    type: function
+    cc: 6
+  - name: get_trigger
+    type: function
+    cc: 3
+  - name: get_required_fields
+    type: function
+    cc: 5
+  - name: get_defaults
+    type: function
+    cc: 5
+  - name: get_quality_required_fields
+    type: function
+    cc: 2
+  - name: get_action_contract
+    type: function
+    cc: 3
+  - name: get_action_contracts
+    type: function
+    cc: 3
+- path: nlp-service/app/routing/native.py
+  lines: 143
+  classes: 0
+  methods: 13
+  cc_max: 6
+  inbound_deps: 1
+  exports:
+  - name: resolve_native_intent
+    type: function
+    cc: 4
+- path: nlp-service/app/routing/resolve.py
+  lines: 241
+  classes: 0
+  methods: 12
+  cc_max: 6
+  inbound_deps: 1
+  exports:
+  - name: resolve_intent
+    type: function
+    cc: 5
+- path: nlp-service/app/settings.py
+  lines: 251
+  classes: 6
+  methods: 11
+  cc_max: 6
+  inbound_deps: 21
+  exports:
+  - name: LLMSettings
+    type: class
+    cc_avg: 0.0
+  - name: NLPSettings
+    type: class
+    cc_avg: 0.0
+  - name: WorkerSettings
+    type: class
+    cc_avg: 0.0
+  - name: FileAccessSettings
+    type: class
+    cc_avg: 0.0
+  - name: SystemSettings
+    type: class
+    cc_avg: 0.0
+  - name: SettingsManager
+    type: class
+    cc_avg: 3.0
+    methods:
+    - name: set
+      cc: 4
+      fan_out: 10
+- path: nlp-service/app/validation/path_policy.py
+  lines: 83
+  classes: 0
+  methods: 5
+  cc_max: 6
+  inbound_deps: 2
+  exports:
+  - name: path_matches_glob
+    type: function
+    cc: 2
+  - name: example_relative_path
+    type: function
+    cc: 6
+  - name: path_allowed_by_patterns
+    type: function
+    cc: 3
+  - name: validate_process_path
+    type: function
+    cc: 6
+- path: nlp2dsl_sdk/demos.py
+  lines: 355
+  classes: 1
+  methods: 11
+  cc_max: 6
+  inbound_deps: 3
+  exports:
+  - name: DemoSpec
+    type: class
+    cc_avg: 0.0
+  - name: run_crm_update_demo
+    type: function
+    cc: 3
+  - name: run_action_catalog_demo
+    type: function
+    cc: 6
+    fan_out: 11
+  - name: run_automation_gallery_demo
+    type: function
+    cc: 4
+  - name: run_code_generation_demo
+    type: function
+    cc: 6
+  - name: list_available_demos
+    type: function
+    cc: 1
+- path: nlp2dsl_sdk/validation/messages.py
+  lines: 2
+  classes: 0
+  methods: 14
+  cc_max: 6
+  inbound_deps: 1
+  exports:
+  - name: legacy_message_to_issue
+    type: function
+    cc: 3
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/data_files.py
+  lines: 73
+  classes: 0
+  methods: 5
+  cc_max: 6
+  inbound_deps: 1
+  exports:
+  - name: get_user_config_dir
+    type: function
+    cc: 3
+  - name: bundled_data_file
+    type: function
+    cc: 2
+  - name: find_data_files
+    type: function
+    cc: 6
+    fan_out: 11
+- path: packages/nlp2dsl-plugin/src/nlp2dsl_plugin/schema.py
+  lines: 46
+  classes: 1
+  methods: 2
+  cc_max: 6
+  inbound_deps: 0
+  exports:
+  - name: PluginManifest
+    type: class
+    cc_avg: 0.0
+  - name: load_plugin_manifest
+    type: function
+    cc: 2
+  - name: plugin_layout_valid
+    type: function
+    cc: 6
+- path: scripts/validate-contract-drift.py
+  lines: 102
+  classes: 0
+  methods: 4
+  cc_max: 6
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 6
+    fan_out: 11
+- path: worker/action_catalog.py
+  lines: 73
+  classes: 0
+  methods: 5
+  cc_max: 6
+  inbound_deps: 0
+  exports:
+  - name: load_action_field_catalog
+    type: function
+    cc: 6
+  - name: required_fields_for_action
+    type: function
+    cc: 2
+  - name: quality_fields_for_action
+    type: function
+    cc: 2
+  - name: known_action_names_from_catalog
+    type: function
+    cc: 2
+- path: backend/app/dsl_validation.py
+  lines: 47
+  classes: 0
+  methods: 5
+  cc_max: 5
+  inbound_deps: 4
+  exports:
+  - name: validate_dsl_for_execution
+    type: function
+    cc: 1
+  - name: validation_issue_payloads
+    type: function
+    cc: 2
+  - name: missing_fields_from_issues
+    type: function
+    cc: 5
+  - name: format_dsl_validation_message
+    type: function
+    cc: 2
+  - name: dsl_validation_response
+    type: function
+    cc: 1
+- path: nlp-service/app/executors/router.py
+  lines: 102
+  classes: 1
+  methods: 9
+  cc_max: 5
+  inbound_deps: 1
+  exports:
+  - name: ExecutionRoute
+    type: class
+    cc_avg: 1.0
+  - name: is_delegated_to_mullm
+    type: function
+    cc: 2
+  - name: execution_backend_for_runtime
+    type: function
+    cc: 4
+  - name: execution_backend_for_intent
+    type: function
+    cc: 5
+  - name: route_action
+    type: function
+    cc: 2
+  - name: route_workflow_steps
+    type: function
+    cc: 5
+  - name: mullm_action_names
+    type: function
+    cc: 1
+  - name: delegate_payload
+    type: function
+    cc: 1
+- path: nlp-service/app/governance/policy.py
+  lines: 302
+  classes: 2
+  methods: 14
+  cc_max: 5
+  inbound_deps: 2
+  exports:
+  - name: AccessDecision
+    type: class
+    cc_avg: 1.0
+  - name: _ActionContext
+    type: class
+    cc_avg: 0.0
+  - name: get_agent_id
+    type: function
+    cc: 4
+  - name: authorize_action
+    type: function
+    cc: 5
+- path: nlp-service/integrations/loader.py
+  lines: 62
+  classes: 0
+  methods: 3
+  cc_max: 5
+  inbound_deps: 1
+  exports:
+  - name: load_integration_registries
+    type: function
+    cc: 5
+  - name: apply_integrations
+    type: function
+    cc: 5
+- path: nlp2dsl_sdk/__main__.py
+  lines: 45
+  classes: 0
+  methods: 1
+  cc_max: 5
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 5
+- path: nlp2dsl_sdk/mullm/client.py
+  lines: 81
+  classes: 2
+  methods: 5
+  cc_max: 5
+  inbound_deps: 0
+  exports:
+  - name: MullmClientError
+    type: class
+    cc_avg: 1.0
+  - name: MullmClient
+    type: class
+    cc_avg: 3.0
+- path: packages/dsl-validate/src/dsl_validate/contract_drift.py
+  lines: 160
+  classes: 2
+  methods: 7
+  cc_max: 5
+  inbound_deps: 2
+  exports:
+  - name: CatalogDriftIssue
+    type: class
+    cc_avg: 1.0
+  - name: CatalogDriftReport
+    type: class
+    cc_avg: 2.0
+  - name: worker_eligible_actions
+    type: function
+    cc: 5
+  - name: validate_handler_drift
+    type: function
+    cc: 3
+  - name: validate_catalog_field_drift
+    type: function
+    cc: 5
+  - name: build_catalog_drift_report
+    type: function
+    cc: 2
+- path: worker/registry.py
+  lines: 53
+  classes: 0
+  methods: 3
+  cc_max: 5
+  inbound_deps: 1
+  exports:
+  - name: worker_eligible_catalog_actions
+    type: function
+    cc: 5
+  - name: validate_handlers_against_catalog
+    type: function
+    cc: 3
+  - name: fetch_nlp_action_names
+    type: function
+    cc: 1
+- path: backend/app/db/postgres.py
+  lines: 230
+  classes: 4
+  methods: 13
+  cc_max: 4
+  inbound_deps: 0
+  exports:
+  - name: Base
+    type: class
+    cc_avg: 0.0
+  - name: WorkflowRunModel
+    type: class
+    cc_avg: 4.0
+  - name: WorkflowEventModel
+    type: class
+    cc_avg: 0.0
+  - name: PostgresWorkflowRepo
+    type: class
+    cc_avg: 2.1
+    methods:
+    - name: save_run
+      cc: 1
+      fan_out: 11
+    - name: append_event
+      cc: 4
+      fan_out: 12
+- path: examples/06-interactive-chat/scenario.py
+  lines: 55
+  classes: 0
+  methods: 3
+  cc_max: 4
+  inbound_deps: 0
+  exports:
+  - name: run_demo
+    type: function
+    cc: 4
+    fan_out: 12
+  - name: run_interactive
+    type: function
+    cc: 1
+  - name: run
+    type: function
+    cc: 2
+- path: examples/07-email-conversation/scenario.py
+  lines: 45
+  classes: 0
+  methods: 1
+  cc_max: 4
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 4
+    fan_out: 13
+- path: examples/14-markpact-export/scenario.py
+  lines: 103
+  classes: 0
+  methods: 2
+  cc_max: 4
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 4
+    fan_out: 16
+- path: nlp-service/app/store/factory.py
+  lines: 46
+  classes: 0
+  methods: 1
+  cc_max: 4
+  inbound_deps: 2
+  exports:
+  - name: get_conversation_store
+    type: function
+    cc: 4
+- path: nlp2dsl_sdk/encoding.py
+  lines: 93
+  classes: 0
+  methods: 8
+  cc_max: 4
+  inbound_deps: 5
+  exports:
+  - name: utf8_auto_enabled
+    type: function
+    cc: 1
+  - name: configure_utf8
+    type: function
+    cc: 3
+  - name: utf8_open
+    type: function
+    cc: 3
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/clarification.py
+  lines: 37
+  classes: 1
+  methods: 3
+  cc_max: 4
+  inbound_deps: 1
+  exports:
+  - name: IntentClarificationRequired
+    type: class
+    cc_avg: 4.0
+  - name: clarification_enforced
+    type: function
+    cc: 1
+  - name: ensure_intent_clear
+    type: function
+    cc: 4
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/facade.py
+  lines: 54
+  classes: 3
+  methods: 6
+  cc_max: 4
+  inbound_deps: 1
+  exports:
+  - name: PassthroughEntityExtractor
+    type: class
+    cc_avg: 1.0
+  - name: KeywordIntentAdapter
+    type: class
+    cc_avg: 2.0
+  - name: IntentPipeline
+    type: class
+    cc_avg: 3.0
+  - name: default_intent_detector
+    type: function
+    cc: 1
+- path: packages/nlp2cmd-planner/src/nlp2cmd_planner/workflow_backend.py
+  lines: 50
+  classes: 0
+  methods: 4
+  cc_max: 4
+  inbound_deps: 1
+  exports:
+  - name: workflow_backend_enabled
+    type: function
+    cc: 1
+  - name: workflow_backend_url
+    type: function
+    cc: 1
+  - name: workflow_run_path
+    type: function
+    cc: 2
+  - name: fetch_workflow_from_text
+    type: function
+    cc: 4
+    fan_out: 12
+- path: backend/app/logging_setup.py
+  lines: 100
+  classes: 2
+  methods: 6
+  cc_max: 3
+  inbound_deps: 6
+  exports:
+  - name: JSONFormatter
+    type: class
+    cc_avg: 1.5
+  - name: RequestIDMiddleware
+    type: class
+    cc_avg: 1.5
+  - name: get_request_id
+    type: function
+    cc: 1
+  - name: setup_logging
+    type: function
+    cc: 3
+- path: backend/app/workflow_events.py
+  lines: 91
+  classes: 2
+  methods: 6
+  cc_max: 3
+  inbound_deps: 1
+  exports:
+  - name: WorkflowEvent
+    type: class
+    cc_avg: 1.0
+  - name: WorkflowEventHub
+    type: class
+    cc_avg: 1.6
+- path: examples/10-llm-benchmark/scenario.py
+  lines: 37
+  classes: 0
+  methods: 1
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: run
+    type: function
+    cc: 3
+- path: nlp-service/app/logging_setup.py
+  lines: 100
+  classes: 2
+  methods: 6
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: JSONFormatter
+    type: class
+    cc_avg: 1.5
+  - name: RequestIDMiddleware
+    type: class
+    cc_avg: 1.5
+  - name: get_request_id
+    type: function
+    cc: 1
+  - name: setup_logging
+    type: function
+    cc: 3
+- path: nlp-service/app/request_context.py
+  lines: 23
+  classes: 0
+  methods: 2
+  cc_max: 3
+  inbound_deps: 5
+  exports:
+  - name: set_example_dir
+    type: function
+    cc: 3
+  - name: get_example_dir
+    type: function
+    cc: 2
+- path: nlp-service/app/routers/nlp.py
+  lines: 170
+  classes: 0
+  methods: 10
+  cc_max: 3
+  inbound_deps: 1
+  exports:
+  - name: orient_text
+    type: function
+    cc: 1
+  - name: parse_text
+    type: function
+    cc: 1
+  - name: text_to_dsl
+    type: function
+    cc: 2
+  - name: plan_text
+    type: function
+    cc: 2
+  - name: access_config
+    type: function
+    cc: 3
+  - name: access_check
+    type: function
+    cc: 3
+  - name: access_reload
+    type: function
+    cc: 2
+  - name: list_actions
+    type: function
+    cc: 1
+  - name: health
+    type: function
+    cc: 3
+- path: nlp-service/app/routers/schema.py
+  lines: 33
+  classes: 0
+  methods: 2
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: actions_schema
+    type: function
+    cc: 3
+  - name: action_schema
+    type: function
+    cc: 2
+- path: nlp-service/app/routers/settings.py
+  lines: 59
+  classes: 0
+  methods: 5
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: get_settings
+    type: function
+    cc: 1
+  - name: get_settings_section
+    type: function
+    cc: 2
+  - name: update_settings_section
+    type: function
+    cc: 2
+  - name: set_setting
+    type: function
+    cc: 3
+  - name: reset_settings
+    type: function
+    cc: 2
+- path: nlp-service/app/routing/intent.py
+  lines: 55
+  classes: 1
+  methods: 2
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: IntentDecision
+    type: class
+    cc_avg: 2.0
+- path: nlp-service/app/routing/parser/facade.py
+  lines: 20
+  classes: 0
+  methods: 1
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: parse_text
+    type: function
+    cc: 3
+- path: nlp-service/app/store/redis_store.py
+  lines: 58
+  classes: 1
+  methods: 7
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: RedisConversationStore
+    type: class
+    cc_avg: 1.3
+- path: nlp-service/app/validation/invoice_pdf.py
+  lines: 73
+  classes: 0
+  methods: 3
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: build_invoice_pdf_bytes
+    type: function
+    cc: 3
+    fan_out: 11
+  - name: write_invoice_pdf
+    type: function
+    cc: 1
+- path: nlp2dsl_sdk/__init__.py
+  lines: 54
+  classes: 0
+  methods: 1
+  cc_max: 3
+  inbound_deps: 0
+- path: nlp2dsl_sdk/invoice_pdf.py
+  lines: 75
+  classes: 0
+  methods: 3
+  cc_max: 3
+  inbound_deps: 2
+  exports:
+  - name: build_invoice_pdf_bytes
+    type: function
+    cc: 3
+    fan_out: 11
+  - name: write_invoice_pdf
+    type: function
+    cc: 1
+- path: nlp2dsl_sdk/validation/context.py
+  lines: 2
+  classes: 1
+  methods: 1
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: ValidationContext
+    type: class
+    cc_avg: 3.0
+- path: nlp2dsl_sdk/validation/helpers.py
+  lines: 2
+  classes: 0
+  methods: 4
+  cc_max: 3
+  inbound_deps: 3
+  exports:
+  - name: is_empty
+    type: function
+    cc: 3
+  - name: parse_amount
+    type: function
+    cc: 3
+  - name: pdf_structure_issues
+    type: function
+    cc: 3
+  - name: pdf_amount_mismatch
+    type: function
+    cc: 3
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/input.py
+  lines: 35
+  classes: 0
+  methods: 1
+  cc_max: 3
+  inbound_deps: 2
+  exports:
+  - name: analyze_query
+    type: function
+    cc: 3
+- path: packages/nlp2cmd-planner/src/nlp2cmd_planner/pipeline.py
+  lines: 24
+  classes: 1
+  methods: 2
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: PlanningPipeline
+    type: class
+    cc_avg: 2.0
+- path: packages/nlp2cmd-planner/src/nlp2cmd_planner/router.py
+  lines: 36
+  classes: 2
+  methods: 3
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: UnsupportedIntentError
+    type: class
+    cc_avg: 1.0
+  - name: PlanRouter
+    type: class
+    cc_avg: 2.5
+- path: packages/workflow-export/src/workflow_export/pactown.py
+  lines: 213
+  classes: 1
+  methods: 4
+  cc_max: 3
+  inbound_deps: 1
+  exports:
+  - name: PactownExportBundle
+    type: class
+    cc_avg: 0.0
+  - name: platform_service_readme
+    type: function
+    cc: 2
+  - name: nlp2dsl_platform_ecosystem
+    type: function
+    cc: 1
+  - name: ecosystem_to_yaml
+    type: function
+    cc: 1
+  - name: export_pactown_bundle
+    type: function
+    cc: 3
+    fan_out: 15
+- path: worker/logging_setup.py
+  lines: 100
+  classes: 2
+  methods: 6
+  cc_max: 3
+  inbound_deps: 0
+  exports:
+  - name: JSONFormatter
+    type: class
+    cc_avg: 1.5
+  - name: RequestIDMiddleware
+    type: class
+    cc_avg: 1.5
+  - name: get_request_id
+    type: function
+    cc: 1
+  - name: setup_logging
+    type: function
+    cc: 3
+- path: backend/app/db/__init__.py
+  lines: 63
+  classes: 1
+  methods: 8
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: WorkflowRepo
+    type: class
+    cc_avg: 1.0
+  - name: create_workflow_repo
+    type: function
+    cc: 2
+- path: backend/app/db/memory.py
+  lines: 51
+  classes: 1
+  methods: 8
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: MemoryWorkflowRepo
+    type: class
+    cc_avg: 1.2
+- path: backend/app/routers/settings.py
+  lines: 81
+  classes: 0
+  methods: 7
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: actions_schema
+    type: function
+    cc: 1
+  - name: action_schema
+    type: function
+    cc: 2
+  - name: get_settings
+    type: function
+    cc: 1
+  - name: get_settings_section
+    type: function
+    cc: 2
+  - name: update_settings_section
+    type: function
+    cc: 2
+  - name: set_setting
+    type: function
+    cc: 2
+  - name: reset_settings
+    type: function
+    cc: 1
+- path: backend/app/routers/system.py
+  lines: 29
+  classes: 0
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: system_execute
+    type: function
+    cc: 2
+- path: backend/app/step_validator.py
+  lines: 51
+  classes: 0
+  methods: 3
+  cc_max: 2
+  inbound_deps: 5
+  exports:
+  - name: validate_step_config_issues
+    type: function
+    cc: 2
+  - name: validate_step_config
+    type: function
+    cc: 1
+- path: examples/05-conversation-flow/scenario.py
+  lines: 51
+  classes: 0
+  methods: 4
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: run_demo
+    type: function
+    cc: 2
+    fan_out: 10
+  - name: run_interactive
+    type: function
+    cc: 1
+  - name: run
+    type: function
+    cc: 2
+- path: nlp-service/app/execution/__init__.py
+  lines: 21
+  classes: 0
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+- path: nlp-service/app/parser_llm.py
+  lines: 32
+  classes: 0
+  methods: 2
+  cc_max: 2
+  inbound_deps: 0
+- path: nlp-service/app/routers/code.py
+  lines: 43
+  classes: 0
+  methods: 2
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: generate_code
+    type: function
+    cc: 2
+  - name: get_supported_languages
+    type: function
+    cc: 2
+- path: nlp-service/app/routers/system.py
+  lines: 26
+  classes: 0
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: system_execute
+    type: function
+    cc: 2
+- path: nlp2dsl_sdk/contracts/action.py
+  lines: 2
+  classes: 4
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: FieldContract
+    type: class
+    cc_avg: 0.0
+  - name: ExecutionContract
+    type: class
+    cc_avg: 0.0
+  - name: CompatibilityContract
+    type: class
+    cc_avg: 0.0
+  - name: ActionContract
+    type: class
+    cc_avg: 2.0
+- path: nlp2dsl_sdk/validation/__init__.py
+  lines: 2
+  classes: 0
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+- path: packages/dsl-contracts/src/dsl_contracts/__init__.py
+  lines: 69
+  classes: 0
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/normalize.py
+  lines: 16
+  classes: 1
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: QueryNormalizer
+    type: class
+    cc_avg: 2.0
+- path: packages/nlp2dsl-mcp/src/nlp2dsl_mcp/server.py
+  lines: 98
+  classes: 0
+  methods: 6
+  cc_max: 2
+  inbound_deps: 1
+  exports:
+  - name: build_mcp
+    type: function
+    cc: 2
+    fan_out: 10
+  - name: main
+    type: function
+    cc: 1
+- path: packages/pact-ir/src/pact_ir/intent.py
+  lines: 44
+  classes: 3
+  methods: 2
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: Ambiguity
+    type: class
+    cc_avg: 0.0
+  - name: EntityBag
+    type: class
+    cc_avg: 1.0
+  - name: IntentIR
+    type: class
+    cc_avg: 2.0
+- path: scripts/generate-compat-shims.py
+  lines: 83
+  classes: 0
+  methods: 2
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: shim_body
+    type: function
+    cc: 2
+  - name: main
+    type: function
+    cc: 2
+- path: tauri-wrapper/src-tauri/src/main.rs
+  lines: 7
+  classes: 0
+  methods: 1
+  cc_max: 2
+  inbound_deps: 0
+- path: worker/step_validator.py
+  lines: 51
+  classes: 0
+  methods: 3
+  cc_max: 2
+  inbound_deps: 0
+  exports:
+  - name: validate_step_config_issues
+    type: function
+    cc: 2
+  - name: validate_step_config
+    type: function
+    cc: 1
+- path: backend/app/main.py
+  lines: 50
+  classes: 0
+  methods: 1
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: health
+    type: function
+    cc: 1
+- path: backend/app/mullm_execute.py
+  lines: 21
+  classes: 0
+  methods: 1
+  cc_max: 1
+  inbound_deps: 2
+  exports:
+  - name: execute_mullm_dsl
+    type: function
+    cc: 1
+- path: examples/code_generation_examples.py
+  lines: 25
+  classes: 0
+  methods: 1
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 1
+- path: nlp-service/app/store/__init__.py
+  lines: 30
+  classes: 1
+  methods: 4
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: ConversationStore
+    type: class
+    cc_avg: 1.0
+- path: nlp-service/app/store/memory.py
+  lines: 23
+  classes: 1
+  methods: 5
+  cc_max: 1
+  inbound_deps: 1
+  exports:
+  - name: MemoryConversationStore
+    type: class
+    cc_avg: 1.0
+- path: nlp2dsl_sdk/step_validation.py
+  lines: 43
+  classes: 0
+  methods: 2
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: validate_step_config_from_map
+    type: function
+    cc: 1
+  - name: validate_workflow_from_map
+    type: function
+    cc: 1
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/protocols.py
+  lines: 15
+  classes: 2
+  methods: 2
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: IntentDetector
+    type: class
+    cc_avg: 1.0
+  - name: EntityExtractor
+    type: class
+    cc_avg: 1.0
+- path: packages/nlp2cmd-planner/src/nlp2cmd_planner/strategy.py
+  lines: 15
+  classes: 1
+  methods: 2
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: PlanStrategy
+    type: class
+    cc_avg: 1.0
+- path: packages/nlp2cmd-propact/src/nlp2cmd_propact/cli.py
+  lines: 22
+  classes: 0
+  methods: 1
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: main
+    type: function
+    cc: 1
+- path: packages/pact-ir/src/pact_ir/execution_plan.py
+  lines: 59
+  classes: 2
+  methods: 1
+  cc_max: 1
+  inbound_deps: 0
+  exports:
+  - name: PlanStep
+    type: class
+    cc_avg: 0.0
+  - name: ExecutionPlanIR
+    type: class
+    cc_avg: 1.0
+- path: tauri-wrapper/src-tauri/build.rs
+  lines: 3
+  classes: 0
+  methods: 1
+  cc_max: 1
+  inbound_deps: 0
+- path: .pfix-test-wrapper.sh
+  lines: 16
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: Makefile
+  lines: 104
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: backend/Dockerfile
+  lines: 14
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: backend/app/__init__.py
+  lines: 0
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: backend/app/config.py
+  lines: 42
+  classes: 1
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: BackendSettings
+    type: class
+    cc_avg: 0.0
+- path: backend/app/schemas.py
+  lines: 64
+  classes: 6
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: StepStatus
+    type: class
+    cc_avg: 0.0
+  - name: Step
+    type: class
+    cc_avg: 0.0
+  - name: RunWorkflowRequest
+    type: class
+    cc_avg: 0.0
+  - name: StepResult
+    type: class
+    cc_avg: 0.0
+  - name: WorkflowResult
+    type: class
+    cc_avg: 0.0
+  - name: ActionInfo
+    type: class
+    cc_avg: 0.0
+- path: backend/app/workflow.py
+  lines: 22
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: backend/pyproject.toml
+  lines: 52
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: backend/pytest.ini
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: backend/requirements.txt
+  lines: 11
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: docker-compose.e2e.yml
+  lines: 41
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: docker-compose.yml
+  lines: 161
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/01-invoice/Dockerfile
+  lines: 23
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/01-invoice/fixtures/invoice-request.txt
+  lines: 4
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/01-invoice/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/02-email/Dockerfile
+  lines: 23
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/02-email/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/03-report-and-notify/Dockerfile
+  lines: 23
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/03-report-and-notify/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/04-scheduled-report/Dockerfile
+  lines: 23
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/04-scheduled-report/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/05-conversation-flow/Dockerfile
+  lines: 23
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/05-conversation-flow/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/05-conversation-flow/requirements.txt
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/05-conversation-flow/run.sh
+  lines: 6
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/06-interactive-chat/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/07-email-conversation/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/benchmark_queries.py
+  lines: 158
+  classes: 1
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: BenchmarkQuery
+    type: class
+    cc_avg: 0.0
+- path: examples/08-multi-object-benchmark/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780668482.json
+  lines: 321
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780668530.json
+  lines: 642
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780668555.json
+  lines: 320
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780668647.json
+  lines: 319
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780669461.json
+  lines: 322
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780669469.json
+  lines: 322
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780669486.json
+  lines: 319
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780672619.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780673613.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780694039.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780734808.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780737026.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780738187.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780739013.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780741913.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780751306.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/08-multi-object-benchmark/results/benchmark_1780763810.json
+  lines: 636
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/09-execution-smoke/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/10-llm-benchmark/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/11-notify-quality/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/12-ir-show/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/13-autonomous-invoice-stack/fixtures/stack-request.txt
+  lines: 8
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/13-autonomous-invoice-stack/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/14-markpact-export/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/15-idempotency-replay/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/16-golden-eval/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/16-golden-eval/results/golden_1780744032.json
+  lines: 288
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/17-execution-policy/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/18-trigger-webhook/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/19-real-smtp/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/20-pactown-deploy/main.py
+  lines: 33
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/docker-compose.yml
+  lines: 58
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/docker-e2e-results.json
+  lines: 86
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/example-profiles.yaml
+  lines: 178
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/run-all.sh
+  lines: 76
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/testql-results.json
+  lines: 1855
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: examples/validate-contract-draft.sh
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: goal.yaml
+  lines: 512
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: intract.yaml
+  lines: 51
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: metrun-profile.sh
+  lines: 48
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/Dockerfile
+  lines: 15
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/access/__init__.py
+  lines: 15
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/access/bootstrap.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/access/config.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/access/native.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/access/policy.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/config.py
+  lines: 60
+  classes: 1
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: NLPServiceSettings
+    type: class
+    cc_avg: 0.0
+- path: nlp-service/app/conversation/__init__.py
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/dsl/__init__.py
+  lines: 4
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/execution/delegate.py
+  lines: 21
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/executors/__init__.py
+  lines: 19
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/governance/__init__.py
+  lines: 14
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/main.py
+  lines: 50
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/mapper.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/orchestrator.py
+  lines: 21
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/parser_enrich.py
+  lines: 15
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/parser_rules.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/parsing/__init__.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/parsing/facade.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/routers/__init__.py
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/routing/__init__.py
+  lines: 17
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/routing/parser/__init__.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/schemas.py
+  lines: 150
+  classes: 12
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: NLPIntent
+    type: class
+    cc_avg: 0.0
+  - name: NLPEntities
+    type: class
+    cc_avg: 0.0
+  - name: NLPResult
+    type: class
+    cc_avg: 0.0
+  - name: DSLStep
+    type: class
+    cc_avg: 0.0
+  - name: WorkflowDSL
+    type: class
+    cc_avg: 0.0
+  - name: DialogResponse
+    type: class
+    cc_avg: 0.0
+  - name: NLPRequest
+    type: class
+    cc_avg: 0.0
+  - name: OrientRequest
+    type: class
+    cc_avg: 0.0
+  - name: ConversationState
+    type: class
+    cc_avg: 0.0
+  - name: FieldSchema
+    type: class
+    cc_avg: 0.0
+  - name: ActionFormSchema
+    type: class
+    cc_avg: 0.0
+  - name: ConversationResponse
+    type: class
+    cc_avg: 0.0
+- path: nlp-service/app/system_executor.py
+  lines: 35
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/app/validation/__init__.py
+  lines: 15
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/integrations/__init__.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/integrations/mullm/__init__.py
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/integrations/mullm/client.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/integrations/mullm/registry.py
+  lines: 66
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/pyproject.toml
+  lines: 53
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/requirements.txt
+  lines: 10
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp-service/static/manifest.json
+  lines: 30
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl.yaml
+  lines: 204
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/artifact_layout.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/artifacts.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/compose_generator.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/contracts/__init__.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/contracts/draft.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/deploy/__init__.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql/__init__.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql/context_blocks.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql/models.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql/parse.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql/render.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql/runtime.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql_context.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/doql_registry.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/evaluation/__init__.py
+  lines: 13
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/evaluation/data/golden_cases.yaml
+  lines: 107
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/example_bootstrap.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/export/__init__.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/export/markpact.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/export/pactown.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/export/publish.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/invoice_policy.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/mullm/__init__.py
+  lines: 16
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/path_resolve.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/process_policy.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_bridge.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_generator.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_ir.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_models.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_render/__init__.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_render/blocks.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_render/helpers.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_render/render.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/system_map_runtimes.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/validation/capability_policy.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/validation/contract_drift.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/validation/pipeline.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/validation/profile_checks.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/validation/rules/__init__.py
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/validation/rules/attachment.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/validation/rules/post_execute.py
+  lines: 2
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: nlp2dsl_sdk/workflow/__init__.py
+  lines: 45
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/dsl-contracts/pyproject.toml
+  lines: 24
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/dsl-validate/pyproject.toml
+  lines: 25
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/dsl-validate/src/dsl_validate/issue.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/install-dev.sh
+  lines: 42
+  classes: 0
+  methods: 1
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: install_one
+    type: function
+    cc: 0
+- path: packages/nlp2cmd-intent/pyproject.toml
+  lines: 24
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/__init__.py
+  lines: 31
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/data/fast_path_overrides.json
+  lines: 1043
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/data/keyword_intent_detector_config.json
+  lines: 215
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/data/patterns.json
+  lines: 2016
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/__init__.py
+  lines: 12
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/fast_path_terms.py
+  lines: 340
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-planner/pyproject.toml
+  lines: 28
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-planner/src/nlp2cmd_planner/__init__.py
+  lines: 15
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-propact/pyproject.toml
+  lines: 34
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2cmd-propact/src/nlp2cmd_propact/__init__.py
+  lines: 16
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-artifacts/pyproject.toml
+  lines: 24
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-artifacts/src/nlp2dsl_artifacts/__init__.py
+  lines: 28
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-mcp/pyproject.toml
+  lines: 19
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-mcp/src/nlp2dsl_mcp/__init__.py
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-plugin/examples/smtp-plugin/plugin.yaml
+  lines: 10
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-plugin/pyproject.toml
+  lines: 16
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-plugin/src/nlp2dsl_plugin/__init__.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-show/pyproject.toml
+  lines: 29
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-show/src/nlp2dsl_show/__init__.py
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-show/src/nlp2dsl_show/encoding.py
+  lines: 44
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-stack/pyproject.toml
+  lines: 24
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/nlp2dsl-stack/src/nlp2dsl_stack/__init__.py
+  lines: 13
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/pact-ir/pyproject.toml
+  lines: 29
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/pact-ir/src/pact_ir/__init__.py
+  lines: 17
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/pact-ir/src/pact_ir/target_kind.py
+  lines: 34
+  classes: 2
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: TargetKind
+    type: class
+    cc_avg: 0.0
+  - name: ExecutionRisk
+    type: class
+    cc_avg: 0.0
+- path: packages/testql-conversations/pyproject.toml
+  lines: 24
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/testql-conversations/src/testql_conversations/__init__.py
+  lines: 18
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: packages/workflow-export/pyproject.toml
+  lines: 24
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: planfile.yaml
+  lines: 1319
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: prefact.yaml
+  lines: 82
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: project.sh
+  lines: 61
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: pyproject.toml
+  lines: 115
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: pyqual.yaml
+  lines: 41
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: run-all-tests.sh
+  lines: 90
+  classes: 0
+  methods: 3
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: run_tests
+    type: function
+    cc: 0
+- path: scripts/_ensure_nlp2dsl_sdk.sh
+  lines: 22
+  classes: 0
+  methods: 1
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: ensure_nlp2dsl_sdk
+    type: function
+    cc: 0
+- path: scripts/bootstrap-venv.sh
+  lines: 32
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: scripts/install-local-deps.sh
+  lines: 32
+  classes: 0
+  methods: 1
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: install_one
+    type: function
+    cc: 0
+- path: scripts/publish-all.sh
+  lines: 44
+  classes: 0
+  methods: 1
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: require_tool
+    type: function
+    cc: 0
+- path: scripts/setup-dev.sh
+  lines: 43
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: scripts/validate-contract-draft.sh
+  lines: 8
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: tauri-wrapper/desktop.sh
+  lines: 79
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: tauri-wrapper/package.json
+  lines: 18
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: tauri-wrapper/src-tauri/Cargo.toml
+  lines: 17
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: tauri-wrapper/src-tauri/tauri.conf.json
+  lines: 43
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: testql-scenarios/generated-api-smoke.testql.toon.yaml
+  lines: 39
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: testql-scenarios/generated-cli-tests.testql.toon.yaml
+  lines: 20
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: testql-scenarios/generated-examples.testql.toon.yaml
+  lines: 40
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: testql-scenarios/generated-from-pytests.testql.toon.yaml
+  lines: 128
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: tree.sh
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: trigger-service/Dockerfile
+  lines: 9
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: trigger-service/app/__init__.py
+  lines: 1
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: trigger-service/requirements.txt
+  lines: 3
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: worker/Dockerfile
+  lines: 16
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: worker/__init__.py
+  lines: 5
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: worker/config.py
+  lines: 27
+  classes: 1
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+  exports:
+  - name: WorkerSettings
+    type: class
+    cc_avg: 0.0
+- path: worker/connectors/__init__.py
+  lines: 8
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: worker/pyproject.toml
+  lines: 46
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+- path: worker/requirements.txt
+  lines: 4
+  classes: 0
+  methods: 0
+  cc_max: 0
+  inbound_deps: 0
+hotspots:
+- name: generate_stack_compose
+  fan_out: 57
+  note: Emit transparent docker-compose stack + cron sidecar under .nlp2dsl/generated/.
+- name: process_example
+  fan_out: 37
+  note: Analysis pipeline, 37 stages
+- name: main
+  fan_out: 25
+  note: Orchestrates 25 calls
+- name: _execute_ready_dsl
+  fan_out: 23
+  note: Orchestrates 23 calls
+- name: run
+  fan_out: 23
+  note: Orchestrates 23 calls
+- name: _try_validation_fixes
+  fan_out: 23
+  note: Fix validation errors via issue → resolution plans, guided by reflection tokens.
+- name: main
+  fan_out: 23
+  note: Orchestrates 23 calls
+- name: workflow_from_text
+  fan_out: 22
+  note: 'Pełny pipeline: tekst → NLP → DSL → (opcjonalne) wykonanie.
+
+
+    Body: {"text": "...'
+- name: export_markpact_bundle
+  fan_out: 22
+  note: Export with 22 outputs
+- name: _execute_workflow
+  fan_out: 21
+  note: Orchestrates 21 calls
+refactoring:
+  priorities:
+  - action: Split god module scripts/run-example-testql-results.py (555L, 2 classes)
+    impact: high
+    effort: high
+  - action: Split god module backend/app/routers/workflow.py (516L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module nlp2dsl_sdk/client.py (1008L, 2 classes)
+    impact: high
+    effort: high
+  - action: Split god module packages/nlp2dsl-stack/src/nlp2dsl_stack/compose.py (512L,
+      1 classes)
+    impact: high
+    effort: high
+  - action: Split god module nlp-service/app/routing/parser/rules.py (622L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module packages/nlp2cmd-intent/src/nlp2cmd_intent/keywords/keyword_detector.py
+      (602L, 2 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780668530.json
+      (642L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780672619.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780673613.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780694039.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780734808.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780737026.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780738187.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780739013.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+  - action: Split god module examples/08-multi-object-benchmark/results/benchmark_1780741913.json
+      (636L, 0 classes)
+    impact: high
+    effort: high
+evolution:
+- date: '2026-06-06'
+  cc_avg: 4.0
+  critical: 91
+  lines: 47832
+  note: Automated analysis

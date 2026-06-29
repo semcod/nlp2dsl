@@ -1,0 +1,76 @@
+syntax = "proto3";
+package dsl2nlp2dsl.v1;
+
+message ParseCommand {
+  string text = 1;
+  string mode = 2;
+}
+
+message PlanCommand {
+  string text = 1;
+  string mode = 2;
+}
+
+message ValidateCommand {
+  string workflow_file = 1;
+  string text = 2;
+  bool check_policy = 3;
+}
+
+message ExecuteCommand {
+  string text = 1;
+  string workflow_file = 2;
+  string mode = 3;
+  bool dry_run = 4;
+}
+
+message GenerateCommand {
+  string text = 1;
+  string out = 2;
+  string mode = 3;
+}
+
+message DraftCommand {
+  string name = 1;
+  string status = 2;
+  string draft_file = 3;
+}
+
+message ObserveCommand {
+  string target = 1;
+}
+
+message ComposeCommand {
+  string profile = 1;
+  string out = 2;
+  string target = 3;
+}
+
+message HealthCommand {}
+message ActionsCommand {}
+message ResolveCommand { string text = 1; }
+message OrientCommand { string text = 1; string mode = 2; }
+message SimulateCommand { string text = 1; string workflow_file = 2; string mode = 3; }
+message ChatCommand { string text = 1; }
+
+message DslEnvelope {
+  string verb = 1;
+  oneof body {
+    ParseCommand parse = 10;
+    PlanCommand plan = 11;
+    ValidateCommand validate = 12;
+    ExecuteCommand execute = 13;
+    GenerateCommand generate = 14;
+    DraftCommand draft = 15;
+    ObserveCommand observe = 16;
+    ComposeCommand compose = 17;
+    HealthCommand health = 18;
+    ActionsCommand actions = 19;
+    ResolveCommand resolve = 20;
+    OrientCommand orient = 21;
+    SimulateCommand simulate = 22;
+    ChatCommand chat = 23;
+  }
+  string default_file = 30;
+  string correlation_id = 31;
+}
