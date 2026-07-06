@@ -44,7 +44,9 @@ test: ## Run tests
 test-parallel: test ## Alias for goal/Makefile compatibility
 
 check-pypi-deps: ## Verify build/twine are installed (auto-install if missing)
-	@$(PYTHON) -c "import build, twine" 2>/dev/null || $(PYTHON) -m pip install build twine -q
+	@$(PYTHON) -c "import build, twine" 2>/dev/null || \
+		uv pip install --python $(PYTHON) pip build twine -q 2>/dev/null || \
+		$(PYTHON) -m pip install build twine -q
 
 clean: ## Remove build artifacts (root + packages)
 	rm -rf dist/ build/ *.egg-info
