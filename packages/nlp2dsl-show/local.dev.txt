@@ -1,0 +1,11 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: nlp2dsl-show 0.1.0 (python) at /home/tom/github/semcod/nlp2dsl/packages/nlp2dsl-show
+# deps declared: 5 | with local source: 3
+
+## LOCAL DEPS  (dep | required | local source (version) | installed | status)
+nlp2cmd-intent | >=0.1.1 | /home/tom/github/semcod/nlp2dsl/packages/nlp2cmd-intent (0.1.1) | 0.1.1 editable | EDITABLE-ELSEWHERE(/home/tom/github/wronai/nlp2dsl/packages/nlp2cmd-intent)  [pyproject.toml]
+nlp2cmd-planner | >=0.1.0 | /home/tom/github/semcod/nlp2dsl/packages/nlp2cmd-planner (0.1.2) | 0.1.2 editable | EDITABLE-ELSEWHERE(/home/tom/github/wronai/nlp2dsl/packages/nlp2cmd-planner)  [pyproject.toml]
+pact-ir | >=0.1.0 | /home/tom/github/semcod/nlp2dsl/packages/pact-ir (0.1.0) | 0.1.0 editable | EDITABLE-ELSEWHERE(/home/tom/github/wronai/nlp2dsl/packages/pact-ir)  [pyproject.toml]
+
+## EXTERNAL DEPS (no local source, 2): pytest, pyyaml

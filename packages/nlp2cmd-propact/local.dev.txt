@@ -1,0 +1,15 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: nlp2cmd-propact 0.1.3 (python) at /home/tom/github/semcod/nlp2dsl/packages/nlp2cmd-propact
+# deps declared: 7 | with local source: 7
+
+## LOCAL DEPS  (dep | required | local source (version) | installed | status)
+nlp2cmd | * | /home/tom/github/semcod/nlp2cmd (1.1.27) | - | NOT-INSTALLED  [pyproject.toml[nlp2cmd]]
+nlp2cmd | * | /home/tom/github/wronai/teLLMe/nlp2cmd-src (1.1.4) | - | NOT-INSTALLED  [pyproject.toml[nlp2cmd]]
+nlp2cmd | * | /home/tom/github/wronai/teLLMe/nlp2cmd-src/webops/nlp2cmd-repo (1.0.51) | - | NOT-INSTALLED  [pyproject.toml[nlp2cmd]]
+nlp2cmd | * | /home/tom/github/wronai/textx (?) | - | NOT-INSTALLED  [pyproject.toml[nlp2cmd]]
+nlp2cmd-planner | >=0.1.0 | /home/tom/github/semcod/nlp2dsl/packages/nlp2cmd-planner (0.1.2) | 0.1.2 editable | EDITABLE-ELSEWHERE(/home/tom/github/wronai/nlp2dsl/packages/nlp2cmd-planner)  [pyproject.toml]
+pact-ir | >=0.1.0 | /home/tom/github/semcod/nlp2dsl/packages/pact-ir (0.1.0) | 0.1.0 editable | EDITABLE-ELSEWHERE(/home/tom/github/wronai/nlp2dsl/packages/pact-ir)  [pyproject.toml]
+propact | >=0.0.9 | /home/tom/github/markpact/propact (0.0.9) | - | NOT-INSTALLED  [pyproject.toml[propact]]
+
+## EXTERNAL DEPS (no local source, 3): pydantic, pytest, pyyaml

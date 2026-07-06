@@ -1,0 +1,8 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: nlp2dsl-backend 0.0.0 (python) at /home/tom/github/semcod/nlp2dsl/backend
+# deps declared: 11 | with local source: 0
+
+## LOCAL DEPS: none — all dependencies are external
+
+## EXTERNAL DEPS (no local source, 11): asyncpg, fastapi, httpx, pydantic, pydantic-settings, python-dateutil, python-multipart, pyyaml, requests, sqlalchemy, uvicorn

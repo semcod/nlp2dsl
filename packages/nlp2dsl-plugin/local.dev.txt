@@ -1,0 +1,8 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: nlp2dsl-plugin 0.1.0 (python) at /home/tom/github/semcod/nlp2dsl/packages/nlp2dsl-plugin
+# deps declared: 2 | with local source: 0
+
+## LOCAL DEPS: none — all dependencies are external
+
+## EXTERNAL DEPS (no local source, 2): pydantic, pyyaml

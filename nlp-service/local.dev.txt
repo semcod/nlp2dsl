@@ -1,0 +1,8 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: nlp2dsl-nlp-service 0.0.0 (python) at /home/tom/github/semcod/nlp2dsl/nlp-service
+# deps declared: 10 | with local source: 0
+
+## LOCAL DEPS: none — all dependencies are external
+
+## EXTERNAL DEPS (no local source, 10): PyYAML, deepgram-sdk, fastapi, httpx, litellm, pydantic, pydantic-settings, python-multipart, redis, uvicorn

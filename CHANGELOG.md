@@ -15,6 +15,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Usunięto shimy `nlp2dsl_sdk` (contracts, validation, export, doql, env-map); importy w backend/worker/nlp-service/examples/koru → bezpośrednie pakiety
 - `env2llm.bootstrap.ensure_doql_registry` — alias kompatybilności z nlp2dsl
 
+## [0.0.43] - 2026-07-06
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/local.dev.txt
+
+### Other
+- Update .env.example
+- Update backend/local.dev.txt
+- Update local.dev.txt
+- Update nlp-service/local.dev.txt
+- Update packages/cli2nlp2dsl/local.dev.txt
+- Update packages/dsl-contracts/local.dev.txt
+- Update packages/dsl-validate/local.dev.txt
+- Update packages/dsl2nlp2dsl/local.dev.txt
+- Update packages/mcp2nlp2dsl/local.dev.txt
+- Update packages/nlp2cmd-intent/local.dev.txt
+- ... and 16 more files
+
 ## [0.0.42] - 2026-06-29
 
 ### Docs
