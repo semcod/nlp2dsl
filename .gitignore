@@ -262,3 +262,5 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 .aider*
+.github/
+.pactown-sandboxes/
