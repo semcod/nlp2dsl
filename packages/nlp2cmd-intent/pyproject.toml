@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nlp2cmd-intent"
-version = "0.1.1"
+version = "0.1.2"
 description = "NL normalization, intent detection, and entity extraction for nlp2cmd"
 readme = "README.md"
 requires-python = ">=3.10"
