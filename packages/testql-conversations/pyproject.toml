@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-testql = ["testql>=0.1"]
+testql = ["testql>=1.2.63; python_version >= '3.11' and python_version < '3.14'"]
 dev = ["pytest>=8.0"]
 
 [tool.hatch.build.targets.wheel]

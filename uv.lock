@@ -637,7 +637,7 @@ provides-extras = ["dev"]
 
 [[package]]
 name = "env2llm"
-version = "0.1.13"
+version = "0.1.14"
 source = { editable = "../env2llm" }
 dependencies = [
     { name = "pydantic" },
@@ -3127,7 +3127,7 @@ dependencies = [
 requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "pyyaml", specifier = ">=6.0" },
-    { name = "testql", marker = "extra == 'testql'", specifier = ">=0.1" },
+    { name = "testql", marker = "python_full_version >= '3.11' and python_full_version < '3.14' and extra == 'testql'", specifier = ">=1.2.63" },
 ]
 provides-extras = ["testql", "dev"]
 
