@@ -132,7 +132,9 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Run LLM scenarios
-        if: ${{ secrets.OPENROUTER_API_KEY != '' }}
+        # GitHub rejects direct `secrets` references in `if`; expose the secret
+        # only to this step and evaluate the corresponding env context.
+        if: env.OPENROUTER_API_KEY != ''
         run: |
           python3 scripts/run-example-docker-e2e.py --skip-main --llm \
             05-conversation-flow 10-llm-benchmark
